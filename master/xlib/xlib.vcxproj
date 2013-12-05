@@ -1,0 +1,223 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{3B89532F-2E02-44F7-B250-42746B077A4E}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>xlib</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>$(ProjectName)_d</TargetName>
+    <OutDir>$(SolutionDir)core\lib\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)core\lib\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="..\core\encrypt\MD4_asm.asm" />
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\core\algo\bitmap.h" />
+    <ClInclude Include="..\core\algo\bloom.h" />
+    <ClInclude Include="..\core\algo\bm_wrapper.h" />
+    <ClInclude Include="..\core\algo\common_substr.h" />
+    <ClInclude Include="..\core\algo\find_tool.h" />
+    <ClInclude Include="..\core\algo\kmp.h" />
+    <ClInclude Include="..\core\algo\ld.h" />
+    <ClInclude Include="..\core\algo\lps.h" />
+    <ClInclude Include="..\core\algo\many_many_queue.h" />
+    <ClInclude Include="..\core\algo\one_many_queue.h" />
+    <ClInclude Include="..\core\algo\qsort.h" />
+    <ClInclude Include="..\core\algo\search.h" />
+    <ClInclude Include="..\core\algo\sort.h" />
+    <ClInclude Include="..\core\algo\string_hash.h" />
+    <ClInclude Include="..\core\algo\str_algo.h" />
+    <ClInclude Include="..\core\algo\sunday.h" />
+    <ClInclude Include="..\core\algo\text_search.h" />
+    <ClInclude Include="..\core\algo\trie.h" />
+    <ClInclude Include="..\core\algo\wm_wrapper.h" />
+    <ClInclude Include="..\core\comp\calendar\calendar.h" />
+    <ClInclude Include="..\core\core\app_instance.h" />
+    <ClInclude Include="..\core\core\array.h" />
+    <ClInclude Include="..\core\core\code_convert.h" />
+    <ClInclude Include="..\core\core\datetime.h" />
+    <ClInclude Include="..\core\core\ensure.h" />
+    <ClInclude Include="..\core\core\fast_string.h" />
+    <ClInclude Include="..\core\core\ini_file.h" />
+    <ClInclude Include="..\core\core\kdetect_leakk.h" />
+    <ClInclude Include="..\core\core\lock_stl.h" />
+    <ClInclude Include="..\core\core\logger.h" />
+    <ClInclude Include="..\core\core\MemStream.h" />
+    <ClInclude Include="..\core\core\mem_buffer.h" />
+    <ClInclude Include="..\core\core\mem_list.h" />
+    <ClInclude Include="..\core\core\mem_string.h" />
+    <ClInclude Include="..\core\core\MiniDumper.h" />
+    <ClInclude Include="..\core\core\perf_counter.h" />
+    <ClInclude Include="..\core\core\PidAndPort.h" />
+    <ClInclude Include="..\core\core\private_heap.h" />
+    <ClInclude Include="..\core\core\process_enumer.h" />
+    <ClInclude Include="..\core\core\process_helper.h" />
+    <ClInclude Include="..\core\core\scope_guard.h" />
+    <ClInclude Include="..\core\core\seqnumber.h" />
+    <ClInclude Include="..\core\core\ShareMemory.h" />
+    <ClInclude Include="..\core\core\singleton.h" />
+    <ClInclude Include="..\core\core\small_string.h" />
+    <ClInclude Include="..\core\core\task_mgr.h" />
+    <ClInclude Include="..\core\core\timer.h" />
+    <ClInclude Include="..\core\db\CppSQLite3.h" />
+    <ClInclude Include="..\core\debuglog.h" />
+    <ClInclude Include="..\core\encrypt\base64.h" />
+    <ClInclude Include="..\core\encrypt\crc_func.h" />
+    <ClInclude Include="..\core\encrypt\crc_single.h" />
+    <ClInclude Include="..\core\encrypt\des_single.h" />
+    <ClInclude Include="..\core\encrypt\MD4.h" />
+    <ClInclude Include="..\core\encrypt\MD5.h" />
+    <ClInclude Include="..\core\encrypt\md5_class.h" />
+    <ClInclude Include="..\core\encrypt\md5_single.h" />
+    <ClInclude Include="..\core\encrypt\rc4_single.h" />
+    <ClInclude Include="..\core\encrypt\sha1_single.h" />
+    <ClInclude Include="..\core\encrypt\urlencode.h" />
+    <ClInclude Include="..\core\inttype.h" />
+    <ClInclude Include="..\core\io\path.h" />
+    <ClInclude Include="..\core\io\stream.h" />
+    <ClInclude Include="..\core\istddef.h" />
+    <ClInclude Include="..\core\klib.h" />
+    <ClInclude Include="..\core\kthread\auto_lock.h" />
+    <ClInclude Include="..\core\kthread\event.h" />
+    <ClInclude Include="..\core\kthread\ReadWriteSection.h" />
+    <ClInclude Include="..\core\kthread\RWLock.h" />
+    <ClInclude Include="..\core\kthread\RWSemaphore.h" />
+    <ClInclude Include="..\core\kthread\thread.h" />
+    <ClInclude Include="..\core\kthread\threadpool.h" />
+    <ClInclude Include="..\core\kthread\win_mutex.h" />
+    <ClInclude Include="..\core\macro.h" />
+    <ClInclude Include="..\core\net\addr_resolver.h" />
+    <ClInclude Include="..\core\net\bytebuyffer.h" />
+    <ClInclude Include="..\core\net\CheckNat.h" />
+    <ClInclude Include="..\core\net\http_down.h" />
+    <ClInclude Include="..\core\net\IP_V4.h" />
+    <ClInclude Include="..\core\net\proto_def.h" />
+    <ClInclude Include="..\core\net\tcp_socket.h" />
+    <ClInclude Include="..\core\net\udp_client.h" />
+    <ClInclude Include="..\core\net\udp_socket.h" />
+    <ClInclude Include="..\core\net\wininet_httpclient.h" />
+    <ClInclude Include="..\core\net\winsockInit.h" />
+    <ClInclude Include="..\core\pattern\aspec.h" />
+    <ClInclude Include="..\core\pattern\factory.h" />
+    <ClInclude Include="..\core\pattern\fsm.h" />
+    <ClInclude Include="..\core\pattern\object_pool.h" />
+    <ClInclude Include="..\core\pattern\object_reuser.h" />
+    <ClInclude Include="..\core\pattern\sync_invoke.h" />
+    <ClInclude Include="..\core\util\atom.h" />
+    <ClInclude Include="..\core\util\mem_check.h" />
+    <ClInclude Include="..\core\util\strutil.h" />
+    <ClInclude Include="..\core\util\sysutil.h" />
+    <ClInclude Include="..\core\util\timeout_checker.h" />
+    <ClInclude Include="..\core\util\util.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\core\algo\bitmap.cpp" />
+    <ClCompile Include="..\core\algo\bloom.cpp" />
+    <ClCompile Include="..\core\algo\many_many_queue.cpp" />
+    <ClCompile Include="..\core\algo\string_hash.cpp" />
+    <ClCompile Include="..\core\algo\trie.cpp" />
+    <ClCompile Include="..\core\algo\wm_wrapper.cpp" />
+    <ClCompile Include="..\core\comp\calendar\calendar.cpp" />
+    <ClCompile Include="..\core\core\code_convert.cpp" />
+    <ClCompile Include="..\core\core\datetime.cpp" />
+    <ClCompile Include="..\core\core\ini_file.cpp" />
+    <ClCompile Include="..\core\core\logger.cpp" />
+    <ClCompile Include="..\core\core\MiniDumper.cpp" />
+    <ClCompile Include="..\core\core\process_enumer.cpp" />
+    <ClCompile Include="..\core\core\process_helper.cpp" />
+    <ClCompile Include="..\core\core\ShareMemory.cpp" />
+    <ClCompile Include="..\core\core\task_mgr.cpp" />
+    <ClCompile Include="..\core\core\timer.cpp" />
+    <ClCompile Include="..\core\db\CppSQLite3.cpp" />
+    <ClCompile Include="..\core\encrypt\base64.cpp" />
+    <ClCompile Include="..\core\encrypt\MD4.cpp" />
+    <ClCompile Include="..\core\encrypt\MD5.cpp" />
+    <ClCompile Include="..\core\encrypt\md5_class.cpp" />
+    <ClCompile Include="..\core\io\path.cpp" />
+    <ClCompile Include="..\core\io\stream.cpp" />
+    <ClCompile Include="..\core\kthread\RWSemaphore.cpp" />
+    <ClCompile Include="..\core\kthread\Semaphore.cpp" />
+    <ClCompile Include="..\core\kthread\win_mutex.cpp" />
+    <ClCompile Include="..\core\net\addr_resolver.cpp" />
+    <ClCompile Include="..\core\net\CheckNat.cpp" />
+    <ClCompile Include="..\core\net\http_down.cpp" />
+    <ClCompile Include="..\core\net\tcp_socket.cpp" />
+    <ClCompile Include="..\core\net\udp_client.cpp" />
+    <ClCompile Include="..\core\net\udp_socket.cpp" />
+    <ClCompile Include="..\core\net\wininet_httpclient.cpp" />
+    <ClCompile Include="..\core\pattern\sync_invoke.cpp" />
+    <ClCompile Include="..\core\util\strutil.cpp" />
+    <ClCompile Include="..\core\util\sysutil.cpp" />
+    <ClCompile Include="..\core\util\util.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

@@ -1,0 +1,432 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="..\core\encrypt\MD4_asm.asm">
+      <Filter>源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\core\core\app_instance.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\array.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\ensure.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\fast_string.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\lock_stl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\logger.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\mem_buffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\mem_list.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\mem_string.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\MemStream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\MiniDumper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\PidAndPort.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\private_heap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\ShareMemory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\singleton.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\small_string.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\bm_wrapper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\kmp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\ld.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\sort.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\sunday.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\db\CppSQLite3.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\crc_func.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\crc_single.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\des_single.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\MD4.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\MD5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\md5_class.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\md5_single.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\rc4_single.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\sha1_single.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\urlencode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\bytebuyffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\proto_def.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\comp\calendar\calendar.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\util\sysutil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\CheckNat.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\util\util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\trie.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\scope_guard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\factory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\sync_invoke.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\util\mem_check.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\task_mgr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\code_convert.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\ini_file.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\process_enumer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\process_helper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\kdetect_leakk.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\perf_counter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\base64.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\str_algo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\tcp_socket.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\udp_client.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\udp_socket.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\addr_resolver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\wm_wrapper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\text_search.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\IP_V4.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\http_down.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\find_tool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\wininet_httpclient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\winsockInit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\auto_lock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\event.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\ReadWriteSection.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\RWLock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\RWSemaphore.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\thread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\threadpool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\util\strutil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\bitmap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\bloom.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\aspec.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\fsm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\string_hash.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\klib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\seqnumber.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\io\stream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\util\atom.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\common_substr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\lps.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\many_many_queue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\one_many_queue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\qsort.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\debuglog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\inttype.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\istddef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\macro.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\io\path.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\datetime.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\object_pool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\object_reuser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\win_mutex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\util\timeout_checker.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\core\core\logger.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\MiniDumper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\ShareMemory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\db\CppSQLite3.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\encrypt\MD4.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\encrypt\MD5.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\encrypt\md5_class.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\comp\calendar\calendar.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\sysutil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\CheckNat.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\timer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\trie.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\sync_invoke.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\task_mgr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\code_convert.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\ini_file.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\process_enumer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\process_helper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\encrypt\base64.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\tcp_socket.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\udp_client.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\udp_socket.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\addr_resolver.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\wm_wrapper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\http_down.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\wininet_httpclient.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\kthread\RWSemaphore.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\kthread\Semaphore.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\strutil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\bitmap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\bloom.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\string_hash.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\io\stream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\many_many_queue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\io\path.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\datetime.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\kthread\win_mutex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

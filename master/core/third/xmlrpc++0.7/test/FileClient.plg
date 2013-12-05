@@ -1,0 +1,92 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: xmlrpc - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPECA5.tmp" with contents
+[
+/MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_LIB" /FR"Debug/" /Fo"Debug/" /Fd"Debug/" /FD /c 
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcClient.cpp"
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcDispatch.cpp"
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcServer.cpp"
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcServerConnection.cpp"
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcServerMethod.cpp"
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcSocket.cpp"
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcSource.cpp"
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcUtil.cpp"
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcValue.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSPECA5.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPECA6.tmp" with contents
+[
+/nologo /out:"Debug\xmlrpc.lib" 
+".\Debug\XmlRpcClient.obj"
+".\Debug\XmlRpcDispatch.obj"
+".\Debug\XmlRpcServer.obj"
+".\Debug\XmlRpcServerConnection.obj"
+".\Debug\XmlRpcServerMethod.obj"
+".\Debug\XmlRpcSocket.obj"
+".\Debug\XmlRpcSource.obj"
+".\Debug\XmlRpcUtil.obj"
+".\Debug\XmlRpcValue.obj"
+]
+Creating command line "link.exe -lib @C:\Users\ADMINI~1\AppData\Local\Temp\RSPECA6.tmp"
+<h3>Output Window</h3>
+Compiling...
+Microsoft (R) 32-bit C/C++ Optimizing Compiler Version 12.00.8168 for 80x86
+Copyright (C) Microsoft Corp 1984-1998. All rights reserved.
+
+cl /MDd /W3 /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_MBCS" /D "_LIB" /FR"Debug/" /Fo"Debug/" /Fd"Debug/" /FD /c 
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcClient.cpp"
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcDispatch.cpp"
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcServer.cpp"
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcServerConnection.cpp"
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcServerMethod.cpp"
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcSocket.cpp"
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcSource.cpp"
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcUtil.cpp"
+   "C:\Users\Administrator\Desktop\xmlrpc++0.7\src\XmlRpcValue.cpp"
+
+XmlRpcClient.cpp
+XmlRpcDispatch.cpp
+XmlRpcServer.cpp
+XmlRpcServerConnection.cpp
+XmlRpcServerMethod.cpp
+XmlRpcSocket.cpp
+XmlRpcSource.cpp
+XmlRpcUtil.cpp
+XmlRpcValue.cpp
+Generating Code...
+Creating library...
+<h3>
+--------------------Configuration: FileClient - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPFAF9.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\src" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "_WINDOWS" /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"C:\Users\Administrator\Desktop\xmlrpc++0.7\Test\FileClient.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSPFAF9.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSPFB09.tmp" with contents
+[
+xmlrpc.lib Ws2_32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /incremental:yes /pdb:"Debug/FileClient.pdb" /debug /machine:I386 /out:"Debug/FileClient.exe" /pdbtype:sept /libpath:"..\Debug" 
+".\Debug\FileClient.obj"
+"\Users\Administrator\Desktop\xmlrpc++0.7\Debug\xmlrpc.lib"
+]
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSPFB09.tmp"
+<h3>Output Window</h3>
+Compiling...
+FileClient.cpp
+Linking...
+
+
+
+<h3>Results</h3>
+FileClient.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

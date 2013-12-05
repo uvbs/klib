@@ -26,5 +26,12 @@
 *.suo
 *.opensdf
 *.ipch
+*.lastbuildstate
+*.unsuccessfulbuild
+*.filters
+*.user
+*.manifest
+*.res
+
 Debug
 Release

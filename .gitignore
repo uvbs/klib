@@ -25,3 +25,4 @@
 *.pch
 *.suo
 *.opensdf
+*.ipch

@@ -11,6 +11,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mynet", "core\comp\MyNet\my
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mynet_test", "example\mynet_test\mynet_test.vcxproj", "{97571C7D-E080-4EAD-987A-BC9FB0C67F20}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kl", "kl\kl.vcxproj", "{8F300589-804D-3838-166A-5FA9A636AB63}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kl_ex", "kl_ex\kl_ex.vcxproj", "{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +41,14 @@ Global
 		{97571C7D-E080-4EAD-987A-BC9FB0C67F20}.Debug|Win32.Build.0 = Debug|Win32
 		{97571C7D-E080-4EAD-987A-BC9FB0C67F20}.Release|Win32.ActiveCfg = Release|Win32
 		{97571C7D-E080-4EAD-987A-BC9FB0C67F20}.Release|Win32.Build.0 = Release|Win32
+		{8F300589-804D-3838-166A-5FA9A636AB63}.Debug|Win32.ActiveCfg = Debug|Win32
+		{8F300589-804D-3838-166A-5FA9A636AB63}.Debug|Win32.Build.0 = Debug|Win32
+		{8F300589-804D-3838-166A-5FA9A636AB63}.Release|Win32.ActiveCfg = Release|Win32
+		{8F300589-804D-3838-166A-5FA9A636AB63}.Release|Win32.Build.0 = Release|Win32
+		{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}.Debug|Win32.Build.0 = Debug|Win32
+		{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}.Release|Win32.ActiveCfg = Release|Win32
+		{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

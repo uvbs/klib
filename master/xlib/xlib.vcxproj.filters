@@ -312,6 +312,9 @@
     <ClInclude Include="..\core\util\timeout_checker.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\util\buffer_reader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core\logger.cpp">
@@ -426,6 +429,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\kthread\win_mutex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\buffer_reader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

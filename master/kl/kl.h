@@ -1,0 +1,4 @@
+
+/*
+design a script language
+*/

@@ -1,0 +1,4 @@
+1. net support ipv6
+2. path finish
+3. finish k script language.
+4. 

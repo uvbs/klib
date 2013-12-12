@@ -177,7 +177,7 @@ protected:
     auto_cs  thread_num_cs_;
     
     Event event_;
-    klib::stl::CLockList<TaskInfo*> tasklist_;
+    klib::stl::lock_list<TaskInfo*> tasklist_;
 };
 
 

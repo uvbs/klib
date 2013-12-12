@@ -12,29 +12,32 @@ namespace stl {
 
 using namespace klib::kthread;
 
+typedef auto_lock MutexGuard;
+typedef auto_cs   Mutex;
+
 //----------------------------------------------------------------------
 // 有锁链接基类
-template<class T, class StlContainer>
-class CLockListBase
+template<class T, class _Container>
+class lock_list_base
 {
 public:
-    typedef CLockListBase<T, StlContainer>  self_type;
-    typedef StlContainer  ContainerType;
+    typedef lock_list_base<T, _Container>  self_type;
+    typedef _Container  ContainerType;
 
 public:
     size_t size() const
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        return m_container.size();
+        return container_.size();
     }
 
     bool find_item(const T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.begin();
-        for (; itr != m_container.end(); ++itr)
+        auto itr = container_.begin();
+        for (; itr != container_.end(); ++itr)
         {
             if (*itr == t)
             {
@@ -47,90 +50,90 @@ public:
 
     bool push_item(const T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        m_container.push_back(t);
+        container_.push_back(t);
         return true;
     }
     
     bool pop_item(T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        if (m_container.empty()) 
+        if (container_.empty()) 
         {
             return false;
         }
 
-        t = m_container.front();
-        m_container.pop_front();
+        t = container_.front();
+        container_.pop_front();
         return true;
     }
 
     bool remove_item(T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        m_container.remove(t);
+        container_.remove(t);
         return true;
     }
 
     void for_each(std::function<bool(T& t)> f)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.begin();
-        for (; itr != m_container.end(); ++ itr)
+        auto itr = container_.begin();
+        for (; itr != container_.end(); ++ itr)
         {
             if (!f(*itr))  break;
         }
     }
     
-    StlContainer& get_container()
+    _Container& get_container()
     {
-        return m_container;
+        return container_;
     }
 
-    auto_cs& get_lock()
+    Mutex& get_lock()
     {
-        return m_auto_cs;;
+        return mutex_;;
     }
 
 protected:
-    mutable auto_cs m_auto_cs;;        ///< 锁
-    StlContainer m_container;               ///< 容器
+    mutable Mutex mutex_;;                  ///< 锁
+    _Container container_;               ///< 容器
 };
 
 //----------------------------------------------------------------------
 // 有锁链接
 template<class T>
-class CLockList : public CLockListBase<T, std::list<T>>
+class lock_list : public lock_list_base<T, std::list<T>>
 {
 public:
-    typedef CLockList<T>  self_type;
+    typedef lock_list<T>  self_type;
     typedef std::list<T>   ContainerType;
 
 };
 
 //----------------------------------------------------------------------
 // 有锁vector基类
-template<class T, class StlContainer>
-class CLockVectorBase
+template<class T, class _Container>
+class lock_vector_base
 {
 public:
     size_t size() const
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        return m_container.size();
+        return container_.size();
     }
 
     bool find_item(const T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.begin();
-        for (; itr != m_container.end(); ++itr)
+        auto itr = container_.begin();
+        for (; itr != container_.end(); ++itr)
         {
             if (*itr == t)
             {
@@ -143,14 +146,14 @@ public:
 
     bool remove_item(const T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.begin();
-        for (; itr != m_container.end(); ++itr)
+        auto itr = container_.begin();
+        for (; itr != container_.end(); ++itr)
         {
             if (*itr == t)
             {
-                m_container.erase(itr);
+                container_.erase(itr);
                 return true;
             }
         }
@@ -160,57 +163,57 @@ public:
 
     bool push_item(const T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        m_container.push_back(t);
+        container_.push_back(t);
         return true;
     }
     
     bool pop_item(T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        if (m_container.empty()) 
+        if (container_.empty()) 
         {
             return false;
         }
 
-        t = m_container.front();
-        m_container.erase(m_container.begin());
+        t = container_.front();
+        container_.erase(container_.begin());
         return true;
     }
 
     void for_each(std::function<void(T& t)> f)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.begin();
-        for (; itr != m_container.end(); ++ itr)
+        auto itr = container_.begin();
+        for (; itr != container_.end(); ++ itr)
         {
             f(*itr);
         }
     }
 
-    StlContainer& get_container()
+    _Container& get_container()
     {
-        return m_container;
+        return container_;
     }
 
 
-    auto_cs& get_lock()
+    Mutex& get_lock()
     {
-        return m_auto_cs;;
+        return mutex_;;
     }
 
 protected:
-    mutable auto_cs m_auto_cs;;        ///< 临界区
-    StlContainer m_container;       ///< 容器
+    mutable Mutex mutex_;;        ///< 临界区
+    _Container container_;       ///< 容器
 };
 
 //----------------------------------------------------------------------
 // 有锁vector
 template<class T>
-class CLockVector : public CLockVectorBase<T, std::vector<T>>
+class lock_vector : public lock_vector_base<T, std::vector<T>>
 {
 public:
 
@@ -220,66 +223,66 @@ public:
 //----------------------------------------------------------------------
 // 有锁stack
 template<class T>
-class CLockStack 
+class lock_stack 
 {
 public:
     bool push_item(const T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        m_container.push_back(t);
+        container_.push_back(t);
         return true;
     }
 
     bool pop_item(T& t)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        if (m_container.empty()) 
+        if (container_.empty()) 
         {
             return false;
         }
 
-        t = m_container.back();
-        m_container.pop_back();
+        t = container_.back();
+        container_.pop_back();
         return true;
     }
 
     size_t size()
     {
-        return m_container.size();
+        return container_.size();
     }
 
-    auto_cs& get_lock()
+    Mutex& get_lock()
     {
-        return m_auto_cs;;
+        return mutex_;;
     }
 
 protected:
-    auto_cs     m_auto_cs;;
-    std::vector<T>  m_container;
+    Mutex     mutex_;;
+    std::vector<T>  container_;
 };
 
 
 //----------------------------------------------------------------------
 // 锁对基类
-template<class Key, class Val, class StlContainer>
-class CLockPairBase
+template<class Key, class Val, class _Container>
+class lock_pair_base
 {
 public:
     ///<  获取大小
     size_t size() const
     {
-        return m_container.size();
+        return container_.size();
     }
 
     ///< 获取键值对中的值
     bool get_item(const Key& k, Val& v)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.find(k);
-        if (itr != m_container.end()) 
+        auto itr = container_.find(k);
+        if (itr != container_.end()) 
         {
             v = itr->second;
             return true;
@@ -290,10 +293,10 @@ public:
     ///< 查找是否存在该值
     bool find_item(const Key& k)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.find(k);
-        if (itr == m_container.end())
+        auto itr = container_.find(k);
+        if (itr == container_.end())
         {
             return false;
         }
@@ -303,32 +306,32 @@ public:
     ///< 添加一项
     bool add_item(const Key& k, const Val& v)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.find(k);
-        if (itr != m_container.end()) 
+        auto itr = container_.find(k);
+        if (itr != container_.end()) 
         {
             return false;
         }
 
-        m_container.insert(std::make_pair(k, v));
+        container_.insert(std::make_pair(k, v));
         return true;
     }
 
     ///< 更新item
     bool update_item(const Key& k, const Val& v, BOOL bAdd)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.find(k);
-        if (itr == m_container.end()) 
+        auto itr = container_.find(k);
+        if (itr == container_.end()) 
         {
             if (!bAdd) 
             {
                 return false;
             }
             
-            m_container.insert(std::make_pair(k, v));
+            container_.insert(std::make_pair(k, v));
         }
         else
         {
@@ -341,9 +344,9 @@ public:
     ///< 删除一项
     bool remove_item(const Key& k)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        m_container.erase(k);
+        container_.erase(k);
 
         return true;
     }
@@ -351,14 +354,14 @@ public:
     ///< 根据条件删除项,matchfun 可以对v进行释放操作
     void remove_if(std::function<bool(const Key& k, Val& v)> matchfun)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.begin();
-        for (; itr != m_container.end(); )
+        auto itr = container_.begin();
+        for (; itr != container_.end(); )
         {
             if (matchfun(itr->first, itr->second))
             {
-                itr = m_container.erase(itr);
+                itr = container_.erase(itr);
             }
             else
             {
@@ -370,10 +373,10 @@ public:
     ///< 检测某一项
     void check_item(const Key& k, std::function<void (Val& v)> checkfun)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.find(k);
-        if (itr != m_container.end()) 
+        auto itr = container_.find(k);
+        if (itr != container_.end()) 
         {
             checkfun(itr->second);
         }
@@ -384,38 +387,38 @@ public:
     ///< 释放其中的一项,会调用delete
     bool delete_item(const Key& k)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.find(k);
-        if (itr != m_container.end()) 
+        auto itr = container_.find(k);
+        if (itr != container_.end()) 
         {
             delete itr->second;
         }
-        m_container.erase(itr);
+        container_.erase(itr);
         return true;
     }
 
     ///< 提供遍历的接口
     void for_each(std::function<void(const Key& k, const Val& v)> f)
     {
-        auto_lock lock(m_auto_cs);
+        MutexGuard lock(mutex_);
 
-        auto itr = m_container.begin();
-        for (; itr != m_container.end(); ++ itr)
+        auto itr = container_.begin();
+        for (; itr != container_.end(); ++ itr)
         {
             f(itr->first, itr->second);
         }
     }
 
 protected:
-    StlContainer m_container;
-    mutable auto_cs m_auto_cs;;
+    _Container container_;
+    mutable Mutex mutex_;;
 };
 
 //----------------------------------------------------------------------
 // LockMap
 template<class Key, class Val>
-class CLockMap : public CLockPairBase<Key, Val, std::map<Key, Val>>
+class lock_map : public lock_pair_base<Key, Val, std::map<Key, Val>>
 {
 public:    
 };
@@ -423,7 +426,7 @@ public:
 //----------------------------------------------------------------------
 // LockHashMap
 template<class Key, class Val>
-class CLockHashMap : public CLockPairBase<Key, Val, stdext::hash_map<Key, Val>>
+class lock_hash_map : public lock_pair_base<Key, Val, stdext::hash_map<Key, Val>>
 {
 public:
 };
@@ -431,10 +434,10 @@ public:
 //----------------------------------------------------------------------
 // 定义有桶大小的hashmap, Key需定义operator size_t 函数
 template<class Key, class Val, INT nBucketSize>
-class CLockBucketMap
+class lock_bucket_map
 {
 public:
-    CLockBucketMap()
+    lock_bucket_map()
     {
         static_assert(nBucketSize> 0, "nBucketSize must big than zero!!!");
     }
@@ -479,7 +482,7 @@ protected:
     }
 
 protected:
-    CLockMap<Key, Val>  m_buck_map[nBucketSize];
+    lock_map<Key, Val>  m_buck_map[nBucketSize];
 };
 
 

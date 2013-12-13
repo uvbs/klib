@@ -1,7 +1,7 @@
 #ifndef _KLIB_TIMEOUT_CHECKER_H_
 #define _KLIB_TIMEOUT_CHECKER_H_
 
-
+#include <set>
 #include <functional>
 
 namespace klib{
@@ -13,6 +13,8 @@ namespace util {
  超时检测类
 */
 
+typedef int64_t time_stamp_type ;
+
 template <typename KeyType>
 class timeout_checker
 {
@@ -20,7 +22,7 @@ public:
     struct st_timeout_info
     {
         KeyType key_;
-        UINT64  time_stamp_;
+        time_stamp_type  time_stamp_;
 
         st_timeout_info() : time_stamp_(0) { }
         st_timeout_info(KeyType& key) : key_(key), time_stamp_(0) {}
@@ -43,13 +45,12 @@ public:
     
     //------------------------------------------------------------------------
     // 插入超时项
-    UINT64 insert(KeyType key)
+    time_stamp_type insert(KeyType key)
     {
         st_timeout_info tmout_info(key);
         tmout_info.time_stamp_ = GetTickCount64();
-        TimeoutSetType::_Pairib itr_pair;
 
-        itr_pair = timeout_set_.insert(tmout_info);
+        auto itr_pair = timeout_set_.insert(tmout_info);
         while (!itr_pair.second) 
         {
             ++ tmout_info.time_stamp_;
@@ -61,7 +62,7 @@ public:
 
     //------------------------------------------------------------------------
     // 通过插入时返回的超时时间戳可以删除超时项
-    bool remove(UINT64 utime_stamp)
+    bool remove(time_stamp_type utime_stamp)
     {
         st_timeout_info key;
         key.time_stamp_ = utime_stamp;
@@ -71,19 +72,20 @@ public:
 
     //------------------------------------------------------------------------
     // 超时时长:tmout 单位为毫秒
-    void check(UINT64 tmout, const CallBack& fun)
+    void check(time_stamp_type tmout, const CallBack& fun)
     {
         if (timeout_set_.empty())  {  return;   }
 
-        UINT64 utime_now = GetTickCount64();
+        time_stamp_type utime_now = GetTickCount64();
         do 
         {
             // 清除超时的记录
             auto itr_tmout = timeout_set_.begin();
             if (itr_tmout->time_stamp_ + tmout < utime_now) 
             {
-                fun(itr_tmout->key_);
+                auto key = itr_tmout->key_;
                 timeout_set_.erase(itr_tmout);
+                fun(key);
             }
             else
             {
@@ -95,13 +97,13 @@ public:
 
     //------------------------------------------------------------------------
     // 检测是否是在检测的时限内
-    bool is_limit(UINT64 check_interval) const 
+    bool is_limit(time_stamp_type check_interval) const 
     {
-        static UINT64 ulast_check_time = 0;                         // 上次检测的时间
-        UINT64 utime_now = GetTickCount64();                        // 当前系统运行时间
+        static time_stamp_type ulast_check_time = 0;                         // 上次检测的时间
+        time_stamp_type utime_now = GetTickCount64();                        // 当前系统运行时间
         
         // 判断是否需要进行超时检查
-        UINT64 unext_check_time = ulast_check_time + check_interval;
+        time_stamp_type unext_check_time = ulast_check_time + check_interval;
         if (utime_now < unext_check_time) 
         {
             return true;

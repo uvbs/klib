@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include <core/timer.h>
+#include <core/timer_mgr.h>
 
 
 bool print_info()

@@ -125,7 +125,7 @@
     <ClInclude Include="..\core\core\singleton.h" />
     <ClInclude Include="..\core\core\small_string.h" />
     <ClInclude Include="..\core\core\task_mgr.h" />
-    <ClInclude Include="..\core\core\timer.h" />
+    <ClInclude Include="..\core\core\timer_mgr.h" />
     <ClInclude Include="..\core\db\CppSQLite3.h" />
     <ClInclude Include="..\core\debuglog.h" />
     <ClInclude Include="..\core\encrypt\base64.h" />
@@ -195,7 +195,7 @@
     <ClCompile Include="..\core\core\process_helper.cpp" />
     <ClCompile Include="..\core\core\ShareMemory.cpp" />
     <ClCompile Include="..\core\core\task_mgr.cpp" />
-    <ClCompile Include="..\core\core\timer.cpp" />
+    <ClCompile Include="..\core\core\timer_mgr.cpp" />
     <ClCompile Include="..\core\db\CppSQLite3.cpp" />
     <ClCompile Include="..\core\encrypt\base64.cpp" />
     <ClCompile Include="..\core\encrypt\MD4.cpp" />

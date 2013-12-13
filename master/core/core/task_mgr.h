@@ -36,7 +36,7 @@ protected:
 protected:
     klib::kthread::Thread                   thread_;
     klib::kthread::Event                    event_;
-    klib::stl::CLockList<task_func_type>    task_list_;
+    klib::stl::lock_list<task_func_type>    task_list_;
 };
 
 

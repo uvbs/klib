@@ -4,8 +4,9 @@
 design a script language
 */
 
-struct Token
-{
 
-};
+// struct Token
+// {
+// 
+// };
 

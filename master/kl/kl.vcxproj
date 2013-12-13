@@ -35,12 +35,21 @@
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="arg_list.h" />
     <ClInclude Include="kl.h" />
+    <ClInclude Include="lex.h" />
+    <ClInclude Include="symbols.h" />
+    <ClInclude Include="token.h" />
     <ClInclude Include="variable.h" />
+    <ClInclude Include="vmachine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="kl.cpp" />
+    <ClCompile Include="lex.cpp" />
+    <ClCompile Include="symbols.cpp" />
+    <ClCompile Include="token.cpp" />
     <ClCompile Include="variable.cpp" />
+    <ClCompile Include="vmachine.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

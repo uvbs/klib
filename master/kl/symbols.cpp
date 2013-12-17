@@ -2,6 +2,8 @@
 #include "symbols.h"
 
 
+//----------------------------------------------------------------------
+// 
 bool symbols_mgr::add_symbol(const std::string& name, symbol_info& info)
 {
     symbols_info_table::_Pairib result;

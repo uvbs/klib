@@ -67,6 +67,21 @@ bool buffer_reader::skip(size_t len)
     return true;
 }
 
+bool buffer_reader::skip(skip_callbcak callback)
+{
+    while (cur_ptr < end_ptr)
+    {
+        if (!callback(*cur_ptr)) 
+        {
+            break;
+        }
+
+        ++ cur_ptr;
+    }
+
+    return cur_ptr != end_ptr;
+}
+
 bool buffer_reader::skip_until(unsigned char ch)
 {
     while (cur_ptr < end_ptr)

@@ -24,7 +24,7 @@ int _tmain(int argc, _TCHAR* argv[])
     variable x = std::move(var);
 
     vmachine vm;
-    vm.compile("");
+    vm.compile("13434 324324.434 sjfldsf");
 
 	return 0;
 }

@@ -4,9 +4,13 @@
 #ifndef _klib_buffer_reader_h
 #define _klib_buffer_reader_h
 
+
+#include <functional>
+
 namespace klib {
 namespace util {
 
+typedef std::function<bool (unsigned char)> skip_callbcak;
 
 class buffer_reader
 {
@@ -32,8 +36,9 @@ public:
 
     bool back(size_t len);
     bool skip(size_t len);
+    bool skip(skip_callbcak callback);
     bool skip_until(unsigned char ch);
-    bool skip_space();
+    bool skip_space();    
 
     self_type& operator ++ ();
     self_type& operator ++ (int);

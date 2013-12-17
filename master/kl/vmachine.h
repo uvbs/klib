@@ -13,7 +13,7 @@
 class vmachine
 {
 public:
-
+    void test();
     bool compile(const std::string& script);
     bool run();
     //bool 

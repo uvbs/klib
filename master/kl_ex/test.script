@@ -1,0 +1,12 @@
+$val = 12323;
+$val += 4;
+
+/* hello this is comment */
+// sdflkjdslfj
+
+function xxx()
+{
+	return "hello";
+}
+
+xxx();

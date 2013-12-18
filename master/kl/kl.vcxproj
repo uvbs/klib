@@ -39,6 +39,7 @@
     <ClInclude Include="kl.h" />
     <ClInclude Include="lex.h" />
     <ClInclude Include="symbols.h" />
+    <ClInclude Include="syntax.h" />
     <ClInclude Include="token.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="vmachine.h" />
@@ -47,6 +48,7 @@
     <ClCompile Include="kl.cpp" />
     <ClCompile Include="lex.cpp" />
     <ClCompile Include="symbols.cpp" />
+    <ClCompile Include="syntax.cpp" />
     <ClCompile Include="token.cpp" />
     <ClCompile Include="variable.cpp" />
     <ClCompile Include="vmachine.cpp" />

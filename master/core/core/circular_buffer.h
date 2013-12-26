@@ -103,8 +103,8 @@ public:
         return (size_t) seg_len; 
     }
 
-
     size_t size() const { return size_; }
+    size_t capacity() const { return (t_max_buff_size - size_); } 
 
 protected:
     size_t get_room(size_t len) const 

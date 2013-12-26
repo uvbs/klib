@@ -85,11 +85,18 @@ bool vmachine::compile(const std::string& script)
 
 bool vmachine::run()
 {
+    symbol_info info;
+    bool ret = symbol_mgr_.get_symbol("main", info);
+    if (ret) {
+        info.node_;
+    }
+
     return true;
 }
 
 
-bool vmachine::invoke(const std::string& func, variable& var)
+bool vmachine::invoke(const std::string& func, std::vector<variable>& var)
 {
+
     return true;
 }

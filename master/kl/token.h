@@ -109,6 +109,7 @@ public:
     token_type  get_type() const { return type_; }
     size_t      get_line_no() const { return line_no_; }
 
+    bool empty() const { return pos_ != NULL;}
 private:
     token_type                  type_;
     const token_char_type*      pos_;

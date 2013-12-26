@@ -10,6 +10,9 @@
 #include <string>
 
 
+
+
+// virtual machine
 class vmachine
 {
 public:
@@ -19,7 +22,7 @@ public:
     //bool 
 
     /* func : º¯Êýµ÷ÓÃ */
-    bool invoke(const std::string& func, variable& var);
+    bool invoke(const std::string& func, std::vector<variable>& var);
 
 protected:
     symbols_mgr  symbol_mgr_;

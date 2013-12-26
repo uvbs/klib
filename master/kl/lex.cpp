@@ -3,6 +3,15 @@
 
 #include <locale>
 
+bool lex_parser::init_keyword_list()
+{
+    keyword_info info;
+    info.init("", );
+    keyword_list_;
+
+
+    return true;
+}
 
 bool lex_parser::get_parser_funcs(parser_func_list& thelist)
 {

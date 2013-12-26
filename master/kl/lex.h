@@ -34,6 +34,7 @@ public:
 
 
 public:
+    bool init_keyword_list();
     bool get_parser_funcs(parser_func_list& thelist);       // 获取解析函数列表
 
     const char_type* get_pos() const {  return cur_ptr_;}  
@@ -78,6 +79,7 @@ protected:
     const char_type* script_;
     size_t   len_;
     size_t   line_no_;
+    keyword_list_type keyword_list_;
 };
 
 

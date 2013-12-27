@@ -38,6 +38,7 @@
     <ClInclude Include="arg_list.h" />
     <ClInclude Include="kl.h" />
     <ClInclude Include="lex.h" />
+    <ClInclude Include="node.h" />
     <ClInclude Include="symbols.h" />
     <ClInclude Include="syntax.h" />
     <ClInclude Include="token.h" />

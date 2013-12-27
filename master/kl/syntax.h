@@ -9,12 +9,12 @@
 class syntax_parser
 {
 public:
+    bool init(symbols_mgr* mgr);
     bool parser(const token_list_type& thelist) ;
-
 
 private:
 
-    symbols_mgr symbols_mgr_;
+    symbols_mgr* symbols_mgr_;
 };
 
 

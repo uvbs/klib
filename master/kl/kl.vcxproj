@@ -46,11 +46,9 @@
     <ClInclude Include="vmachine.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="kl.cpp" />
     <ClCompile Include="lex.cpp" />
     <ClCompile Include="symbols.cpp" />
     <ClCompile Include="syntax.cpp" />
-    <ClCompile Include="token.cpp" />
     <ClCompile Include="variable.cpp" />
     <ClCompile Include="vmachine.cpp" />
   </ItemGroup>

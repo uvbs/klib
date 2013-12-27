@@ -1,7 +1,7 @@
 
 #include "vmachine.h"
 #include "lex.h"
-
+#include "syntax.h"
 
 void vmachine::test()
 {
@@ -16,10 +16,18 @@ void vmachine::test()
 
 bool vmachine::compile(const std::string& script)
 {
-    lex_parser parser(script.c_str(), script.size());
+    lex_parser lex_p(script.c_str(), script.size());
+    syntax_parser sytax_p;
 
     token_list_type thelist;
-    parser.parser_script(thelist);
+    if (!lex_p.parser_script(thelist))
+    {
+        // error handler
+        return false;
+    }
+    
+    sytax_p.init(&symbol_mgr_);
+    sytax_p.parser(thelist);
 
     return true;
 }

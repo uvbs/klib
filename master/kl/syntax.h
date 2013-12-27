@@ -9,11 +9,18 @@
 class syntax_parser
 {
 public:
+    syntax_parser() ;
+
+    // init syntax parser
     bool init(symbols_mgr* mgr);
-    bool parser(const token_list_type& thelist) ;
+
+    // parser tokens and return the sytax tree
+    sytax_node* parser_tokens(const token_list_type& thelist) ;
+
+protected:
+    sytax_node* alloc_node();
 
 private:
-
     symbols_mgr* symbols_mgr_;
 };
 

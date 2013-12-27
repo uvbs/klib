@@ -3,110 +3,46 @@
 
 #include <locale>
 
-bool lex_parser::init_keyword_list()
+
+bool lex_parser::parser_script(token_list_type& token_lst, parsser_error_info& err_info)
 {
-    keyword_info infos[] = 
-    {
-        keyword_info("class", token_class),
-        keyword_info("function", token_function),
-        keyword_info("var", token_var),
-        keyword_info("return", token_return),
-        keyword_info("if", token_if),        
-        keyword_info("this", token_this),
-        keyword_info("while", token_while),
-        keyword_info("do", token_do),
-        keyword_info("public", token_public),
-        keyword_info("private", token_private),
-        keyword_info("protect", token_protect),
-    };
-
-    for (auto index=0; index < _countof(infos); ++index) 
-    {
-        keyword_list_.insert(infos[index]);
-    }
-    return true;
-}
-
-bool lex_parser::get_parser_funcs(parser_func_list& thelist)
-{
-    parser_func_info funcs[] =
-    {
-        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
-        parser_func_info(token_name, std::bind(&lex_parser::parser_name, this)),
-        parser_func_info(token_double, std::bind(&lex_parser::parser_double, this)),
-        parser_func_info(token_string, std::bind(&lex_parser::parser_string, this)),
-        parser_func_info(token_logic, std::bind(&lex_parser::parser_logic, this)),
-        parser_func_info(token_bracket, std::bind(&lex_parser::parser_bracket, this)),
-        parser_func_info(token_keyword, std::bind(&lex_parser::parser_keyword, this)),
-        parser_func_info(token_int, std::bind(&lex_parser::parser_int, this)),
-        parser_func_info(token_operator, std::bind(&lex_parser::parser_operator, this)),
-        parser_func_info(token_assign, std::bind(&lex_parser::parser_assign, this)),
-        parser_func_info(token_line, std::bind(&lex_parser::parser_line, this)),
-        parser_func_info(token_statement, std::bind(&lex_parser::parser_statement, this)),
-        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
-        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
-        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
-        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
-        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
-    };
-    
-    for (auto index=0; index < _countof(funcs); ++index)
-    {
-        thelist.push_back(funcs[index]);
-    }
-
-    return true;
-}
-
-bool lex_parser::parser_script(token_list_type& token_lst, const char* src_script, size_t src_len)
-{
-    if (NULL != src_script) {
-        cur_ptr_ = src_script;
-        script_buff_  = src_script;
-        script_len_     = src_len;
-        line_no_ = 1;
-        end_ptr_ = script_buff_ + script_len_;
-    }
+    parser_func_list thelist;
+    this->get_parser_funcs(thelist);
 
     parser_result p_ret;
     std::string var ;
-    while (true)
+    do 
     {
-        parser_func_list thelist;
-        this->get_parser_funcs(thelist);
-
-        do 
+        for (auto itr = thelist.begin(); itr != thelist.end(); ++itr)
         {
-            for (auto itr = thelist.begin(); itr != thelist.end(); ++itr)
+            p_ret = itr->func_();
+            if (p_ret.length() > 0) 
             {
-                p_ret = itr->func_();
-                if (p_ret.len_ > 0) 
-                {
-                    token tk;
-                    tk.set_tks(this->get_pos(), p_ret.len_);
-                    tk.set_type(p_ret.type_ == token_none ? itr->type_ : p_ret.type_);
-                    tk.set_line_no(this->get_line_no());
-                    token_lst.push_back(tk);
+                token tk;
+                tk.set_tks(this->get_pos(), p_ret.length());
+                tk.set_type(p_ret.type() == token_none ? itr->type_ : p_ret.type());
+                tk.set_line_no(this->get_line_no());
+                token_lst.push_back(tk);
 
-                    this->skip(p_ret.len_);
-                    this->skip_space();
-                    break;
-                }
-            }
-
-            if (p_ret.len_ == 0) 
-            {
-                int error_x = 0;
-                error_x = 1;
+                this->skip(p_ret.length());
+                this->skip_space();
                 break;
             }
+        }
 
-            if (is_finished()) {
-                break;
-            }
+        if (p_ret.length() == 0) 
+        {
+            err_info.line_no_ = get_line_no();
+            err_info.err_pos_ = get_pos();
+            err_info.err_msg_ = "unreconise token found!!!";
+            return false;
+        }
 
-        } while (true);
-    }
+        if (is_finished()) {
+            break;
+        }
+
+    } while (true);    
 
     return true;
 }
@@ -149,6 +85,56 @@ parser_result lex_parser::parser_comment()
     }
 
     return 0;    
+}
+
+bool lex_parser::get_parser_funcs(parser_func_list& thelist)
+{
+    parser_func_info funcs[] =
+    {
+        parser_func_info(token_comment,     std::bind(&lex_parser::parser_comment, this)),
+        parser_func_info(token_name,        std::bind(&lex_parser::parser_name, this)),
+        parser_func_info(token_double,      std::bind(&lex_parser::parser_double, this)),
+        parser_func_info(token_string,      std::bind(&lex_parser::parser_string, this)),
+        parser_func_info(token_logic,       std::bind(&lex_parser::parser_logic, this)),
+        parser_func_info(token_bracket,     std::bind(&lex_parser::parser_bracket, this)),
+        parser_func_info(token_keyword,     std::bind(&lex_parser::parser_keyword, this)),
+        parser_func_info(token_int,         std::bind(&lex_parser::parser_int, this)),
+        parser_func_info(token_operator,    std::bind(&lex_parser::parser_operator, this)),
+        parser_func_info(token_assign,      std::bind(&lex_parser::parser_assign, this)),
+        parser_func_info(token_line,        std::bind(&lex_parser::parser_line, this)),
+        parser_func_info(token_statement,   std::bind(&lex_parser::parser_statement, this)),
+    };
+
+    for (auto index=0; index < _countof(funcs); ++index)
+    {
+        thelist.push_back(funcs[index]);
+    }
+
+    return true;
+}
+
+bool lex_parser::init_keyword_list()
+{
+    keyword_info infos[] = 
+    {
+        keyword_info("class", token_class),
+        keyword_info("function", token_function),
+        keyword_info("var", token_var),
+        keyword_info("return", token_return),
+        keyword_info("if", token_if),        
+        keyword_info("this", token_this),
+        keyword_info("while", token_while),
+        keyword_info("do", token_do),
+        keyword_info("public", token_public),
+        keyword_info("private", token_private),
+        keyword_info("protect", token_protect),
+    };
+
+    for (auto index=0; index < _countof(infos); ++index) 
+    {
+        keyword_list_.insert(infos[index]);
+    }
+    return true;
 }
 
 parser_result lex_parser::parser_int()
@@ -226,13 +212,13 @@ parser_result lex_parser::parser_keyword()           // 判断是否是函数
 parser_result lex_parser::parser_double()             // 解析是否是浮点数
 {
     parser_result int_ret = this->parser_int();
-    const char_type* pos = cur_ptr_ + int_ret.len_;
+    const char_type* pos = cur_ptr_ + int_ret.length();
 
     if (0 == this->parser_(pos, '.')) {
         return 0;
     }
     size_t len_ext = this->parser_(pos + 1, is_digital);
-    return len_ext + int_ret.len_ + 1;
+    return len_ext + int_ret.length() + 1;
 }
 
 parser_result lex_parser::parser_logic()
@@ -377,8 +363,9 @@ parser_result lex_parser::parser_line()
 parser_result lex_parser::parser_statement()
 {
     if (*cur_ptr_ == ';') {
-        return 1;
+        return parser_result(1, token_semicolon);
     }
+
     return 0;
 }
 

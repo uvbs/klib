@@ -6,6 +6,7 @@
 
 #include "token.h"
 
+typedef char char_type;
 
 /* parser result */
 class parser_result
@@ -18,9 +19,17 @@ public:
     size_t length() const { return len_; }
     token_type type() const { return type_; }
 
+protected:
     size_t          len_;       // parsed length 
     token_type      type_;      // token type
-    bool            error_;     // is error ?
+};
+
+/* parser error info */
+struct parsser_error_info
+{
+    const char_type* err_msg_;
+    const char_type* err_pos_;
+    size_t           line_no_;
 };
 
 // call back function type
@@ -46,7 +55,6 @@ typedef std::vector<parser_func_info> parser_func_list;
 class lex_parser
 {
 public:
-    typedef char char_type;
 
 public:
     lex_parser(const char_type* script, size_t len) : 
@@ -61,26 +69,28 @@ public:
 
 
 public:
-    bool init_keyword_list();
-    bool get_parser_funcs(parser_func_list& thelist);       // 获取解析函数列表
-    bool parser_script(token_list_type& thelist, const char* src_script = NULL, size_t len = 0);           // parser script strings
+    bool parser_script(token_list_type& thelist, parsser_error_info& err_info);           // parser script strings
     bool is_finished() const ;
 
     const char_type* get_pos() const {  return cur_ptr_;}  
     size_t get_line_no() const { return line_no_; }
 
-    parser_result parser_comment();            // 解析注释
-    parser_result parser_int();                // 解析是否是否是
-    parser_result parser_name();               // 解析是否是名字
-    parser_result parser_string();             // 解析是否是字符串
+protected:
+    bool get_parser_funcs(parser_func_list& thelist);       // 获取解析函数列表
+    bool init_keyword_list();
+
+    parser_result parser_comment();            // 注释
+    parser_result parser_int();                // 是否是否是
+    parser_result parser_name();               // 是否是名字
+    parser_result parser_string();             // 是否是字符串
     parser_result parser_keyword();            // 判断是否是函数
-    parser_result parser_double();             // 解析是否是浮点数
-    parser_result parser_logic();              // 解析逻辑运算符
-    parser_result parser_operator();           // 解析运算符
-    parser_result parser_bracket();            // 解析括号 () {}[]
-    parser_result parser_assign();             // 解析赋值符
-    parser_result parser_line();               // 解析一行结束
-    parser_result parser_statement();          // 解析语句结束
+    parser_result parser_double();             // 是否是浮点数
+    parser_result parser_logic();              // 逻辑运算符
+    parser_result parser_operator();           // 运算符
+    parser_result parser_bracket();            // 括号 () {}[]
+    parser_result parser_assign();             // 赋值符
+    parser_result parser_line();               // 一行结束
+    parser_result parser_statement();          // 语句结束
 
     size_t parser_(const char_type* pos, const parser_callback& call);
     size_t parser_(const char_type* pos, char_type ch);

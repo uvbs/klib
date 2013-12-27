@@ -5,6 +5,7 @@
 #include "symbols.h"
 #include "node.h"
 
+
 // syntax parser module
 class syntax_parser
 {

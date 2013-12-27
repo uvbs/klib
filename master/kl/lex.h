@@ -12,16 +12,28 @@ typedef char char_type;
 class parser_result
 {
 public:
-    parser_result() : len_(0), type_(token_none) {}
-    parser_result(size_t len) : len_(len), type_(token_none)  {}
-    parser_result(size_t len, token_type type) : len_(len), type_(type) {}
+    parser_result() : 
+        len_(0), type_(token_none), err_info_(NULL) {}
 
+    parser_result(size_t len) : 
+        len_(len), type_(token_none), err_info_(NULL)  {}
+
+    parser_result(size_t len, token_type type) : 
+        len_(len), type_(type), err_info_(NULL) {}
+
+    // return some information
     size_t length() const { return len_; }
     token_type type() const { return type_; }
+
+    // for error handle
+    void set_error_info(char_type* info) { err_info_ = info; }
+    const char_type* get_err_info() { return err_info_; }
 
 protected:
     size_t          len_;       // parsed length 
     token_type      type_;      // token type
+    
+    char_type*      err_info_;  // error information
 };
 
 /* parser error info */

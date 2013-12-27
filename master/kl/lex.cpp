@@ -28,6 +28,13 @@ bool lex_parser::parser_script(token_list_type& token_lst, parsser_error_info& e
                 this->skip_space();
                 break;
             }
+            else if (p_ret.get_err_info()) 
+            {
+                err_info.line_no_ = get_line_no();
+                err_info.err_pos_ = get_pos();
+                err_info.err_msg_ = p_ret.get_err_info();
+                return false;
+            }
         }
 
         if (p_ret.length() == 0) 

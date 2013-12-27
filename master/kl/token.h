@@ -19,14 +19,17 @@ enum token_type
     token_comment,                  // comment
     token_semicolon,                // ; 分号
 
-    token_name,                     // name, 变量名
     token_int,                      // xxx
     token_double,                   // xx.xxx
+    token_string,                   // string ... 
+    token_name,                     // name, 变量名
+    token_label,                    // 
     
     token_keyword,                  // keyword
     token_class,                    // class 
     token_function,                 // function
     token_var,                      // var
+    token_return,                   // return
     token_if,                       // if
     token_else,                     // else
     token_this,                     // $this
@@ -35,27 +38,37 @@ enum token_type
     token_public,                   // public
     token_private,                  // private
     token_protect,                  // protect
-
+    
+    token_bracket,
+    token_left_parentheses,         // (
+    token_right_parentheses,        // )
+    token_left_brace,               // {
+    token_right_brace,              // }
+    token_left_bracket,             // [
+    token_right_bracket,            // ]
 
     token_logic,                    // < > || && 
     token_logic_less,               // <
+    token_logic_less_eq,            // <=
     token_logic_greater,            // >
+    token_logic_greater_eq,         // >=
+    token_logic_not,                // !
+    token_logic_not_equal,          // !=
+    token_logic_equal,              // ==
     token_logic_or,                 // ||
     token_logic_and,                // &&
-    token_logic_not_eq,             // !=
-    token_logic_eq,                 // ==
-    token_logic_greater_eq,         // >=
-    token_logic_less_eq,            // <=
 
     token_operator,                 // + - * / += -= *= /= 
     token_operator_add,             // +
-    token_operator_minus,           // -
-    token_operator_multi,           // *
-    token_operator_divide,          // /
     token_operator_add_assign,      // += 
+    token_operator_minus,           // -
     token_operator_minus_assign,    // -= 
+    token_operator_multi,           // *
     token_operator_multi_assign,    // *= 
+    token_operator_divide,          // /
     token_operator_divide_assign,   // /= 
+    token_operator_mod,             // %
+    token_operator_mod_assign,      // %=
 
     token_bit_operation,
     token_bit_or,                   // |
@@ -78,12 +91,12 @@ public:
     bool operator < (const keyword_info& other) const
     {
         if (len_ != other.len_) 
-        {
             return len_ < other.len_;
-        }
 
         return memcmp(this->name_, other.name_, this->len_) < 0;
     }
+
+public:
     keyword_info() {}
     keyword_info(const token_char_type* name, token_type type)
     {
@@ -96,10 +109,11 @@ public:
         type_ = type;
         len_  = len;
     }
+    token_type type() const { return type_; }
 
 protected:
-    const token_char_type*   name_;
-    size_t                   len_;
+    const token_char_type*      name_;
+    size_t                      len_;
     token_type                  type_;
 };
 

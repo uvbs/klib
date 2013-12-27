@@ -10,7 +10,8 @@ bool lex_parser::init_keyword_list()
         keyword_info("class", token_class),
         keyword_info("function", token_function),
         keyword_info("var", token_var),
-        keyword_info("if", token_if),
+        keyword_info("return", token_return),
+        keyword_info("if", token_if),        
         keyword_info("this", token_this),
         keyword_info("while", token_while),
         keyword_info("do", token_do),
@@ -28,52 +29,94 @@ bool lex_parser::init_keyword_list()
 
 bool lex_parser::get_parser_funcs(parser_func_list& thelist)
 {
-    parser_func_info fx;
-
-    fx.type_ = token_comment;
-    fx.func = std::bind(&lex_parser::parser_comment, this);
-    thelist.push_back(fx);
-
-    fx.type_ = token_name;
-    fx.func = std::bind(&lex_parser::parser_name, this);
-    thelist.push_back(fx);
-
-    fx.type_ = token_double;
-    fx.func = std::bind(&lex_parser::parser_double, this);
-    thelist.push_back(fx);
-
-    fx.type_ = token_function;
-    fx.func = std::bind(&lex_parser::parser_keyword, this);
-    thelist.push_back(fx);
-
-    fx.type_ = token_int;
-    fx.func = std::bind(&lex_parser::parser_int, this);
-    thelist.push_back(fx);
-
-    fx.type_ = token_class;
-    fx.func = std::bind(&lex_parser::parser_class, this);
-    thelist.push_back(fx);
-
-    fx.type_ = token_operator;
-    fx.func = std::bind(&lex_parser::parser_operator, this);
-    thelist.push_back(fx);
-        
-    fx.type_ = token_assign;
-    fx.func = std::bind(&lex_parser::parser_assign, this);
-    thelist.push_back(fx);
-
-    fx.type_ = token_line;
-    fx.func = std::bind(&lex_parser::parser_line, this);
-    thelist.push_back(fx);
-
-    fx.type_ = token_statement;
-    fx.func = std::bind(&lex_parser::parser_statement, this);
-    thelist.push_back(fx);
+    parser_func_info funcs[] =
+    {
+        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
+        parser_func_info(token_name, std::bind(&lex_parser::parser_name, this)),
+        parser_func_info(token_double, std::bind(&lex_parser::parser_double, this)),
+        parser_func_info(token_string, std::bind(&lex_parser::parser_string, this)),
+        parser_func_info(token_logic, std::bind(&lex_parser::parser_logic, this)),
+        parser_func_info(token_bracket, std::bind(&lex_parser::parser_bracket, this)),
+        parser_func_info(token_keyword, std::bind(&lex_parser::parser_keyword, this)),
+        parser_func_info(token_int, std::bind(&lex_parser::parser_int, this)),
+        parser_func_info(token_operator, std::bind(&lex_parser::parser_operator, this)),
+        parser_func_info(token_assign, std::bind(&lex_parser::parser_assign, this)),
+        parser_func_info(token_line, std::bind(&lex_parser::parser_line, this)),
+        parser_func_info(token_statement, std::bind(&lex_parser::parser_statement, this)),
+        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
+        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
+        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
+        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
+        parser_func_info(token_comment, std::bind(&lex_parser::parser_comment, this)),
+    };
+    
+    for (auto index=0; index < _countof(funcs); ++index)
+    {
+        thelist.push_back(funcs[index]);
+    }
 
     return true;
 }
 
-size_t lex_parser::parser_comment()
+bool lex_parser::parser_script(token_list_type& token_lst, const char* src_script, size_t src_len)
+{
+    if (NULL != src_script) {
+        cur_ptr_ = src_script;
+        script_buff_  = src_script;
+        script_len_     = src_len;
+        line_no_ = 1;
+        end_ptr_ = script_buff_ + script_len_;
+    }
+
+    parser_result p_ret;
+    std::string var ;
+    while (true)
+    {
+        parser_func_list thelist;
+        this->get_parser_funcs(thelist);
+
+        do 
+        {
+            for (auto itr = thelist.begin(); itr != thelist.end(); ++itr)
+            {
+                p_ret = itr->func_();
+                if (p_ret.len_ > 0) 
+                {
+                    token tk;
+                    tk.set_tks(this->get_pos(), p_ret.len_);
+                    tk.set_type(p_ret.type_ == token_none ? itr->type_ : p_ret.type_);
+                    tk.set_line_no(this->get_line_no());
+                    token_lst.push_back(tk);
+
+                    this->skip(p_ret.len_);
+                    this->skip_space();
+                    break;
+                }
+            }
+
+            if (p_ret.len_ == 0) 
+            {
+                int error_x = 0;
+                error_x = 1;
+                break;
+            }
+
+            if (is_finished()) {
+                break;
+            }
+
+        } while (true);
+    }
+
+    return true;
+}
+
+bool lex_parser::is_finished() const 
+{
+    return (cur_ptr_ == script_buff_ + script_len_);
+}
+
+parser_result lex_parser::parser_comment()
 {
     auto pos = cur_ptr_;
     if (*pos != '/') 
@@ -108,12 +151,12 @@ size_t lex_parser::parser_comment()
     return 0;    
 }
 
-size_t lex_parser::parser_int()
+parser_result lex_parser::parser_int()
 {
     return this->parser_(cur_ptr_, is_digital);
 }
 
-size_t lex_parser::parser_name()               // 解析是否是名字
+parser_result lex_parser::parser_name()               // 解析是否是名字
 {
     auto pos = cur_ptr_;
     if (*pos != '$') {
@@ -121,22 +164,48 @@ size_t lex_parser::parser_name()               // 解析是否是名字
     }
 
     ++ pos;
-    if (is_letter(*pos)) 
+    if (is_letter(*pos) || is_underline(*pos)) 
     {
-        return this->parser_(pos + 1, is_digi_letter) + 2;
+        return this->parser_(pos + 1, is_digi_letter_underline) + 2;
     }
     return 0;
 }
 
-size_t lex_parser::parser_keyword()           // 判断是否是函数
+parser_result lex_parser::parser_string()             // 解析是否是字符串
 {
     auto pos = cur_ptr_;
-    if (!is_letter(*pos)) 
+    if (*pos != '"') {
+        return 0;
+    }
+
+    ++ pos;
+    if (pos >= end_ptr_) {
+        return 0;
+    }
+
+    bool find_end = false;
+    while (pos < end_ptr_)
+    {
+        if (*pos == '"' && *(pos - 1) != '\\') {
+            find_end = true;
+            break;
+        }
+
+        ++ pos;
+    }
+
+    return parser_result(pos - cur_ptr_ + 1, token_string);
+}
+
+parser_result lex_parser::parser_keyword()           // 判断是否是函数
+{
+    auto pos = cur_ptr_;
+    if (!is_letter(*pos) && !is_underline(*pos)) 
     {
         return 0;
     }
 
-    size_t len_key = this->parser_(pos + 1, is_digi_letter);
+    size_t len_key = this->parser_(pos + 1, is_digi_letter_underline);
     ++ len_key;
 
     keyword_info kinfo;
@@ -144,80 +213,141 @@ size_t lex_parser::parser_keyword()           // 判断是否是函数
     auto itr = keyword_list_.find(kinfo);
     if (itr != keyword_list_.end()) 
     {
-        //@todo 子类型
-
-        return len_key;
+        return parser_result(len_key, itr->type());
+    }
+    else 
+    {
+        return parser_result(len_key, token_label);
     }
 
     return 0;
 }
 
-size_t lex_parser::parser_double()             // 解析是否是浮点数
+parser_result lex_parser::parser_double()             // 解析是否是浮点数
 {
-    size_t len_main = this->parser_int();
-    const char_type* pos = cur_ptr_ + len_main;
+    parser_result int_ret = this->parser_int();
+    const char_type* pos = cur_ptr_ + int_ret.len_;
 
     if (0 == this->parser_(pos, '.')) {
         return 0;
     }
     size_t len_ext = this->parser_(pos + 1, is_digital);
-    return len_ext + len_main + 1;
+    return len_ext + int_ret.len_ + 1;
 }
 
-size_t lex_parser::parser_class()              // 判断是否是一个类
+parser_result lex_parser::parser_logic()
 {
+    auto pos = cur_ptr_;
 
-    return 0;
-}
-
-size_t lex_parser::parser_logic()
-{
-    if (*cur_ptr_ == '<' ||
-        *cur_ptr_ == '>' 
-        ) 
+    if (*pos == '<')
     {
-        return 1;
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_logic_less_eq);
+        }
+        return parser_result(1, token_logic_less);
+    }
+    else if (*pos == '>')
+    {
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_logic_greater_eq);
+        }
+        return parser_result(1, token_logic_greater);
+    }
+    else if (*pos == '!')
+    {
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_logic_not_equal);
+        }
+        return parser_result(1, token_logic_not);
+    }
+    else if (*pos == '=') {
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_logic_equal);
+        }
+    }
+    else if (*pos == '|') {
+        if (*(pos + 1) == '|') {
+            return parser_result(2, token_logic_or);
+        }
+    }
+    else if (*pos == '&') {
+        if (*(pos + 1) == '&') {
+            return parser_result(2, token_logic_and);
+        }
     }
 
     return 0;
 }
 
-size_t lex_parser::parser_operator()           // 解析运算符
+parser_result lex_parser::parser_operator()           // 解析运算符
 {
     auto pos = cur_ptr_;
     bool find_op = false;
 
     if (*pos == '+') 
     {
-        find_op = true;
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_operator_add_assign);
+        }
+        return parser_result(1, token_operator_add);
     }
     else if (*pos == '-') 
     {
-        find_op = true;
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_operator_minus_assign);
+        }
+        return parser_result(1, token_operator_minus);
     }
     else if (*pos == '*') 
     {
-        find_op = true;
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_operator_multi_assign);
+        }
+        return parser_result(1, token_operator_multi);
     }
     else if (*pos == '/') 
     {
-        find_op = true;
-    }
-
-    if (find_op) 
-    {
-        ++ pos;
-        if (*pos == '=') 
-        {
-            return 2;
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_operator_divide_assign);
         }
-        return 1;
+        return parser_result(1, token_operator_divide);
+    }
+    else if (*pos == '%') {
+        if (*(pos + 1) == '=') {
+            return parser_result(2, token_operator_mod_assign);
+        }
+        return parser_result(1, token_operator_mod);
     }
 
     return 0;
 }
 
-size_t lex_parser::parser_assign()             // 解析赋值符
+parser_result lex_parser::parser_bracket()            // 解析括号 () {}[]
+{
+    auto pos = cur_ptr_;
+    if (*pos == '(') {
+        return parser_result(1, token_left_parentheses);
+    }
+    else if (*pos == ')') {
+        return parser_result(1, token_right_parentheses);
+    }
+    else if (*pos == '{') {
+        return parser_result(1, token_left_brace);
+    }
+    else if (*pos == '}') {
+        return parser_result(1, token_right_brace);
+    }
+    else if (*pos == '[') {
+        return parser_result(1, token_left_bracket);
+    }
+    else if (*pos == ']') {
+        return parser_result(1, token_right_bracket);
+    }
+
+    return 0;
+}
+
+parser_result lex_parser::parser_assign()             // 解析赋值符
 {
     if (*cur_ptr_ == '=') {
         return 1;
@@ -225,7 +355,7 @@ size_t lex_parser::parser_assign()             // 解析赋值符
     return 0;
 }
 
-size_t lex_parser::parser_line()
+parser_result lex_parser::parser_line()
 {
     auto pos = cur_ptr_;
     if (this->parser_(pos, '\n')) 
@@ -244,7 +374,7 @@ size_t lex_parser::parser_line()
     return 0;
 }
 
-size_t lex_parser::parser_statement()
+parser_result lex_parser::parser_statement()
 {
     if (*cur_ptr_ == ';') {
         return 1;
@@ -382,11 +512,21 @@ bool lex_parser::is_digi_letter(char_type ch)
         return true;
     }
 
-    if (is_digital(ch)) {
+    return is_digital(ch);
+}
+
+bool lex_parser::is_underline(char_type ch)
+{
+    return ch == '_';
+}
+
+bool lex_parser::is_digi_letter_underline(char_type ch)
+{
+    if (is_digi_letter(ch)) {
         return true;
     }
 
-    return false;
+    return ch == '_';
 }
 
 bool lex_parser::is_space(char_type ch)

@@ -43,8 +43,8 @@ public:
     size_t parser_comment();            // 解析注释
     size_t parser_int();                // 解析是否是否是
     size_t parser_name();               // 解析是否是名字
+    size_t parser_keyword();            // 判断是否是函数
     size_t parser_double();             // 解析是否是浮点数
-    size_t parser_function();           // 判断是否是函数
     size_t parser_class();              // 判断是否是一个类
     size_t parser_logic();              // 解析逻辑运算符
     size_t parser_operator();           // 解析运算符

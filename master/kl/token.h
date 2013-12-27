@@ -11,6 +11,8 @@
 // ·ûºÅÀàÐÍ
 enum token_type
 {
+    token_none,
+
     token_assign,                   // =
     token_line,                     // \r\n
     token_statement,                // ??????
@@ -24,6 +26,7 @@ enum token_type
     token_keyword,                  // keyword
     token_class,                    // class 
     token_function,                 // function
+    token_var,                      // var
     token_if,                       // if
     token_else,                     // else
     token_this,                     // $this
@@ -81,17 +84,23 @@ public:
 
         return memcmp(this->name_, other.name_, this->len_) < 0;
     }
+    keyword_info() {}
+    keyword_info(const token_char_type* name, token_type type)
+    {
+        init(name, strlen(name), type);
+    }
 
-    void init(const token_char_type* name, size_t len)
+    void init(const token_char_type* name, size_t len, token_type type)
     {
         name_ = name;
-        len_ = len;
+        type_ = type;
+        len_  = len;
     }
 
 protected:
     const token_char_type*   name_;
     size_t                   len_;
-
+    token_type                  type_;
 };
 
 // ·ûºÅÀà

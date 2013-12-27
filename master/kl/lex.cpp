@@ -5,11 +5,24 @@
 
 bool lex_parser::init_keyword_list()
 {
-    keyword_info info;
-    info.init("", );
-    keyword_list_;
+    keyword_info infos[] = 
+    {
+        keyword_info("class", token_class),
+        keyword_info("function", token_function),
+        keyword_info("var", token_var),
+        keyword_info("if", token_if),
+        keyword_info("this", token_this),
+        keyword_info("while", token_while),
+        keyword_info("do", token_do),
+        keyword_info("public", token_public),
+        keyword_info("private", token_private),
+        keyword_info("protect", token_protect),
+    };
 
-
+    for (auto index=0; index < _countof(infos); ++index) 
+    {
+        keyword_list_.insert(infos[index]);
+    }
     return true;
 }
 
@@ -30,7 +43,7 @@ bool lex_parser::get_parser_funcs(parser_func_list& thelist)
     thelist.push_back(fx);
 
     fx.type_ = token_function;
-    fx.func = std::bind(&lex_parser::parser_function, this);
+    fx.func = std::bind(&lex_parser::parser_keyword, this);
     thelist.push_back(fx);
 
     fx.type_ = token_int;
@@ -115,6 +128,30 @@ size_t lex_parser::parser_name()               // 解析是否是名字
     return 0;
 }
 
+size_t lex_parser::parser_keyword()           // 判断是否是函数
+{
+    auto pos = cur_ptr_;
+    if (!is_letter(*pos)) 
+    {
+        return 0;
+    }
+
+    size_t len_key = this->parser_(pos + 1, is_digi_letter);
+    ++ len_key;
+
+    keyword_info kinfo;
+    kinfo.init(pos, len_key, token_none);
+    auto itr = keyword_list_.find(kinfo);
+    if (itr != keyword_list_.end()) 
+    {
+        //@todo 子类型
+
+        return len_key;
+    }
+
+    return 0;
+}
+
 size_t lex_parser::parser_double()             // 解析是否是浮点数
 {
     size_t len_main = this->parser_int();
@@ -125,17 +162,6 @@ size_t lex_parser::parser_double()             // 解析是否是浮点数
     }
     size_t len_ext = this->parser_(pos + 1, is_digital);
     return len_ext + len_main + 1;
-}
-
-size_t lex_parser::parser_function()           // 判断是否是函数
-{
-    auto pos = cur_ptr_;
-    size_t len_func =  this->parser_(pos, "function ", 9);
-    if (len_func > 0) 
-    {
-        return len_func - 1;
-    }
-    return 0;
 }
 
 size_t lex_parser::parser_class()              // 判断是否是一个类

@@ -129,6 +129,7 @@
     <ClInclude Include="..\core\db\CppSQLite3.h" />
     <ClInclude Include="..\core\debuglog.h" />
     <ClInclude Include="..\core\encrypt\base64.h" />
+    <ClInclude Include="..\core\encrypt\crc23.h" />
     <ClInclude Include="..\core\encrypt\crc_func.h" />
     <ClInclude Include="..\core\encrypt\crc_single.h" />
     <ClInclude Include="..\core\encrypt\des_single.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="..\core\pattern\object_pool.h" />
     <ClInclude Include="..\core\pattern\object_reuser.h" />
     <ClInclude Include="..\core\pattern\sync_invoke.h" />
+    <ClInclude Include="..\core\sys\cpu.h" />
     <ClInclude Include="..\core\sys\sys.h" />
     <ClInclude Include="..\core\util\atom.h" />
     <ClInclude Include="..\core\util\buffer_reader.h" />
@@ -198,6 +200,7 @@
     <ClCompile Include="..\core\core\timer_mgr.cpp" />
     <ClCompile Include="..\core\db\CppSQLite3.cpp" />
     <ClCompile Include="..\core\encrypt\base64.cpp" />
+    <ClCompile Include="..\core\encrypt\crc23.cpp" />
     <ClCompile Include="..\core\encrypt\MD4.cpp" />
     <ClCompile Include="..\core\encrypt\MD5.cpp" />
     <ClCompile Include="..\core\encrypt\md5_class.cpp" />
@@ -214,6 +217,7 @@
     <ClCompile Include="..\core\net\udp_socket.cpp" />
     <ClCompile Include="..\core\net\wininet_httpclient.cpp" />
     <ClCompile Include="..\core\pattern\sync_invoke.cpp" />
+    <ClCompile Include="..\core\sys\cpu.cpp" />
     <ClCompile Include="..\core\sys\sys.cpp" />
     <ClCompile Include="..\core\util\buffer_reader.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />

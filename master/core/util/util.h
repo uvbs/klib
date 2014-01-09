@@ -30,16 +30,6 @@ BOOL is_file_exists(LPCTSTR pszFilePath);
 // 则再加上一个字节。它们的和存入一个32位的双字中
 USHORT check_sum(USHORT* buff, int iSize);
 
-///< 获取cpu个数
-UINT32 get_cpu_number();
-
-///< 文件时间转换为世界时间
-UINT64 FileTimeToUtc(const FILETIME* ftime);
-
-///< 获取cpu使用率
-INT32 get_cpu_usage();
-
-
 ///< 计算crc32值
 size_t crc32(unsigned long crc, const unsigned char* buf, size_t len);
 

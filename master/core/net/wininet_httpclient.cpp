@@ -5,6 +5,7 @@
 //#include "stdafx.h"
 #include "wininet_httpclient.h"
 
+#pragma warning(disable: 4996)
 
 using namespace klib::net;
 
@@ -125,7 +126,7 @@ BOOL wininet_httpclient::Request(LPCTSTR szURL, int nMethod, LPCTSTR szAgent){
 
 	ParseURL(szURL, szProtocol, szAddress, dwPort, szURI);
 
-	if(Connect(szAddress, szAgent, dwPort)){
+	if(Connect(szAddress, szAgent, (USHORT)dwPort)){
 		if(!RequestOfURI(szURI, nMethod)){
 			bReturn=FALSE;
 		}else{

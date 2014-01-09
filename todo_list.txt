@@ -4,4 +4,7 @@
 4. http classes
 5. auto update module
 6. combine libx
-7. 
+7. file class 
+8. inter process communication
+9. rmi
+10.

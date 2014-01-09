@@ -315,6 +315,12 @@
     <ClInclude Include="..\core\sys\sys.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\sys\cpu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\crc23.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core\logger.cpp">
@@ -432,6 +438,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\sys\sys.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\sys\cpu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\encrypt\crc23.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

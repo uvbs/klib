@@ -4,6 +4,10 @@
 #include <Windows.h>
 
 
+namespace klib {
+namespace core {
+
+
 template<typename apitype>
 class api_fetcher
 {
@@ -35,3 +39,8 @@ protected:
     LPCSTR  func_name_;
     HMODULE hmodule_;
 };
+
+
+
+}}
+

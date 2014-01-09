@@ -99,6 +99,7 @@
     <ClInclude Include="..\core\algo\trie.h" />
     <ClInclude Include="..\core\algo\wm_wrapper.h" />
     <ClInclude Include="..\core\comp\calendar\calendar.h" />
+    <ClInclude Include="..\core\core\api_fetcher.h" />
     <ClInclude Include="..\core\core\app_instance.h" />
     <ClInclude Include="..\core\core\array.h" />
     <ClInclude Include="..\core\core\code_convert.h" />

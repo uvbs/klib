@@ -321,6 +321,9 @@
     <ClInclude Include="..\core\io\file.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\core\api_fetcher.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core\logger.cpp">

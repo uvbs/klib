@@ -1,8 +1,9 @@
-#include "sysutil.h"
+#include "sys.h"
 #include "..\core\scope_guard.h"
 
-namespace klib
-{
+namespace klib{
+namespace sys {
+
 using namespace klib::core;
 
 
@@ -16,7 +17,7 @@ using namespace klib::core;
 //     szCommandLine += "\" ";
 //     szCommandLine += "-autorun";
 */
-bool SetAppRunBoot(const TCHAR* szAppName, const TCHAR* szCommandLine, size_t nLen, bool bSetBoot/* = true*/) 
+bool system::SetAppRunBoot(const TCHAR* szAppName, const TCHAR* szCommandLine, size_t nLen, bool bSetBoot/* = true*/) 
 {
     HKEY  regKey = NULL;
 
@@ -48,7 +49,7 @@ bool SetAppRunBoot(const TCHAR* szAppName, const TCHAR* szCommandLine, size_t nL
 }
 
 
-bool IsSetAppRunBoot(const TCHAR* szAppName)
+bool system::IsSetAppRunBoot(const TCHAR* szAppName)
 {
     HKEY  regKey = NULL;
     ON_SCOPE_EXIT
@@ -76,7 +77,7 @@ bool IsSetAppRunBoot(const TCHAR* szAppName)
     }
 }
 
-BOOL DebugPrivilegeEnable(BOOL Enable)
+BOOL system::DebugPrivilegeEnable(BOOL Enable)
 {
     HANDLE m_Token;
     if(!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &m_Token))
@@ -99,28 +100,28 @@ BOOL DebugPrivilegeEnable(BOOL Enable)
 }
 
 static unsigned long g_OldProtect;
-BOOL AddProtect(void *addr,int memSize)
+BOOL system::AddProtect(void *addr,int memSize)
 {
     return VirtualProtectEx(::GetCurrentProcess(),addr,memSize,g_OldProtect,NULL);
 }
 
-BOOL RemoveProtect(void *addr,int memSize)
+BOOL system::RemoveProtect(void *addr,int memSize)
 {
     return VirtualProtectEx(::GetCurrentProcess(),addr,memSize,PAGE_READWRITE,&g_OldProtect);
 }
 
-BOOL AddProtect(HANDLE processHandle,void *addr,unsigned long &proctect)
+BOOL system::AddProtect(HANDLE processHandle,void *addr,unsigned long &proctect)
 {
     return VirtualProtectEx(processHandle,addr,10,proctect,NULL);
 }
 
-BOOL RemoveProtect(HANDLE processHandle,void *addr,unsigned long &oldProctect)
+BOOL system::RemoveProtect(HANDLE processHandle,void *addr,unsigned long &oldProctect)
 {
     return VirtualProtectEx(processHandle,addr,10,PAGE_READWRITE,&oldProctect);
 }
 
 #define MAX_REMOTE_MEM (100)
-void* InjectProcess(const char *dllName, HANDLE proHandle)
+void* system::InjectProcess(const char *dllName, HANDLE proHandle)
 {
     int	len	= strlen(dllName);
     void* pMem = NULL;
@@ -143,4 +144,4 @@ void* InjectProcess(const char *dllName, HANDLE proHandle)
 }
 
 
-}
+}}

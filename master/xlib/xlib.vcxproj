@@ -170,11 +170,11 @@
     <ClInclude Include="..\core\pattern\object_pool.h" />
     <ClInclude Include="..\core\pattern\object_reuser.h" />
     <ClInclude Include="..\core\pattern\sync_invoke.h" />
+    <ClInclude Include="..\core\sys\sys.h" />
     <ClInclude Include="..\core\util\atom.h" />
     <ClInclude Include="..\core\util\buffer_reader.h" />
     <ClInclude Include="..\core\util\mem_check.h" />
     <ClInclude Include="..\core\util\strutil.h" />
-    <ClInclude Include="..\core\util\sysutil.h" />
     <ClInclude Include="..\core\util\timeout_checker.h" />
     <ClInclude Include="..\core\util\util.h" />
   </ItemGroup>
@@ -214,9 +214,9 @@
     <ClCompile Include="..\core\net\udp_socket.cpp" />
     <ClCompile Include="..\core\net\wininet_httpclient.cpp" />
     <ClCompile Include="..\core\pattern\sync_invoke.cpp" />
+    <ClCompile Include="..\core\sys\sys.cpp" />
     <ClCompile Include="..\core\util\buffer_reader.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />
-    <ClCompile Include="..\core\util\sysutil.cpp" />
     <ClCompile Include="..\core\util\util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

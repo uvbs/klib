@@ -1,5 +1,9 @@
 #pragma once
 
+
+#include "../istddef.h"
+#include "../inttype.h"
+
 #ifdef _MSC_VER
 #include <string>
 #include <tchar.h>
@@ -13,6 +17,7 @@ namespace sys {
 
 
 using namespace std;
+using namespace klib;
 
 
 class system
@@ -35,8 +40,13 @@ public:
     // 远程注入函数,proHandle远程进程句柄
     static void* InjectProcess(const char *dllName, HANDLE proHandle);
 
+    // 判断是否是管理员
+    static BOOL is_admin();
 
+    // 以管理员权限运行
+    static BOOL run_as_admin(LPCTSTR lpExeFile );
 
+    static tstring fetch_cmd_result(const tstring strParamt);
 
 };
 

@@ -7,4 +7,4 @@
 7. file class 
 8. inter process communication
 9. rmi
-10.
+10.wrapper easy usage of ini_file for config

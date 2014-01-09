@@ -143,5 +143,94 @@ void* system::InjectProcess(const char *dllName, HANDLE proHandle)
     return pMem;
 }
 
+BOOL system::is_admin()
+{
+    BOOL bIsElevated = FALSE;
+    HANDLE hToken    = NULL;
+    UINT16 uWinVer   = LOWORD(GetVersion());
+    uWinVer = MAKEWORD(HIBYTE(uWinVer),LOBYTE(uWinVer));
+    if (uWinVer < 0x0600) return TRUE;
+    if (OpenProcessToken(GetCurrentProcess(),TOKEN_QUERY,&hToken))
+    {
+        struct{
+            DWORD TokenIsElevated;
+        }te;
+        DWORD dwReturnLength = 0;
+        if (GetTokenInformation(hToken,(_TOKEN_INFORMATION_CLASS)20,&te,sizeof(te),&dwReturnLength))
+        {
+            if (dwReturnLength == sizeof(te))
+                bIsElevated = te.TokenIsElevated;
+        }
+        CloseHandle(hToken);
+    }
+    return bIsElevated;
+}
+
+BOOL system::run_as_admin(LPCTSTR lpExeFile )
+{
+    SHELLEXECUTEINFO SEI = {sizeof(SHELLEXECUTEINFO)};
+    SEI.lpVerb = _T("runas");
+    SEI.lpFile = lpExeFile;
+    SEI.nShow = SW_SHOWNORMAL;
+    return ShellExecuteEx(&SEI);
+}
+
+tstring system::fetch_cmd_result(const tstring strParamt)
+{
+//     tstring strResult = _T("");
+//     SECURITY_ATTRIBUTES sa;
+//     HANDLE hRead,hWrite;
+//     sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+//     sa.lpSecurityDescriptor = NULL;
+//     sa.bInheritHandle = TRUE;
+//     if (CreatePipe(&hRead,&hWrite,&sa,0) == FALSE) return FALSE;
+// 
+//     tstring strCommandFull = CLibX::File::GetSystemPath();
+//     strCommandFull.append(_T("system32\\cmd.exe /c "));
+//     strCommandFull.append(strParamt);
+// 
+//     STARTUPINFO si;
+//     PROCESS_INFORMATION pi;
+//     si.cb = sizeof(STARTUPINFO);
+//     GetStartupInfo(&si);
+//     si.hStdError = hWrite;
+//     si.hStdOutput = hWrite;
+//     si.wShowWindow = SW_HIDE;
+//     si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+//     if (::CreateProcess(NULL,(lchar*)strCommandFull.c_str(),NULL,NULL,TRUE,NULL,NULL,NULL,&si,&pi) == FALSE)
+//     {
+//         CloseHandle(hWrite);
+//         CloseHandle(hRead);
+//         return FALSE;
+//     }
+// 
+//     CloseHandle(hWrite);
+// 
+//     char buffer[4095] = {0};
+//     DWORD bytesRead = 0;
+//     while (true)
+//     {
+//         ReadFile(hRead,buffer,4095,&bytesRead,NULL);
+//         if (bytesRead > 0 )
+// #ifdef _UNICODE
+//             strResult += CLibX::String::GBToUTF8(buffer);
+// #else
+//             strResult += buffer;
+// #endif // _UNICODE
+//         else
+//             break;
+//     }
+// 
+//     CloseHandle(hRead);
+
+    //return strResult;
+
+    return _T("");
+}
+
+
+
+
+
 
 }}

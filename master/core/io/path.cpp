@@ -51,6 +51,97 @@ bool path::is_exists(const tstring& file)
     return true;
 }
 
+bool path::has_slash(const tstring& lpszPath)
+{
+    if (lpszPath.empty()) 
+    {
+        return false;
+    }
+
+    if (lpszPath[lpszPath.size() - 1] != '\\' ||
+        lpszPath[lpszPath.size() - 1] != '/') 
+    {
+        return true;
+    }
+
+    return false;
+}
+
+tstring path::add_slash(tstring& lpszPath )
+{
+    if (lpszPath.empty()) 
+    {
+        return lpszPath;
+    }
+
+    if (lpszPath[lpszPath.size() - 1] != '\\' &&
+        lpszPath[lpszPath.size() - 1] != '/') 
+    {
+        lpszPath.append(_T("\\"));
+    }
+
+    return lpszPath;
+}
+
+tstring path::del_slash(tstring& lpszPath )
+{
+    if (lpszPath.empty()) 
+    {
+        return lpszPath;
+    }
+
+    if (lpszPath[lpszPath.size() - 1] != '\\' &&
+        lpszPath[lpszPath.size() - 1] != '/') 
+    {
+        return lpszPath;
+    }
+
+    lpszPath.erase(lpszPath.end());
+    return lpszPath;
+}
+
+tstring path::extract_file_name(const tstring& szFile)
+{
+    //@todo 需要测试
+    size_t index = szFile.size() - 1;
+    while (index > 0)
+    {
+        if (szFile[index] == _T('\\') ||
+            szFile[index] == _T('/')) 
+        {
+            return szFile.substr(index + 1);
+        }
+    }
+
+    return tstring();
+}
+
+tstring path::extract_file_ext(const tstring& szFile)
+{
+    size_t pos = szFile.rfind(_T("."));
+    if (pos == std::string::npos) 
+    {
+        return tstring();
+    }
+
+    return szFile.substr(pos);
+}
+
+tstring path::extract_path(const tstring& szFile)
+{
+    //@todo 需要测试
+    size_t index = szFile.size() - 1;
+    while (index > 0)
+    {
+        if (szFile[index] == _T('\\') ||
+            szFile[index] == _T('/')) 
+        {
+            return szFile.substr(0, index + 1);
+        }
+    }
+
+    return szFile;
+}
 
 BOOL path::get_app_path(tstring& strAppPath)
 {

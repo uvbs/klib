@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 
+#pragma warning(disable: 4996)
+
 #include "../kl/kl.h"
 #include "../kl/variable.h"
 #include "../kl/vmachine.h"

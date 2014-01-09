@@ -1,7 +1,5 @@
 
 #include "vmachine.h"
-#include "lex.h"
-
 
 void vmachine::test()
 {
@@ -16,68 +14,23 @@ void vmachine::test()
 
 bool vmachine::compile(const std::string& script)
 {
-    lex_parser parser(script.c_str(), script.size());
+    lex_parser lex_p(script.c_str(), script.size());
+    syntax_parser sytax_p;
 
-    size_t len = 0;
-    std::string var ;
-    while (true)
+    parsser_error_info err_info;
+    token_list_type thelist;
+    if (!lex_p.parser_script(thelist, err_info))
     {
-        parser_func_list thelist;
-        parser.get_parser_funcs(thelist);
-
-        token_list_type token_list_;
-
-        do 
-        {
-            for (auto itr = thelist.begin(); itr != thelist.end(); ++itr)
-            {
-                len = itr->func();
-                if (len > 0) 
-                {
-                    token tk;
-                    tk.set_tks(parser.get_pos(), len);
-                    tk.set_type(itr->type_);
-                    tk.set_line_no(parser.get_line_no());
-                    token_list_.push_back(tk);
-
-                    parser.skip(len);
-                    parser.skip_space();
-
-                    var = tk.str();
-
-                    break;
-                }
-            }
-
-            if (len == 0) 
-            {
-                int error_x = 0;
-                error_x = 1;
-            }
-
-        } while (true);
-        
-
-        len = parser.parser_name();
-        if (len > 0) {
-            var = parser.read(len);
-        }
-
-        len = parser.parser_int();
-        std::string x = parser.read(len);
-
-        variable int_v = parser.to_int(len);
-
-        parser.skip(len);
-        parser.skip_space();
-
-        len = parser.parser_double();
-
-        double dbl = parser.to_double(len);
-
-        x = parser.read(len);
-
-
+        // error handler
+        lex_err_handler_ ? lex_err_handler_(err_info) : lex_err_handler_;
+        return false;
+    }
+    
+    sytax_p.init(&symbol_mgr_);
+    sytax_node* root_node = sytax_p.parser_tokens(thelist);
+    if (NULL == root_node)
+    {
+        return false;
     }
 
     return true;

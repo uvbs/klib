@@ -10,3 +10,9 @@ function xxx()
 }
 
 xxx();
+
+
+function main()
+{
+	print "hello world!!!";
+}

@@ -22,7 +22,7 @@ bool symbols_mgr::set_symbol(const std::string& name, symbol_info& info)
 bool symbols_mgr::get_symbol(const std::string& name, symbol_info& info)
 {
     auto itr = symbol_table_.find(name);
-    if (itr == symbol_table_.end()) {
+    if (itr != symbol_table_.end()) {
         info = itr->second;
         return true;
     }

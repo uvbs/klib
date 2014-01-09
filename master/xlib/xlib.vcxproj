@@ -178,6 +178,7 @@
     <ClInclude Include="..\core\util\atom.h" />
     <ClInclude Include="..\core\util\buffer_reader.h" />
     <ClInclude Include="..\core\util\mem_check.h" />
+    <ClInclude Include="..\core\util\shell_link.h" />
     <ClInclude Include="..\core\util\strutil.h" />
     <ClInclude Include="..\core\util\timeout_checker.h" />
   </ItemGroup>
@@ -222,6 +223,7 @@
     <ClCompile Include="..\core\sys\cpu.cpp" />
     <ClCompile Include="..\core\sys\sys.cpp" />
     <ClCompile Include="..\core\util\buffer_reader.cpp" />
+    <ClCompile Include="..\core\util\shell_link.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

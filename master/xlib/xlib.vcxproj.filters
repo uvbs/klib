@@ -324,6 +324,9 @@
     <ClInclude Include="..\core\core\api_fetcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\util\shell_link.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core\logger.cpp">
@@ -447,6 +450,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\io\file.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\shell_link.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

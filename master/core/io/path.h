@@ -31,6 +31,7 @@ public:
 
     static tstring get_system_path();
     static tstring get_temp_path(const LPCTSTR  lpszPrefixString = _T("klib_"));    ///< 获取临时文件夹名字
+
     static BOOL get_app_path(tstring& strAppPath);      ///< 获取应用程序文件夹路径
     static BOOL get_app_file(tstring& strAppFile);      ///< 获取文件的路径
     static BOOL get_app_file_name(tstring& strFileName);   ///< 获取应用程序的名字

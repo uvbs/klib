@@ -25,12 +25,24 @@ UINT64 file::get_file_size(tstring strFilePath)
     return iFileSize;
 }
 
-BOOL  file::is_file_exists(LPCTSTR pszFilePath)
+bool file::is_file_exists(LPCTSTR pszFilePath)
 {
     return GetFileAttributes(pszFilePath) != -1;
 }
 
+bool file::write_file_content(const tstring& src_file, const LPCTSTR lpszContent, size_t nlen)
+{
+    FILE* fFile;
+    _tfopen_s(&fFile, src_file.c_str(), _T("wb"));
 
+    size_t szTextLen = nlen;
+    size_t lWrite    = fwrite(lpszContent, sizeof(TCHAR), szTextLen,  fFile);
+    fclose(fFile);
+
+    if (lWrite != lWrite)
+        return false ;
+    return true;
+}
 
 
 

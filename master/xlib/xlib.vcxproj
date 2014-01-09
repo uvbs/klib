@@ -141,6 +141,7 @@
     <ClInclude Include="..\core\encrypt\sha1_single.h" />
     <ClInclude Include="..\core\encrypt\urlencode.h" />
     <ClInclude Include="..\core\inttype.h" />
+    <ClInclude Include="..\core\io\file.h" />
     <ClInclude Include="..\core\io\path.h" />
     <ClInclude Include="..\core\io\stream.h" />
     <ClInclude Include="..\core\istddef.h" />
@@ -178,7 +179,6 @@
     <ClInclude Include="..\core\util\mem_check.h" />
     <ClInclude Include="..\core\util\strutil.h" />
     <ClInclude Include="..\core\util\timeout_checker.h" />
-    <ClInclude Include="..\core\util\util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\algo\bitmap.cpp" />
@@ -204,6 +204,7 @@
     <ClCompile Include="..\core\encrypt\MD4.cpp" />
     <ClCompile Include="..\core\encrypt\MD5.cpp" />
     <ClCompile Include="..\core\encrypt\md5_class.cpp" />
+    <ClCompile Include="..\core\io\file.cpp" />
     <ClCompile Include="..\core\io\path.cpp" />
     <ClCompile Include="..\core\io\stream.cpp" />
     <ClCompile Include="..\core\kthread\RWSemaphore.cpp" />
@@ -221,7 +222,6 @@
     <ClCompile Include="..\core\sys\sys.cpp" />
     <ClCompile Include="..\core\util\buffer_reader.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />
-    <ClCompile Include="..\core\util\util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

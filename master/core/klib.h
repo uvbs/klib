@@ -27,6 +27,10 @@
 
 #include "sys/sys.h"
 
+#include "io/file.h"
+#include "io/path.h"
+#include "io/stream.h"
+
 #include "kthread/kthreadpool.h"
 #include "kthread/threadpool.h"
 #include "kthread/ReadWriteSection.h"

@@ -1,8 +1,11 @@
 #pragma once
 
-#include <string>
 #include "../inttype.h"
 #include "../istddef.h"
+
+#include <Windows.h>
+#include <string>
+
 
 namespace klib {
 namespace io {
@@ -17,6 +20,14 @@ public:
     static bool is_exists(const tstring& file) ;
 
 public:
+    ///< 获取应用程序文件夹路径
+    BOOL get_app_path(tstring& strAppPath);
+
+    ///< 获取文件的路径
+    BOOL get_app_file(tstring& strAppFile);
+
+    ///< 获取应用程序的名字
+    BOOL get_app_file_name(tstring& strFileName);
 
 
 protected:

@@ -19,6 +19,8 @@ public:
     void init_table();
     uint32_t get_crc(const unsigned char* data, size_t size, uint32_t crc = 0) ;
 
+    USHORT check_sum(USHORT* buff, int size);
+
 protected:
     uint32_t crc32_table_[256];
 };

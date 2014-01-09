@@ -52,4 +52,26 @@ uint32_t crc32::get_crc(const unsigned char *data, size_t size, uint32_t crc/* =
 }
 
 
+USHORT crc32::check_sum(USHORT* buff, int size)
+{
+    unsigned long cksum = 0;
+    while (size > 1) 
+    {
+        cksum += *buff++;
+        size -= sizeof(USHORT);
+    }
+
+    // 是奇数
+    if(size) 
+    {
+        cksum += *(UCHAR*)buff;
+    }
+    // 将32位的chsum高16位和低16位相加，然后取反
+    cksum = (cksum >> 16) + (cksum & 0xffff);
+    cksum += (cksum >> 16);     // ???	
+    return (USHORT)(~cksum);
+}
+
+
+
 }}

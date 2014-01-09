@@ -7,6 +7,7 @@
 
 #include "addr_resolver.h"
 
+#pragma warning(disable: 4996)
 
 using namespace klib::net;
 
@@ -58,7 +59,7 @@ BOOL http_down::download(const char* pszHttpUrl, const char* pszSaveFile)
 			return FALSE;
 		}
 
-		Sleep(1000 * 2.5);
+		Sleep((DWORD)(1000 * 2.5));
 	}
 
 	char szRequestHeader[MAX_PATH * 2];

@@ -34,5 +34,6 @@
 *.res
 *.dll
 
+xlib_d.lib
 Debug
 Release

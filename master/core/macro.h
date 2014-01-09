@@ -1,5 +1,7 @@
 #pragma once
 
+#include "inttype.h"
+
 namespace klib
 {
 

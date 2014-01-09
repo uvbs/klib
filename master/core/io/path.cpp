@@ -7,6 +7,7 @@
 #include <tchar.h>
 #endif
 
+#include <vector>
 
 
 namespace klib{
@@ -143,6 +144,34 @@ tstring path::extract_path(const tstring& szFile)
     return szFile;
 }
 
+tstring path::del_file_ext(const tstring& szFile)
+{
+    size_t pos = szFile.rfind(_T("."));
+    if (pos == std::string::npos) 
+    {
+        return szFile.substr(0, pos);
+    }
+
+    return szFile;
+}
+
+tstring path::get_system_path()
+{
+    TCHAR szChar[1024];
+    GetWindowsDirectory(szChar, _countof(szChar));
+    tstring str = szChar;
+    return add_slash(str);
+}
+
+tstring path::get_temp_path(const LPCTSTR  lpszPrefixString/* = _TEXT("klib_")*/)
+{
+    TCHAR szChar[1024] = {0};
+    TCHAR szTemp[1024] = {0};
+    ::GetTempPath(_countof(szChar), szChar);
+    ::GetTempFileName(szChar, lpszPrefixString, 0, szTemp);
+    return szTemp;
+}
+
 BOOL path::get_app_path(tstring& strAppPath)
 {
     static TCHAR pszAppPath[MAX_PATH] = {0}; 
@@ -213,6 +242,38 @@ BOOL path::get_app_file_name(tstring& strFileName)
 
     return TRUE;
 }
+
+BOOL path::create_directorys(const tstring& szPath)
+{
+    BOOL bSuccess = FALSE;
+
+    tstring str_path = szPath;
+    add_slash(str_path);
+
+    std::vector<tstring> vPath;	   //存放每一层目录字符串
+    tstring strTemp;			   //一个临时变量,存放目录字符串
+
+    for (unsigned int i=0; i< str_path.size(); i++)
+    {
+        //如果当前字符是'\\'
+        //将当前层的字符串添加到数组中
+        if (str_path[i] == _T('\\') || str_path[i] == _T('/'))
+        {
+            vPath.push_back(strTemp);
+        }
+        strTemp += str_path[i];
+    }// end of for
+
+    //遍历存放目录的数组,创建每层目录
+    for (std::vector<tstring>::const_iterator vIter = vPath.begin(); vIter != vPath.end(); vIter++)
+    {
+        //如果CreateDirectory执行成功,返回true,否则返回false
+        bSuccess = CreateDirectory(vIter->c_str(), NULL) ;
+    }
+
+    return bSuccess;
+}
+
 
 
 

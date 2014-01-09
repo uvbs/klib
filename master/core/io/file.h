@@ -12,11 +12,8 @@ namespace io{
 class file
 {
 public:
-    ///< 获取文件大小
-    UINT64 get_file_size(tstring strFilePath);
-
-    ///< 判断文件是否存在
-    BOOL is_file_exists(LPCTSTR pszFilePath);
+    static UINT64 get_file_size(tstring strFilePath);      ///< 获取文件大小
+    static BOOL is_file_exists(LPCTSTR pszFilePath);       ///< 判断文件是否存在
 
 
 

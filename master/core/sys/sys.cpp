@@ -1,8 +1,9 @@
-#include "sysutil.h"
+#include "sys.h"
 #include "..\core\scope_guard.h"
 
-namespace klib
-{
+namespace klib{
+namespace sys {
+
 using namespace klib::core;
 
 
@@ -16,7 +17,7 @@ using namespace klib::core;
 //     szCommandLine += "\" ";
 //     szCommandLine += "-autorun";
 */
-bool SetAppRunBoot(const TCHAR* szAppName, const TCHAR* szCommandLine, size_t nLen, bool bSetBoot/* = true*/) 
+bool system::SetAppRunBoot(const TCHAR* szAppName, const TCHAR* szCommandLine, size_t nLen, bool bSetBoot/* = true*/) 
 {
     HKEY  regKey = NULL;
 
@@ -48,7 +49,7 @@ bool SetAppRunBoot(const TCHAR* szAppName, const TCHAR* szCommandLine, size_t nL
 }
 
 
-bool IsSetAppRunBoot(const TCHAR* szAppName)
+bool system::IsSetAppRunBoot(const TCHAR* szAppName)
 {
     HKEY  regKey = NULL;
     ON_SCOPE_EXIT
@@ -76,7 +77,7 @@ bool IsSetAppRunBoot(const TCHAR* szAppName)
     }
 }
 
-BOOL DebugPrivilegeEnable(BOOL Enable)
+BOOL system::DebugPrivilegeEnable(BOOL Enable)
 {
     HANDLE m_Token;
     if(!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &m_Token))
@@ -99,28 +100,28 @@ BOOL DebugPrivilegeEnable(BOOL Enable)
 }
 
 static unsigned long g_OldProtect;
-BOOL AddProtect(void *addr,int memSize)
+BOOL system::AddProtect(void *addr,int memSize)
 {
     return VirtualProtectEx(::GetCurrentProcess(),addr,memSize,g_OldProtect,NULL);
 }
 
-BOOL RemoveProtect(void *addr,int memSize)
+BOOL system::RemoveProtect(void *addr,int memSize)
 {
     return VirtualProtectEx(::GetCurrentProcess(),addr,memSize,PAGE_READWRITE,&g_OldProtect);
 }
 
-BOOL AddProtect(HANDLE processHandle,void *addr,unsigned long &proctect)
+BOOL system::AddProtect(HANDLE processHandle,void *addr,unsigned long &proctect)
 {
     return VirtualProtectEx(processHandle,addr,10,proctect,NULL);
 }
 
-BOOL RemoveProtect(HANDLE processHandle,void *addr,unsigned long &oldProctect)
+BOOL system::RemoveProtect(HANDLE processHandle,void *addr,unsigned long &oldProctect)
 {
     return VirtualProtectEx(processHandle,addr,10,PAGE_READWRITE,&oldProctect);
 }
 
 #define MAX_REMOTE_MEM (100)
-void* InjectProcess(const char *dllName, HANDLE proHandle)
+void* system::InjectProcess(const char *dllName, HANDLE proHandle)
 {
     int	len	= strlen(dllName);
     void* pMem = NULL;
@@ -142,5 +143,94 @@ void* InjectProcess(const char *dllName, HANDLE proHandle)
     return pMem;
 }
 
-
+BOOL system::is_admin()
+{
+    BOOL bIsElevated = FALSE;
+    HANDLE hToken    = NULL;
+    UINT16 uWinVer   = LOWORD(GetVersion());
+    uWinVer = MAKEWORD(HIBYTE(uWinVer),LOBYTE(uWinVer));
+    if (uWinVer < 0x0600) return TRUE;
+    if (OpenProcessToken(GetCurrentProcess(),TOKEN_QUERY,&hToken))
+    {
+        struct{
+            DWORD TokenIsElevated;
+        }te;
+        DWORD dwReturnLength = 0;
+        if (GetTokenInformation(hToken,(_TOKEN_INFORMATION_CLASS)20,&te,sizeof(te),&dwReturnLength))
+        {
+            if (dwReturnLength == sizeof(te))
+                bIsElevated = te.TokenIsElevated;
+        }
+        CloseHandle(hToken);
+    }
+    return bIsElevated;
 }
+
+BOOL system::run_as_admin(LPCTSTR lpExeFile )
+{
+    SHELLEXECUTEINFO SEI = {sizeof(SHELLEXECUTEINFO)};
+    SEI.lpVerb = _T("runas");
+    SEI.lpFile = lpExeFile;
+    SEI.nShow = SW_SHOWNORMAL;
+    return ShellExecuteEx(&SEI);
+}
+
+tstring system::fetch_cmd_result(const tstring strParamt)
+{
+//     tstring strResult = _T("");
+//     SECURITY_ATTRIBUTES sa;
+//     HANDLE hRead,hWrite;
+//     sa.nLength = sizeof(SECURITY_ATTRIBUTES);
+//     sa.lpSecurityDescriptor = NULL;
+//     sa.bInheritHandle = TRUE;
+//     if (CreatePipe(&hRead,&hWrite,&sa,0) == FALSE) return FALSE;
+// 
+//     tstring strCommandFull = CLibX::File::GetSystemPath();
+//     strCommandFull.append(_T("system32\\cmd.exe /c "));
+//     strCommandFull.append(strParamt);
+// 
+//     STARTUPINFO si;
+//     PROCESS_INFORMATION pi;
+//     si.cb = sizeof(STARTUPINFO);
+//     GetStartupInfo(&si);
+//     si.hStdError = hWrite;
+//     si.hStdOutput = hWrite;
+//     si.wShowWindow = SW_HIDE;
+//     si.dwFlags = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+//     if (::CreateProcess(NULL,(lchar*)strCommandFull.c_str(),NULL,NULL,TRUE,NULL,NULL,NULL,&si,&pi) == FALSE)
+//     {
+//         CloseHandle(hWrite);
+//         CloseHandle(hRead);
+//         return FALSE;
+//     }
+// 
+//     CloseHandle(hWrite);
+// 
+//     char buffer[4095] = {0};
+//     DWORD bytesRead = 0;
+//     while (true)
+//     {
+//         ReadFile(hRead,buffer,4095,&bytesRead,NULL);
+//         if (bytesRead > 0 )
+// #ifdef _UNICODE
+//             strResult += CLibX::String::GBToUTF8(buffer);
+// #else
+//             strResult += buffer;
+// #endif // _UNICODE
+//         else
+//             break;
+//     }
+// 
+//     CloseHandle(hRead);
+
+    //return strResult;
+
+    return _T("");
+}
+
+
+
+
+
+
+}}

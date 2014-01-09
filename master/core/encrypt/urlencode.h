@@ -9,7 +9,7 @@ namespace encode {
 //  “只有字母和数字[0-9a-zA-Z]、一些特殊符号“$-_.+!*'(),”
 //  [不包括双引号]、以及某些保留字，才可以不经过编码直接用于URL。”
 //----------------------------------------------------------------------
-class curl_encode {
+class url_encode {
 
 public:
     BOOL encode(const byte* pszSrc, size_t uLen, std::string& strEncoded)

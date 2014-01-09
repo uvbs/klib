@@ -129,13 +129,7 @@
     <ClInclude Include="..\core\comp\calendar\calendar.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\util\sysutil.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\net\CheckNat.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\util\util.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\trie.h">
@@ -315,6 +309,18 @@
     <ClInclude Include="..\core\core\timer_mgr.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\sys\sys.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\sys\cpu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\crc23.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\io\file.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core\logger.cpp">
@@ -341,13 +347,7 @@
     <ClCompile Include="..\core\comp\calendar\calendar.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\util\sysutil.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\net\CheckNat.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\util\util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\algo\trie.cpp">
@@ -432,6 +432,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\core\timer_mgr.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\sys\sys.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\sys\cpu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\encrypt\crc23.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\io\file.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

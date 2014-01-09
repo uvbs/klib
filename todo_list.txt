@@ -1,4 +1,10 @@
 1. net support ipv6
 2. path finish
 3. finish k script language.
-4. 
+4. http classes
+5. auto update module
+6. combine libx
+7. file class 
+8. inter process communication
+9. rmi
+10.wrapper easy usage of ini_file for config

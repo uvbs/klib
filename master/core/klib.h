@@ -25,6 +25,11 @@
 #include "core/perf_counter.h"
 #include "core/seqnumber.h"
 
+#include "sys/sys.h"
+
+#include "io/file.h"
+#include "io/path.h"
+#include "io/stream.h"
 
 #include "kthread/kthreadpool.h"
 #include "kthread/threadpool.h"
@@ -57,7 +62,6 @@
 #include "algo/text_search.h"
 
 #include "util/util.h"
-#include "util/sysutil.h"
 #include "util/strutil.h"
 #include "util/convert.h"
 #include "util/atom.h"

@@ -19,6 +19,11 @@ udp_socket::udp_socket(void)
 
 udp_socket::~udp_socket(void)
 {
+    if (m_socket != INVALID_SOCKET) 
+    {
+        closesocket(m_socket);
+        m_socket = INVALID_SOCKET;
+    }
 }
 
 BOOL udp_socket::init(USHORT uBindPort)

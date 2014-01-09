@@ -70,7 +70,7 @@ inline UINT64 KNTOH64(UINT64 uValue)
 #define KHTON64		KNTOH64
 
 
-///< 
+///< 定义访问成员的函数
 #define DEFINE_ACCESS_FUN(Type, Target)         \
 public:                                         \
     inline Type Get_##Target()                  \
@@ -82,6 +82,7 @@ public:                                         \
         Target = t;                             \
     }
 
+///< 定义引用访问成员的函数
 #define DEFINE_ACCESS_FUN_REF(Type, Target)     \
 public:                                         \
     inline Type& Get_##Target()                 \

@@ -61,7 +61,6 @@
 #include "algo/wm_wrapper.h"
 #include "algo/text_search.h"
 
-#include "util/util.h"
 #include "util/strutil.h"
 #include "util/convert.h"
 #include "util/atom.h"

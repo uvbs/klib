@@ -15,6 +15,7 @@
 //#pragma comment(lib, "ws2_32")
 
 #include <core/atom.h>
+#include <klib_link.h>
 
 #include "find_tool_test.h"
 #include "faststring_test.h"
@@ -41,12 +42,7 @@
 #include "third/letter.h"
 #include "timer_test.h"
 
-
-#ifdef _DEBUG
-#pragma comment(lib, "xlib_d")
-#else
-#pragma comment(lib, "xlib")
-#endif
+#include <net/proto/net_archive.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {

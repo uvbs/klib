@@ -118,7 +118,7 @@ typedef unsigned int		uint32;
 typedef __int64				int64;
 typedef unsigned __int64	uint64;
 
-#include <intsafe.h>
+
 #else
 #include <sys/types.h>
 typedef int64_t				int64;

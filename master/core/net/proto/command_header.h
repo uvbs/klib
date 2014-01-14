@@ -10,6 +10,7 @@ class cmd_header_builder
     {
         InitializeCriticalSection(&mutex_);
     }
+    ~cmd_header_builder() { DeleteCriticalSection(&mutex_); }
 public:
     static cmd_header_builder* instance()
     {

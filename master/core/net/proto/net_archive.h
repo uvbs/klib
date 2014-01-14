@@ -29,6 +29,7 @@ typedef  unsigned long  DWORD;
 #endif
 
 #include "../../macro.h"
+#include "../../inttype.h"
 #include <string>
 #include <list>
 #include <map>

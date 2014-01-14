@@ -1,8 +1,41 @@
-#ifndef _Advertisement_COMMAND_HEADER_H_
-#define _Advertisement_COMMAND_HEADER_H_
+#ifndef _klib_cmd_header_h_
+#define _klib_cmd_header_h_
+
+
+
+// 命令创建者
+class cmd_header_builder
+{
+    cmd_header_builder() : pkt_no_(0) 
+    {
+        InitializeCriticalSection(&mutex_);
+    }
+public:
+    static cmd_header_builder* instance()
+    {
+        static cmd_header_builder _instance;
+        return & _instance;
+    }
+
+
+    UCHAR ver() { return 1;}
+    UINT  gen_pkt_no() { 
+
+        UINT no_ = 0;
+        EnterCriticalSection(&mutex_);
+        no_ =  pkt_no_ ++;
+        LeaveCriticalSection(&mutex_);
+        return no_;
+    } 
+
+protected:
+    UINT32   pkt_no_;
+    CRITICAL_SECTION  mutex_;
+};
+
 
 // 命令结构
-typedef class _COMMAND_HEADER {
+class cmd_header {
 public:
 	//USHORT   cbSize;	 //结构总长度(所有数据,在结构体中不体现出来)
 	UCHAR		ver;		 //版本
@@ -11,26 +44,18 @@ public:
 	UINT		pktNo;	     //封包编号
 
 public:
-	_COMMAND_HEADER(USHORT uCmd = 0) 
+	cmd_header(USHORT uCmd = 0) 
 	{
+        static cmd_header_builder* builder_ = cmd_header_builder::instance();
 		static UINT  pktNoCounter = 0;
-		static CRITICAL_SECTION     cs;
-		if (0 == pktNoCounter) 	
-		{
-			InitializeCriticalSection(&cs);
-		}
+		
 
-		EnterCriticalSection(&cs);
-		{
-			pktNo = ++ pktNoCounter;
-		}
-		LeaveCriticalSection(&cs);
 		encrypt = 1;
-		ver = ADVERTISE_VERSION;
+		ver = builder_->ver();
 		cmd = uCmd;
 	}
 
-	friend net_archive& operator << (net_archive& ar, _COMMAND_HEADER& pt) {
+	friend net_archive& operator << (net_archive& ar, cmd_header& pt) {
 		//ar << pt.cbSize;
 		ar << pt.ver;
 		ar << pt.cmd;
@@ -39,7 +64,7 @@ public:
 		return ar;
 	}
 
-	friend net_archive& operator >> (net_archive& ar, _COMMAND_HEADER& pt) {
+	friend net_archive& operator >> (net_archive& ar, cmd_header& pt) {
 		//ar >> pt.cbSize;
 		ar >> pt.ver;
 		ar >> pt.cmd;
@@ -47,6 +72,7 @@ public:
 		//ar >> pt.dwOffset;
 		return ar;
 	}
-} COMMAND_HEADER, *PCOMMAND_HEADER;
+} ;
+
 
 #endif

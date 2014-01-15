@@ -13,7 +13,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kl", "kl\kl.vcxproj", "{8F3
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kl_ex", "kl_ex\kl_ex.vcxproj", "{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "proc_comm.vcxproj", "example\ProcessCommunicate\proc_comm.vcxproj.vcxproj", "{0F981E0A-2493-4716-9813-23113B43CDC9}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "proc_comm", "example\ProcessCommunicate\proc_comm.vcxproj", "{0F981E0A-2493-4716-9813-23113B43CDC9}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "proxy_server", "example\proxy\proxy_server\proxy_server.vcxproj", "{9E74EC96-B025-4F03-B7FA-6C414DC352CA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "proxy_client", "example\proxy\proxy_client\proxy_client.vcxproj", "{1F4E3692-CECD-429B-B3BD-3E227CD26837}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +53,14 @@ Global
 		{0F981E0A-2493-4716-9813-23113B43CDC9}.Debug|Win32.Build.0 = Debug|Win32
 		{0F981E0A-2493-4716-9813-23113B43CDC9}.Release|Win32.ActiveCfg = Release|Win32
 		{0F981E0A-2493-4716-9813-23113B43CDC9}.Release|Win32.Build.0 = Release|Win32
+		{9E74EC96-B025-4F03-B7FA-6C414DC352CA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E74EC96-B025-4F03-B7FA-6C414DC352CA}.Debug|Win32.Build.0 = Debug|Win32
+		{9E74EC96-B025-4F03-B7FA-6C414DC352CA}.Release|Win32.ActiveCfg = Release|Win32
+		{9E74EC96-B025-4F03-B7FA-6C414DC352CA}.Release|Win32.Build.0 = Release|Win32
+		{1F4E3692-CECD-429B-B3BD-3E227CD26837}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1F4E3692-CECD-429B-B3BD-3E227CD26837}.Debug|Win32.Build.0 = Debug|Win32
+		{1F4E3692-CECD-429B-B3BD-3E227CD26837}.Release|Win32.ActiveCfg = Release|Win32
+		{1F4E3692-CECD-429B-B3BD-3E227CD26837}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

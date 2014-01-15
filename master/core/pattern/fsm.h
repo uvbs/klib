@@ -287,6 +287,20 @@ void RegisterAllState()                                         \
 };
 
 
+/*
+///< 状态机的定义
+BEGIN_FSM(ClientAppFsm)
+    BEGIN_REGISTER_STATE()
+        REGISTER_INIT_STATE(CQueryLogicState)
+        REGISTER_STATE(CQueryNewVerState)
+        REGISTER_STATE(COnlineState)
+    END_REGISTER_STATE
+END
+
+ClientAppFsm    m_fsm;
+*/
+
+
 }
-}
-}
+
+}}

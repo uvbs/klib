@@ -35,7 +35,7 @@ protected:
 //临界区线程同步帮助类RAII
 //在对象构造的时候自动加锁，在对象析构的时候自动解锁
 //用法：
-//  auto_lock helper(m_auto_cs);
+//  auto_lock guard(m_auto_cs);
 class auto_lock 
 {
 public:
@@ -51,6 +51,12 @@ public:
 protected:
     auto_cs& m_auto_cs;           ///< 临界区对象
 };
+
+
+// 定义互斥锁和守卫
+typedef auto_cs   mutex;
+typedef auto_lock guard;
+
 
 #endif
 

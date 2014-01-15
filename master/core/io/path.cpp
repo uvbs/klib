@@ -245,33 +245,36 @@ BOOL path::get_app_file_name(tstring& strFileName)
 
 BOOL path::create_directorys(const tstring& szPath)
 {
-    BOOL bSuccess = FALSE;
+    TCHAR szFullfilepath[4*MAX_PATH] = {0};
+    _tcsncpy(szFullfilepath, szPath.c_str(), _countof(szFullfilepath));
+    int len = _tcslen(szFullfilepath);
+    TCHAR* pos = (TCHAR*) &szFullfilepath[0];
+    pos += len;
+    while( (*pos != '\\') && (*pos != '/')){ pos--; }
+    *pos = '\0';
 
-    tstring str_path = szPath;
-    add_slash(str_path);
+    TCHAR filedirectory[MAX_PATH] = {0};
+    TCHAR* token;
+    TCHAR seps[] = _T("\\/");
 
-    std::vector<tstring> vPath;	   //存放每一层目录字符串
-    tstring strTemp;			   //一个临时变量,存放目录字符串
-
-    for (unsigned int i=0; i< str_path.size(); i++)
+    token = _tcstok(szFullfilepath, seps);
+    if (token) {
+        _tcsncpy(filedirectory, token, MAX_PATH);
+        token = _tcstok( NULL, seps );
+    }
+    while( token != NULL )
     {
-        //如果当前字符是'\\'
-        //将当前层的字符串添加到数组中
-        if (str_path[i] == _T('\\') || str_path[i] == _T('/'))
-        {
-            vPath.push_back(strTemp);
+        _tcscat(filedirectory, _T("\\"));
+        _tcscat(filedirectory, token);
+        if (FALSE == CreateDirectory(filedirectory, NULL)) {
+            if (ERROR_ALREADY_EXISTS != GetLastError()) {
+                return FALSE;
+            }
         }
-        strTemp += str_path[i];
-    }// end of for
-
-    //遍历存放目录的数组,创建每层目录
-    for (std::vector<tstring>::const_iterator vIter = vPath.begin(); vIter != vPath.end(); vIter++)
-    {
-        //如果CreateDirectory执行成功,返回true,否则返回false
-        bSuccess = CreateDirectory(vIter->c_str(), NULL) ;
+        token = _tcstok( NULL, seps );
     }
 
-    return bSuccess;
+    return TRUE;
 }
 
 

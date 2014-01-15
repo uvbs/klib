@@ -4,7 +4,6 @@
 #include "comp/MyNet/INetwork.h"
 #include "comp/MyNet/INetEventHandler.h"
 #include "comp/MyNet/INetConnection.h"
-#include "comp/MyNet/NetStream.h"
 #include "comp/MyNet/INetPacketMgr.h"
 #include "comp/MyNet/INetConnectionMgr.h"
 #include "comp/MyNet/ICombiner.h"

@@ -8,3 +8,5 @@
 8. inter process communication
 9. rmi
 10.wrapper easy usage of ini_file for config
+11.network wrapper
+12.serilize data

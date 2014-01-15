@@ -4,6 +4,7 @@
 #include <list>
 #include <map>
 
+
 #define  NETCONNECTION_ARRAY_LENGTH 9
 
 class INetConnectionMgrImp : public INetConnectionMgr

@@ -90,7 +90,6 @@
     <ClInclude Include="INetEventHandler.h" />
     <ClInclude Include="INetPacketMgr.h" />
     <ClInclude Include="INetPacketMgrImp.h" />
-    <ClInclude Include="INetParser.h" />
     <ClInclude Include="INetwork.h" />
     <ClInclude Include="INetworkImp.h" />
     <ClInclude Include="MyNet.h" />
@@ -119,7 +118,6 @@
     <ClCompile Include="INetEventHandler.cpp" />
     <ClCompile Include="INetPacketMgr.cpp" />
     <ClCompile Include="INetPacketMgrImp.cpp" />
-    <ClCompile Include="INetParser.cpp" />
     <ClCompile Include="INetwork.cpp" />
     <ClCompile Include="INetworkImp.cpp" />
     <ClCompile Include="mynet.cpp" />

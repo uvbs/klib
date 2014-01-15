@@ -6,6 +6,8 @@
 #include <list>
 #include <kthread/auto_lock.h>
 
+using namespace klib::kthread;
+
 
 #define  MAX_CLIENT_BUFF_LEN 5*1024
 
@@ -17,6 +19,7 @@ enum emOperationType
   OP_WRITE,
   OP_CONNECT,
 };
+
 
 class NetPacket;
 class INetConnection
@@ -70,12 +73,12 @@ public:
   inline DWORD GetBytesRead() { return m_dwBytesRead; }
   inline DWORD AddBytesRead(DWORD dwBytes) { return m_dwBytesRead += dwBytes; }
 
-  void lock() { m_cs.lock(); }
-  void unlock(){ m_cs.unlock() ;}
+  void lock() { mutex_.lock(); }
+  void unlock(){ mutex_.unlock() ;}
 
 protected:
   NetSocket m_socket;		//套接字
-  DWORD m_tLastActive;		//最后活跃时间
+  DWORD     m_tLastActive;		//最后活跃时间
 
   USHORT m_PeerPort;		//对端端口,主机序
   DWORD  m_PeerAddr;		//对端地址，网络字节序
@@ -87,7 +90,7 @@ protected:
   DWORD  m_dwKey;           //绑定的键值
   DWORD  m_dwBytesWrite;     //输出了多少字节数
   DWORD  m_dwBytesRead;     //接收到了多少字节数
-  klib::kthread::auto_cs m_cs;        //临界区对象，用于互斥数据的访问
+  mutex  mutex_;        //临界区对象，用于互斥数据的访问
   char   m_strAddress[50];		//字符串地址
   int datalen;					//缓冲区中保存数据的长度
   char  mbuff[MAX_CLIENT_BUFF_LEN];		//该连接的数据缓冲区

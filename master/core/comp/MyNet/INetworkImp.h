@@ -10,7 +10,7 @@
   处理网络相关数据
 */
 
-class MYOVERLAPPED : public OVERLAPPED
+class Klib_OverLapped: public OVERLAPPED
 {
 public:
   // 以下是用户需要的信息
@@ -25,8 +25,8 @@ public:
   //DWORD dwRead; //读取的字节数 //todo 
 
 public:
-  MYOVERLAPPED() {
-    memset(this, 0, sizeof(MYOVERLAPPED));
+  Klib_OverLapped() {
+    memset(this, 0, sizeof(Klib_OverLapped));
   }
 };
 
@@ -54,8 +54,8 @@ protected:
   static unsigned int WINAPI ThreadNetwork(void* param);
 
   void InitFixedOverlappedList(size_t nCount);    //初始固定的Overlapped的个数，这部分内存不能被释放
-  MYOVERLAPPED* GetMyOverlapped();                //申请重叠结构
-  bool ReleaseMyOverlapped(MYOVERLAPPED* pMyoverlapped);	//释放重叠结构
+  Klib_OverLapped* GetMyOverlapped();                //申请重叠结构
+  bool ReleaseMyOverlapped(Klib_OverLapped* pMyoverlapped);	//释放重叠结构
 
   void CheckAndDisconnect(INetConnection* pConn);     //判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
 
@@ -64,8 +64,8 @@ private:
   INetEventHandler* m_INetEventHandler;   ///< 移交上层处理的接口
   LPFN_ACCEPTEX m_lpfnAcceptEx;   ///< AcceptEx函数指针
   
-  typedef std::list<MYOVERLAPPED*> OverLappedListType;  /// 保存MYOVERLAPPED的链表类型
-  OverLappedListType m_overlappedList;      /// 申明链表，用来保存MYOVERLAPPED
+  typedef std::list<Klib_OverLapped*> OverLappedListType;  /// 保存Klib_OverLapped的链表类型
+  OverLappedListType m_overlappedList;      /// 申明链表，用来保存Klib_OverLapped
   auto_cs            m_csOverlappedList;      /// 同步访问m_overlappedList
 
   typedef std::list<INetConnection*> INetConnListType;  /// 接口列表类型定义

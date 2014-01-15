@@ -84,36 +84,36 @@ void INetConnection::UpdateLastActiveTimestamp()
 
 void INetConnection::AddPostReadCount() 
 {
-  auto_lock helper(m_cs);
+  guard helper(mutex_);
   ++ m_PostReadCount;
 }
 
 void INetConnection::DecPostReadCount()
 {
-  auto_lock helper(m_cs);
+  guard helper(mutex_);
   -- m_PostReadCount;
 }
 
 USHORT INetConnection::GetPostReadCount()
 {
-  auto_lock helper(m_cs);
+  guard helper(mutex_);
   return m_PostReadCount;
 }
 
 void INetConnection::AddPostWriteCount()
 {
-  auto_lock helper(m_cs);
+  guard helper(mutex_);
   ++ m_PostWriteCount;
 }
 
 void INetConnection::DecPostWriteCount()
 {
-  auto_lock helper(m_cs);
+  guard helper(mutex_);
   -- m_PostWriteCount;
 }
 
 USHORT INetConnection::GetPostWriteCount()
 {
-  auto_lock helper(m_cs);
+  guard helper(mutex_);
   return m_PostWriteCount;
 }

@@ -77,7 +77,7 @@ INetConnection* INetNetworkImp::PostAccept(INetConnection* pListenConn)
 {
   HANDLE hResult;
   DWORD dwBytes = 0;
-  MYOVERLAPPED* lpOverlapped = GetMyOverlapped();
+  Klib_OverLapped* lpOverlapped = GetMyOverlapped();
   if (lpOverlapped == NULL) {
     return false;
   }
@@ -218,7 +218,7 @@ bool INetNetworkImp::PostConnection(INetConnection* pConn)
     return FALSE;
   }
 
-  MYOVERLAPPED *pmyoverlapped = GetMyOverlapped(); // socket和I/O通讯的载体
+  Klib_OverLapped *pmyoverlapped = GetMyOverlapped(); // socket和I/O通讯的载体
   if (NULL == pmyoverlapped) {
     _ASSERT(FALSE && "TODO 这里要释放资源嘛");
     return false;
@@ -268,7 +268,7 @@ bool INetNetworkImp::PostRead(INetConnection* pConn)
   DWORD dwRecvedBytes = 0;
   DWORD dwFlag = 0;
   DWORD dwBytesTransfered = 0;
-  MYOVERLAPPED* pMyoverlapped = GetMyOverlapped();
+  Klib_OverLapped* pMyoverlapped = GetMyOverlapped();
   if (NULL == pMyoverlapped) {
     _ASSERT(pMyoverlapped);
     return false;
@@ -306,7 +306,7 @@ bool INetNetworkImp::PostWrite(INetConnection* pConn, const char* buff, size_t l
 {
   // 下面提交发送请求
   DWORD dwWriteLen = 0;
-  MYOVERLAPPED *pmyoverlapped = GetMyOverlapped();
+  Klib_OverLapped *pmyoverlapped = GetMyOverlapped();
   if(pmyoverlapped == NULL) {
     //TRACE(TEXT("fail to molloc memory for pmyoverlapped\n"));
     return false;
@@ -435,7 +435,7 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
   _ASSERT(pINetwork);
   _ASSERT(pINetwork->m_hIocp);
   _ASSERT(pINetEventHandler);
-  MYOVERLAPPED *lpOverlapped = NULL;
+  Klib_OverLapped *lpOverlapped = NULL;
   DWORD		dwByteTransfered = 0;
   INetConnection *pConn = NULL;
 
@@ -592,7 +592,7 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
 
 void INetNetworkImp::InitFixedOverlappedList(size_t nCount)
 {
-  MYOVERLAPPED* pList = new MYOVERLAPPED[nCount];
+  Klib_OverLapped* pList = new Klib_OverLapped[nCount];
   if (NULL == pList) {
     return;
   }
@@ -604,11 +604,11 @@ void INetNetworkImp::InitFixedOverlappedList(size_t nCount)
   }
 }
 
-MYOVERLAPPED* INetNetworkImp::GetMyOverlapped()
+Klib_OverLapped* INetNetworkImp::GetMyOverlapped()
 {
   auto_lock helper(m_csOverlappedList);
 
-  MYOVERLAPPED* ptmp = NULL;
+  Klib_OverLapped* ptmp = NULL;
   if (!m_overlappedList.empty()) {
     ptmp = m_overlappedList.front();
     m_overlappedList.pop_front();
@@ -617,18 +617,18 @@ MYOVERLAPPED* INetNetworkImp::GetMyOverlapped()
     memset(ptmp, 0, sizeof(OVERLAPPED));
 	ptmp->bFixed = bFix;
 
-    //TRACE(TEXT("中内存池中获取MYOVERLAPPED..."));
+    //TRACE(TEXT("中内存池中获取Klib_OverLapped..."));
   }
   else {
 
-    //TRACE(TEXT("新建MYOVERLAPPED结构..."));
-    ptmp = new MYOVERLAPPED;
+    //TRACE(TEXT("新建Klib_OverLapped结构..."));
+    ptmp = new Klib_OverLapped;
   }
 
   return ptmp;
 }
 
-bool INetNetworkImp::ReleaseMyOverlapped(MYOVERLAPPED* pMyoverlapped)
+bool INetNetworkImp::ReleaseMyOverlapped(Klib_OverLapped* pMyoverlapped)
 {
   _ASSERT(pMyoverlapped);
   if (NULL == pMyoverlapped) {

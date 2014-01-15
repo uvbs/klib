@@ -1,6 +1,10 @@
 #ifndef _klib_cmd_header_h_
 #define _klib_cmd_header_h_
 
+#include <windows.h>
+
+namespace klib {
+namespace net {
 
 
 // ÃüÁî´´½¨Õß
@@ -18,10 +22,9 @@ public:
         return & _instance;
     }
 
-
     UCHAR ver() { return 1;}
-    UINT  gen_pkt_no() { 
-
+    UINT  gen_pkt_no() 
+    {
         UINT no_ = 0;
         EnterCriticalSection(&mutex_);
         no_ =  pkt_no_ ++;
@@ -48,12 +51,11 @@ public:
 	cmd_header(USHORT uCmd = 0) 
 	{
         static cmd_header_builder* builder_ = cmd_header_builder::instance();
-		static UINT  pktNoCounter = 0;
-		
 
-		encrypt = 1;
-		ver = builder_->ver();
-		cmd = uCmd;
+        pktNo   = builder_->gen_pkt_no();
+        ver     = builder_->ver();
+		encrypt = 0;
+		cmd     = uCmd;
 	}
 
 	friend net_archive& operator << (net_archive& ar, cmd_header& pt) {
@@ -61,7 +63,6 @@ public:
 		ar << pt.ver;
 		ar << pt.cmd;
 		ar << pt.encrypt;
-		//ar << pt.dwOffset;
 		return ar;
 	}
 
@@ -70,10 +71,12 @@ public:
 		ar >> pt.ver;
 		ar >> pt.cmd;
 		ar >> pt.encrypt;
-		//ar >> pt.dwOffset;
 		return ar;
 	}
 } ;
+
+
+}}
 
 
 #endif

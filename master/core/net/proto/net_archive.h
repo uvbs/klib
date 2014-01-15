@@ -2,6 +2,14 @@
 #define _klib_net_archive_h_
 
 
+#include <string>
+#include <list>
+#include <map>
+
+
+
+
+
 #if (!defined(WIN32) || !(defined(_WIN32)))
 typedef  unsigned int UINT;
 typedef    int   BOOL;
@@ -30,13 +38,11 @@ typedef  unsigned long  DWORD;
 
 #include "../../macro.h"
 #include "../../inttype.h"
-#include <string>
-#include <list>
-#include <map>
 
 
-using namespace klib;
-using namespace std;
+
+namespace klib {
+namespace net {
 
 
 // 定义长度标记的长度
@@ -255,7 +261,7 @@ public:
 		return *this;
 	}
 
-	net_archive& operator << (std::string& str) {
+	net_archive& operator << (::std::string& str) {
 		if (this->get_data_len() + sizeof(USHORT) + str.size() > buff_len_) {
 			error_flag_ = true;
 			return *this;
@@ -266,7 +272,7 @@ public:
 		return *this;
 	}
 
-	net_archive& operator << (const std::string& str) {
+	net_archive& operator << (const ::std::string& str) {
 		if (this->get_data_len() + sizeof(USHORT) + str.size() > buff_len_) {
 			error_flag_ = true;
 			return *this;
@@ -277,20 +283,20 @@ public:
 		return *this;
 	}
 
-	net_archive& operator >> (std::string& str) {
+	net_archive& operator >> (::std::string& str) {
 		if (this->get_data_len() + sizeof(USHORT) + str.size() > buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
 		USHORT len;
 		(*this). operator >> (len);
-		str = std::string(op_pos_, len);
+		str = ::std::string(op_pos_, len);
 		op_pos_ += str.size();
 		return *this;
 	}
 
 	template <class T>
-	net_archive& operator << (std::list<T>& theList) {
+	net_archive& operator << (::std::list<T>& theList) {
 		if (this->get_data_len() + sizeof(USHORT) >= buff_len_) {
 			error_flag_ = true;
 			return *this;
@@ -310,7 +316,7 @@ public:
 	}
 
 	template <typename T>
-	net_archive& operator >> (std::list<T>& theList) {
+	net_archive& operator >> (::std::list<T>& theList) {
 		USHORT len;
 		T target;
 
@@ -328,14 +334,14 @@ public:
 	}
 
 	template <typename TKey, typename TVal>
-	net_archive& operator << (std::map<TKey, TVal>& theMap) {
+	net_archive& operator << (::std::map<TKey, TVal>& theMap) {
 		if (this->get_data_len() + sizeof(USHORT) >= buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
 
 		this->operator << ((USHORT)theMap.size());
-		typename std::map<TKey, TVal>::iterator itr = theMap.begin();
+		typename ::std::map<TKey, TVal>::iterator itr = theMap.begin();
 		for (; itr != theMap.end(); ++itr) {
 			this->operator << (itr->first);
 			this->operator << (itr->second);
@@ -344,7 +350,7 @@ public:
 	}
 
 	template <typename TKey, typename TVal>
-	net_archive& operator >> (std::map<TKey, TVal>& theMap) {
+	net_archive& operator >> (::std::map<TKey, TVal>& theMap) {
 		if (this->get_data_len() + sizeof(USHORT) >= buff_len_) {
 			error_flag_ = true;
 			return *this;
@@ -374,6 +380,11 @@ private:
 	bool error_flag_;       ///< 是否出错(缓冲区大小不够情况)
     bool writed_length_;    ///< 是否写入的长度
 };
+
+
+
+}}
+
 
 
 #endif  // _klib_net_archive_h_

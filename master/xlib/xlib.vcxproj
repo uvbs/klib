@@ -97,6 +97,7 @@
     <ClInclude Include="..\core\algo\sunday.h" />
     <ClInclude Include="..\core\algo\text_search.h" />
     <ClInclude Include="..\core\algo\trie.h" />
+    <ClInclude Include="..\core\algo\wildcmp.h" />
     <ClInclude Include="..\core\algo\wm_wrapper.h" />
     <ClInclude Include="..\core\comp\calendar\calendar.h" />
     <ClInclude Include="..\core\core\api_fetcher.h" />
@@ -161,6 +162,9 @@
     <ClInclude Include="..\core\net\CheckNat.h" />
     <ClInclude Include="..\core\net\http_down.h" />
     <ClInclude Include="..\core\net\IP_V4.h" />
+    <ClInclude Include="..\core\net\proto\command_header.h" />
+    <ClInclude Include="..\core\net\proto\local_archive.h" />
+    <ClInclude Include="..\core\net\proto\net_archive.h" />
     <ClInclude Include="..\core\net\proto_def.h" />
     <ClInclude Include="..\core\net\tcp_socket.h" />
     <ClInclude Include="..\core\net\udp_client.h" />
@@ -172,6 +176,7 @@
     <ClInclude Include="..\core\pattern\fsm.h" />
     <ClInclude Include="..\core\pattern\object_pool.h" />
     <ClInclude Include="..\core\pattern\object_reuser.h" />
+    <ClInclude Include="..\core\pattern\qmem_pool.h" />
     <ClInclude Include="..\core\pattern\sync_invoke.h" />
     <ClInclude Include="..\core\sys\cpu.h" />
     <ClInclude Include="..\core\sys\sys.h" />

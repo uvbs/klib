@@ -330,6 +330,21 @@
     <ClInclude Include="..\core\ui\window.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\net\proto\net_archive.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\proto\command_header.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\proto\local_archive.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\qmem_pool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\wildcmp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core\logger.cpp">

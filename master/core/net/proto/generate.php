@@ -151,15 +151,17 @@ $result = Parse($file_content);
 //print_r($result);
 
 $generate_content =<<<EOF
-#ifndef _PROTOCOL_H_
-#define _PROTOCOL_H_
+#ifndef _PROTOCOL_DEF_H_
+#define _PROTOCOL_DEF_H_
 
 #include "stdio.h"
 #include "protocol.h"
 #include <net/proto/net_archive.h>
 #include <net/proto/command_header.h>
 
-#pragma pack(1)
+using namespace klib::net::net_archive;
+
+// #pragma pack(1)
 
 EOF;
 
@@ -218,14 +220,14 @@ EOF;
 		//this->encrypt = E_None;
 	}
 	
-	friend CSysArchive& operator << (CSysArchive& ar, {$st_name}& pt) {
+	friend net_archive& operator << (net_archive& ar, {$st_name}& pt) {
 		//ar << *(COMMAND_HEADER*) &pt;
 	
 		{$generate_serilisze}
 		return ar;
 	}
 	
-	friend CSysArchive& operator >> (CSysArchive& ar, {$st_name}& pt) {
+	friend net_archive& operator >> (net_archive& ar, {$st_name}& pt) {
 		//ar >> *(COMMAND_HEADER*) &pt;
 		
 		{$generate_deserilise}
@@ -243,7 +245,7 @@ EOF;
 
 $generate_content .=<<<EOF
 
-#pragma pack()
+// #pragma pack()
 
 #endif
 

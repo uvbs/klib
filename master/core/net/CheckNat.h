@@ -10,6 +10,12 @@
 
 #include "windows.h"
 
+
+namespace klib {
+namespace net {
+
+
+
 typedef enum
 {
     TYPE_BLOCK,
@@ -102,5 +108,13 @@ private:
     char szName[128];
 
 };
+
+
+
+
+}}
+
+
+
 
 #endif

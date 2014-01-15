@@ -44,6 +44,12 @@ void test_des(){
 #include "memory.h"
 
 
+namespace klib {
+namespace encode {
+
+
+
+
 //////////////////////////////////////////////////////////////////////////////
 //define tables and box:
 
@@ -284,6 +290,10 @@ void BitToByte(char *Out, const bool *In, int bits)
 		Out[i>>3] |= In[i]<<(i&7);
     }
 }
+
+
+
+}}
 
 
 #endif

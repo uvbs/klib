@@ -10,6 +10,13 @@
 #define ADDR_MAIN            "222.xx.xxx.xx"
 #define ADDR_ASSIST            "222.xx.xxx.xx"
 
+
+namespace klib {
+namespace net {
+
+
+
+
 CRITICAL_SECTION CNatCheck::m_section;
 
 CNatCheck::CNatCheck()
@@ -432,3 +439,8 @@ void  CNatCheck::GetLocalAddress()
 
     m_local.uIP = inet_addr( chHostIP );
 }
+
+
+
+}}
+

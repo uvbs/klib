@@ -3,6 +3,13 @@
 //type and macro  
 #include <default.h>  
 
+
+namespace klib {
+namespace pattern {
+
+
+
+
 //debug пео╒  
 const   bool    DebugQMem=1;  
 
@@ -374,6 +381,10 @@ class   QMemPool:public TypeSelectT<DebugQMem,QMemDebugImpl<Host>,QMemImpl<Host>
 
 
 }; 
+
+
+}}
+
 
 
 

@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ut", "ut\ut.vcxproj", "{47D029D5-DD10-4BAD-84EE-C0C74B587B67}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ProcessCommunicate", "example\ProcessCommunicate\ProcessCommunicate.vcxproj", "{0F981E0A-2493-4716-9813-23113B43CDC9}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xlib", "xlib\xlib.vcxproj", "{3B89532F-2E02-44F7-B250-42746B077A4E}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mynet", "core\comp\MyNet\mynet.vcxproj", "{094D121B-28D9-4CFB-B18B-FA0BCA71409A}"
@@ -14,6 +12,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kl", "kl\kl.vcxproj", "{8F300589-804D-3838-166A-5FA9A636AB63}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "kl_ex", "kl_ex\kl_ex.vcxproj", "{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "proc_comm.vcxproj", "example\ProcessCommunicate\proc_comm.vcxproj.vcxproj", "{0F981E0A-2493-4716-9813-23113B43CDC9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -25,10 +25,6 @@ Global
 		{47D029D5-DD10-4BAD-84EE-C0C74B587B67}.Debug|Win32.Build.0 = Debug|Win32
 		{47D029D5-DD10-4BAD-84EE-C0C74B587B67}.Release|Win32.ActiveCfg = Release|Win32
 		{47D029D5-DD10-4BAD-84EE-C0C74B587B67}.Release|Win32.Build.0 = Release|Win32
-		{0F981E0A-2493-4716-9813-23113B43CDC9}.Debug|Win32.ActiveCfg = Debug|Win32
-		{0F981E0A-2493-4716-9813-23113B43CDC9}.Debug|Win32.Build.0 = Debug|Win32
-		{0F981E0A-2493-4716-9813-23113B43CDC9}.Release|Win32.ActiveCfg = Release|Win32
-		{0F981E0A-2493-4716-9813-23113B43CDC9}.Release|Win32.Build.0 = Release|Win32
 		{3B89532F-2E02-44F7-B250-42746B077A4E}.Debug|Win32.ActiveCfg = Debug|Win32
 		{3B89532F-2E02-44F7-B250-42746B077A4E}.Debug|Win32.Build.0 = Debug|Win32
 		{3B89532F-2E02-44F7-B250-42746B077A4E}.Release|Win32.ActiveCfg = Release|Win32
@@ -49,6 +45,10 @@ Global
 		{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}.Debug|Win32.Build.0 = Debug|Win32
 		{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}.Release|Win32.ActiveCfg = Release|Win32
 		{68C5D543-E4F7-4DFA-BE3E-4CCBE94B3AEF}.Release|Win32.Build.0 = Release|Win32
+		{0F981E0A-2493-4716-9813-23113B43CDC9}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0F981E0A-2493-4716-9813-23113B43CDC9}.Debug|Win32.Build.0 = Debug|Win32
+		{0F981E0A-2493-4716-9813-23113B43CDC9}.Release|Win32.ActiveCfg = Release|Win32
+		{0F981E0A-2493-4716-9813-23113B43CDC9}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

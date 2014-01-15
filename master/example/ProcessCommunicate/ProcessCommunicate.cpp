@@ -7,11 +7,7 @@
 #include <iostream>
 using namespace std;
 
-#ifdef _DEBUG
-#pragma comment(lib, "../../core/lib/xlib_d.lib")
-#else
-#pragma comment(lib, "../../core/lib/xlib.lib")
-#endif 
+#include "../../core/klib_link.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {

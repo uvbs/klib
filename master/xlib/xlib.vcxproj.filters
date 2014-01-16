@@ -342,9 +342,6 @@
     <ClInclude Include="..\core\algo\wildcmp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\core\mem_tream.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core\logger.cpp">

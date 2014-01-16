@@ -41,7 +41,40 @@ public:
     void set_pos(int64_t pos) { seek(pos, SO_BEGINNING); }
 
     virtual int64_t get_size();
-    virtual void set_size(int64_t size) {}
+
+
+#define OPERATOR_IN(type) \
+    istream &operator<< (const type value) { \
+        this->write(&value, sizeof(value)); \
+        return *this; \
+    }
+
+    OPERATOR_IN(INT8)
+        OPERATOR_IN(INT16)
+        OPERATOR_IN(INT32)
+        OPERATOR_IN(INT64)
+        OPERATOR_IN(UINT8)
+        OPERATOR_IN(UINT16)
+        OPERATOR_IN(UINT32)
+        OPERATOR_IN(UINT64)
+#undef OPERATOR_IN
+
+
+#define OPERATOR_OUT(type) \
+    istream &operator>>(type &value) { \
+        this->read(&value, sizeof(value));\
+        return *this; \
+    }
+        OPERATOR_OUT(INT8)
+        OPERATOR_OUT(INT16)
+        OPERATOR_OUT(INT32)
+        OPERATOR_OUT(INT64)
+        OPERATOR_OUT(UINT8)
+        OPERATOR_OUT(UINT16)
+        OPERATOR_OUT(UINT32)
+        OPERATOR_OUT(UINT64)
+#undef OPERATOR_OUT
+
 };
 
 /**

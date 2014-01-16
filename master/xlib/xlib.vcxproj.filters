@@ -48,9 +48,6 @@
     <ClInclude Include="..\core\core\mem_string.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\core\MemStream.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\core\MiniDumper.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -343,6 +340,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\wildcmp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\mem_tream.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

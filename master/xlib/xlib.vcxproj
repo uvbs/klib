@@ -111,10 +111,10 @@
     <ClInclude Include="..\core\core\kdetect_leakk.h" />
     <ClInclude Include="..\core\core\lock_stl.h" />
     <ClInclude Include="..\core\core\logger.h" />
-    <ClInclude Include="..\core\core\MemStream.h" />
     <ClInclude Include="..\core\core\mem_buffer.h" />
     <ClInclude Include="..\core\core\mem_list.h" />
     <ClInclude Include="..\core\core\mem_string.h" />
+    <ClInclude Include="..\core\core\mem_tream.h" />
     <ClInclude Include="..\core\core\MiniDumper.h" />
     <ClInclude Include="..\core\core\perf_counter.h" />
     <ClInclude Include="..\core\core\PidAndPort.h" />

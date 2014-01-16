@@ -40,7 +40,13 @@ protected:
 class file_stream : public istream
 {
 public:
+    virtual int read(void *buffer, int count) ;
+    virtual int write(const void *buffer, int count) ;
+    virtual int peek(void *buffer, int count) ;
 
+    virtual int64_t get_size() ;
+
+protected:
 
 };
 

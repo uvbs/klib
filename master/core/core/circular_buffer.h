@@ -3,6 +3,10 @@
 
 // #include <boost/cstdint.hpp>
 
+namespace klib {
+namespace core {
+
+
 
 /*
  Ñ­»·»º³åÇø 
@@ -25,6 +29,12 @@ public:
         write_pos_ = buffer_;
         read_pos_  = buffer_;
         end_pos_ = buffer_ + t_max_buff_size;
+    }
+    ~circular_buffer()
+    {
+        if (0 != buffer_) {
+            delete [] buffer_;
+        }
     }
 
     bool push(const buffer_type buff, size_t buff_len) 
@@ -332,6 +342,11 @@ protected:
     size_t size_;
 
 };
+
+
+
+}}
+
 
 
 #endif //  _klib_circular_buffer_h_

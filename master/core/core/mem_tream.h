@@ -8,11 +8,11 @@ namespace klib {
 namespace mem {
 
 
-class CMemStream
+class mem_stream
 {
 public:
-  CMemStream(void) :m_datalen(0) {}
-  ~CMemStream(void) {}
+  mem_stream(void) :m_datalen(0) {}
+  ~mem_stream(void) {}
 
 public:
   size_t GetLength() { return m_datalen; }
@@ -27,7 +27,7 @@ public:
 
 
 #define OPERATOR_IN(type) \
-    CMemStream &operator<< (const type value) { \
+    mem_stream &operator<< (const type value) { \
     * ((type*)m_pointer + m_datalen) = value; \
     m_datalen += sizeof(type); \
     return *this; \
@@ -45,7 +45,7 @@ public:
 
 
 #define OPERATOR_OUT(type) \
-    CMemStream &operator>>(type &value) { \
+    mem_stream &operator>>(type &value) { \
     value = *((const type*)m_pointer + m_datalen); \
     m_datalen += sizeof(type);\
     return *this; \
@@ -65,14 +65,14 @@ protected:
   size_t  m_datalen;
 };
 
-class CWritestream
+class write_stream
 {
 public:
-  CWritestream(void* value):m_pointer(value){}
-  ~CWritestream(void){};
+  write_stream(void* value):m_pointer(value){}
+  ~write_stream(void){};
 
 #define OPERATOR_IN(type) \
-  CWritestream &operator<< (const type value) { \
+  write_stream &operator<< (const type value) { \
   *(type*)m_pointer = value; \
   m_pointer = (UINT8*)m_pointer + sizeof(type); \
   return *this; \
@@ -94,14 +94,14 @@ private:
   void *m_pointer;
 };
 
-class CReadstream
+class read_stream
 {
 public:
-  CReadstream(const void* value):m_pointer(value){}
-  ~CReadstream(void){}
+  read_stream(const void* value):m_pointer(value){}
+  ~read_stream(void){}
 
 #define OPERATOR_OUT(type) \
-  CReadstream &operator>>(type &value) { \
+  read_stream &operator>>(type &value) { \
   value = *(const type*)m_pointer; \
   m_pointer = (const UINT8*)m_pointer + sizeof(type);\
   return *this; \

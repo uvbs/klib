@@ -14,12 +14,12 @@ public:
   ~INetConnectionMgrImp(void);
 
 public:
-  virtual bool AddConnection(INetConnection* pConn) ;
-  virtual bool RemoveConnection(INetConnection* pConn) ;
-  virtual bool IsExitsConnection(INetConnection* pConn) ;
+  virtual bool add_conn(INetConnection* pConn) ;
+  virtual bool rmv_conn(INetConnection* pConn) ;
+  virtual bool is_exist_conn(INetConnection* pConn) ;
 
-  virtual int GetConnectionCount() ;
-  virtual bool ForeachConnection(NetConnMgrCallBackFun* callback, void* param) ;
+  virtual int get_conn_count() ;
+  virtual bool for_each_conn(conn_callback* callback, void* param) ;
 
 protected:
   int ConnHashFun(void* param, int len);
@@ -27,6 +27,6 @@ protected:
 protected:
   typedef std::map<INetConnection*, INetConnection*> ConnectionListType;
   ConnectionListType m_ConnList[NETCONNECTION_ARRAY_LENGTH];
-  auto_cs      m_cs[NETCONNECTION_ARRAY_LENGTH];
+  mutex      mutexs_[NETCONNECTION_ARRAY_LENGTH];
 
 };

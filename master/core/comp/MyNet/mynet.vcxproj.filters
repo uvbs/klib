@@ -75,6 +75,9 @@
     <ClInclude Include="NetPacket.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="stream.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -129,6 +132,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="NetSocket.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="stream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

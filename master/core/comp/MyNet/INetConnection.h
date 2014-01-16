@@ -11,6 +11,8 @@ using namespace klib::kthread;
 
 #define  MAX_CLIENT_BUFF_LEN 5*1024
 
+//------------------------------------------------------------------------
+// 操作类型
 enum emOperationType
 {
   OP_NONE,
@@ -65,8 +67,8 @@ public:
   inline BOOL GetIsClosing() { return m_bClosing; }
   inline void SetIsClosing(BOOL bClose = TRUE) { m_bClosing = bClose; }
 
-  inline void SetKey(DWORD dwKey) { m_dwKey = dwKey; }
-  inline DWORD GetKey() { return m_dwKey; }
+  inline void SetKey(void* key) { bind_key_ = key; }
+  inline void* GetKey() { return bind_key_; }
 
   inline DWORD GetBytesWrite() { return m_dwBytesWrite; }
   inline DWORD AddBytesWrite(DWORD dwBytes) { return (m_dwBytesWrite+=dwBytes); }
@@ -78,20 +80,20 @@ public:
 
 protected:
   NetSocket m_socket;		//套接字
-  DWORD     m_tLastActive;		//最后活跃时间
+  DWORD     m_tLastActive;	//最后活跃时间
 
-  USHORT m_PeerPort;		//对端端口,主机序
-  DWORD  m_PeerAddr;		//对端地址，网络字节序
+  USHORT    m_PeerPort;		//对端端口,主机序
+  DWORD     m_PeerAddr;		//对端地址，网络字节序
 
-  USHORT m_LocalPort;     //本地端口，做监听用的
-  USHORT  m_PostReadCount;       //投递接收的数量
-  USHORT  m_PostWriteCount;       //投递发送的数量
-  BOOL   m_bClosing;            //指示是否是在关闭
-  DWORD  m_dwKey;           //绑定的键值
-  DWORD  m_dwBytesWrite;     //输出了多少字节数
-  DWORD  m_dwBytesRead;     //接收到了多少字节数
-  mutex  mutex_;        //临界区对象，用于互斥数据的访问
-  char   m_strAddress[50];		//字符串地址
-  int datalen;					//缓冲区中保存数据的长度
-  char  mbuff[MAX_CLIENT_BUFF_LEN];		//该连接的数据缓冲区
+  USHORT    m_LocalPort;           //本地端口，做监听用的
+  USHORT    m_PostReadCount;       //投递接收的数量
+  USHORT    m_PostWriteCount;       //投递发送的数量
+  BOOL      m_bClosing;            //指示是否是在关闭
+  void*     bind_key_;               //绑定的键值
+  DWORD     m_dwBytesWrite;        //输出了多少字节数
+  DWORD     m_dwBytesRead;     //接收到了多少字节数
+  mutex     mutex_;        //临界区对象，用于互斥数据的访问
+  char      m_strAddress[50];		//字符串地址
+  int       datalen;					//缓冲区中保存数据的长度
+  char      mbuff[MAX_CLIENT_BUFF_LEN];		//该连接的数据缓冲区
 };

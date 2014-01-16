@@ -6,10 +6,9 @@
 #include <string>
 #include <windows.h>
 
-namespace klib{
-
-namespace mem
-{
+namespace klib {
+namespace mem {
+namespace check {
 
  // 同步对象
 class auto_cs
@@ -201,7 +200,7 @@ static std::string summary();   // 汇总，包括总内存，及各类的使用内存
 };
 
 
-}}
+}}}
 
 
 // 控制是否启用内存统计

@@ -85,15 +85,15 @@ protected:
   USHORT    m_PeerPort;		//对端端口,主机序
   DWORD     m_PeerAddr;		//对端地址，网络字节序
 
-  USHORT    m_LocalPort;           //本地端口，做监听用的
-  USHORT    m_PostReadCount;       //投递接收的数量
+  USHORT    m_LocalPort;            //本地端口，做监听用的
+  USHORT    m_PostReadCount;        //投递接收的数量
   USHORT    m_PostWriteCount;       //投递发送的数量
-  BOOL      m_bClosing;            //指示是否是在关闭
+  BOOL      m_bClosing;             //指示是否是在关闭
   void*     bind_key_;               //绑定的键值
-  DWORD     m_dwBytesWrite;        //输出了多少字节数
-  DWORD     m_dwBytesRead;     //接收到了多少字节数
-  mutex     mutex_;        //临界区对象，用于互斥数据的访问
+  DWORD     m_dwBytesWrite;         //输出了多少字节数
+  DWORD     m_dwBytesRead;          //接收到了多少字节数
+  mutex     mutex_;                 //临界区对象，用于互斥数据的访问
   char      m_strAddress[50];		//字符串地址
-  int       datalen;					//缓冲区中保存数据的长度
+  int       datalen;					    //缓冲区中保存数据的长度
   char      mbuff[MAX_CLIENT_BUFF_LEN];		//该连接的数据缓冲区
 };

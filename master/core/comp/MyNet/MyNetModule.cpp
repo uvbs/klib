@@ -3,6 +3,7 @@
 
 #include "INetClientImp.h"
 
+
 CMyNetModule::CMyNetModule(void)
 {
 }

@@ -12,11 +12,11 @@ INetConnectionMgrImp::~INetConnectionMgrImp(void)
 {
 }
 
-bool INetConnectionMgrImp::AddConnection(INetConnection* pConn) 
+bool INetConnectionMgrImp::add_conn(INetConnection* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {
-        auto_lock helper(m_cs[ipos]);
+        guard helper(mutexs_[ipos]);
         ConnectionListType::const_iterator itr;
         itr = m_ConnList[ipos].find(pConn);
         if (itr != m_ConnList[ipos].end()) {
@@ -28,11 +28,11 @@ bool INetConnectionMgrImp::AddConnection(INetConnection* pConn)
     return true;
 }
 
-bool INetConnectionMgrImp::RemoveConnection(INetConnection* pConn) 
+bool INetConnectionMgrImp::rmv_conn(INetConnection* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {
-        auto_lock helper(m_cs[ipos]);
+        guard helper(mutexs_[ipos]);
         ConnectionListType::const_iterator itr;
         itr = m_ConnList[ipos].find(pConn);
         if (itr != m_ConnList[ipos].end()) {
@@ -44,11 +44,11 @@ bool INetConnectionMgrImp::RemoveConnection(INetConnection* pConn)
     return false;
 }
 
-bool INetConnectionMgrImp::IsExitsConnection(INetConnection* pConn) 
+bool INetConnectionMgrImp::is_exist_conn(INetConnection* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {
-        auto_lock helper(m_cs[ipos]);
+        guard helper(mutexs_[ipos]);
         ConnectionListType::const_iterator itr;
         itr = m_ConnList[ipos].find(pConn);
         if (itr != m_ConnList[ipos].end()) {
@@ -59,7 +59,7 @@ bool INetConnectionMgrImp::IsExitsConnection(INetConnection* pConn)
     return false;
 }
 
-int INetConnectionMgrImp::GetConnectionCount()
+int INetConnectionMgrImp::get_conn_count()
 {
     int iCount = 0;
 
@@ -70,13 +70,13 @@ int INetConnectionMgrImp::GetConnectionCount()
     return iCount;
 }
 
-bool INetConnectionMgrImp::ForeachConnection(NetConnMgrCallBackFun* callback, void* param) 
+bool INetConnectionMgrImp::for_each_conn(conn_callback* callback, void* param) 
 {
     ConnectionListType::const_iterator itr;
 
     for (int i=0; i<NETCONNECTION_ARRAY_LENGTH; ++i) 
     {
-        auto_lock helper(m_cs[i]);
+        guard helper(mutexs_[i]);
 
         itr = m_ConnList[i].begin();
         for (; itr != m_ConnList[i].end(); ++itr)

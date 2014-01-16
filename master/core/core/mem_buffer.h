@@ -2,6 +2,7 @@
 
 #include "..\algo\bm_wrapper.h"
 #include <vector>
+#include <list>
 
 namespace klib {
 namespace mem{

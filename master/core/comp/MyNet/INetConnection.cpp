@@ -10,7 +10,7 @@ INetConnection::INetConnection(void)
   m_tLastActive = 0;
   m_PeerPort = 0;
   m_LocalPort = 0;
-  m_dwKey = 0;
+  bind_key_ = 0;
   m_dwBytesRead = 0;
   m_dwBytesWrite = 0;
   memset(m_strAddress, 0, sizeof(m_strAddress));
@@ -25,7 +25,7 @@ INetConnection::~INetConnection(void)
   m_tLastActive = 0;
   m_PeerPort = 0;
   m_LocalPort = 0;
-  m_dwKey = 0;
+  bind_key_ = 0;
   m_dwBytesRead = 0;
   m_dwBytesWrite = 0;
   memset(m_strAddress, 0, sizeof(m_strAddress));

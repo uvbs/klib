@@ -2,8 +2,8 @@
 #include "mem_check.h"
 
 namespace klib{
-namespace mem
-{
+namespace mem {
+namespace check {
 
 bool g_enable_mem_stats = true;
 
@@ -347,4 +347,4 @@ std::string mem_imp::summary()
 
 
 
-}}
+}}}

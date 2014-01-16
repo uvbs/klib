@@ -123,7 +123,7 @@ bool INetTcpClientImp::OnConnect(INetConnection* pConn, bool bConnected/* = true
 
 #ifdef _DEBUG
     if (m_pINetConnMgr) {
-        if (m_pINetConnMgr->IsExitsConnection(pConn)) {
+        if (m_pINetConnMgr->is_exist_conn(pConn)) {
             _ASSERT(FALSE && "连接添加错误，设计错误");
         }
     }
@@ -131,7 +131,7 @@ bool INetTcpClientImp::OnConnect(INetConnection* pConn, bool bConnected/* = true
 
     //将连接添加到连接管理器里
     if (m_pINetConnMgr) {
-        m_pINetConnMgr->AddConnection(pConn);
+        m_pINetConnMgr->add_conn(pConn);
     }
 
     //通知连接事件
@@ -150,7 +150,7 @@ bool INetTcpClientImp::OnDisConnect(INetConnection* pConn)
 
 #ifdef _DEBUG
     if (m_pINetConnMgr) {
-        if (!m_pINetConnMgr->IsExitsConnection(pConn)) {
+        if (!m_pINetConnMgr->is_exist_conn(pConn)) {
             _ASSERT(FALSE && "连接关闭错误，设计错误");
             // 这里可能是由于刚才连接上还没有添加到mgr里面，进行投递读请求就会出错;
             return true;
@@ -166,7 +166,7 @@ bool INetTcpClientImp::OnDisConnect(INetConnection* pConn)
     }
 
     if (m_pINetConnMgr) {
-        m_pINetConnMgr->RemoveConnection(pConn);
+        m_pINetConnMgr->rmv_conn(pConn);
     }
     if (m_pNetPacketMgr) {
         m_pNetPacketMgr->FreeConnPacket(pConn);
@@ -255,11 +255,11 @@ bool INetTcpClientImp::OnAccept(INetConnection* pListen, INetConnection* pNewCon
 {
     if (m_pINetConnMgr && bSuccess) {
 #ifdef _DEBUG
-        if (m_pINetConnMgr->IsExitsConnection(pNewConn)) {
+        if (m_pINetConnMgr->is_exist_conn(pNewConn)) {
             _ASSERT(FALSE && "重复添加连接，这里设计出错!");
         }
 #endif
-        m_pINetConnMgr->AddConnection(pNewConn);
+        m_pINetConnMgr->add_conn(pNewConn);
     }
 
     if (bSuccess) {

@@ -3,7 +3,6 @@
 #include "MySocket.h"
 
 class INetConnection;
-class CNetStream;
 class INetEventHandler;
 class INetNetwork
 {

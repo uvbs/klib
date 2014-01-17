@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "INetworkImp.h"
+#include "inetwork_imp.h"
 #include <process.h>
 
 #include "inet_event_handler.h"

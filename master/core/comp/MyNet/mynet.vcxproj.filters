@@ -30,9 +30,6 @@
     <ClInclude Include="INetwork.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="INetworkImp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="MyNet.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -76,6 +73,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="tcp_net_facade.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inetwork_imp.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,7 +3,7 @@
 
 #include "icombiner.h"
 #include "net_conn.h"
-#include "INetworkImp.h"
+#include "inetwork_imp.h"
 #include "icombiner_imp.h"
 #include "inetpacket_mgr_imp.h"
 #include "dispatcher_handler.h"

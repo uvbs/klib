@@ -91,7 +91,7 @@
     <ClInclude Include="inetpacket_mgr.h" />
     <ClInclude Include="inetpacket_mgr_imp.h" />
     <ClInclude Include="INetwork.h" />
-    <ClInclude Include="INetworkImp.h" />
+    <ClInclude Include="inetwork_imp.h" />
     <ClInclude Include="MyNet.h" />
     <ClInclude Include="MyNetModule.h" />
     <ClInclude Include="net_socket.h" />

@@ -18,5 +18,5 @@ struct IMyNet
 {
     /// @brief
     /// 创建一个TCP客户操作接口
-    virtual tcp_net_facade* CreateTcpClient() = 0;
+    virtual tcp_net_facade* create_tcp_facade() = 0;
 };

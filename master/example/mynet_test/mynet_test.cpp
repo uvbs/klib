@@ -47,7 +47,6 @@ public:
             "\r\n\r\n";
 
         net_facade_->get_network()->post_write(pConn, str.c_str(), str.size());
-        net_facade_->get_network()->post_read(pConn);
         
         return true;
     }
@@ -68,7 +67,7 @@ int _tmain(int argc, _TCHAR* argv[])
     pframework->start();
     pframework->find_next_interface(IID_IMyNet, (void**)&pNet);
 
-    tcp_net_facade* pClient = pNet->CreateTcpClient();
+    tcp_net_facade* pClient = pNet->create_tcp_facade();
 
     MyHandler thehandler(pClient);
     pClient->init_client();

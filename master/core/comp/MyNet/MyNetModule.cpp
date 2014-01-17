@@ -12,7 +12,7 @@ CMyNetModule::~CMyNetModule(void)
 {
 }
 
-tcp_net_facade* CMyNetModule::CreateTcpClient()
+tcp_net_facade* CMyNetModule::create_tcp_facade()
 {
     return new tcp_net_facade_imp;
 }

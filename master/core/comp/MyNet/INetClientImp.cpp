@@ -182,10 +182,8 @@ bool INetTcpClientImp::OnRead(INetConnection* pConn, const char* buff, size_t le
     int iPacketLen = 0;
     bool bIsCombined = false;
 
-    pConn->AddStream(buff, len);
-    bIsCombined = m_pICombiner->IsIntactPacket(pConn->GetBuff(),
-        pConn->GetDataLen(),
-        iPacketLen);
+    pConn->write_recv_stream(buff, len);
+    bIsCombined = m_pICombiner->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
 
     while (bIsCombined) 
     {
@@ -202,7 +200,7 @@ bool INetTcpClientImp::OnRead(INetConnection* pConn, const char* buff, size_t le
         //TRACE(TEXT("封包生成..."));
         pPacket->pConn = pConn;
         pPacket->datalen = iPacketLen;
-        pConn->GetStream(pPacket->buff, iPacketLen);
+        pConn->read_recv_stream(pPacket->buff, iPacketLen);
 
         if (m_pIDispatcher) 
         {
@@ -214,21 +212,14 @@ bool INetTcpClientImp::OnRead(INetConnection* pConn, const char* buff, size_t le
             m_pNetPacketMgr->AddPacket(pPacket);
         }
 
-        if (pConn->GetDataLen() <= 0)
+        if (pConn->get_recv_length() <= 0)
         {
             break;
         }
 
-        bIsCombined = m_pICombiner->IsIntactPacket(pConn->GetBuff(), 
-            pConn->GetDataLen(), 
-            iPacketLen);
+        bIsCombined = m_pICombiner->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
     }
-
-#ifdef _DEBUG
-    pConn->GetBuff()[pConn->GetDataLen()] = '\0';
-    //MyPrtLog("剩余数据>>长度 = %d \r\n", pConn->GetDataLen());
-#endif  
-
+    
     INetEventHandlerListType::const_iterator itr;
     itr  = m_INetEventList.begin();
     for (; itr != m_INetEventList.end(); ++itr) {

@@ -5,5 +5,5 @@
 class ICombinerImp : public ICombiner
 {
 public:
-  virtual bool IsIntactPacket(const char* buff, int len, int& packetlen) ;
+  virtual bool IsIntactPacket(const net_stream_type& stream, int& packetlen) ;
 };

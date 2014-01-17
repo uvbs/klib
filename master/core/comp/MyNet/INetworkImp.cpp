@@ -134,12 +134,12 @@ INetConnection* INetNetworkImp::PostAccept(INetConnection* pListenConn)
 	  (char *)& bSetUpdate,
 	  sizeof(bSetUpdate) );
 
-  pNewConn->GetSocket() = sockAccept;
+  pNewConn->get_socket() = sockAccept;
   lpOverlapped->operate_type = OP_ACCEPT;
   lpOverlapped->pvoid = (void*) pNewConn;  // 这里比较特殊，和其它情况不同
   lpOverlapped->hEvent = NULL;
 
-  BOOL brt = m_lpfnAcceptEx(pListenConn->GetSocket(),
+  BOOL brt = m_lpfnAcceptEx(pListenConn->get_socket(),
                             sockAccept,
                             lpOverlapped->buff, 
                             0,//lpToverlapped->dwBufSize,
@@ -172,13 +172,13 @@ bool INetNetworkImp::PostConnection(INetConnection* pConn)
   _ASSERT(pConn);
 
   UINT32  uPeerAddr = 0;
-  klib::net::addr_resolver ipresover(pConn->GetPeerAddress());
+  klib::net::addr_resolver ipresover(pConn->get_peer_addr());
   if (ipresover.size() < 0)  {
 	  return false;
   }
   uPeerAddr = ipresover.at(0);
 
-  SOCKET& sock = pConn->GetSocket();
+  SOCKET& sock = pConn->get_socket();
   sock = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
   if (sock == INVALID_SOCKET) {
       _ASSERT(FALSE);  // DWORD dwErr = WSAGetLastError();
@@ -231,7 +231,7 @@ bool INetNetworkImp::PostConnection(INetConnection* pConn)
   ZeroMemory(&addrPeer, sizeof(sockaddr_in));
   addrPeer.sin_family = AF_INET;
   addrPeer.sin_addr.s_addr = uPeerAddr;
-  addrPeer.sin_port = htons( pConn->GetPeerPort() );
+  addrPeer.sin_port = htons( pConn->get_peer_port() );
 
   int nLen = sizeof(addrPeer);
   PVOID lpSendBuffer = NULL;
@@ -279,7 +279,7 @@ bool INetNetworkImp::PostRead(INetConnection* pConn)
   pMyoverlapped->wsaBuf.buf = pMyoverlapped->buff;
   pMyoverlapped->wsaBuf.len = sizeof(pMyoverlapped->buff);
  
-  int nResult = WSARecv (pConn->GetSocket(),  // 已经和IOCP关联的socket
+  int nResult = WSARecv (pConn->get_socket(),  // 已经和IOCP关联的socket
                           &pMyoverlapped->wsaBuf,			// 接收数据的WSABUF结构
                           1,
                           &dwBytesTransfered, // 如立刻完成，则返回接收得到的字节数
@@ -318,7 +318,7 @@ bool INetNetworkImp::PostWrite(INetConnection* pConn, const char* buff, size_t l
   pmyoverlapped->wsaBuf.len = len;
   
   int nResult =  WSASend(  //开始发送
-                          pConn->GetSocket(),  // 已连接的socket
+                          pConn->get_socket(),  // 已连接的socket
                           &pmyoverlapped->wsaBuf, // 发送buf和数据长度
                           1,
                           &dwWriteLen,// 如立刻完成，则返回发送长度
@@ -357,16 +357,16 @@ INetConnection* INetNetworkImp::CreateListenConn(USHORT uLocalPort)
     return NULL;
   }
 
-  SOCKET& sockListen = pListenConn->GetSocket();
+  SOCKET& sockListen = pListenConn->get_socket();
 
-  pListenConn->SetLocalPort(uLocalPort);
-  pListenConn->DisConnect();
+  pListenConn->set_local_port(uLocalPort);
+  pListenConn->dis_connect();
   sockListen = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
 
   sockaddr_in local_addr;
   ZeroMemory(&local_addr, sizeof(sockaddr_in));
   local_addr.sin_family = AF_INET;
-  local_addr.sin_port = htons(pListenConn->GetLocalPort());
+  local_addr.sin_port = htons(pListenConn->get_local_port());
   int irt = ::bind(sockListen, (sockaddr*)(&local_addr), sizeof(sockaddr_in));
   listen(sockListen, 5);
 
@@ -509,14 +509,14 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
           INetConnection* pAcceptConn = (INetConnection*) lpOverlapped->pvoid;    //接收的连接
 
 		  //设置套接字更新上下文（以便可以通过getpeername获取到ip地址）
-		  setsockopt(pAcceptConn->GetSocket(), 
+		  setsockopt(pAcceptConn->get_socket(), 
 					SOL_SOCKET, 
 					SO_UPDATE_ACCEPT_CONTEXT,  
-					( char* )&( pListConn->GetSocket() ), 
-					sizeof( pListConn->GetSocket()) );
+					( char* )&( pListConn->get_socket() ), 
+					sizeof( pListConn->get_socket()) );
 
 		  //获取对端ip的信息
-		  pAcceptConn->InitPeerInfo();
+		  pAcceptConn->init_peer_info();
 
 		  //再次投递新的接收连接请求
           pINetwork->PostAccept(pListConn);
@@ -563,7 +563,7 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
       }
 
       if (lpOverlapped->operate_type == OP_CONNECT) {
-        pConn->DisConnect();
+        pConn->dis_connect();
         pINetEventHandler->OnConnect(pConn, false);
       }
       else if (lpOverlapped->operate_type == OP_ACCEPT) {
@@ -577,7 +577,7 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
       }
       else {
 		//处理其它操作（如需要释放连接）
-        pConn->DisConnect();
+        pConn->dis_connect();
         pINetwork->CheckAndDisconnect(pConn);
 		pINetwork->ReleaseConnection(pConn);
       }
@@ -652,8 +652,8 @@ bool INetNetworkImp::ReleaseMyOverlapped(Klib_OverLapped* pMyoverlapped)
 void INetNetworkImp::CheckAndDisconnect(INetConnection* pConn)
 {
   pConn->lock();
-  if (!pConn->GetIsClosing() && pConn->GetPostReadCount() == 0 && pConn->GetPostReadCount() == 0) {
-    pConn->SetIsClosing(TRUE);
+  if (!pConn->get_is_closing() && pConn->GetPostReadCount() == 0 && pConn->GetPostReadCount() == 0) {
+    pConn->set_is_closing(TRUE);
     pConn->unlock();
 
     m_INetEventHandler->OnDisConnect(pConn);

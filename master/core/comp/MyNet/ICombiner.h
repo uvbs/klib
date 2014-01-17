@@ -2,6 +2,8 @@
 
 /*  协议分包合并器(用在tcp中)  */
 
+#include "INetConnection.h"
+
 class ICombiner
 {
 public:
@@ -10,5 +12,5 @@ public:
     bufflen: 缓存区buff中有效数据长度
     packetlen: 组成封包后的长度,这个可能小于bufflen, 也可能大于bufflen
   */
-  virtual bool IsIntactPacket(const char* buff, int bufflen, int& packetlen) = 0;
+  virtual bool IsIntactPacket(const net_stream_type& stream, int& packetlen) = 0;
 };

@@ -30,7 +30,7 @@ public:
   /// @post  创建套接字接口，并投递一个AcceptEx请求，当系统处理完毕时会收到一个完成请求
   ///
   /// @usage   INetConnection* pListenConn = pClient->GetNetwork()->CreateNewConnection();
-  /// pListenConn->SetLocalPort(7000);
+  /// pListenConn->set_local_port(7000);
   /// pClient->GetNetwork()->InitListenConnection(pListenConn);
   /// pClient->GetNetwork()->PostAccept(pListenConn);
   ///
@@ -47,8 +47,8 @@ public:
   /// @post  投递连接请求到完成端口上
   ///
   /// @usage   INetConnection* pMyConn = pClient->GetNetwork()->CreateNewConnection();
-  /// pMyConn->SetPeerAddress("127.0.0.1");
-  /// pMyConn->SetPeerPort(7000);
+  /// pMyConn->set_peer_addr("127.0.0.1");
+  /// pMyConn->set_peer_port(7000);
   /// pClient->GetNetwork()->PostConnection(pMyConn);
   /// 
   virtual bool PostConnection(INetConnection* pConn) = 0;

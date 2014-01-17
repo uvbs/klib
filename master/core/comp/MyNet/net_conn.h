@@ -42,8 +42,8 @@ public:
     // 获取相关信息
     inline net_socket& get_socket() { return m_socket; }
     bool init_peer_info();                                      // 初始对端信息，通过getpeername来获取
-    void set_peer_addr(const char* straddr);                    // 设置ip地址
-    char* get_peer_addr() ;
+    void set_peer_addr_st(const char* straddr) {strncpy(peer_addr_str_, straddr, sizeof(peer_addr_str_) - 1);}                  // 设置ip地址
+    char* get_peer_addr_str() ;
 
     inline void   set_peer_port(USHORT port) { peer_port_ = port; }
     inline USHORT get_peer_port() { return peer_port_; }
@@ -101,7 +101,8 @@ protected:
     DWORD     last_active_tm_;	            // 最后活跃时间
 
     USHORT    peer_port_;		            // 对端端口,主机序
-    DWORD     peer_addr_;		            // 对端地址，网络字节序
+    DWORD     peer_addr_dw_;		        // 对端地址，网络字节序
+    char      peer_addr_str_[50];		    // 字符串地址
 
     USHORT    local_port_;                  // 本地端口，做监听用的
     USHORT    post_read_count_;             // 投递接收的数量
@@ -111,7 +112,6 @@ protected:
 
     size_t    writed_bytes_;                // 输出了多少字节数
     size_t    readed_bytes_;                // 接收到了多少字节数
-    char      m_strAddress[50];		        // 字符串地址
 
     mutex     mutex_;                       // 临界区对象，用于互斥数据的访问
 

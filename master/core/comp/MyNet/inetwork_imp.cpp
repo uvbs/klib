@@ -170,7 +170,7 @@ bool inetwork_imp::post_connection(net_conn* pConn)
     _ASSERT(pConn);
 
     UINT32  uPeerAddr = 0;
-    klib::net::addr_resolver ipresover(pConn->get_peer_addr());
+    klib::net::addr_resolver ipresover(pConn->get_peer_addr_str());
     if (ipresover.size() < 0)  {
         return false;
     }
@@ -390,12 +390,14 @@ net_conn* inetwork_imp::create_conn()
 {
     net_conn* pConn = NULL;
     auto_lock helper(free_net_conn_mutex_);
-    if (!free_net_conn_list_.empty()) {
+    if (!free_net_conn_list_.empty()) 
+    {
         pConn = free_net_conn_list_.front();
         new (pConn) net_conn;   //placement new
         free_net_conn_list_.pop_front();
     }
-    else {
+    else 
+    {
         pConn = new net_conn;
     }
     return pConn;
@@ -410,17 +412,21 @@ bool inetwork_imp::release_conn(net_conn* pConn)
 
     INetConnListType::const_iterator itr;
     itr = free_net_conn_list_.begin();
-    for (; itr != free_net_conn_list_.end(); ++itr) {
-        if ((*itr) == pConn) {
+    for (; itr != free_net_conn_list_.end(); ++itr) 
+    {
+        if ((*itr) == pConn) 
+        {
             _ASSERT(FALSE && "设计有问题，请检查设计!");
         }
     }
 #endif
 
-    if (free_net_conn_list_.size() > 1000) {
+    if (free_net_conn_list_.size() > 1000) 
+    {
         delete pConn;
     }
-    else {
+    else 
+    {
         pConn->~net_conn();
         free_net_conn_list_.push_back(pConn);
     }
@@ -433,12 +439,14 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
     //使用完成端口模型
     inetwork_imp* pINetwork = (inetwork_imp*)param;
     inet_event_handler* pINetEventHandler = pINetwork->net_event_handler_;
+
     _ASSERT(pINetwork);
     _ASSERT(pINetwork->hiocp_);
     _ASSERT(pINetEventHandler);
+
     net_overLapped *lpOverlapped = NULL;
-    DWORD		dwByteTransfered = 0;
-    net_conn *pConn = NULL;
+    DWORD		    dwByteTransfered = 0;
+    net_conn*       pConn = NULL;
 
     while (true)
     {
@@ -453,13 +461,15 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
             INFINITE);				// 一直等待，直到有结果
 
         _ASSERT(lpOverlapped);
-        if (lpOverlapped == NULL)  {
+        if (lpOverlapped == NULL)  
+        {
             //TRACE(TEXT("退出...."));
             return 0;
         }
 
         if (bResult) {
-            if(dwByteTransfered==-1 && lpOverlapped==NULL) {
+            if(dwByteTransfered == -1 && lpOverlapped == NULL) 
+            {
                 //TRACE(TEXT("退出线程并结束..."));
                 return 1L;
             }
@@ -469,12 +479,13 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
             case OP_READ:
                 {
                     pConn->dec_post_read_count();
-                    if (dwByteTransfered == 0) {
-
+                    if (dwByteTransfered == 0) 
+                    {
                         //_ASSERT(FALSE && "这里出现是对方直接关闭了连接");
                         pINetwork->check_and_disconnect(pConn);
                     }
-                    else {
+                    else 
+                    {
                         //统计该套接字的读字节数
                         pConn->add_readed_bytes(dwByteTransfered);
 
@@ -498,7 +509,7 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
                     pConn->add_rwited_bytes(dwByteTransfered);
 
                     //通知上层处理写事件
-                    pINetEventHandler->on_write(pConn);
+                    pINetEventHandler->on_write(pConn, dwByteTransfered);
 
                     //更新上次活跃的时间戳
                     pConn->upsate_last_active_tm();

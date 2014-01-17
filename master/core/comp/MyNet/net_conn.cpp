@@ -12,7 +12,7 @@ net_conn::net_conn(void)
     bind_key_ = 0;
     readed_bytes_ = 0;
     writed_bytes_ = 0;
-    memset(m_strAddress, 0, sizeof(m_strAddress));
+    memset(peer_addr_str_, 0, sizeof(peer_addr_str_));
 }
 
 net_conn::~net_conn(void)
@@ -26,7 +26,7 @@ net_conn::~net_conn(void)
     bind_key_ = 0;
     readed_bytes_ = 0;
     writed_bytes_ = 0;
-    memset(m_strAddress, 0, sizeof(m_strAddress));
+    memset(peer_addr_str_, 0, sizeof(peer_addr_str_));
 }
 
 bool net_conn::init_peer_info()
@@ -38,24 +38,24 @@ bool net_conn::init_peer_info()
     if (SOCKET_ERROR != getpeername(get_socket(), (struct sockaddr*) & sockaddr, &len)) 
     {
         set_peer_port(ntohs(sockaddr.sin_port));
-        peer_addr_ = sockaddr.sin_addr.s_addr;
+        peer_addr_dw_ = sockaddr.sin_addr.s_addr;
         return true;
     }
 
     return false;
 }
 
-void net_conn::set_peer_addr(const char* straddr)
-{
-    strncpy(m_strAddress, straddr, sizeof(m_strAddress) - 1);
-}
+// void net_conn::set_peer_addr_st(const char* straddr)
+// {
+//     strncpy(peer_addr_str_, straddr, sizeof(peer_addr_str_) - 1);
+// }
 
-char* net_conn::get_peer_addr() 
+char* net_conn::get_peer_addr_str() 
 {
-    if (m_strAddress[0] == '\0') {
-        set_peer_addr(inet_ntoa(*(in_addr*) &peer_addr_));
+    if (peer_addr_str_[0] == '\0') {
+        set_peer_addr_st(inet_ntoa(*(in_addr*) &peer_addr_str_));
     }
-    return m_strAddress;
+    return peer_addr_str_;
 }
 
 void net_conn::dis_connect() 

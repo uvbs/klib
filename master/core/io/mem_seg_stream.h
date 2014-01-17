@@ -102,6 +102,13 @@ public:
     mem_seg_stream() : buff_len_(0),  r_seg_bf(0), w_seg_bf(0)
     {
     }
+    ~mem_seg_stream()
+    {
+        for (auto itr=buff_list_.begin(); itr != buff_list_.end(); ++itr)
+        {
+            free_buffer(*itr);
+        }
+    }
     
     int write(const buff_type bf, size_t len)
     {
@@ -236,8 +243,6 @@ protected:
         static seg_free_list_type _the_seg_list;
         return &_the_seg_list;
     }
-
-    
 
 protected:
     size_t  buff_len_;

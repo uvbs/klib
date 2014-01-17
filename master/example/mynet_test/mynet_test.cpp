@@ -7,49 +7,53 @@
 #include <comp/MyNet/imynetdef.h>
 
 
-class MyHandler : public INetEventHandler
+class MyHandler : public inet_event_handler
 {
 public:
-    MyHandler(INetTcpClient* client) {
-        m_pClient = client;
+    MyHandler(tcp_net_facade* client) {
+        net_facade_ = client;
     }
 
-    virtual bool OnAccept(INetConnection* pListen, INetConnection* pNewConn, bool bSuccess) 
+    virtual bool on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess) 
     {
-        printf("接受连接，当前连接数 ：%d \r\n", m_pClient->GetINetConnectionMgr()->GetConnectionCount());
+        printf("接受连接，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
         return true;
     }
 
-    virtual bool OnDisConnect(INetConnection* pConn)  
+    virtual bool on_disconnect(net_conn* pConn)  
     {
-        printf("连接断开，当前连接数 ：%d \r\n", m_pClient->GetINetConnectionMgr()->GetConnectionCount());
-        // m_pClient->GetNetwork()->FreeConnection(pConn);
+        printf("连接断开，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
+        // net_facade_->GetNetwork()->FreeConnection(pConn);
         return true;
     }
 
-    virtual bool OnRead(INetConnection* pConn, const char* buff, size_t len)
+    virtual bool on_read(net_conn* pConn, const char* buff, size_t len)
     {
         printf(buff);
         return true;
     }
-    virtual bool OnWrite(INetConnection* pConn) {return true;}
-
-    virtual bool OnConnect(INetConnection* pConn, bool bConnected /* = true */) 
+    virtual bool on_write(net_conn* pConn, size_t len) 
     {
-        printf("建立连接，当前连接数 ：%d \r\n", m_pClient->GetINetConnectionMgr()->GetConnectionCount());
+        return true;
+    }
+
+    virtual bool on_connect(net_conn* pConn, bool bConnected /* = true */) 
+    {
+        printf("建立连接，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
 
         std::string str = "GET / HTTP/1.1\r\n"
             "Host: www.baidu.com\r\n"
             "Accept: */*\r\n"
             "\r\n\r\n";
 
-        m_pClient->GetNetwork()->PostWrite(pConn, str.c_str(), str.size());
+        net_facade_->get_network()->post_write(pConn, str.c_str(), str.size());
+        net_facade_->get_network()->post_read(pConn);
         
         return true;
     }
 
 protected:
-    INetTcpClient* m_pClient;
+    tcp_net_facade* net_facade_;
 };
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -64,16 +68,16 @@ int _tmain(int argc, _TCHAR* argv[])
     pframework->start();
     pframework->find_next_interface(IID_IMyNet, (void**)&pNet);
 
-    INetTcpClient* pClient = pNet->CreateTcpClient();
+    tcp_net_facade* pClient = pNet->CreateTcpClient();
 
     MyHandler thehandler(pClient);
-    pClient->InitClient();
-    pClient->AddEventHandler(&thehandler);
+    pClient->init_client();
+    pClient->add_event_handler(&thehandler);
 
-    INetConnection* pConn = pClient->GetNetwork()->CreateNewConn();
-    pConn->SetPeerAddress("www.baidu.com");
-    pConn->SetPeerPort(80);
-    pClient->GetNetwork()->PostConnection(pConn);
+    net_conn* pConn = pClient->get_network()->create_conn();
+    pConn->set_peer_addr_st("www.baidu.com");
+    pConn->set_peer_port(80);
+    pClient->get_network()->post_connection(pConn);
 
 
     Sleep(-1);

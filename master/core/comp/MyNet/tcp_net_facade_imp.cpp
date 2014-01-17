@@ -212,7 +212,7 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
         //TRACE(TEXT("封包生成..."));
         pPacket->pConn    = pConn;
         pPacket->bf_size_ = iPacketLen;
-        if (pPacket->init_buff(iPacketLen)) {
+        if (!pPacket->init_buff(iPacketLen)) {
             return false;
         }
         pConn->read_recv_stream(pPacket->get_buff(), iPacketLen);
@@ -244,14 +244,14 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
     return true;
 }
 
-bool tcp_net_facade_imp::on_write(net_conn* pConn) 
+bool tcp_net_facade_imp::on_write(net_conn* pConn, size_t len) 
 {
     //MyPrtLog("写数据完毕..\r\n");
 
     INetEventHandlerListType::const_iterator itr;
     itr  = net_event_list_.begin();
     for (; itr != net_event_list_.end(); ++itr) {
-        (*itr)->on_write(pConn);
+        (*itr)->on_write(pConn, len);
     }
 
     return true;

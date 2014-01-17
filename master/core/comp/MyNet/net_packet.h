@@ -1,10 +1,10 @@
 #pragma once
 
-// 保存网络数据包的
 class net_conn;
 class tcp_net_facade_imp;
 class inetpacket_mgr_imp;
 
+// 保存网络数据包的
 class net_packet
 {
     friend tcp_net_facade_imp;

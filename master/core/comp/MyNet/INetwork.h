@@ -44,7 +44,7 @@ public:
     /// @post  投递连接请求到完成端口上
     ///
     /// @usage   net_conn* pMyConn = pClient->get_network()->CreateNewConnection();
-    /// pMyConn->set_peer_addr("127.0.0.1");
+    /// pMyConn->set_peer_addr_str("127.0.0.1");
     /// pMyConn->set_peer_port(7000);
     /// pClient->get_network()->post_connection(pMyConn);
     /// 

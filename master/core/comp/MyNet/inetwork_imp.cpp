@@ -481,7 +481,7 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
                         pConn->add_readed_bytes(dwByteTransfered);
 
                         //通知上层处理读事件
-                        pINetEventHandler->OnRead(pConn, (const char*)lpOverlapped->buff_, dwByteTransfered);
+                        pINetEventHandler->on_read(pConn, (const char*)lpOverlapped->buff_, dwByteTransfered);
 
                         //继续投递读操作
                         pINetwork->post_read(pConn);
@@ -500,7 +500,7 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
                     pConn->add_rwited_bytes(dwByteTransfered);
 
                     //通知上层处理写事件
-                    pINetEventHandler->OnWrite(pConn);
+                    pINetEventHandler->on_write(pConn);
 
                     //更新上次活跃的时间戳
                     pConn->upsate_last_active_tm();
@@ -525,7 +525,7 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
                     pINetwork->post_accept(pListConn);
 
                     //交给上层处理事件,即INetClientImp
-                    pINetEventHandler->OnAccept(pListConn, pAcceptConn); 
+                    pINetEventHandler->on_accept(pListConn, pAcceptConn); 
 
                     //更新时间戳
                     pListConn->upsate_last_active_tm();
@@ -541,7 +541,7 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
                     //TRACE(TEXT("connected successfully!\n"));
 
                     //连接成功，通知上层处理事件
-                    pINetEventHandler->OnConnect(pConn, true);
+                    pINetEventHandler->on_connect(pConn, true);
 
                     //更新上次活跃的时间戳
                     pConn->upsate_last_active_tm();
@@ -567,14 +567,14 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
 
             if (lpOverlapped->operate_type_ == OP_CONNECT) {
                 pConn->dis_connect();
-                pINetEventHandler->OnConnect(pConn, false);
+                pINetEventHandler->on_connect(pConn, false);
             }
             else if (lpOverlapped->operate_type_ == OP_ACCEPT) {
                 //
                 net_conn* pListConn = pConn;      //监听套接字
                 net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;    //接收的连接
                 pINetwork->post_accept(pListConn);
-                pINetEventHandler->OnAccept(pListConn, pAcceptConn, false);
+                pINetEventHandler->on_accept(pListConn, pAcceptConn, false);
 
                 pINetwork->release_conn(pAcceptConn);
             }
@@ -659,7 +659,7 @@ void inetwork_imp::check_and_disconnect(net_conn* pConn)
         pConn->set_is_closing(TRUE);
         pConn->unlock();
 
-        net_event_handler_->OnDisConnect(pConn);
+        net_event_handler_->on_disconnect(pConn);
     }
     else 
     {

@@ -3,7 +3,6 @@
 
 net_conn::net_conn(void)
 {
-    datalen = 0;
     post_read_count_ = 0;
     post_write_count_ = 0;
     is_closing_ = FALSE;
@@ -11,14 +10,13 @@ net_conn::net_conn(void)
     peer_port_ = 0;
     local_port_ = 0;
     bind_key_ = 0;
-    m_dwBytesRead = 0;
-    m_dwBytesWrite = 0;
+    readed_bytes_ = 0;
+    writed_bytes_ = 0;
     memset(m_strAddress, 0, sizeof(m_strAddress));
 }
 
 net_conn::~net_conn(void)
 {
-    datalen = 0;
     post_read_count_ = 0;
     post_write_count_ = 0;
     is_closing_ = FALSE;
@@ -26,8 +24,8 @@ net_conn::~net_conn(void)
     peer_port_ = 0;
     local_port_ = 0;
     bind_key_ = 0;
-    m_dwBytesRead = 0;
-    m_dwBytesWrite = 0;
+    readed_bytes_ = 0;
+    writed_bytes_ = 0;
     memset(m_strAddress, 0, sizeof(m_strAddress));
 }
 
@@ -46,12 +44,22 @@ bool net_conn::init_peer_info()
     return false;
 }
 
+void net_conn::set_peer_addr(const char* straddr)
+{
+    strncpy(m_strAddress, straddr, sizeof(m_strAddress) - 1);
+}
+
 char* net_conn::get_peer_addr() 
 {
     if (m_strAddress[0] == '\0') {
         set_peer_addr(inet_ntoa(*(in_addr*) &peer_addr_));
     }
     return m_strAddress;
+}
+
+void net_conn::dis_connect() 
+{  
+    closesocket(m_socket); m_socket = INVALID_SOCKET; 
 }
 
 bool net_conn::write_recv_stream(const char* buff, size_t len) 
@@ -74,6 +82,23 @@ bool net_conn::read_recv_stream(char* buff, size_t len)
 size_t net_conn::get_recv_length()
 {
     return recv_stream_.size();
+}
+
+bool net_conn::write_send_stream(const char* buff, size_t len) 
+{
+    send_stream_.write((unsigned char*)buff, len);
+    return true;
+}
+
+bool net_conn::read_send_stream(char* buff, size_t len)
+{
+    send_stream_.read((unsigned char*)buff, len);
+    return true;
+}
+
+size_t net_conn::get_send_length()
+{
+    return send_stream_.size();
 }
 
 void net_conn::upsate_last_active_tm()  

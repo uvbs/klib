@@ -11,12 +11,12 @@
 
 tcp_net_facade_imp::tcp_net_facade_imp(void)
 {
-    m_pICombiner = NULL;
-    m_pINetwork = NULL;
-    m_pIDispatcher = NULL;
-    m_pNetPacketMgr = NULL;
-    m_pINetConnMgr = NULL;
-    m_bInitSucc  =    false;
+    icombiner_        = NULL;
+    inetwork_         = NULL;
+    dispatch_handler_ = NULL;
+    net_packet_mgr_   = NULL;
+    net_conn_mgr_     = NULL;
+    init_success_     = false;
 
 }
 
@@ -27,61 +27,61 @@ tcp_net_facade_imp::~tcp_net_facade_imp(void)
 bool tcp_net_facade_imp::set_icombiner(icombiner* pCombiner) 
 {
     _ASSERT(pCombiner);
-    auto_lock helper(m_cs);
+    guard helper(mutex_);
 
-    m_pICombiner = pCombiner;
-    return m_pICombiner != NULL;
+    icombiner_ = pCombiner;
+    return icombiner_ != NULL;
 }
 
 bool tcp_net_facade_imp::set_dispatch_handler(dispatcher_handler* pHandler) 
 {
     _ASSERT(pHandler);
-    auto_lock helper(m_cs);
+    guard helper(mutex_);
 
-    m_pIDispatcher = pHandler;
-    return m_pIDispatcher != NULL;
+    dispatch_handler_ = pHandler;
+    return dispatch_handler_ != NULL;
 }
 
 bool tcp_net_facade_imp::set_net_conn_mgr(inet_conn_mgr* pMgr) 
 {
     _ASSERT(pMgr);
-    auto_lock helper(m_cs);
+    guard helper(mutex_);
 
-    m_pINetConnMgr = pMgr;
-    return m_pINetConnMgr != NULL;
+    net_conn_mgr_ = pMgr;
+    return net_conn_mgr_ != NULL;
 }
 
 bool tcp_net_facade_imp::init_client()
 {
-    if (m_bInitSucc)
+    if (init_success_)
     {
-        return m_bInitSucc;
+        return init_success_;
     }
 
-    m_pINetwork = new inetwork_imp;
-    _ASSERT(m_pINetwork);
-    m_pINetwork->init_network();
-    m_pINetwork->set_net_event_handler(this);
-    m_pINetwork->run_network();
+    inetwork_ = new inetwork_imp;
+    _ASSERT(inetwork_);
+    inetwork_->init_network();
+    inetwork_->set_net_event_handler(this);
+    inetwork_->run_network();
 
     // 初始化默认的处理器
-    m_pICombiner = new icombiner_imp;
-    m_pNetPacketMgr = new inetpacket_mgr_imp;
-    m_pINetConnMgr = new inet_conn_mgr_imp;
+    icombiner_ = new icombiner_imp;
+    net_packet_mgr_ = new inetpacket_mgr_imp;
+    net_conn_mgr_ = new inet_conn_mgr_imp;
 
-    m_bInitSucc = (m_pICombiner && m_pNetPacketMgr && m_pINetConnMgr);
+    init_success_ = (icombiner_ && net_packet_mgr_ && net_conn_mgr_);
 
-    return m_bInitSucc;
+    return init_success_;
 }
 
 bool tcp_net_facade_imp::add_event_handler(inet_event_handler* handler) 
 {
-    auto_lock helper(m_cs);
+    guard helper(mutex_);
 
 #ifdef _DEBUG
     INetEventHandlerListType::const_iterator itr;
-    itr = m_INetEventList.begin();
-    for (; itr != m_INetEventList.end(); ++itr) 
+    itr = net_event_list_.begin();
+    for (; itr != net_event_list_.end(); ++itr) 
     {
         if ((*itr) == handler) {
             _ASSERT(FALSE);
@@ -89,20 +89,20 @@ bool tcp_net_facade_imp::add_event_handler(inet_event_handler* handler)
     }
 #endif
 
-    m_INetEventList.push_back(handler);
+    net_event_list_.push_back(handler);
     return true;
 }
 
 bool tcp_net_facade_imp::del_event_handler(inet_event_handler* handler) 
 {
-    auto_lock helper(m_cs);
+    guard helper(mutex_);
 
     INetEventHandlerListType::const_iterator itr;
-    itr  = m_INetEventList.begin();
-    for (; itr != m_INetEventList.end(); ++itr)
+    itr  = net_event_list_.begin();
+    for (; itr != net_event_list_.end(); ++itr)
     {
         if (handler == (*itr)) {
-            m_INetEventList.erase(itr);
+            net_event_list_.erase(itr);
             return true;
         }
     }
@@ -111,48 +111,55 @@ bool tcp_net_facade_imp::del_event_handler(inet_event_handler* handler)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool tcp_net_facade_imp::OnConnect(net_conn* pConn, bool bConnected/* = true*/) 
+bool tcp_net_facade_imp::on_connect(net_conn* pConn, bool bConnected/* = true*/) 
 {
-    if (bConnected) {
+    if (bConnected) 
+    {
         //const char *msg = "GET / HTTP/1.1\r\nAccept: */*\r\nHost: www.baidu.com\r\n\r\n";
-        //m_pINetwork->post_write(pConn, msg, strlen(msg));
+        //inetwork_->post_write(pConn, msg, strlen(msg));
     }
-    else {
+    else 
+    {
         //TRACE(TEXT("连接失败!\r\n"));
     }
 
 #ifdef _DEBUG
-    if (m_pINetConnMgr) {
-        if (m_pINetConnMgr->is_exist_conn(pConn)) {
+    if (net_conn_mgr_) 
+    {
+        if (net_conn_mgr_->is_exist_conn(pConn)) 
+        {
             _ASSERT(FALSE && "连接添加错误，设计错误");
         }
     }
 #endif
 
     //将连接添加到连接管理器里
-    if (m_pINetConnMgr) {
-        m_pINetConnMgr->add_conn(pConn);
+    if (net_conn_mgr_) {
+        net_conn_mgr_->add_conn(pConn);
     }
 
-    //通知连接事件
+    // 通知上层处理连接事件
     INetEventHandlerListType::const_iterator itr;
-    itr  = m_INetEventList.begin();
-    for (; itr != m_INetEventList.end(); ++itr) {
-        (*itr)->OnConnect(pConn, bConnected);
+    itr  = net_event_list_.begin();
+    for (; itr != net_event_list_.end(); ++itr) 
+    {
+        (*itr)->on_connect(pConn, bConnected);
     }
 
     return true;
 }
 
-bool tcp_net_facade_imp::OnDisConnect(net_conn* pConn) 
+bool tcp_net_facade_imp::on_disconnect(net_conn* pConn) 
 {
     //MyPrtLog("连接断开了...\r\n");
 
 #ifdef _DEBUG
-    if (m_pINetConnMgr) {
-        if (!m_pINetConnMgr->is_exist_conn(pConn)) {
-            _ASSERT(FALSE && "连接关闭错误，设计错误");
+    if (net_conn_mgr_) 
+    {
+        if (!net_conn_mgr_->is_exist_conn(pConn)) 
+        {
             // 这里可能是由于刚才连接上还没有添加到mgr里面，进行投递读请求就会出错;
+            _ASSERT(FALSE && "连接关闭错误，设计错误");
             return true;
         }
     }
@@ -160,22 +167,28 @@ bool tcp_net_facade_imp::OnDisConnect(net_conn* pConn)
 
     //这里是先交给上层处理再释放
     INetEventHandlerListType::const_iterator itr;
-    itr  = m_INetEventList.begin();
-    for (; itr != m_INetEventList.end(); ++itr) {
-        (*itr)->OnDisConnect(pConn);
+    itr  = net_event_list_.begin();
+    for (; itr != net_event_list_.end(); ++itr) 
+    {
+        (*itr)->on_disconnect(pConn);
     }
 
-    if (m_pINetConnMgr) {
-        m_pINetConnMgr->del_conn(pConn);
+    // 删除连接
+    if (net_conn_mgr_) 
+    {
+        net_conn_mgr_->del_conn(pConn);
     }
-    if (m_pNetPacketMgr) {
-        m_pNetPacketMgr->free_conn_packets(pConn);
+
+    // 释放所有的数据包
+    if (net_packet_mgr_) 
+    {
+        net_packet_mgr_->free_conn_packets(pConn);
     }
 
     return true;
 }
 
-bool tcp_net_facade_imp::OnRead(net_conn* pConn, const char* buff, size_t len)
+bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
 {
     //MyPrtLog("有数据来啦Len: %d", len);
     _ASSERT(buff);
@@ -183,14 +196,14 @@ bool tcp_net_facade_imp::OnRead(net_conn* pConn, const char* buff, size_t len)
     bool bIsCombined = false;
 
     pConn->write_recv_stream(buff, len);
-    bIsCombined = m_pICombiner->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
+    bIsCombined = icombiner_->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
 
     while (bIsCombined) 
     {
         //添加封包
         //MyPrtLog("已构成完整封包....\r\n");
 
-        net_packet* pPacket = m_pNetPacketMgr->alloc_net_packet();
+        net_packet* pPacket = net_packet_mgr_->alloc_net_packet();
         if (NULL == pPacket) 
         {
             _ASSERT(FALSE);
@@ -202,14 +215,14 @@ bool tcp_net_facade_imp::OnRead(net_conn* pConn, const char* buff, size_t len)
         pPacket->datalen = iPacketLen;
         pConn->read_recv_stream(pPacket->buff, iPacketLen);
 
-        if (m_pIDispatcher) 
+        if (dispatch_handler_) 
         {
-            m_pIDispatcher->DispatchPacket(pPacket);
-            m_pNetPacketMgr->free_net_packet(pPacket);
+            dispatch_handler_->DispatchPacket(pPacket);
+            net_packet_mgr_->free_net_packet(pPacket);
         }
         else 
         {
-            m_pNetPacketMgr->add_packet(pPacket);
+            net_packet_mgr_->add_packet(pPacket);
         }
 
         if (pConn->get_recv_length() <= 0)
@@ -217,40 +230,40 @@ bool tcp_net_facade_imp::OnRead(net_conn* pConn, const char* buff, size_t len)
             break;
         }
 
-        bIsCombined = m_pICombiner->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
+        bIsCombined = icombiner_->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
     }
     
     INetEventHandlerListType::const_iterator itr;
-    itr  = m_INetEventList.begin();
-    for (; itr != m_INetEventList.end(); ++itr) {
-        (*itr)->OnRead(pConn, buff, len);
+    itr  = net_event_list_.begin();
+    for (; itr != net_event_list_.end(); ++itr) {
+        (*itr)->on_read(pConn, buff, len);
     }
 
     return true;
 }
 
-bool tcp_net_facade_imp::OnWrite(net_conn* pConn) 
+bool tcp_net_facade_imp::on_write(net_conn* pConn) 
 {
     //MyPrtLog("写数据完毕..\r\n");
 
     INetEventHandlerListType::const_iterator itr;
-    itr  = m_INetEventList.begin();
-    for (; itr != m_INetEventList.end(); ++itr) {
-        (*itr)->OnWrite(pConn);
+    itr  = net_event_list_.begin();
+    for (; itr != net_event_list_.end(); ++itr) {
+        (*itr)->on_write(pConn);
     }
 
     return true;
 }
 
-bool tcp_net_facade_imp::OnAccept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
+bool tcp_net_facade_imp::on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
 {
-    if (m_pINetConnMgr && bSuccess) {
+    if (net_conn_mgr_ && bSuccess) {
 #ifdef _DEBUG
-        if (m_pINetConnMgr->is_exist_conn(pNewConn)) {
+        if (net_conn_mgr_->is_exist_conn(pNewConn)) {
             _ASSERT(FALSE && "重复添加连接，这里设计出错!");
         }
 #endif
-        m_pINetConnMgr->add_conn(pNewConn);
+        net_conn_mgr_->add_conn(pNewConn);
     }
 
     if (bSuccess) {
@@ -261,9 +274,9 @@ bool tcp_net_facade_imp::OnAccept(net_conn* pListen, net_conn* pNewConn, bool bS
     }
 
     INetEventHandlerListType::const_iterator itr;
-    itr  = m_INetEventList.begin();
-    for (; itr != m_INetEventList.end(); ++itr) {
-        (*itr)->OnAccept(pListen, pNewConn, bSuccess);
+    itr  = net_event_list_.begin();
+    for (; itr != net_event_list_.end(); ++itr) {
+        (*itr)->on_accept(pListen, pNewConn, bSuccess);
     }
     return true;
 }

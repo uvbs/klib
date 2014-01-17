@@ -18,7 +18,7 @@ public:
     END_INTERFACE_ENTRY
 
 public:
-    virtual tcpclient* CreateTcpClient();
+    virtual tcp_net_facade* CreateTcpClient();
 
 };
 

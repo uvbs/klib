@@ -22,12 +22,9 @@ public:
     WSABUF    wsaBuf_;                  ///< 缓冲区对象
     char      buff_[2 * 1024];			///< 传输数据的buf
     
-    //DWORD dwRead; //读取的字节数 //todo 
-
 public:
-    net_overLapped() 
+    net_overLapped() : bFixed(false), pend_data_(0), transfer_bytes_(0)
     {
-        memset(this, 0, sizeof(net_overLapped));
     }
 };
 

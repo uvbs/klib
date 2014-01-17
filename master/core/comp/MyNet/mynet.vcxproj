@@ -82,8 +82,8 @@
     <ClInclude Include="ICombiner.h" />
     <ClInclude Include="icombiner_imp.h" />
     <ClInclude Include="dispatcher_handler.h" />
-    <ClInclude Include="tcpclient.h" />
-    <ClInclude Include="tcpclient_imp.h" />
+    <ClInclude Include="tcp_net_facade.h" />
+    <ClInclude Include="tcp_net_facade_imp.h" />
     <ClInclude Include="net_conn.h" />
     <ClInclude Include="inet_conn_mgr.h" />
     <ClInclude Include="inet_conn_mgr_imp.h" />
@@ -111,7 +111,7 @@
     </ClCompile>
     <ClCompile Include="ICombiner.cpp" />
     <ClCompile Include="ICombinerImp.cpp" />
-    <ClCompile Include="tcpclient_imp.cpp" />
+    <ClCompile Include="tcp_net_facade_imp.cpp" />
     <ClCompile Include="net_conn.cpp" />
     <ClCompile Include="inet_conn_mgr_imp.cpp" />
     <ClCompile Include="inetpacket_mgr_imp.cpp" />

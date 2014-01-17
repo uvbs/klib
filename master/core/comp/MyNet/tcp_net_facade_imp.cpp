@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "tcpclient_imp.h"
+#include "tcp_net_facade_imp.h"
 
 #include "icombiner.h"
 #include "net_conn.h"
@@ -9,7 +9,7 @@
 #include "dispatcher_handler.h"
 #include "inet_conn_mgr_imp.h"
 
-tcpclient_imp::tcpclient_imp(void)
+tcp_net_facade_imp::tcp_net_facade_imp(void)
 {
     m_pICombiner = NULL;
     m_pINetwork = NULL;
@@ -20,11 +20,11 @@ tcpclient_imp::tcpclient_imp(void)
 
 }
 
-tcpclient_imp::~tcpclient_imp(void)
+tcp_net_facade_imp::~tcp_net_facade_imp(void)
 {
 }
 
-bool tcpclient_imp::SetICombiner(icombiner* pCombiner) 
+bool tcp_net_facade_imp::set_icombiner(icombiner* pCombiner) 
 {
     _ASSERT(pCombiner);
     auto_lock helper(m_cs);
@@ -33,7 +33,7 @@ bool tcpclient_imp::SetICombiner(icombiner* pCombiner)
     return m_pICombiner != NULL;
 }
 
-bool tcpclient_imp::SetIDispatchHandler(dispatcher_handler* pHandler) 
+bool tcp_net_facade_imp::set_dispatch_handler(dispatcher_handler* pHandler) 
 {
     _ASSERT(pHandler);
     auto_lock helper(m_cs);
@@ -42,7 +42,7 @@ bool tcpclient_imp::SetIDispatchHandler(dispatcher_handler* pHandler)
     return m_pIDispatcher != NULL;
 }
 
-bool tcpclient_imp::SetINetConnectionMgr(inet_conn_mgr* pMgr) 
+bool tcp_net_facade_imp::set_net_conn_mgr(inet_conn_mgr* pMgr) 
 {
     _ASSERT(pMgr);
     auto_lock helper(m_cs);
@@ -51,7 +51,7 @@ bool tcpclient_imp::SetINetConnectionMgr(inet_conn_mgr* pMgr)
     return m_pINetConnMgr != NULL;
 }
 
-bool tcpclient_imp::InitClient()
+bool tcp_net_facade_imp::init_client()
 {
     if (m_bInitSucc)
     {
@@ -74,7 +74,7 @@ bool tcpclient_imp::InitClient()
     return m_bInitSucc;
 }
 
-bool tcpclient_imp::AddEventHandler(inet_event_handler* handler) 
+bool tcp_net_facade_imp::add_event_handler(inet_event_handler* handler) 
 {
     auto_lock helper(m_cs);
 
@@ -93,7 +93,7 @@ bool tcpclient_imp::AddEventHandler(inet_event_handler* handler)
     return true;
 }
 
-bool tcpclient_imp::RemoveEventHandler(inet_event_handler* handler) 
+bool tcp_net_facade_imp::del_event_handler(inet_event_handler* handler) 
 {
     auto_lock helper(m_cs);
 
@@ -111,7 +111,7 @@ bool tcpclient_imp::RemoveEventHandler(inet_event_handler* handler)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool tcpclient_imp::OnConnect(net_conn* pConn, bool bConnected/* = true*/) 
+bool tcp_net_facade_imp::OnConnect(net_conn* pConn, bool bConnected/* = true*/) 
 {
     if (bConnected) {
         //const char *msg = "GET / HTTP/1.1\r\nAccept: */*\r\nHost: www.baidu.com\r\n\r\n";
@@ -144,7 +144,7 @@ bool tcpclient_imp::OnConnect(net_conn* pConn, bool bConnected/* = true*/)
     return true;
 }
 
-bool tcpclient_imp::OnDisConnect(net_conn* pConn) 
+bool tcp_net_facade_imp::OnDisConnect(net_conn* pConn) 
 {
     //MyPrtLog("连接断开了...\r\n");
 
@@ -175,7 +175,7 @@ bool tcpclient_imp::OnDisConnect(net_conn* pConn)
     return true;
 }
 
-bool tcpclient_imp::OnRead(net_conn* pConn, const char* buff, size_t len)
+bool tcp_net_facade_imp::OnRead(net_conn* pConn, const char* buff, size_t len)
 {
     //MyPrtLog("有数据来啦Len: %d", len);
     _ASSERT(buff);
@@ -229,7 +229,7 @@ bool tcpclient_imp::OnRead(net_conn* pConn, const char* buff, size_t len)
     return true;
 }
 
-bool tcpclient_imp::OnWrite(net_conn* pConn) 
+bool tcp_net_facade_imp::OnWrite(net_conn* pConn) 
 {
     //MyPrtLog("写数据完毕..\r\n");
 
@@ -242,7 +242,7 @@ bool tcpclient_imp::OnWrite(net_conn* pConn)
     return true;
 }
 
-bool tcpclient_imp::OnAccept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
+bool tcp_net_facade_imp::OnAccept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
 {
     if (m_pINetConnMgr && bSuccess) {
 #ifdef _DEBUG

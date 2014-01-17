@@ -12,7 +12,7 @@ public:
 
 public:
     /// 
-    /// @brief 初始化网络层接口，由tcpclient调用
+    /// @brief 初始化网络层接口，由tcp_net_facade调用
     virtual bool init_network() = 0; 
 
     /// @brief 设置事件处理器，主要处理网络事件
@@ -29,10 +29,10 @@ public:
     /// @retval !=NULL  新创建的用于接收连接的套接字接口,类型是 net_conn*
     /// @post  创建套接字接口，并投递一个AcceptEx请求，当系统处理完毕时会收到一个完成请求
     ///
-    /// @usage   net_conn* pListenConn = pClient->GetNetwork()->CreateNewConnection();
+    /// @usage   net_conn* pListenConn = pClient->get_network()->CreateNewConnection();
     /// pListenConn->set_local_port(7000);
-    /// pClient->GetNetwork()->InitListenConnection(pListenConn);
-    /// pClient->GetNetwork()->post_accept(pListenConn);
+    /// pClient->get_network()->InitListenConnection(pListenConn);
+    /// pClient->get_network()->post_accept(pListenConn);
     ///
     virtual net_conn* post_accept(net_conn* plistenConn) = 0;
 
@@ -46,10 +46,10 @@ public:
     /// @retval true  投递成功
     /// @post  投递连接请求到完成端口上
     ///
-    /// @usage   net_conn* pMyConn = pClient->GetNetwork()->CreateNewConnection();
+    /// @usage   net_conn* pMyConn = pClient->get_network()->CreateNewConnection();
     /// pMyConn->set_peer_addr("127.0.0.1");
     /// pMyConn->set_peer_port(7000);
-    /// pClient->GetNetwork()->post_connection(pMyConn);
+    /// pClient->get_network()->post_connection(pMyConn);
     /// 
     virtual bool post_connection(net_conn* pConn) = 0;
 
@@ -61,8 +61,8 @@ public:
     /// @retval true  投递成功
     /// @post  
     ///
-    /// @usage   net_conn* pMyConn = pClient->GetNetwork()->CreateNewConnection();
-    /// pClient->GetNetwork()->post_read(pMyConn);
+    /// @usage   net_conn* pMyConn = pClient->get_network()->CreateNewConnection();
+    /// pClient->get_network()->post_read(pMyConn);
     /// 
     virtual bool post_read(net_conn* pConn) = 0;
 
@@ -74,8 +74,8 @@ public:
     /// @retval true  投递成功
     /// @post  
     ///
-    /// @usage   net_conn* pMyConn = pClient->GetNetwork()->CreateNewConnection();
-    /// pClient->GetNetwork()->post_write(pMyConn, buff, 1024);
+    /// @usage   net_conn* pMyConn = pClient->get_network()->CreateNewConnection();
+    /// pClient->get_network()->post_write(pMyConn, buff, 1024);
     /// 
     virtual bool post_write(net_conn* pConn, const char* buff, size_t len) = 0;
 
@@ -100,7 +100,7 @@ public:
     /// @retval !=NULL  创建成功
     /// @post  
     ///
-    /// @usage   net_conn* pListenConn = pClient->GetNetwork()->CreateNewConnection();
+    /// @usage   net_conn* pListenConn = pClient->get_network()->CreateNewConnection();
     /// 
     virtual net_conn* create_conn() = 0;
 
@@ -114,7 +114,7 @@ public:
     /// @retval true    释放成功
     /// @post  
     ///
-    /// @usage   net_conn* pListenConn = pClient->GetNetwork()->FreeConnection(pConn);
+    /// @usage   net_conn* pListenConn = pClient->get_network()->release_conn(pConn);
     /// 
     virtual bool release_conn(net_conn* pConn) = 0;
 };

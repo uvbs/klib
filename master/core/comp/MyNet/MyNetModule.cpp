@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "MyNetModule.h"
 
-#include "tcpclient_imp.h"
+#include "tcp_net_facade_imp.h"
 
 
 CMyNetModule::CMyNetModule(void)
@@ -12,9 +12,9 @@ CMyNetModule::~CMyNetModule(void)
 {
 }
 
-tcpclient* CMyNetModule::CreateTcpClient()
+tcp_net_facade* CMyNetModule::CreateTcpClient()
 {
-    return new tcpclient_imp;
+    return new tcp_net_facade_imp;
 }
 
 

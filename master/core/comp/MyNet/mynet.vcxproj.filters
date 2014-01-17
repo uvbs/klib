@@ -45,12 +45,6 @@
     <ClInclude Include="net_conn.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="tcpclient.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="tcpclient_imp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="icombiner_imp.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -76,6 +70,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="dispatcher_handler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tcp_net_facade_imp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tcp_net_facade.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -110,9 +110,6 @@
     <ClCompile Include="net_conn.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="tcpclient_imp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="inet_conn_mgr_imp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -120,6 +117,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="inetwork_imp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tcp_net_facade_imp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

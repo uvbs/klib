@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tcpclient.h"
+#include "tcp_net_facade.h"
 #include "INetwork.h"
 #include "inet_event_handler.h"
 #include "net_conn.h"
@@ -18,5 +18,5 @@ struct IMyNet
 {
     /// @brief
     /// 创建一个TCP客户操作接口
-    virtual tcpclient* CreateTcpClient() = 0;
+    virtual tcp_net_facade* CreateTcpClient() = 0;
 };

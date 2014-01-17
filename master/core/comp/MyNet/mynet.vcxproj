@@ -84,7 +84,7 @@
     <ClInclude Include="IDispatchHandler.h" />
     <ClInclude Include="INetClient.h" />
     <ClInclude Include="INetClientImp.h" />
-    <ClInclude Include="INetConnection.h" />
+    <ClInclude Include="net_conn.h" />
     <ClInclude Include="INetConnectionMgr.h" />
     <ClInclude Include="INetConnectionMgrImp.h" />
     <ClInclude Include="INetEventHandler.h" />
@@ -114,7 +114,7 @@
     <ClCompile Include="IDispatchHandler.cpp" />
     <ClCompile Include="INetClient.cpp" />
     <ClCompile Include="INetClientImp.cpp" />
-    <ClCompile Include="INetConnection.cpp" />
+    <ClCompile Include="net_conn.cpp" />
     <ClCompile Include="INetConnectionMgrImp.cpp" />
     <ClCompile Include="INetEventHandler.cpp" />
     <ClCompile Include="INetPacketMgr.cpp" />

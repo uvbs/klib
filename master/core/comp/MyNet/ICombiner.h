@@ -2,7 +2,7 @@
 
 /*  协议分包合并器(用在tcp中)  */
 
-#include "INetConnection.h"
+#include "net_conn.h"
 
 class ICombiner
 {

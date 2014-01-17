@@ -30,11 +30,11 @@ public:
     virtual bool RemoveEventHandler(INetEventHandler* handler) ;
 
 protected:
-    virtual bool OnConnect(INetConnection* pConn, bool bConnected = true) ;
-    virtual bool OnDisConnect(INetConnection* pConn) ;
-    virtual bool OnRead(INetConnection* pConn, const char* buff, size_t len);
-    virtual bool OnWrite(INetConnection* pConn) ;
-    virtual bool OnAccept(INetConnection* pListen, INetConnection* pNewConn, bool bSuccess = true) ;
+    virtual bool OnConnect(net_conn* pConn, bool bConnected = true) ;
+    virtual bool OnDisConnect(net_conn* pConn) ;
+    virtual bool OnRead(net_conn* pConn, const char* buff, size_t len);
+    virtual bool OnWrite(net_conn* pConn) ;
+    virtual bool OnAccept(net_conn* pListen, net_conn* pNewConn, bool bSuccess = true) ;
 
 protected:
 

@@ -41,14 +41,14 @@ public:
   virtual bool SetNetEventHandler(INetEventHandler* handler) ;    //设置事件处理接口
   virtual bool RunNetwork() ;   //启动网络层-》创建线程
 
-  virtual INetConnection* PostAccept(INetConnection* pListenConn) ;	//投递接受请求,可多次投递，监听套接字必须用 CreateListenConn 创建
-  virtual bool PostConnection(INetConnection* pConn) ;		//投递连接请求
-  virtual bool PostRead(INetConnection* pConn) ;	//投递读请求，在接受连接后底层会默认投递一个请求
-  virtual bool PostWrite(INetConnection* pConn, const char* buff, size_t len) ;	//投递写请求
+  virtual net_conn* PostAccept(net_conn* pListenConn) ;	//投递接受请求,可多次投递，监听套接字必须用 CreateListenConn 创建
+  virtual bool PostConnection(net_conn* pConn) ;		//投递连接请求
+  virtual bool PostRead(net_conn* pConn) ;	//投递读请求，在接受连接后底层会默认投递一个请求
+  virtual bool PostWrite(net_conn* pConn, const char* buff, size_t len) ;	//投递写请求
 
-  virtual INetConnection* CreateListenConn(USHORT uLocalPort) ;	//创建返回监听套接字，返回一个INetConnection结构，用于接受连接
-  virtual INetConnection* CreateNewConn() ;			//创建一个连接套接字
-  virtual bool ReleaseConnection(INetConnection* pConn);		//释放连接
+  virtual net_conn* CreateListenConn(USHORT uLocalPort) ;	//创建返回监听套接字，返回一个net_conn结构，用于接受连接
+  virtual net_conn* CreateNewConn() ;			//创建一个连接套接字
+  virtual bool ReleaseConnection(net_conn* pConn);		//释放连接
 
 protected:
   static unsigned int WINAPI ThreadNetwork(void* param);
@@ -57,7 +57,7 @@ protected:
   Klib_OverLapped* GetMyOverlapped();                //申请重叠结构
   bool ReleaseMyOverlapped(Klib_OverLapped* pMyoverlapped);	//释放重叠结构
 
-  void CheckAndDisconnect(INetConnection* pConn);     //判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
+  void CheckAndDisconnect(net_conn* pConn);     //判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
 
 private:
   HANDLE m_hIocp;   ///< 完成端口句柄
@@ -68,7 +68,7 @@ private:
   OverLappedListType m_overlappedList;      /// 申明链表，用来保存Klib_OverLapped
   auto_cs            m_csOverlappedList;      /// 同步访问m_overlappedList
 
-  typedef std::list<INetConnection*> INetConnListType;  /// 接口列表类型定义
+  typedef std::list<net_conn*> INetConnListType;  /// 接口列表类型定义
   INetConnListType m_INetConnFreeList;      /// 保存网络连接接口链表
   auto_cs          m_CsNetFreeList;         /// 同步访问m_INetConnFreeList
 };

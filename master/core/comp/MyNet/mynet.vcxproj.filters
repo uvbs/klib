@@ -39,9 +39,6 @@
     <ClInclude Include="INetClientImp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="INetConnection.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="INetConnectionMgr.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -78,6 +75,9 @@
     <ClInclude Include="stream.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="net_conn.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -102,9 +102,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="INetClientImp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetConnection.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="INetConnectionMgrImp.cpp">
@@ -135,6 +132,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stream.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="net_conn.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

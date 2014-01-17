@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#include "INetConnection.h"
+#include "net_conn.h"
 #include "INetConnectionMgrImp.h"
 
 
@@ -12,7 +12,7 @@ INetConnectionMgrImp::~INetConnectionMgrImp(void)
 {
 }
 
-bool INetConnectionMgrImp::add_conn(INetConnection* pConn) 
+bool INetConnectionMgrImp::add_conn(net_conn* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {
@@ -28,7 +28,7 @@ bool INetConnectionMgrImp::add_conn(INetConnection* pConn)
     return true;
 }
 
-bool INetConnectionMgrImp::rmv_conn(INetConnection* pConn) 
+bool INetConnectionMgrImp::rmv_conn(net_conn* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {
@@ -44,7 +44,7 @@ bool INetConnectionMgrImp::rmv_conn(INetConnection* pConn)
     return false;
 }
 
-bool INetConnectionMgrImp::is_exist_conn(INetConnection* pConn) 
+bool INetConnectionMgrImp::is_exist_conn(net_conn* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {

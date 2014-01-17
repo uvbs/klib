@@ -2,7 +2,7 @@
 #include "INetClientImp.h"
 
 #include "ICombiner.h"
-#include "INetConnection.h"
+#include "net_conn.h"
 #include "INetworkImp.h"
 #include "ICombinerImp.h"
 #include "INetPacketMgrImp.h"
@@ -111,7 +111,7 @@ bool INetTcpClientImp::RemoveEventHandler(INetEventHandler* handler)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool INetTcpClientImp::OnConnect(INetConnection* pConn, bool bConnected/* = true*/) 
+bool INetTcpClientImp::OnConnect(net_conn* pConn, bool bConnected/* = true*/) 
 {
     if (bConnected) {
         //const char *msg = "GET / HTTP/1.1\r\nAccept: */*\r\nHost: www.baidu.com\r\n\r\n";
@@ -144,7 +144,7 @@ bool INetTcpClientImp::OnConnect(INetConnection* pConn, bool bConnected/* = true
     return true;
 }
 
-bool INetTcpClientImp::OnDisConnect(INetConnection* pConn) 
+bool INetTcpClientImp::OnDisConnect(net_conn* pConn) 
 {
     //MyPrtLog("连接断开了...\r\n");
 
@@ -175,7 +175,7 @@ bool INetTcpClientImp::OnDisConnect(INetConnection* pConn)
     return true;
 }
 
-bool INetTcpClientImp::OnRead(INetConnection* pConn, const char* buff, size_t len)
+bool INetTcpClientImp::OnRead(net_conn* pConn, const char* buff, size_t len)
 {
     //MyPrtLog("有数据来啦Len: %d", len);
     _ASSERT(buff);
@@ -229,7 +229,7 @@ bool INetTcpClientImp::OnRead(INetConnection* pConn, const char* buff, size_t le
     return true;
 }
 
-bool INetTcpClientImp::OnWrite(INetConnection* pConn) 
+bool INetTcpClientImp::OnWrite(net_conn* pConn) 
 {
     //MyPrtLog("写数据完毕..\r\n");
 
@@ -242,7 +242,7 @@ bool INetTcpClientImp::OnWrite(INetConnection* pConn)
     return true;
 }
 
-bool INetTcpClientImp::OnAccept(INetConnection* pListen, INetConnection* pNewConn, bool bSuccess/* = true*/) 
+bool INetTcpClientImp::OnAccept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
 {
     if (m_pINetConnMgr && bSuccess) {
 #ifdef _DEBUG

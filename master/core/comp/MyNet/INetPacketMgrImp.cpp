@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "INetPacketMgrImp.h"
 #include "NetPacket.h"
-#include "INetConnection.h"
+#include "net_conn.h"
 
 INetPacketMgrImp::INetPacketMgrImp(void)
 {
@@ -109,7 +109,7 @@ NetPacket* INetPacketMgrImp::GetPacket(bool bRemoveFlag/* = true*/)
     return pPacket;
 }
 
-bool INetPacketMgrImp::FreeConnPacket(INetConnection* pConn)
+bool INetPacketMgrImp::FreeConnPacket(net_conn* pConn)
 {
     _ASSERT(pConn);
     int ipos =  HashFun(pConn);

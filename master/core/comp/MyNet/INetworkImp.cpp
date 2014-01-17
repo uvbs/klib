@@ -3,7 +3,7 @@
 #include <process.h>
 
 #include "INetEventHandler.h"
-#include "INetConnection.h"
+#include "net_conn.h"
 #include <net/addr_resolver.h>
 
 #include <BaseTsd.h>
@@ -73,7 +73,7 @@ bool INetNetworkImp::RunNetwork()
   return true;
 }
 
-INetConnection* INetNetworkImp::PostAccept(INetConnection* pListenConn) 
+net_conn* INetNetworkImp::PostAccept(net_conn* pListenConn) 
 {
   HANDLE hResult;
   DWORD dwBytes = 0;
@@ -110,7 +110,7 @@ INetConnection* INetNetworkImp::PostAccept(INetConnection* pListenConn)
     }
   }
 
-  INetConnection* pNewConn = CreateNewConn();
+  net_conn* pNewConn = CreateNewConn();
   if (NULL == pNewConn) {
     closesocket(sockAccept);
     ReleaseMyOverlapped(lpOverlapped);
@@ -167,7 +167,7 @@ INetConnection* INetNetworkImp::PostAccept(INetConnection* pListenConn)
   return pNewConn;
 }
 
-bool INetNetworkImp::PostConnection(INetConnection* pConn) 
+bool INetNetworkImp::PostConnection(net_conn* pConn) 
 {
   _ASSERT(pConn);
 
@@ -263,7 +263,7 @@ bool INetNetworkImp::PostConnection(INetConnection* pConn)
   return true;
 }
 
-bool INetNetworkImp::PostRead(INetConnection* pConn) 
+bool INetNetworkImp::PostRead(net_conn* pConn) 
 {
   DWORD dwRecvedBytes = 0;
   DWORD dwFlag = 0;
@@ -298,11 +298,11 @@ bool INetNetworkImp::PostRead(INetConnection* pConn)
     }
   }
 
-  pConn->AddPostReadCount();
+  pConn->inc_post_read_count();
   return true;
 }
 
-bool INetNetworkImp::PostWrite(INetConnection* pConn, const char* buff, size_t len) 
+bool INetNetworkImp::PostWrite(net_conn* pConn, const char* buff, size_t len) 
 {
   // 下面提交发送请求
   DWORD dwWriteLen = 0;
@@ -346,13 +346,13 @@ bool INetNetworkImp::PostWrite(INetConnection* pConn, const char* buff, size_t l
     //TRACE(TEXT("发送完成了"));
   }
 
-  pConn->AddPostWriteCount();
+  pConn->inc_post_write_count();
   return true;
 }
 
-INetConnection* INetNetworkImp::CreateListenConn(USHORT uLocalPort)
+net_conn* INetNetworkImp::CreateListenConn(USHORT uLocalPort)
 {
-  INetConnection* pListenConn = CreateNewConn();
+  net_conn* pListenConn = CreateNewConn();
   if (NULL == pListenConn) {
     return NULL;
   }
@@ -385,22 +385,22 @@ INetConnection* INetNetworkImp::CreateListenConn(USHORT uLocalPort)
   return pListenConn;
 }
 
-INetConnection* INetNetworkImp::CreateNewConn() 
+net_conn* INetNetworkImp::CreateNewConn() 
 {
-  INetConnection* pConn = NULL;
+  net_conn* pConn = NULL;
   auto_lock helper(m_CsNetFreeList);
   if (!m_INetConnFreeList.empty()) {
     pConn = m_INetConnFreeList.front();
-    new (pConn) INetConnection;   //placement new
+    new (pConn) net_conn;   //placement new
     m_INetConnFreeList.pop_front();
   }
   else {
-    pConn = new INetConnection;
+    pConn = new net_conn;
   }
   return pConn;
 }
 
-bool INetNetworkImp::ReleaseConnection(INetConnection* pConn)
+bool INetNetworkImp::ReleaseConnection(net_conn* pConn)
 {
   _ASSERT(pConn);
   auto_lock helper(m_CsNetFreeList);
@@ -420,7 +420,7 @@ bool INetNetworkImp::ReleaseConnection(INetConnection* pConn)
     delete pConn;
   }
   else {
-    pConn->~INetConnection();
+    pConn->~net_conn();
     m_INetConnFreeList.push_back(pConn);
   }
 
@@ -437,7 +437,7 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
   _ASSERT(pINetEventHandler);
   Klib_OverLapped *lpOverlapped = NULL;
   DWORD		dwByteTransfered = 0;
-  INetConnection *pConn = NULL;
+  net_conn *pConn = NULL;
 
   while (true)
   {
@@ -467,7 +467,7 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
       {
       case OP_READ:
         {
-          pConn->DecPostReadCount();
+          pConn->dec_post_read_count();
           if (dwByteTransfered == 0) {
 
             //_ASSERT(FALSE && "这里出现是对方直接关闭了连接");
@@ -475,7 +475,7 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
           }
           else {
 			//统计该套接字的读字节数
-            pConn->AddBytesRead(dwByteTransfered);
+            pConn->add_readed_bytes(dwByteTransfered);
 
 			//通知上层处理读事件
             pINetEventHandler->OnRead(pConn, (const char*)lpOverlapped->buff, dwByteTransfered);
@@ -484,29 +484,29 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
             pINetwork->PostRead(pConn);
           }
           //处理完了再更新活跃时间，以便可以检查连接发送数据的速度
-          pConn->UpdateLastActiveTimestamp();
+          pConn->upsate_last_active_tm();
         }
         break;
 
       case OP_WRITE:
 		{
 		  //减少该套接字上的写投递计数
-		  pConn->DecPostWriteCount();
+		  pConn->dec_post_write_count();
 
 		  //统计该套接字的写字节数
-          pConn->AddBytesWrite(dwByteTransfered);
+          pConn->add_rwited_bytes(dwByteTransfered);
 
           //通知上层处理写事件
           pINetEventHandler->OnWrite(pConn);
 
 		  //更新上次活跃的时间戳
-          pConn->UpdateLastActiveTimestamp();
+          pConn->upsate_last_active_tm();
         }
         break;
       case OP_ACCEPT:
         {
-          INetConnection* pListConn = pConn;      //监听套接字
-          INetConnection* pAcceptConn = (INetConnection*) lpOverlapped->pvoid;    //接收的连接
+          net_conn* pListConn = pConn;      //监听套接字
+          net_conn* pAcceptConn = (net_conn*) lpOverlapped->pvoid;    //接收的连接
 
 		  //设置套接字更新上下文（以便可以通过getpeername获取到ip地址）
 		  setsockopt(pAcceptConn->get_socket(), 
@@ -525,8 +525,8 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
           pINetEventHandler->OnAccept(pListConn, pAcceptConn); 
 
 		  //更新时间戳
-          pListConn->UpdateLastActiveTimestamp();
-          pAcceptConn->UpdateLastActiveTimestamp();
+          pListConn->upsate_last_active_tm();
+          pAcceptConn->upsate_last_active_tm();
 
 		  //投递读请求，如果断开连接内部会处理
           pINetwork->PostRead(pAcceptConn);
@@ -541,7 +541,7 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
           pINetEventHandler->OnConnect(pConn, true);
 
 		  //更新上次活跃的时间戳
-          pConn->UpdateLastActiveTimestamp();
+          pConn->upsate_last_active_tm();
 
 		  //投递读请求
           pINetwork->PostRead(pConn);
@@ -556,10 +556,10 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
 		//@todo 需要处理断开连接的处理
 
       if (lpOverlapped->operate_type == OP_READ) {
-        pConn->DecPostReadCount();
+        pConn->dec_post_read_count();
       }
       else if (lpOverlapped->operate_type == OP_WRITE) {
-        pConn->DecPostWriteCount();
+        pConn->dec_post_write_count();
       }
 
       if (lpOverlapped->operate_type == OP_CONNECT) {
@@ -568,8 +568,8 @@ unsigned int WINAPI INetNetworkImp::ThreadNetwork(void* param)
       }
       else if (lpOverlapped->operate_type == OP_ACCEPT) {
         //
-        INetConnection* pListConn = pConn;      //监听套接字
-        INetConnection* pAcceptConn = (INetConnection*) lpOverlapped->pvoid;    //接收的连接
+        net_conn* pListConn = pConn;      //监听套接字
+        net_conn* pAcceptConn = (net_conn*) lpOverlapped->pvoid;    //接收的连接
         pINetwork->PostAccept(pListConn);
         pINetEventHandler->OnAccept(pListConn, pAcceptConn, false);
 
@@ -649,10 +649,10 @@ bool INetNetworkImp::ReleaseMyOverlapped(Klib_OverLapped* pMyoverlapped)
   return true;
 }
 
-void INetNetworkImp::CheckAndDisconnect(INetConnection* pConn)
+void INetNetworkImp::CheckAndDisconnect(net_conn* pConn)
 {
   pConn->lock();
-  if (!pConn->get_is_closing() && pConn->GetPostReadCount() == 0 && pConn->GetPostReadCount() == 0) {
+  if (!pConn->get_is_closing() && pConn->get_post_read_count() == 0 && pConn->get_post_read_count() == 0) {
     pConn->set_is_closing(TRUE);
     pConn->unlock();
 

@@ -50,7 +50,7 @@ public:
     // Returns:
     //		释放完成返回true, 失败返回false
     //----------------------------------------------------------------------
-    virtual bool FreeConnPacket(INetConnection* pConn);  
+    virtual bool FreeConnPacket(net_conn* pConn);  
 
     //----------------------------------------------------------------------
     // Summary:
@@ -85,12 +85,12 @@ protected:
     //       表示一个连接下保存的多少网络封包,针对一个连接的封包都这样保存
     //----------------------------------------------------------------------
     struct stPacketStore{
-        INetConnection* pConn;
+        net_conn* pConn;
         NetPacketListType m_packetList;
     };
 
     typedef std::list<stPacketStore*> NetConnListType;
-    typedef stdext::hash_map<INetConnection*, stPacketStore*> NetConnMapType;
+    typedef stdext::hash_map<net_conn*, stPacketStore*> NetConnMapType;
     struct stConnPacketHash {
         NetConnListType connQueue;              // 以链表的形式保存所有的连接指针
         NetConnMapType  connMapVisited;         // 以map形式保存已经访问了的连接

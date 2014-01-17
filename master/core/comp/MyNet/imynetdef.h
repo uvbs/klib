@@ -3,7 +3,7 @@
 #include "INetClient.h"
 #include "INetwork.h"
 #include "INetEventHandler.h"
-#include "INetConnection.h"
+#include "net_conn.h"
 #include "INetPacketMgr.h"
 #include "INetConnectionMgr.h"
 #include "ICombiner.h"

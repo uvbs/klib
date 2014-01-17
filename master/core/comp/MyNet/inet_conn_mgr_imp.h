@@ -4,29 +4,29 @@
 #include <list>
 #include <map>
 
+#include <core/lock_stl.h>
 
 #define  NETCONNECTION_ARRAY_LENGTH 9
 
+//----------------------------------------------------------------------
+// 网络连接管理, @todo 添加上超时机制
 class inet_conn_mgr_imp : public inet_conn_mgr
 {
 public:
-  inet_conn_mgr_imp(void);
-  ~inet_conn_mgr_imp(void);
+    inet_conn_mgr_imp(void);
+    ~inet_conn_mgr_imp(void);
 
 public:
-  virtual bool add_conn(net_conn* pConn) ;
-  virtual bool del_conn(net_conn* pConn) ;
-  virtual bool is_exist_conn(net_conn* pConn) ;
+    virtual bool add_conn(net_conn* pConn) ;
+    virtual bool del_conn(net_conn* pConn) ;
+    virtual bool is_exist_conn(net_conn* pConn) ;
 
-  virtual int get_conn_count() ;
-  virtual bool for_each_conn(conn_callback* callback, void* param) ;
-
-protected:
-  int ConnHashFun(void* param, int len);
+    virtual size_t get_conn_count() ;
 
 protected:
-  typedef std::map<net_conn*, net_conn*> ConnectionListType;
-  ConnectionListType m_ConnList[NETCONNECTION_ARRAY_LENGTH];
-  mutex      mutexs_[NETCONNECTION_ARRAY_LENGTH];
+    klib::stl::lock_bucket_map<net_conn*, 
+        net_conn*, 
+        NETCONNECTION_ARRAY_LENGTH>  
+        conn_list_x_;
 
 };

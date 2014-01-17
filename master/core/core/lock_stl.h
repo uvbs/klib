@@ -442,6 +442,16 @@ public:
         static_assert(nBucketSize> 0, "nBucketSize must big than zero!!!");
     }
 
+    size_t size()
+    {
+        size_t num_ = 0;
+        for (size_t i=0; i<nBucketSize; ++i)
+        {
+            num_ += m_buck_map[i].size();
+        }
+        return num_;
+    }
+
     bool get_item(const Key& k, Val& v)
     {
         return m_buck_map[get_bucket_index(k)].get_item(k,v);

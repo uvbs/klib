@@ -118,8 +118,8 @@
     <ClCompile Include="inetwork_imp.cpp" />
     <ClCompile Include="mynet.cpp" />
     <ClCompile Include="MyNetModule.cpp" />
-    <ClCompile Include="NetPacket.cpp" />
-    <ClCompile Include="NetSocket.cpp" />
+    <ClCompile Include="net_packet.cpp" />
+    <ClCompile Include="net_socket.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

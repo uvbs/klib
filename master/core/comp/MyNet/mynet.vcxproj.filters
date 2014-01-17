@@ -98,12 +98,6 @@
     <ClCompile Include="MyNetModule.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="NetPacket.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="NetSocket.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stream.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -120,6 +114,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="tcp_net_facade_imp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="net_packet.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="net_socket.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -210,9 +210,12 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
         }
 
         //TRACE(TEXT("·â°üÉú³É..."));
-        pPacket->pConn = pConn;
-        pPacket->datalen = iPacketLen;
-        pConn->read_recv_stream(pPacket->buff, iPacketLen);
+        pPacket->pConn    = pConn;
+        pPacket->bf_size_ = iPacketLen;
+        if (pPacket->init_buff(iPacketLen)) {
+            return false;
+        }
+        pConn->read_recv_stream(pPacket->get_buff(), iPacketLen);
 
         if (dispatch_handler_) 
         {

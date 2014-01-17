@@ -182,9 +182,9 @@ net_packet* inetpacket_mgr_imp::alloc_net_packet()
     {
         pPacket = free_packet_list_.front();
 
-        BOOL bFixed = pPacket->m_bFixed;
+        bool bFixed = pPacket->is_fixed_mem_;
         new(pPacket) net_packet;
-        pPacket->m_bFixed = bFixed;
+        pPacket->is_fixed_mem_ = bFixed;
 
         free_packet_list_.pop_front();
     }
@@ -204,7 +204,7 @@ bool inetpacket_mgr_imp::free_net_packet(net_packet* pPacket)
     // 空闲列表中的对象比较多的时候要将非固定申请的内存给释放掉
     if (free_packet_list_.size() > NET_MAX_PACKET_COUNT)
     {
-        if (!pPacket->m_bFixed)
+        if (!pPacket->is_fixed_mem_)
         {
             delete pPacket;
             return true;
@@ -238,7 +238,7 @@ bool inetpacket_mgr_imp::InitPacketMgr(UINT uInitPacketNum/* = 300*/)
     for (UINT i=0; i<uInitPacketNum; ++ i) 
     {
         pPacket = (net_packet*) & buff[i];
-        pPacket->m_bFixed = TRUE;
+        pPacket->is_fixed_mem_ = TRUE;
         free_packet_list_.push_back(pPacket);
     }
 

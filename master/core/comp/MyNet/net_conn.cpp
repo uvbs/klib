@@ -35,7 +35,8 @@ bool net_conn::init_peer_info()
     memset(&sockaddr, 0, sizeof(sockaddr));
     sockaddr.sin_family = AF_INET;
     int len = sizeof(sockaddr);
-    if (SOCKET_ERROR != getpeername(get_socket(), (struct sockaddr*) & sockaddr, &len)) {
+    if (SOCKET_ERROR != getpeername(get_socket(), (struct sockaddr*) & sockaddr, &len)) 
+    {
         set_peer_port(ntohs(sockaddr.sin_port));
         peer_addr_ = sockaddr.sin_addr.s_addr;
         return true;

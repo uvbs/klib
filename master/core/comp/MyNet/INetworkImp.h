@@ -37,9 +37,8 @@ public:
     ~inetwork_imp(void);
 
 public:
-    virtual bool init_network() ;   
-    virtual bool set_net_event_handler(inet_event_handler* handler) ;          ///< 设置事件处理接口
-    virtual bool run_network() ;                                             ///< 启动网络层-》创建线程
+    virtual bool init_network(inet_event_handler* handler) ;   
+    virtual bool run_network() ;                 ///< 启动网络层-》创建线程
 
     virtual net_conn* post_accept(net_conn* pListenConn) ;	                ///< 投递接受请求,可多次投递，监听套接字必须用 create_listen_conn 创建
     virtual bool post_connection(net_conn* pConn) ;		                    ///< 投递连接请求

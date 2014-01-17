@@ -13,10 +13,7 @@ public:
 public:
     /// 
     /// @brief 初始化网络层接口，由tcp_net_facade调用
-    virtual bool init_network() = 0; 
-
-    /// @brief 设置事件处理器，主要处理网络事件
-    virtual bool set_net_event_handler(inet_event_handler* handler) = 0;
+    virtual bool init_network(inet_event_handler* handler) = 0; 
 
     /// @brief 运行网络层，创建线程这些
     virtual bool run_network() = 0;

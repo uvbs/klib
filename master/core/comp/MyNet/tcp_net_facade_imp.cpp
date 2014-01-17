@@ -60,8 +60,7 @@ bool tcp_net_facade_imp::init_client()
 
     inetwork_ = new inetwork_imp;
     _ASSERT(inetwork_);
-    inetwork_->init_network();
-    inetwork_->set_net_event_handler(this);
+    inetwork_->init_network(this);
     inetwork_->run_network();
 
     // 初始化默认的处理器

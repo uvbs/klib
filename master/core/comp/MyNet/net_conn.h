@@ -39,6 +39,7 @@ public:
     ~net_conn(void);
 
 public:
+    // 获取相关信息
     inline net_socket& get_socket() { return m_socket; }
     bool init_peer_info();                                      // 初始对端信息，通过getpeername来获取
     void set_peer_addr(const char* straddr);                    // 设置ip地址
@@ -49,6 +50,7 @@ public:
     inline void   set_local_port(USHORT port) { local_port_ = port; }
     inline USHORT get_local_port() { return local_port_; }
 
+    // 断开连接
     void dis_connect() ;
 
     // 接收流的处理
@@ -67,10 +69,16 @@ public:
     inline void  set_bind_key(void* key) { bind_key_ = key; }
     inline void* get_bind_key() { return bind_key_; }
 
+    // 提供给外部的锁，用于相关必须要用到锁的场景
+    void lock() { mutex_.lock(); }
+    void unlock(){ mutex_.unlock() ;}
+
 protected:
+    // 时间计数
     inline DWORD get_last_active_tm() { return last_active_tm_; }
     void upsate_last_active_tm() ;
 
+    // 投递计数
     void inc_post_read_count();
     void dec_post_read_count();
     USHORT get_post_read_count();
@@ -78,6 +86,7 @@ protected:
     void dec_post_write_count();
     USHORT get_post_write_count();
 
+    // 是否关闭状态
     inline BOOL get_is_closing() { return is_closing_; }
     inline void set_is_closing(BOOL bClose = TRUE) { is_closing_ = bClose; }
 
@@ -86,9 +95,6 @@ protected:
     inline size_t add_rwited_bytes(size_t dwBytes) { return (writed_bytes_+=dwBytes); }
     inline size_t get_readed_bytes()               { return readed_bytes_; }
     inline size_t add_readed_bytes(size_t dwBytes) { return readed_bytes_ += dwBytes; }
-
-    void lock() { mutex_.lock(); }
-    void unlock(){ mutex_.unlock() ;}
 
 protected:
     net_socket m_socket;		            // 套接字
@@ -109,6 +115,6 @@ protected:
 
     mutex     mutex_;                       // 临界区对象，用于互斥数据的访问
 
-    net_stream_type  recv_stream_;
-    net_stream_type  send_stream_;
+    net_stream_type  recv_stream_;          // 接收流
+    net_stream_type  send_stream_;          // 发送流
 };

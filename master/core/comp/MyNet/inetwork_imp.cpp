@@ -42,31 +42,29 @@ inetwork_imp::~inetwork_imp(void)
 {
 }
 
-bool inetwork_imp::init_network()
+bool inetwork_imp::init_network(inet_event_handler* handler)
 {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2,2), &wsaData);
 
+    // 创建完成端口
     hiocp_ = CreateIoCompletionPort(INVALID_HANDLE_VALUE,NULL,(ULONG_PTR)0, 0);
     _ASSERT(hiocp_);
-    if (NULL == hiocp_) {
+    if (NULL == hiocp_) 
+    {
         return false;
     }
-
-    //TRACE(TEXT("初始网络成功"));
-
-    return true;
-}
-
-bool inetwork_imp::set_net_event_handler(inet_event_handler* handler)
-{
+    
+    // 设置事件处理器
     _ASSERT(handler);
     net_event_handler_ = handler;
+
     return true;
 }
 
 bool inetwork_imp::run_network() 
 {
+
     HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, &inetwork_imp::work_thread_, this, 0, NULL);
     CloseHandle(hThread);
 

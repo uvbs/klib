@@ -6,16 +6,16 @@
 //      ·â×°Ì×½Ó×Ö
 //----------------------------------------------------------------------
 
-class NetSocket
+class net_socket
 {
 public:
-  NetSocket(void);
-  ~NetSocket(void);
+  net_socket(void);
+  ~net_socket(void);
 
 public:
   SOCKET& Socket() { return m_socket; }
   SOCKET& operator() () { return Socket(); }
-  NetSocket& operator = (SOCKET tsocket) { m_socket = tsocket; return *this; }
+  net_socket& operator = (SOCKET tsocket) { m_socket = tsocket; return *this; }
   operator SOCKET& () { return m_socket; }
   operator HANDLE () { return (HANDLE)m_socket; }
 

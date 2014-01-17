@@ -1,14 +1,14 @@
 #include "StdAfx.h"
-#include "NetPacket.h"
+#include "net_packet.h"
 
 
-NetPacket::NetPacket(void)
+net_packet::net_packet(void)
 {
     m_bFixed	= false;
     pConn		= NULL;
     datalen	= 0;
 }
 
-NetPacket::~NetPacket(void)
+net_packet::~net_packet(void)
 {
 }

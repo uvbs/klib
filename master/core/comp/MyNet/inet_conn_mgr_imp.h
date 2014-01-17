@@ -1,21 +1,21 @@
 #pragma once
 
-#include "INetConnectionMgr.h"
+#include "inet_conn_mgr.h"
 #include <list>
 #include <map>
 
 
 #define  NETCONNECTION_ARRAY_LENGTH 9
 
-class INetConnectionMgrImp : public INetConnectionMgr
+class inet_conn_mgr_imp : public inet_conn_mgr
 {
 public:
-  INetConnectionMgrImp(void);
-  ~INetConnectionMgrImp(void);
+  inet_conn_mgr_imp(void);
+  ~inet_conn_mgr_imp(void);
 
 public:
   virtual bool add_conn(net_conn* pConn) ;
-  virtual bool rmv_conn(net_conn* pConn) ;
+  virtual bool del_conn(net_conn* pConn) ;
   virtual bool is_exist_conn(net_conn* pConn) ;
 
   virtual int get_conn_count() ;

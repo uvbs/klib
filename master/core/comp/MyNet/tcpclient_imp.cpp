@@ -1,15 +1,15 @@
 #include "StdAfx.h"
-#include "INetClientImp.h"
+#include "tcpclient_imp.h"
 
-#include "ICombiner.h"
+#include "icombiner.h"
 #include "net_conn.h"
 #include "INetworkImp.h"
-#include "ICombinerImp.h"
-#include "INetPacketMgrImp.h"
-#include "IDispatchHandler.h"
-#include "INetConnectionMgrImp.h"
+#include "icombiner_imp.h"
+#include "inetpacket_mgr_imp.h"
+#include "dispatcher_handler.h"
+#include "inet_conn_mgr_imp.h"
 
-INetTcpClientImp::INetTcpClientImp(void)
+tcpclient_imp::tcpclient_imp(void)
 {
     m_pICombiner = NULL;
     m_pINetwork = NULL;
@@ -20,11 +20,11 @@ INetTcpClientImp::INetTcpClientImp(void)
 
 }
 
-INetTcpClientImp::~INetTcpClientImp(void)
+tcpclient_imp::~tcpclient_imp(void)
 {
 }
 
-bool INetTcpClientImp::SetICombiner(ICombiner* pCombiner) 
+bool tcpclient_imp::SetICombiner(icombiner* pCombiner) 
 {
     _ASSERT(pCombiner);
     auto_lock helper(m_cs);
@@ -33,7 +33,7 @@ bool INetTcpClientImp::SetICombiner(ICombiner* pCombiner)
     return m_pICombiner != NULL;
 }
 
-bool INetTcpClientImp::SetIDispatchHandler(IDispatchHandler* pHandler) 
+bool tcpclient_imp::SetIDispatchHandler(dispatcher_handler* pHandler) 
 {
     _ASSERT(pHandler);
     auto_lock helper(m_cs);
@@ -42,7 +42,7 @@ bool INetTcpClientImp::SetIDispatchHandler(IDispatchHandler* pHandler)
     return m_pIDispatcher != NULL;
 }
 
-bool INetTcpClientImp::SetINetConnectionMgr(INetConnectionMgr* pMgr) 
+bool tcpclient_imp::SetINetConnectionMgr(inet_conn_mgr* pMgr) 
 {
     _ASSERT(pMgr);
     auto_lock helper(m_cs);
@@ -51,30 +51,30 @@ bool INetTcpClientImp::SetINetConnectionMgr(INetConnectionMgr* pMgr)
     return m_pINetConnMgr != NULL;
 }
 
-bool INetTcpClientImp::InitClient()
+bool tcpclient_imp::InitClient()
 {
     if (m_bInitSucc)
     {
         return m_bInitSucc;
     }
 
-    m_pINetwork = new INetNetworkImp;
+    m_pINetwork = new inetwork_imp;
     _ASSERT(m_pINetwork);
-    m_pINetwork->InitNetwork();
-    m_pINetwork->SetNetEventHandler(this);
-    m_pINetwork->RunNetwork();
+    m_pINetwork->init_network();
+    m_pINetwork->set_net_event_handler(this);
+    m_pINetwork->run_network();
 
     // 初始化默认的处理器
-    m_pICombiner = new ICombinerImp;
-    m_pNetPacketMgr = new INetPacketMgrImp;
-    m_pINetConnMgr = new INetConnectionMgrImp;
+    m_pICombiner = new icombiner_imp;
+    m_pNetPacketMgr = new inetpacket_mgr_imp;
+    m_pINetConnMgr = new inet_conn_mgr_imp;
 
     m_bInitSucc = (m_pICombiner && m_pNetPacketMgr && m_pINetConnMgr);
 
     return m_bInitSucc;
 }
 
-bool INetTcpClientImp::AddEventHandler(INetEventHandler* handler) 
+bool tcpclient_imp::AddEventHandler(inet_event_handler* handler) 
 {
     auto_lock helper(m_cs);
 
@@ -93,7 +93,7 @@ bool INetTcpClientImp::AddEventHandler(INetEventHandler* handler)
     return true;
 }
 
-bool INetTcpClientImp::RemoveEventHandler(INetEventHandler* handler) 
+bool tcpclient_imp::RemoveEventHandler(inet_event_handler* handler) 
 {
     auto_lock helper(m_cs);
 
@@ -111,11 +111,11 @@ bool INetTcpClientImp::RemoveEventHandler(INetEventHandler* handler)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool INetTcpClientImp::OnConnect(net_conn* pConn, bool bConnected/* = true*/) 
+bool tcpclient_imp::OnConnect(net_conn* pConn, bool bConnected/* = true*/) 
 {
     if (bConnected) {
         //const char *msg = "GET / HTTP/1.1\r\nAccept: */*\r\nHost: www.baidu.com\r\n\r\n";
-        //m_pINetwork->PostWrite(pConn, msg, strlen(msg));
+        //m_pINetwork->post_write(pConn, msg, strlen(msg));
     }
     else {
         //TRACE(TEXT("连接失败!\r\n"));
@@ -144,7 +144,7 @@ bool INetTcpClientImp::OnConnect(net_conn* pConn, bool bConnected/* = true*/)
     return true;
 }
 
-bool INetTcpClientImp::OnDisConnect(net_conn* pConn) 
+bool tcpclient_imp::OnDisConnect(net_conn* pConn) 
 {
     //MyPrtLog("连接断开了...\r\n");
 
@@ -166,16 +166,16 @@ bool INetTcpClientImp::OnDisConnect(net_conn* pConn)
     }
 
     if (m_pINetConnMgr) {
-        m_pINetConnMgr->rmv_conn(pConn);
+        m_pINetConnMgr->del_conn(pConn);
     }
     if (m_pNetPacketMgr) {
-        m_pNetPacketMgr->FreeConnPacket(pConn);
+        m_pNetPacketMgr->free_conn_packets(pConn);
     }
 
     return true;
 }
 
-bool INetTcpClientImp::OnRead(net_conn* pConn, const char* buff, size_t len)
+bool tcpclient_imp::OnRead(net_conn* pConn, const char* buff, size_t len)
 {
     //MyPrtLog("有数据来啦Len: %d", len);
     _ASSERT(buff);
@@ -190,7 +190,7 @@ bool INetTcpClientImp::OnRead(net_conn* pConn, const char* buff, size_t len)
         //添加封包
         //MyPrtLog("已构成完整封包....\r\n");
 
-        NetPacket* pPacket = m_pNetPacketMgr->AllocNetPacket();
+        net_packet* pPacket = m_pNetPacketMgr->alloc_net_packet();
         if (NULL == pPacket) 
         {
             _ASSERT(FALSE);
@@ -205,11 +205,11 @@ bool INetTcpClientImp::OnRead(net_conn* pConn, const char* buff, size_t len)
         if (m_pIDispatcher) 
         {
             m_pIDispatcher->DispatchPacket(pPacket);
-            m_pNetPacketMgr->FreeNetPacket(pPacket);
+            m_pNetPacketMgr->free_net_packet(pPacket);
         }
         else 
         {
-            m_pNetPacketMgr->AddPacket(pPacket);
+            m_pNetPacketMgr->add_packet(pPacket);
         }
 
         if (pConn->get_recv_length() <= 0)
@@ -229,7 +229,7 @@ bool INetTcpClientImp::OnRead(net_conn* pConn, const char* buff, size_t len)
     return true;
 }
 
-bool INetTcpClientImp::OnWrite(net_conn* pConn) 
+bool tcpclient_imp::OnWrite(net_conn* pConn) 
 {
     //MyPrtLog("写数据完毕..\r\n");
 
@@ -242,7 +242,7 @@ bool INetTcpClientImp::OnWrite(net_conn* pConn)
     return true;
 }
 
-bool INetTcpClientImp::OnAccept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
+bool tcpclient_imp::OnAccept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
 {
     if (m_pINetConnMgr && bSuccess) {
 #ifdef _DEBUG

@@ -27,33 +27,6 @@
     <ClInclude Include="ICombiner.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ICombinerImp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="IDispatchHandler.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="INetClient.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="INetClientImp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="INetConnectionMgr.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="INetConnectionMgrImp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="INetEventHandler.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="INetPacketMgr.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="INetPacketMgrImp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="INetwork.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -66,16 +39,43 @@
     <ClInclude Include="MyNetModule.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MySocket.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="NetPacket.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="stream.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="net_conn.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tcpclient.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="tcpclient_imp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="icombiner_imp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inet_conn_mgr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inet_conn_mgr_imp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inetpacket_mgr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inetpacket_mgr_imp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inet_event_handler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="net_socket.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="net_packet.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="dispatcher_handler.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -95,33 +95,6 @@
     <ClCompile Include="ICombinerImp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="IDispatchHandler.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetClient.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetClientImp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetConnectionMgrImp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetEventHandler.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetPacketMgr.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetPacketMgrImp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetwork.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="INetworkImp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="MyNetModule.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -135,6 +108,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="net_conn.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="tcpclient_imp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="inet_conn_mgr_imp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="inetpacket_mgr_imp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="inetwork_imp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -1,25 +1,25 @@
 #pragma once
 
-#include "MySocket.h"
+#include "net_socket.h"
 
 class net_conn;
-class INetEventHandler;
-class INetNetwork
+class inet_event_handler;
+class inetwork
 {
 public:
-  INetNetwork(void);
-  ~INetNetwork(void);
+  inetwork(void) {}
+  virtual ~inetwork(void) {}
 
 public:
   /// 
-  /// @brief 初始化网络层接口，由INetTcpClient调用
-  virtual bool InitNetwork() = 0; 
+  /// @brief 初始化网络层接口，由tcpclient调用
+  virtual bool init_network() = 0; 
 
   /// @brief 设置事件处理器，主要处理网络事件
-  virtual bool SetNetEventHandler(INetEventHandler* handler) = 0;
+  virtual bool set_net_event_handler(inet_event_handler* handler) = 0;
 
   /// @brief 运行网络层，创建线程这些
-  virtual bool RunNetwork() = 0;
+  virtual bool run_network() = 0;
   
   /// @brief 投递接受连接
   ///
@@ -32,9 +32,9 @@ public:
   /// @usage   net_conn* pListenConn = pClient->GetNetwork()->CreateNewConnection();
   /// pListenConn->set_local_port(7000);
   /// pClient->GetNetwork()->InitListenConnection(pListenConn);
-  /// pClient->GetNetwork()->PostAccept(pListenConn);
+  /// pClient->GetNetwork()->post_accept(pListenConn);
   ///
-  virtual net_conn* PostAccept(net_conn* plistenConn) = 0;
+  virtual net_conn* post_accept(net_conn* plistenConn) = 0;
 
   /// @brief 投递连接
   /// 
@@ -49,9 +49,9 @@ public:
   /// @usage   net_conn* pMyConn = pClient->GetNetwork()->CreateNewConnection();
   /// pMyConn->set_peer_addr("127.0.0.1");
   /// pMyConn->set_peer_port(7000);
-  /// pClient->GetNetwork()->PostConnection(pMyConn);
+  /// pClient->GetNetwork()->post_connection(pMyConn);
   /// 
-  virtual bool PostConnection(net_conn* pConn) = 0;
+  virtual bool post_connection(net_conn* pConn) = 0;
 
   /// @brief 在建立的连接上投递一个读请求
   ///
@@ -62,9 +62,9 @@ public:
   /// @post  
   ///
   /// @usage   net_conn* pMyConn = pClient->GetNetwork()->CreateNewConnection();
-  /// pClient->GetNetwork()->PostRead(pMyConn);
+  /// pClient->GetNetwork()->post_read(pMyConn);
   /// 
-  virtual bool PostRead(net_conn* pConn) = 0;
+  virtual bool post_read(net_conn* pConn) = 0;
 
   /// @brief 在建立的连接上投递一个写数据请求
   ///
@@ -75,9 +75,9 @@ public:
   /// @post  
   ///
   /// @usage   net_conn* pMyConn = pClient->GetNetwork()->CreateNewConnection();
-  /// pClient->GetNetwork()->PostWrite(pMyConn, buff, 1024);
+  /// pClient->GetNetwork()->post_write(pMyConn, buff, 1024);
   /// 
-  virtual bool PostWrite(net_conn* pConn, const char* buff, size_t len) = 0;
+  virtual bool post_write(net_conn* pConn, const char* buff, size_t len) = 0;
 
   /// @brief 创建获取监听套接口
   ///
@@ -87,10 +87,9 @@ public:
   /// @retval != NULL  创建成功
   /// @post  
   ///
-  /// @usage   net_conn* pListenConn = CreateListenConn(9000);
-  ///          使用PostAccept(pListenConn); 投递接受请求
-  /// 
-  virtual net_conn* CreateListenConn(USHORT uLocalPort) = 0;
+  /// @usage   net_conn* pListenConn = create_listen_conn(9000);
+  ///          使用post_accept(pListenConn); 投递接受请求
+  virtual net_conn* create_listen_conn(USHORT uLocalPort) = 0;
 
   /// @brief 获取一个套接字接口
   ///
@@ -103,7 +102,7 @@ public:
   ///
   /// @usage   net_conn* pListenConn = pClient->GetNetwork()->CreateNewConnection();
   /// 
-  virtual net_conn* CreateNewConn() = 0;
+  virtual net_conn* create_conn() = 0;
 
   /// @brief 销毁一个套接字接口
   ///
@@ -117,5 +116,5 @@ public:
   ///
   /// @usage   net_conn* pListenConn = pClient->GetNetwork()->FreeConnection(pConn);
   /// 
-  virtual bool ReleaseConnection(net_conn* pConn) = 0;
+  virtual bool release_conn(net_conn* pConn) = 0;
 };

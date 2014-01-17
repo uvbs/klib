@@ -40,10 +40,17 @@ void test_seg_buff()
     typedef klib::io::mem_seg_stream<11, char> test_buff_type;
 
     test_buff_type s;
-    s.write("abcdefghijklmnopqrst1234567890QWERTYUIOP", 30);
-
     test_buff_type::value_type buff[2048];
-    s.read(buff, s.size());
+    char* str = (char*) "abcdefghijklmnopqrst1234567890QWERTYUIOP";
+
+    for (int i=0; i<100; ++i)
+    {
+        memset(buff, 0, sizeof(buff));
+
+        s.write(str, strlen(str));
+        s.read(buff, s.size());
+    }
+
     // s.read();
 }
 

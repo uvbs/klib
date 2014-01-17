@@ -4,7 +4,7 @@
 
 #include "net_conn.h"
 
-class ICombiner
+class icombiner
 {
 public:
   /*

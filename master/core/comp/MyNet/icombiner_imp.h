@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ICombiner.h"
+#include "icombiner.h"
 
-class ICombinerImp : public ICombiner
+class icombiner_imp : public icombiner
 {
 public:
   virtual bool IsIntactPacket(const net_stream_type& stream, int& packetlen) ;

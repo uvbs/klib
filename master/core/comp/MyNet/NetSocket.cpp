@@ -1,12 +1,12 @@
 #include "StdAfx.h"
-#include "MySocket.h"
+#include "net_socket.h"
 
 
-NetSocket::NetSocket(void)
+net_socket::net_socket(void)
 {
   m_socket = INVALID_SOCKET;
 }
 
-NetSocket::~NetSocket(void)
+net_socket::~net_socket(void)
 {
 }

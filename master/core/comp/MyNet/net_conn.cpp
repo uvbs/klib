@@ -6,7 +6,7 @@ net_conn::net_conn(void)
     datalen = 0;
     post_read_count_ = 0;
     post_write_count_ = 0;
-    m_bClosing = FALSE;
+    is_closing_ = FALSE;
     last_active_tm_ = 0;
     peer_port_ = 0;
     local_port_ = 0;
@@ -21,7 +21,7 @@ net_conn::~net_conn(void)
     datalen = 0;
     post_read_count_ = 0;
     post_write_count_ = 0;
-    m_bClosing = FALSE;
+    is_closing_ = FALSE;
     last_active_tm_ = 0;
     peer_port_ = 0;
     local_port_ = 0;

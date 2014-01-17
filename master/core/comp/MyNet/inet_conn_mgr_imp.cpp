@@ -1,18 +1,18 @@
 #include "StdAfx.h"
 
 #include "net_conn.h"
-#include "INetConnectionMgrImp.h"
+#include "inet_conn_mgr_imp.h"
 
 
-INetConnectionMgrImp::INetConnectionMgrImp(void)
+inet_conn_mgr_imp::inet_conn_mgr_imp(void)
 {
 }
 
-INetConnectionMgrImp::~INetConnectionMgrImp(void)
+inet_conn_mgr_imp::~inet_conn_mgr_imp(void)
 {
 }
 
-bool INetConnectionMgrImp::add_conn(net_conn* pConn) 
+bool inet_conn_mgr_imp::add_conn(net_conn* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {
@@ -28,7 +28,7 @@ bool INetConnectionMgrImp::add_conn(net_conn* pConn)
     return true;
 }
 
-bool INetConnectionMgrImp::rmv_conn(net_conn* pConn) 
+bool inet_conn_mgr_imp::del_conn(net_conn* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {
@@ -44,7 +44,7 @@ bool INetConnectionMgrImp::rmv_conn(net_conn* pConn)
     return false;
 }
 
-bool INetConnectionMgrImp::is_exist_conn(net_conn* pConn) 
+bool inet_conn_mgr_imp::is_exist_conn(net_conn* pConn) 
 {
     int ipos = ConnHashFun(pConn, NETCONNECTION_ARRAY_LENGTH);
     {
@@ -59,7 +59,7 @@ bool INetConnectionMgrImp::is_exist_conn(net_conn* pConn)
     return false;
 }
 
-int INetConnectionMgrImp::get_conn_count()
+int inet_conn_mgr_imp::get_conn_count()
 {
     int iCount = 0;
 
@@ -70,7 +70,7 @@ int INetConnectionMgrImp::get_conn_count()
     return iCount;
 }
 
-bool INetConnectionMgrImp::for_each_conn(conn_callback* callback, void* param) 
+bool inet_conn_mgr_imp::for_each_conn(conn_callback* callback, void* param) 
 {
     ConnectionListType::const_iterator itr;
 
@@ -88,7 +88,7 @@ bool INetConnectionMgrImp::for_each_conn(conn_callback* callback, void* param)
     return true;
 }
 
-int INetConnectionMgrImp::ConnHashFun(void* param, int len)
+int inet_conn_mgr_imp::ConnHashFun(void* param, int len)
 {
     int ipos = (int)param % len;
     _ASSERT(ipos >=0 && ipos < NETCONNECTION_ARRAY_LENGTH);

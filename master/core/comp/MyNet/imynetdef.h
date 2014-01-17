@@ -1,12 +1,12 @@
 #pragma once
 
-#include "INetClient.h"
+#include "tcpclient.h"
 #include "INetwork.h"
-#include "INetEventHandler.h"
+#include "inet_event_handler.h"
 #include "net_conn.h"
-#include "INetPacketMgr.h"
-#include "INetConnectionMgr.h"
-#include "ICombiner.h"
+#include "inetpacket_mgr.h"
+#include "inet_conn_mgr.h"
+#include "icombiner.h"
 
 // 定义接口
 
@@ -18,5 +18,5 @@ struct IMyNet
 {
     /// @brief
     /// 创建一个TCP客户操作接口
-    virtual INetTcpClient* CreateTcpClient() = 0;
+    virtual tcpclient* CreateTcpClient() = 0;
 };

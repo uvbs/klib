@@ -27,6 +27,12 @@ namespace detail
             throw std::exception();
         }
 
+        void clear()
+        {
+            write_pos_ = 0;
+            read_pos_  = 0;
+        }
+
         pointer get() { return &buff_[0]; }
 
         bool write(const pointer p, size_t len)
@@ -194,6 +200,8 @@ protected:
         if (!l->empty()) {
             p = l->front();
             l->pop_front();
+
+            p->clear();
         }
 
         if (0 == p) {

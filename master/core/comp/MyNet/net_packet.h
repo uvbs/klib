@@ -5,11 +5,11 @@
 
 // 保存网络数据包的
 class net_conn;
-class NetPacket
+class net_packet
 {
 public:
-    NetPacket(void);
-    ~NetPacket(void);
+    net_packet(void);
+    ~net_packet(void);
 
 public:
     BOOL    m_bFixed;                   // 表示是否是固定的，即不需要被delete掉的

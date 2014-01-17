@@ -1,8 +1,8 @@
 #pragma once
 
 class net_conn;
-class INetNetwork;
-class INetEventHandler
+class inetwork;
+class inet_event_handler
 {
 public:
   virtual bool OnConnect(net_conn* pConn, bool bConnected = true) = 0;

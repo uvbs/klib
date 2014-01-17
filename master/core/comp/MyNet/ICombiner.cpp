@@ -1,2 +1,2 @@
 #include "StdAfx.h"
-#include "ICombiner.h"
+#include "icombiner.h"

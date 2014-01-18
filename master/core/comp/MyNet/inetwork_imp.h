@@ -37,7 +37,7 @@ public:
     ~inetwork_imp(void);
 
 public:
-    virtual bool init_network(inet_event_handler* handler) ;   
+    virtual bool init_network(inet_tcp_handler* handler) ;   
     virtual bool run_network() ;                 ///< 启动网络层-》创建线程
 
     virtual net_conn* post_accept(net_conn* pListenConn) ;	                ///< 投递接受请求,可多次投递，监听套接字必须用 create_listen_conn 创建
@@ -45,6 +45,10 @@ public:
     virtual bool post_read(net_conn* pConn) ;	                            ///< 投递读请求，在接受连接后底层会默认投递一个请求
     virtual bool post_write(net_conn* pConn, const char* buff, size_t len) ;	///< 投递写请求
 
+    virtual net_conn* try_listen(USHORT uLocalPort) ;                                  ///< 监听端口
+    virtual net_conn* try_connect(const char* addr, USHORT uport, void* bind_key) ;    ///< 投递连接到服务器
+
+protected:
     virtual net_conn* create_listen_conn(USHORT uLocalPort) ;	            ///< 创建返回监听套接字，返回一个net_conn结构，用于接受连接
     virtual net_conn* create_conn() ;			                            ///< 创建一个连接套接字
     virtual bool release_conn(net_conn* pConn);		                        ///< 释放连接
@@ -60,7 +64,7 @@ protected:
 
 private:
     HANDLE                  hiocp_;                                         ///< 完成端口句柄
-    inet_event_handler*     net_event_handler_;                             ///< 移交上层处理的接口
+    inet_tcp_handler*     net_event_handler_;                             ///< 移交上层处理的接口
     LPFN_ACCEPTEX           m_lpfnAcceptEx;                                 ///< AcceptEx函数指针
 
     typedef std::list<net_overLapped*> OverLappedListType;                  ///< 保存net_overLapped的链表类型

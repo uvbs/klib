@@ -2,7 +2,7 @@
 
 class net_conn;
 class inetwork;
-class inet_event_handler
+class inet_tcp_handler
 {
 public:
   virtual bool on_connect(net_conn* pConn, bool bConnected = true) = 0;

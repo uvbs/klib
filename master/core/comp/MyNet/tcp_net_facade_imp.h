@@ -16,7 +16,7 @@ public:
     virtual bool set_icombiner(icombiner* pCombiner) ;                  //设置分包处理接口
     virtual bool set_dispatch_handler(dispatcher_handler* pHandler) ;   //设置分派接口,如果不设置这个，则封包进入封包管理器中
     virtual bool set_net_conn_mgr(inet_conn_mgr* pMgr) ;                //连接管理器
-    virtual bool init_client();                                         //初始化客户端
+    virtual bool init();                                         //初始化客户端
 
     //////////////////////////////////////////////////////////////////////////
     // 获取其它接口
@@ -26,8 +26,8 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
     // 事件处理接口
-    virtual bool add_event_handler(inet_event_handler* handler) ;
-    virtual bool del_event_handler(inet_event_handler* handler) ;
+    virtual bool add_event_handler(inet_tcp_handler* handler) ;
+    virtual bool del_event_handler(inet_tcp_handler* handler) ;
 
 protected:
     //----------------------------------------------------------------------
@@ -48,6 +48,6 @@ protected:
 
     mutex                       mutex_;                             //同步结构
 
-    typedef std::vector<inet_event_handler*> INetEventHandlerListType;
+    typedef std::vector<inet_tcp_handler*> INetEventHandlerListType;
     INetEventHandlerListType    net_event_list_;                    //事件处理器列表
 };

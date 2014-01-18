@@ -45,7 +45,7 @@ bool net_conn::init_peer_info()
     return false;
 }
 
-// void net_conn::set_peer_addr_st(const char* straddr)
+// void net_conn::set_peer_addr_str(const char* straddr)
 // {
 //     strncpy(peer_addr_str_, straddr, sizeof(peer_addr_str_) - 1);
 // }
@@ -53,7 +53,7 @@ bool net_conn::init_peer_info()
 char* net_conn::get_peer_addr_str() 
 {
     if (peer_addr_str_[0] == '\0') {
-        set_peer_addr_st(inet_ntoa(*(in_addr*) &peer_addr_str_));
+        set_peer_addr_str(inet_ntoa(*(in_addr*) &peer_addr_str_));
     }
     return peer_addr_str_;
 }

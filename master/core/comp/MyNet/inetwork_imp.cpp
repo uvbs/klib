@@ -2,7 +2,7 @@
 #include "inetwork_imp.h"
 #include <process.h>
 
-#include "inet_event_handler.h"
+#include "inet_tcp_handler.h"
 #include "net_conn.h"
 #include <net/addr_resolver.h>
 
@@ -42,7 +42,7 @@ inetwork_imp::~inetwork_imp(void)
 {
 }
 
-bool inetwork_imp::init_network(inet_event_handler* handler)
+bool inetwork_imp::init_network(inet_tcp_handler* handler)
 {
     WSADATA wsaData;
     WSAStartup(MAKEWORD(2,2), &wsaData);
@@ -170,15 +170,17 @@ bool inetwork_imp::post_connection(net_conn* pConn)
     _ASSERT(pConn);
 
     UINT32  uPeerAddr = 0;
-    klib::net::addr_resolver ipresover(pConn->get_peer_addr_str());
-    if (ipresover.size() < 0)  {
+    klib::net::addr_resolver ip_resolver_(pConn->get_peer_addr_str());
+    if (ip_resolver_.size() < 0)  
+    {
         return false;
     }
-    uPeerAddr = ipresover.at(0);
+    uPeerAddr = ip_resolver_.at(0);
 
     SOCKET& sock = pConn->get_socket();
     sock = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
-    if (sock == INVALID_SOCKET) {
+    if (sock == INVALID_SOCKET) 
+    {
         _ASSERT(FALSE);  // DWORD dwErr = WSAGetLastError();
         _ASSERT(!"创建套接字失败!!!");
         return false;
@@ -188,14 +190,16 @@ bool inetwork_imp::post_connection(net_conn* pConn)
     ZeroMemory(&local_addr, sizeof(sockaddr_in));
     local_addr.sin_family = AF_INET;
     int iret = ::bind(sock, (sockaddr*)(&local_addr), sizeof(sockaddr_in));
-    if (SOCKET_ERROR == iret) {
+    if (SOCKET_ERROR == iret) 
+    {
         closesocket(sock);
         _ASSERT(!"绑定端口失败!!!");
         return false;
     }
 
     HANDLE hResult = CreateIoCompletionPort((HANDLE)sock,hiocp_, (ULONG_PTR)pConn,0);
-    if (NULL == hResult) {
+    if (NULL == hResult) 
+    {
         closesocket(sock);
         _ASSERT(FALSE);
         return false;
@@ -217,7 +221,8 @@ bool inetwork_imp::post_connection(net_conn* pConn)
     }
 
     net_overLapped *pmyoverlapped = get_net_overlapped(); // socket和I/O通讯的载体
-    if (NULL == pmyoverlapped) {
+    if (NULL == pmyoverlapped) 
+    {
         _ASSERT(FALSE && "TODO 这里要释放资源嘛");
         return false;
     }
@@ -247,13 +252,15 @@ bool inetwork_imp::post_connection(net_conn* pConn)
 
     if (!bResult )  // 返回值处理
     {
-        if( WSAGetLastError() != ERROR_IO_PENDING) { // 调用失败
+        if( WSAGetLastError() != ERROR_IO_PENDING) 
+        { 
+            // 调用失败
             closesocket(sock);
             _ASSERT(FALSE);
-            //TRACE(TEXT("ConnextEx error: %d\n"));
             return FALSE;
         }
-        else {//操作未决（正在进行中…）
+        else 
+        {//操作未决（正在进行中…）
             //TRACE(TEXT("WSAGetLastError() == ERROR_IO_PENDING\n"));// 操作正在进行中
         }
     }
@@ -309,7 +316,8 @@ bool inetwork_imp::post_write(net_conn* pConn, const char* buff, size_t len)
     // 下面提交发送请求
     DWORD dwWriteLen = 0;
     net_overLapped *pmyoverlapped = get_net_overlapped();
-    if(pmyoverlapped == NULL) {
+    if(pmyoverlapped == NULL) 
+    {
         return false;
     }
 
@@ -339,11 +347,13 @@ bool inetwork_imp::post_write(net_conn* pConn, const char* buff, size_t len)
         {
             ///TRACE(TEXT("iErrorCode == WSAEWOULDBLOCK\n"));
         }
-        else {
+        else 
+        {
             return false;
         }
     }
-    else {
+    else 
+    {
         //TRACE(TEXT("发送完成了"));
     }
 
@@ -351,10 +361,44 @@ bool inetwork_imp::post_write(net_conn* pConn, const char* buff, size_t len)
     return true;
 }
 
+net_conn* inetwork_imp::try_listen(USHORT uLocalPort) 
+{
+    net_conn* pconn =  this->create_listen_conn(uLocalPort);
+    if (NULL == pconn) 
+    {
+        return NULL;
+    }
+
+    this->post_accept(pconn);
+    return pconn;
+}
+
+net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_key) 
+{
+    if (NULL == addr) 
+    {
+        return NULL;
+    }
+
+    net_conn* pconn = create_conn();
+    if (NULL == pconn) 
+    {
+        return NULL;
+    }
+
+    pconn->set_bind_key(bind_key);
+    pconn->set_peer_addr_str(addr);
+    pconn->set_peer_port(uport);
+    this->post_connection(pconn);
+
+    return pconn;
+}
+
 net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
 {
     net_conn* pListenConn = create_conn();
-    if (NULL == pListenConn) {
+    if (NULL == pListenConn) 
+    {
         return NULL;
     }
 
@@ -371,13 +415,15 @@ net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
     int irt = ::bind(sockListen, (sockaddr*)(&local_addr), sizeof(sockaddr_in));
     listen(sockListen, 5);
 
-    if (SOCKET_ERROR == irt) {
+    if (SOCKET_ERROR == irt) 
+    {
         release_conn(pListenConn);
         return NULL;
     }
 
     HANDLE hResult = CreateIoCompletionPort((HANDLE)sockListen,hiocp_, (ULONG_PTR)pListenConn, 0);
-    if (NULL == hResult) {
+    if (NULL == hResult) 
+    {
         _ASSERT(FALSE);
         release_conn(pListenConn);
         return NULL;
@@ -438,7 +484,7 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
 {
     //使用完成端口模型
     inetwork_imp* pINetwork = (inetwork_imp*)param;
-    inet_event_handler* pINetEventHandler = pINetwork->net_event_handler_;
+    inet_tcp_handler* pINetEventHandler = pINetwork->net_event_handler_;
 
     _ASSERT(pINetwork);
     _ASSERT(pINetwork->hiocp_);
@@ -467,7 +513,8 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
             return 0;
         }
 
-        if (bResult) {
+        if (bResult) 
+        {
             if(dwByteTransfered == -1 && lpOverlapped == NULL) 
             {
                 //TRACE(TEXT("退出线程并结束..."));
@@ -547,8 +594,6 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
 
             case OP_CONNECT:
                 {
-                    //TRACE(TEXT("connected successfully!\n"));
-
                     //连接成功，通知上层处理事件
                     pINetEventHandler->on_connect(pConn, true);
 
@@ -564,31 +609,41 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
             //释放lpOverlapped结构，每次有请求的时候重新获取
             pINetwork->release_net_overlapped(lpOverlapped);
         }
-        else {
+        else 
+        {
             //@todo 需要处理断开连接的处理
 
-            if (lpOverlapped->operate_type_ == OP_READ) {
+            // 更新投递计数
+            if (lpOverlapped->operate_type_ == OP_READ) 
+            {
                 pConn->dec_post_read_count();
             }
-            else if (lpOverlapped->operate_type_ == OP_WRITE) {
+            else if (lpOverlapped->operate_type_ == OP_WRITE) 
+            {
                 pConn->dec_post_write_count();
             }
 
-            if (lpOverlapped->operate_type_ == OP_CONNECT) {
+            if (lpOverlapped->operate_type_ == OP_CONNECT) 
+            {
+                // 主动连接失败的时候，先关闭连接，通知上层处理，然后释放连接对象
                 pConn->dis_connect();
                 pINetEventHandler->on_connect(pConn, false);
-            }
-            else if (lpOverlapped->operate_type_ == OP_ACCEPT) {
-                //
-                net_conn* pListConn = pConn;      //监听套接字
-                net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;    //接收的连接
-                pINetwork->post_accept(pListConn);
-                pINetEventHandler->on_accept(pListConn, pAcceptConn, false);
 
-                pINetwork->release_conn(pAcceptConn);
+                pINetwork->release_conn(pConn);
             }
-            else {
-                //处理其它操作（如需要释放连接）
+            else if (lpOverlapped->operate_type_ == OP_ACCEPT) 
+            {
+                // 接受连接失败,释放连接
+                net_conn* pListConn = pConn;                                    // 监听套接字
+                net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;   // 接收的连接
+                pINetwork->post_accept(pListConn);                              // 继续投递接受连接请求
+                pINetEventHandler->on_accept(pListConn, pAcceptConn, false);    // 通知上层接受连接失败
+
+                pINetwork->release_conn(pAcceptConn);                           // 释放
+            }
+            else 
+            {
+                // 处理其它操作（如需要释放连接）
                 pConn->dis_connect();
                 pINetwork->check_and_disconnect(pConn);
                 pINetwork->release_conn(pConn);

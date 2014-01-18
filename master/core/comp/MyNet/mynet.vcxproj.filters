@@ -57,9 +57,6 @@
     <ClInclude Include="inetpacket_mgr_imp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="inet_event_handler.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="net_socket.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -76,6 +73,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="inetwork_imp.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inet_tcp_handler.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

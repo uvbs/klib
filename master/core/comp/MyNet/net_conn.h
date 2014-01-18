@@ -38,11 +38,13 @@ public:
     net_conn(void);
     ~net_conn(void);
 
+    typedef void* bind_key_type;
+
 public:
     // 获取相关信息
     inline net_socket& get_socket() { return m_socket; }
     bool init_peer_info();                                      // 初始对端信息，通过getpeername来获取
-    void set_peer_addr_st(const char* straddr) {strncpy(peer_addr_str_, straddr, sizeof(peer_addr_str_) - 1);}                  // 设置ip地址
+    void set_peer_addr_str(const char* straddr) {strncpy(peer_addr_str_, straddr, sizeof(peer_addr_str_) - 1);}                  // 设置ip地址
     char* get_peer_addr_str() ;
 
     inline void   set_peer_port(USHORT port) { peer_port_ = port; }
@@ -73,6 +75,9 @@ public:
     void lock() { mutex_.lock(); }
     void unlock(){ mutex_.unlock() ;}
 
+    // 获取流量统计
+    inline size_t get_writed_bytes()               { return writed_bytes_; }
+    inline size_t get_readed_bytes()               { return readed_bytes_; }
 protected:
     // 时间计数
     inline DWORD get_last_active_tm() { return last_active_tm_; }
@@ -87,13 +92,11 @@ protected:
     USHORT get_post_write_count();
 
     // 是否关闭状态
-    inline BOOL get_is_closing() { return is_closing_; }
-    inline void set_is_closing(BOOL bClose = TRUE) { is_closing_ = bClose; }
+    inline bool get_is_closing() { return is_closing_; }
+    inline void set_is_closing(bool bClose = TRUE) { is_closing_ = bClose; }
 
-    // 流量统计
-    inline size_t get_writed_bytes()               { return writed_bytes_; }
+    // 设置流量统计
     inline size_t add_rwited_bytes(size_t dwBytes) { return (writed_bytes_+=dwBytes); }
-    inline size_t get_readed_bytes()               { return readed_bytes_; }
     inline size_t add_readed_bytes(size_t dwBytes) { return readed_bytes_ += dwBytes; }
 
 protected:
@@ -107,7 +110,7 @@ protected:
     USHORT    local_port_;                  // 本地端口，做监听用的
     USHORT    post_read_count_;             // 投递接收的数量
     USHORT    post_write_count_;            // 投递发送的数量
-    BOOL      is_closing_;                  // 指示是否是在关闭
+    bool      is_closing_;                  // 指示是否是在关闭
     void*     bind_key_;                    // 绑定的键值
 
     size_t    writed_bytes_;                // 输出了多少字节数

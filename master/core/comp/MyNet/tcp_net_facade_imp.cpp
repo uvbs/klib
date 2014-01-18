@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "tcp_net_facade_imp.h"
 
 #include "icombiner.h"
@@ -13,11 +13,11 @@ tcp_net_facade_imp::tcp_net_facade_imp(void)
 {
     icombiner_        = NULL;
     inetwork_         = NULL;
-    dispatch_handler_ = NULL;
     net_packet_mgr_   = NULL;
     net_conn_mgr_     = NULL;
-    init_success_     = false;
 
+    dispatch_handler_ = NULL;
+    init_success_     = false;
 }
 
 tcp_net_facade_imp::~tcp_net_facade_imp(void)
@@ -51,29 +51,30 @@ bool tcp_net_facade_imp::set_net_conn_mgr(inet_conn_mgr* pMgr)
     return net_conn_mgr_ != NULL;
 }
 
-bool tcp_net_facade_imp::init_client()
+bool tcp_net_facade_imp::init()
 {
     if (init_success_)
     {
         return init_success_;
     }
 
+    // 初始化网络库
     inetwork_ = new inetwork_imp;
     _ASSERT(inetwork_);
     inetwork_->init_network(this);
     inetwork_->run_network();
 
     // 初始化默认的处理器
-    icombiner_ = new icombiner_imp;
-    net_packet_mgr_ = new inetpacket_mgr_imp;
-    net_conn_mgr_ = new inet_conn_mgr_imp;
+    NULL == icombiner_? icombiner_ = new icombiner_imp : (void)0;
+    NULL == net_packet_mgr_ ? net_packet_mgr_ = new inetpacket_mgr_imp : (void)0;
+    NULL == net_conn_mgr_ ? net_conn_mgr_ = new inet_conn_mgr_imp : (void)0;
 
     init_success_ = (icombiner_ && net_packet_mgr_ && net_conn_mgr_);
 
     return init_success_;
 }
 
-bool tcp_net_facade_imp::add_event_handler(inet_event_handler* handler) 
+bool tcp_net_facade_imp::add_event_handler(inet_tcp_handler* handler) 
 {
     guard helper(mutex_);
 
@@ -82,7 +83,8 @@ bool tcp_net_facade_imp::add_event_handler(inet_event_handler* handler)
     itr = net_event_list_.begin();
     for (; itr != net_event_list_.end(); ++itr) 
     {
-        if ((*itr) == handler) {
+        if ((*itr) == handler) 
+        {
             _ASSERT(FALSE);
         }
     }
@@ -92,7 +94,7 @@ bool tcp_net_facade_imp::add_event_handler(inet_event_handler* handler)
     return true;
 }
 
-bool tcp_net_facade_imp::del_event_handler(inet_event_handler* handler) 
+bool tcp_net_facade_imp::del_event_handler(inet_tcp_handler* handler) 
 {
     guard helper(mutex_);
 
@@ -100,7 +102,8 @@ bool tcp_net_facade_imp::del_event_handler(inet_event_handler* handler)
     itr  = net_event_list_.begin();
     for (; itr != net_event_list_.end(); ++itr)
     {
-        if (handler == (*itr)) {
+        if (handler == (*itr)) 
+        {
             net_event_list_.erase(itr);
             return true;
         }
@@ -133,7 +136,8 @@ bool tcp_net_facade_imp::on_connect(net_conn* pConn, bool bConnected/* = true*/)
 #endif
 
     //将连接添加到连接管理器里
-    if (net_conn_mgr_) {
+    if (net_conn_mgr_) 
+    {
         net_conn_mgr_->add_conn(pConn);
     }
 
@@ -212,14 +216,15 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
         //TRACE(TEXT("封包生成..."));
         pPacket->pConn    = pConn;
         pPacket->bf_size_ = iPacketLen;
-        if (!pPacket->init_buff(iPacketLen)) {
+        if (!pPacket->init_buff(iPacketLen)) 
+        {
             return false;
         }
         pConn->read_recv_stream(pPacket->get_buff(), iPacketLen);
 
         if (dispatch_handler_) 
         {
-            dispatch_handler_->DispatchPacket(pPacket);
+            dispatch_handler_->dispatch_packet(pPacket);
             net_packet_mgr_->free_net_packet(pPacket);
         }
         else 
@@ -237,7 +242,8 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
     
     INetEventHandlerListType::const_iterator itr;
     itr  = net_event_list_.begin();
-    for (; itr != net_event_list_.end(); ++itr) {
+    for (; itr != net_event_list_.end(); ++itr) 
+    {
         (*itr)->on_read(pConn, buff, len);
     }
 
@@ -250,7 +256,8 @@ bool tcp_net_facade_imp::on_write(net_conn* pConn, size_t len)
 
     INetEventHandlerListType::const_iterator itr;
     itr  = net_event_list_.begin();
-    for (; itr != net_event_list_.end(); ++itr) {
+    for (; itr != net_event_list_.end(); ++itr) 
+    {
         (*itr)->on_write(pConn, len);
     }
 
@@ -259,19 +266,23 @@ bool tcp_net_facade_imp::on_write(net_conn* pConn, size_t len)
 
 bool tcp_net_facade_imp::on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
 {
-    if (net_conn_mgr_ && bSuccess) {
+    if (net_conn_mgr_ && bSuccess) 
+    {
 #ifdef _DEBUG
-        if (net_conn_mgr_->is_exist_conn(pNewConn)) {
+        if (net_conn_mgr_->is_exist_conn(pNewConn)) 
+        {
             _ASSERT(FALSE && "重复添加连接，这里设计出错!");
         }
 #endif
         net_conn_mgr_->add_conn(pNewConn);
     }
 
-    if (bSuccess) {
+    if (bSuccess) 
+    {
         //MyPrtLog("连接来啦...");
     }
-    else {
+    else 
+    {
         //MyPrtLog("接收连接失败...");
     }
 

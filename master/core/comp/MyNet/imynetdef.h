@@ -2,7 +2,7 @@
 
 #include "tcp_net_facade.h"
 #include "INetwork.h"
-#include "inet_event_handler.h"
+#include "inet_tcp_handler.h"
 #include "net_conn.h"
 #include "inetpacket_mgr.h"
 #include "inet_conn_mgr.h"

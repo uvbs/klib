@@ -87,7 +87,7 @@
     <ClInclude Include="net_conn.h" />
     <ClInclude Include="inet_conn_mgr.h" />
     <ClInclude Include="inet_conn_mgr_imp.h" />
-    <ClInclude Include="inet_event_handler.h" />
+    <ClInclude Include="inet_tcp_handler.h" />
     <ClInclude Include="inetpacket_mgr.h" />
     <ClInclude Include="inetpacket_mgr_imp.h" />
     <ClInclude Include="INetwork.h" />

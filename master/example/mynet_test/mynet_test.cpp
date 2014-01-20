@@ -28,7 +28,7 @@ public:
                 "Last-Modified: Mon, 11 Jan 2004 13:23:42 GMT\r\n"
                 "Content-Length: 12\r\n"
                 "\r\n"
-                "hello world"
+                "hello world!"
                 ;
 
             pListen->set_bind_key(pListen);
@@ -105,10 +105,10 @@ int _tmain(int argc, _TCHAR* argv[])
     HRESULT hr = pframework->load_module(_T("mynet.dll"));
     _ASSERT(S_OK == hr);
 
-    IMyNet* pNet = NULL;
+    imy_net* pNet = NULL;
 
     pframework->start();
-    pframework->find_next_interface(IID_IMyNet, (void**)&pNet);
+    pframework->find_next_interface(IID_imy_net, (void**)&pNet);
 
     tcp_net_facade* tcp_facade_ = pNet->create_tcp_facade();
 

@@ -61,6 +61,14 @@ protected:
 
 protected:
     //----------------------------------------------------------------------
+    // 处理完成事件
+    void on_read(net_conn*, const char* buff, DWORD dwtransfer);
+    void on_write(net_conn*, DWORD dwByteTransfered);
+    void on_accept(net_conn* listen_conn, net_conn* accept_conn);
+    void on_connect(net_conn*, bool bsuccess);
+
+protected:
+    //----------------------------------------------------------------------
     // net_conn 资源管理 
     virtual net_conn* create_listen_conn(USHORT uLocalPort) ;	            ///< 创建返回监听套接字，返回一个net_conn结构，用于接受连接
     virtual net_conn* create_conn() ;			                            ///< 创建一个连接套接字

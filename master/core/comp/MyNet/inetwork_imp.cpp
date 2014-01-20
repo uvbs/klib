@@ -75,6 +75,67 @@ bool inetwork_imp::run_network()
     return true;
 }
 
+bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
+{
+    // 先将要发送的数据放入流中(支持多线程)
+    guard guard_(pconn->get_lock());
+    pconn->write_send_stream(buff, len);
+
+    //@todo 需要计算速率，看是否需要控制速率
+    if (pconn->get_post_write_count() > 0) {
+        return true;
+    }
+
+    // 先发送流中的数据
+    auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
+    auto seg_len = pconn->get_send_stream().get_read_seg_len();
+
+    return this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
+}
+
+bool inetwork_imp::try_read(net_conn* pconn) 
+{
+    // @todo 也需要限制客户端发送的速率（如果达到速率则暂停发送,定时恢复发送）
+    guard guard_(pconn->get_lock());
+    if (pconn->get_post_read_count() > 0) {
+        return true;
+    }
+
+    return this->post_read(pconn);
+}
+
+net_conn* inetwork_imp::try_listen(USHORT local_port) 
+{
+    net_conn* pconn =  this->create_listen_conn(local_port);
+    if (NULL == pconn) {
+        return NULL;
+    }
+
+    this->post_accept(pconn);
+    return pconn;
+}
+
+net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_key) 
+{
+    if (NULL == addr) {
+        return NULL;
+    }
+
+    net_conn* pconn = create_conn();
+    if (NULL == pconn) {
+        return NULL;
+    }
+
+    pconn->set_bind_key(bind_key);
+    pconn->set_peer_addr_str(addr);
+    pconn->set_peer_port(uport);
+    this->post_connection(pconn);
+
+    return pconn;
+}
+
+//----------------------------------------------------------------------
+// 
 net_conn* inetwork_imp::post_accept(net_conn* pListenConn) 
 {
     HANDLE hResult;
@@ -317,56 +378,6 @@ bool inetwork_imp::post_read(net_conn* pConn)
     return true;
 }
 
-// bool inetwork_imp::post_write(net_conn* pConn, char* buff, size_t len) 
-// {
-//     // 下面提交发送请求
-//     DWORD dwWriteLen = 0;
-//     net_overLapped *pmyoverlapped = get_net_overlapped();
-//     if(pmyoverlapped == NULL) 
-//     {
-//         return false;
-//     }
-// 
-//     memcpy(pmyoverlapped->buff_, buff, len);  // 填数据到buf中
-//     pmyoverlapped->operate_type_ = OP_WRITE;  //设置I/O操作类型
-//     pmyoverlapped->wsaBuf_.buf = pmyoverlapped->buff_;
-//     pmyoverlapped->wsaBuf_.len = len;
-// 
-//     int nResult =  WSASend(  //开始发送
-//         pConn->get_socket(),  // 已连接的socket
-//         &pmyoverlapped->wsaBuf_, // 发送buf和数据长度
-//         1,
-//         &dwWriteLen,// 如立刻完成，则返回发送长度
-//         0,	// 
-//         (LPWSAOVERLAPPED)pmyoverlapped, // OVERLAPPED 结构
-//         0); // 例程，不用
-// 
-//     if (nResult == SOCKET_ERROR)
-//     {
-//         int iErrorCode = WSAGetLastError();
-// 
-//         if (iErrorCode ==  WSA_IO_PENDING)
-//         {
-//             //TRACE(TEXT("iErrorCode ==  WSA_IO_PENDING\n"));
-//         }
-//         else if (iErrorCode == WSAEWOULDBLOCK)
-//         {
-//             ///TRACE(TEXT("iErrorCode == WSAEWOULDBLOCK\n"));
-//         }
-//         else 
-//         {
-//             return false;
-//         }
-//     }
-//     else 
-//     {
-//         //TRACE(TEXT("发送完成了"));
-//     }
-// 
-//     pConn->inc_post_write_count();
-//     return true;
-// }
-
 bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len) 	///< 投递写请求
 {
     // 下面提交发送请求
@@ -416,63 +427,89 @@ bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len)
     return true;
 }
 
-bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
+//----------------------------------------------------------------------
+// 
+void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransfered)
 {
-    // 先将要发送的数据放入流中(支持多线程)
-    guard guard_(pconn->get_lock());
-    pconn->write_send_stream(buff, len);
+    pConn->dec_post_read_count();
+    if (dwByteTransfered == 0) 
+    {
+        // _ASSERT(FALSE && "这里出现是对方直接关闭了连接");
+        this->check_and_disconnect(pConn);
+    }
+    else 
+    {
+        // 写入到流中
+        pConn->write_recv_stream(buff, dwByteTransfered);
 
-    //@todo 需要计算速率，看是否需要控制速率
-    if (pconn->get_post_write_count() > 0) {
-        return true;
+        // 统计该套接字的读字节数
+        pConn->add_readed_bytes(dwByteTransfered);
+
+        // 通知上层处理读事件
+        net_event_handler_->on_read(pConn, buff, dwByteTransfered);
+
+        // 继续投递读操作
+        this->post_read(pConn);
     }
 
-    // 先发送流中的数据
-    auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
-    auto seg_len = pconn->get_send_stream().get_read_seg_len();
-
-    return this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
+    // 处理完了再更新活跃时间，以便可以检查连接发送数据的速度
+    pConn->upsate_last_active_tm();
 }
 
-bool inetwork_imp::try_read(net_conn* pconn) 
+void inetwork_imp::on_write(net_conn* pConn, DWORD dwByteTransfered)
 {
-    // @todo 也需要限制客户端发送的速率（如果达到速率则暂停发送,定时恢复发送）
-    guard guard_(pconn->get_lock());
-    if (pconn->get_post_read_count() > 0) {
-        return true;
-    }
+    // 标记已写了的数据
+    pConn->mark_send_stream(dwByteTransfered);
 
-    return this->post_read(pconn);
+    // 减少该套接字上的写投递计数
+    pConn->dec_post_write_count();
+
+    // 统计该套接字的写字节数
+    pConn->add_rwited_bytes(dwByteTransfered);
+
+    // 通知上层处理写事件
+    net_event_handler_->on_write(pConn, dwByteTransfered);
+
+    // 更新上次活跃的时间戳
+    pConn->upsate_last_active_tm();
 }
 
-net_conn* inetwork_imp::try_listen(USHORT local_port) 
+void inetwork_imp::on_accept(net_conn* listen_conn, net_conn* accept_conn)
 {
-    net_conn* pconn =  this->create_listen_conn(local_port);
-    if (NULL == pconn) {
-        return NULL;
-    }
+    // 设置套接字更新上下文（以便可以通过getpeername获取到ip地址）
+    setsockopt(accept_conn->get_socket(), 
+        SOL_SOCKET, 
+        SO_UPDATE_ACCEPT_CONTEXT,  
+        (char*)&( listen_conn->get_socket() ), 
+        sizeof( listen_conn->get_socket()) );
 
-    this->post_accept(pconn);
-    return pconn;
+    // 获取对端ip的信息
+    accept_conn->init_peer_info();
+
+    // 再次投递新的接收连接请求
+    this->post_accept(listen_conn);
+
+    // 交给上层处理事件,即INetClientImp
+    net_event_handler_->on_accept(listen_conn, accept_conn); 
+
+    // 更新时间戳
+    listen_conn->upsate_last_active_tm();
+    accept_conn->upsate_last_active_tm();
+
+    //投递读请求，如果断开连接内部会处理
+    this->post_read(accept_conn);
 }
 
-net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_key) 
+void inetwork_imp::on_connect(net_conn* pConn, bool bsuccess)
 {
-    if (NULL == addr) {
-        return NULL;
-    }
+    // 连接成功，通知上层处理事件
+    net_event_handler_->on_connect(pConn, true);
 
-    net_conn* pconn = create_conn();
-    if (NULL == pconn) {
-        return NULL;
-    }
+    // 更新上次活跃的时间戳
+    pConn->upsate_last_active_tm();
 
-    pconn->set_bind_key(bind_key);
-    pconn->set_peer_addr_str(addr);
-    pconn->set_peer_port(uport);
-    this->post_connection(pconn);
-
-    return pconn;
+    // 投递读请求
+    this->post_read(pConn);
 }
 
 net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
@@ -609,83 +646,25 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
             {
             case OP_READ:
                 {
-                    pConn->dec_post_read_count();
-                    if (dwByteTransfered == 0) 
-                    {
-                        //_ASSERT(FALSE && "这里出现是对方直接关闭了连接");
-                        network_imp_->check_and_disconnect(pConn);
-                    }
-                    else 
-                    {
-                        //统计该套接字的读字节数
-                        pConn->add_readed_bytes(dwByteTransfered);
-
-                        //通知上层处理读事件
-                        event_handler_->on_read(pConn, (const char*)lpOverlapped->buff_, dwByteTransfered);
-
-                        //继续投递读操作
-                        network_imp_->post_read(pConn);
-                    }
-                    //处理完了再更新活跃时间，以便可以检查连接发送数据的速度
-                    pConn->upsate_last_active_tm();
+                    network_imp_->on_read(pConn, (const char*) lpOverlapped->buff_, dwByteTransfered);
                 }
                 break;
 
             case OP_WRITE:
                 {
-                    //减少该套接字上的写投递计数
-                    pConn->dec_post_write_count();
-
-                    //统计该套接字的写字节数
-                    pConn->add_rwited_bytes(dwByteTransfered);
-
-                    //通知上层处理写事件
-                    event_handler_->on_write(pConn, dwByteTransfered);
-
-                    //更新上次活跃的时间戳
-                    pConn->upsate_last_active_tm();
+                    network_imp_->on_write(pConn, dwByteTransfered);
                 }
                 break;
             case OP_ACCEPT:
                 {
-                    net_conn* pListConn = pConn;      //监听套接字
-                    net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;    //接收的连接
-
-                    //设置套接字更新上下文（以便可以通过getpeername获取到ip地址）
-                    setsockopt(pAcceptConn->get_socket(), 
-                        SOL_SOCKET, 
-                        SO_UPDATE_ACCEPT_CONTEXT,  
-                        ( char* )&( pListConn->get_socket() ), 
-                        sizeof( pListConn->get_socket()) );
-
-                    //获取对端ip的信息
-                    pAcceptConn->init_peer_info();
-
-                    //再次投递新的接收连接请求
-                    network_imp_->post_accept(pListConn);
-
-                    //交给上层处理事件,即INetClientImp
-                    event_handler_->on_accept(pListConn, pAcceptConn); 
-
-                    //更新时间戳
-                    pListConn->upsate_last_active_tm();
-                    pAcceptConn->upsate_last_active_tm();
-
-                    //投递读请求，如果断开连接内部会处理
-                    network_imp_->post_read(pAcceptConn);
+                    net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;
+                    network_imp_->on_accept(pConn, pAcceptConn);
                 }
                 break;
 
             case OP_CONNECT:
                 {
-                    //连接成功，通知上层处理事件
-                    event_handler_->on_connect(pConn, true);
-
-                    //更新上次活跃的时间戳
-                    pConn->upsate_last_active_tm();
-
-                    //投递读请求
-                    network_imp_->post_read(pConn);
+                    network_imp_->on_connect(pConn, true);
                 }
                 break;
             }

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "net_conn.h"
 
 net_conn::net_conn(void)
@@ -63,6 +63,11 @@ void net_conn::dis_connect()
     closesocket(m_socket); m_socket = INVALID_SOCKET; 
 }
 
+bool net_conn::mark_send_stream(size_t len)
+{
+    return send_stream_.skip_read(len);
+}
+
 bool net_conn::write_recv_stream(const char* buff, size_t len) 
 {
     recv_stream_.write((net_stream_type::value_type*) buff, len);
@@ -89,11 +94,6 @@ bool net_conn::write_send_stream(const char* buff, size_t len)
 {
     send_stream_.write((unsigned char*)buff, len);
     return true;
-}
-
-bool net_conn::mark_send_stream(size_t len)
-{
-    return send_stream_.skip_read(len);
 }
 
 bool net_conn::read_send_stream(char* buff, size_t len)

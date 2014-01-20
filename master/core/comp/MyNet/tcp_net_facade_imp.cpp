@@ -198,7 +198,6 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
     int iPacketLen = 0;
     bool bIsCombined = false;
 
-    pConn->write_recv_stream(buff, len);
     bIsCombined = icombiner_->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
 
     while (bIsCombined) 
@@ -253,9 +252,7 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
 bool tcp_net_facade_imp::on_write(net_conn* pConn, size_t len) 
 {
     //MyPrtLog("Ğ´Êı¾İÍê±Ï..\r\n");
-
-    pConn->mark_send_stream(len);
-
+    
     INetEventHandlerListType::const_iterator itr;
     itr  = net_event_list_.begin();
     for (; itr != net_event_list_.end(); ++itr) 

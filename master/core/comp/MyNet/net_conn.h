@@ -34,7 +34,6 @@ class inetwork_imp;
 ///< 网络连接类,需要同步的在外部加锁
 class net_conn
 {
-    friend tcp_net_facade_imp;
     friend inetwork_imp;
 public:
     net_conn(void);
@@ -65,7 +64,6 @@ public:
     // 发送流的处理
     const net_stream_type& get_send_stream() { return send_stream_; }
     bool    write_send_stream(const char* buff, size_t len) ;
-    bool    mark_send_stream(size_t len);
     size_t  get_send_length();
 
     // 绑定数据
@@ -82,6 +80,7 @@ public:
     inline size_t get_readed_bytes()               { return readed_bytes_; }
 
 protected:
+    bool mark_send_stream(size_t len);
     bool write_recv_stream(const char* buff, size_t len) ;
     bool read_send_stream(char* buff, size_t len);
 

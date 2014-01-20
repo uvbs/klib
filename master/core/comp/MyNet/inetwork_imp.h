@@ -9,6 +9,7 @@
 
 #include <core/timer_mgr.h>
 #include <kthread/thread.h>
+#include <kthread/thread_local.h>
 
 using namespace klib::kthread;
 typedef std::vector<Thread> thread_vec_type;

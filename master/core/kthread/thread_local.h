@@ -5,7 +5,7 @@
 #include <windows.h>
 
 namespace klib {
-namespace sys {
+namespace kthread {
 
 
 // 线程本地存储

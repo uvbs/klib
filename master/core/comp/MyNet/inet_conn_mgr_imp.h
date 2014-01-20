@@ -5,7 +5,6 @@
 #include <map>
 
 #include <core/lock_stl.h>
-#include <core/timer_mgr.h>
 
 #define  NETCONNECTION_ARRAY_LENGTH 9
 

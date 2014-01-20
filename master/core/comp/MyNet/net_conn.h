@@ -27,12 +27,14 @@ enum emOperationType
 typedef klib::io::mem_seg_stream<2048> net_stream_type;
 
 class net_packet;
+class tcp_net_facade_imp;
 class inetwork_imp;
 
 //----------------------------------------------------------------------
 ///< 网络连接类
 class net_conn
 {
+    friend tcp_net_facade_imp;
     friend inetwork_imp;
 public:
     net_conn(void);
@@ -57,14 +59,13 @@ public:
 
     // 接收流的处理
     const net_stream_type& get_recv_stream() { return recv_stream_; }
-    bool    write_recv_stream(const char* buff, size_t len) ;
     bool    read_recv_stream(char* buff, size_t len);
     size_t  get_recv_length();
 
     // 发送流的处理
     const net_stream_type& get_send_stream() { return send_stream_; }
     bool    write_send_stream(const char* buff, size_t len) ;
-    bool    read_send_stream(char* buff, size_t len);
+    bool    mark_send_stream(size_t len);
     size_t  get_send_length();
 
     // 绑定数据
@@ -72,13 +73,18 @@ public:
     inline void* get_bind_key() { return bind_key_; }
 
     // 提供给外部的锁，用于相关必须要用到锁的场景
+    mutex& get_lock() { return mutex_; }
     void lock() { mutex_.lock(); }
     void unlock(){ mutex_.unlock() ;}
 
     // 获取流量统计
     inline size_t get_writed_bytes()               { return writed_bytes_; }
     inline size_t get_readed_bytes()               { return readed_bytes_; }
+
 protected:
+    bool write_recv_stream(const char* buff, size_t len) ;
+    bool read_send_stream(char* buff, size_t len);
+
     // 时间计数
     inline DWORD get_last_active_tm() { return last_active_tm_; }
     void upsate_last_active_tm() ;

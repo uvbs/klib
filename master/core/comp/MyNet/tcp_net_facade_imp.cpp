@@ -254,13 +254,15 @@ bool tcp_net_facade_imp::on_write(net_conn* pConn, size_t len)
 {
     //MyPrtLog("Ð´Êý¾ÝÍê±Ï..\r\n");
 
+    pConn->mark_send_stream(len);
+
     INetEventHandlerListType::const_iterator itr;
     itr  = net_event_list_.begin();
     for (; itr != net_event_list_.end(); ++itr) 
     {
         (*itr)->on_write(pConn, len);
     }
-
+    
     return true;
 }
 

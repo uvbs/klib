@@ -64,9 +64,10 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler)
 
 bool inetwork_imp::run_network() 
 {
-
     HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, &inetwork_imp::work_thread_, this, 0, NULL);
     CloseHandle(hThread);
+
+    tmr_mgr_.start();
 
     return true;
 }
@@ -147,7 +148,8 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
         (LPOVERLAPPED)lpOverlapped);
 
 
-    if(brt == FALSE && WSA_IO_PENDING != WSAGetLastError()) {
+    if(brt == FALSE && WSA_IO_PENDING != WSAGetLastError()) 
+    {
         closesocket(sockAccept);
         release_net_overlapped(lpOverlapped);
         release_conn(pNewConn);
@@ -156,7 +158,8 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
         //TRACE(TEXT("fail at lpfnAcceptEx,error code:%d\n"), dwErrorCode);
         return NULL;
     }
-    else if (WSA_IO_PENDING == WSAGetLastError()) {
+    else if (WSA_IO_PENDING == WSAGetLastError()) 
+    {
         //成功
         return pNewConn;
     }
@@ -311,7 +314,57 @@ bool inetwork_imp::post_read(net_conn* pConn)
     return true;
 }
 
-bool inetwork_imp::post_write(net_conn* pConn, const char* buff, size_t len) 
+// bool inetwork_imp::post_write(net_conn* pConn, char* buff, size_t len) 
+// {
+//     // 下面提交发送请求
+//     DWORD dwWriteLen = 0;
+//     net_overLapped *pmyoverlapped = get_net_overlapped();
+//     if(pmyoverlapped == NULL) 
+//     {
+//         return false;
+//     }
+// 
+//     memcpy(pmyoverlapped->buff_, buff, len);  // 填数据到buf中
+//     pmyoverlapped->operate_type_ = OP_WRITE;  //设置I/O操作类型
+//     pmyoverlapped->wsaBuf_.buf = pmyoverlapped->buff_;
+//     pmyoverlapped->wsaBuf_.len = len;
+// 
+//     int nResult =  WSASend(  //开始发送
+//         pConn->get_socket(),  // 已连接的socket
+//         &pmyoverlapped->wsaBuf_, // 发送buf和数据长度
+//         1,
+//         &dwWriteLen,// 如立刻完成，则返回发送长度
+//         0,	// 
+//         (LPWSAOVERLAPPED)pmyoverlapped, // OVERLAPPED 结构
+//         0); // 例程，不用
+// 
+//     if (nResult == SOCKET_ERROR)
+//     {
+//         int iErrorCode = WSAGetLastError();
+// 
+//         if (iErrorCode ==  WSA_IO_PENDING)
+//         {
+//             //TRACE(TEXT("iErrorCode ==  WSA_IO_PENDING\n"));
+//         }
+//         else if (iErrorCode == WSAEWOULDBLOCK)
+//         {
+//             ///TRACE(TEXT("iErrorCode == WSAEWOULDBLOCK\n"));
+//         }
+//         else 
+//         {
+//             return false;
+//         }
+//     }
+//     else 
+//     {
+//         //TRACE(TEXT("发送完成了"));
+//     }
+// 
+//     pConn->inc_post_write_count();
+//     return true;
+// }
+
+bool inetwork_imp::post_placement_write(net_conn* pConn, char* buff, size_t len) 	///< 投递写请求
 {
     // 下面提交发送请求
     DWORD dwWriteLen = 0;
@@ -321,9 +374,8 @@ bool inetwork_imp::post_write(net_conn* pConn, const char* buff, size_t len)
         return false;
     }
 
-    memcpy(pmyoverlapped->buff_, buff, len);  // 填数据到buf中
     pmyoverlapped->operate_type_ = OP_WRITE;  //设置I/O操作类型
-    pmyoverlapped->wsaBuf_.buf = pmyoverlapped->buff_;
+    pmyoverlapped->wsaBuf_.buf = buff;
     pmyoverlapped->wsaBuf_.len = len;
 
     int nResult =  WSASend(  //开始发送
@@ -359,6 +411,39 @@ bool inetwork_imp::post_write(net_conn* pConn, const char* buff, size_t len)
 
     pConn->inc_post_write_count();
     return true;
+}
+
+bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
+{
+    // 先将要发送的数据放入流中
+    pconn->write_send_stream(buff, len);
+
+    //@todo 需要计算速率，看是否需要控制速率
+    {
+        guard guard_(pconn->get_lock());
+        if (pconn->get_post_write_count() > 0) {
+            return true;
+        }
+    }
+
+    // 先发送流中的数据
+    auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
+    auto seg_len = pconn->get_send_stream().get_read_seg_len();
+
+    return this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
+}
+
+bool inetwork_imp::try_read(net_conn* pconn) 
+{
+    // @todo 也需要限制客户端发送的速率（如果达到速率则暂停发送,定时恢复发送）
+    {
+        guard guard_(pconn->get_lock());
+        if (pconn->get_post_read_count() > 0) {
+            return true;
+        }
+    }
+
+    return this->post_read(pconn);
 }
 
 net_conn* inetwork_imp::try_listen(USHORT uLocalPort) 

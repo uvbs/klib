@@ -91,6 +91,11 @@ bool net_conn::write_send_stream(const char* buff, size_t len)
     return true;
 }
 
+bool net_conn::mark_send_stream(size_t len)
+{
+    return send_stream_.skip_read(len);
+}
+
 bool net_conn::read_send_stream(char* buff, size_t len)
 {
     send_stream_.read((unsigned char*)buff, len);

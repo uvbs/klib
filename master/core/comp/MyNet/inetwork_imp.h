@@ -6,6 +6,8 @@
 #include <list>
 #include <Mswsock.h>
 
+#include <core/timer_mgr.h>
+
 //----------------------------------------------------------------------
 // 单句柄数据
 //  处理网络相关数据
@@ -37,41 +39,61 @@ public:
     ~inetwork_imp(void);
 
 public:
+    //----------------------------------------------------------------------
+    // 接口实现
     virtual bool init_network(inet_tcp_handler* handler) ;   
     virtual bool run_network() ;                 ///< 启动网络层-》创建线程
 
-    virtual net_conn* post_accept(net_conn* pListenConn) ;	                ///< 投递接受请求,可多次投递，监听套接字必须用 create_listen_conn 创建
-    virtual bool post_connection(net_conn* pConn) ;		                    ///< 投递连接请求
-    virtual bool post_read(net_conn* pConn) ;	                            ///< 投递读请求，在接受连接后底层会默认投递一个请求
-    virtual bool post_write(net_conn* pConn, const char* buff, size_t len) ;	///< 投递写请求
+    virtual bool try_write(net_conn* pconn, const char* buff, size_t len);          ///< 尝试发送数据
+    virtual bool try_read(net_conn* pConn) ;
 
     virtual net_conn* try_listen(USHORT uLocalPort) ;                                  ///< 监听端口
     virtual net_conn* try_connect(const char* addr, USHORT uport, void* bind_key) ;    ///< 投递连接到服务器
 
 protected:
+    //----------------------------------------------------------------------
+    // 内部异步投递函数
+    virtual net_conn* post_accept(net_conn* pListenConn) ;	                    ///< 投递接受请求,可多次投递，监听套接字必须用 create_listen_conn 创建
+    virtual bool post_connection(net_conn* pConn) ;		                        ///< 投递连接请求
+    virtual bool post_read(net_conn* pConn) ;	                                ///< 投递读请求，在接受连接后底层会默认投递一个请求
+    //virtual bool post_write(net_conn* pConn, char* buff, size_t len) ;	///< 投递写请求
+    virtual bool post_placement_write(net_conn* pConn, char* buff, size_t len) ;	///< 投递写请求
+
+protected:
+    //----------------------------------------------------------------------
+    // net_conn 资源管理 
     virtual net_conn* create_listen_conn(USHORT uLocalPort) ;	            ///< 创建返回监听套接字，返回一个net_conn结构，用于接受连接
     virtual net_conn* create_conn() ;			                            ///< 创建一个连接套接字
     virtual bool release_conn(net_conn* pConn);		                        ///< 释放连接
 
-protected:
-    static unsigned int WINAPI work_thread_(void* param);
-
+    //----------------------------------------------------------------------
+    // overlapped 资源管理
     void init_fixed_overlapped_list(size_t nCount);                         ///< 初始固定的Overlapped的个数，这部分内存不能被释放
     net_overLapped* get_net_overlapped();                                   ///< 申请重叠结构
     bool release_net_overlapped(net_overLapped* pMyoverlapped);	            ///< 释放重叠结构
+
+    //----------------------------------------------------------------------
+    // 定时器相关
+
+protected:
+    static unsigned int WINAPI work_thread_(void* param);                   ///< 工作线程
 
     void check_and_disconnect(net_conn* pConn);                             ///< 判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
 
 private:
     HANDLE                  hiocp_;                                         ///< 完成端口句柄
-    inet_tcp_handler*     net_event_handler_;                             ///< 移交上层处理的接口
+    inet_tcp_handler*       net_event_handler_;                             ///< 移交上层处理的接口
     LPFN_ACCEPTEX           m_lpfnAcceptEx;                                 ///< AcceptEx函数指针
 
+    // overlapped 
     typedef std::list<net_overLapped*> OverLappedListType;                  ///< 保存net_overLapped的链表类型
     OverLappedListType      overlapped_list_;                               ///< 申明链表，用来保存net_overLapped
-    auto_cs                 overlapped_list_mutex_;                         ///< 同步访问overlapped_list_
+    mutex                   overlapped_list_mutex_;                         ///< 同步访问overlapped_list_
 
+    // net_conn
     typedef std::list<net_conn*> INetConnListType;                          ///< 接口列表类型定义
     INetConnListType        free_net_conn_list_;                            ///< 保存网络连接接口链表
-    auto_cs                 free_net_conn_mutex_;                           ///< 同步访问free_net_conn_list_
+    mutex                   free_net_conn_mutex_;                           ///< 同步访问free_net_conn_list_
+
+    klib::core::timer_mgr   tmr_mgr_;
 };

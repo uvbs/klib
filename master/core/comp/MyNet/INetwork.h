@@ -19,22 +19,11 @@ public:
     ///< 运行网络层，创建线程这些
     virtual bool run_network() = 0;
 
-    ///< 投递接受连接
-    /// @usage   net_conn* pListenConn = pClient->get_network()->CreateNewConnection();
-    /// pListenConn->set_local_port(7000);
-    /// pClient->get_network()->InitListenConnection(pListenConn);
-    /// pClient->get_network()->post_accept(pListenConn);
-    virtual net_conn* post_accept(net_conn* plistenConn) = 0;
-    
     ///< 在建立的连接上投递一个读请求
-    /// @usage   net_conn* pMyConn = pClient->get_network()->CreateNewConnection();
-    /// pClient->get_network()->post_read(pMyConn);
-    virtual bool post_read(net_conn* pConn) = 0;
+    virtual bool try_read(net_conn* pConn) = 0;
 
-    ///< 在建立的连接上投递一个写数据请求
-    /// @usage   net_conn* pMyConn = pClient->get_network()->CreateNewConnection();
-    /// pClient->get_network()->post_write(pMyConn, buff, 1024);
-    virtual bool post_write(net_conn* pConn, const char* buff, size_t len) = 0;
+    ///< 投递一个写请求
+    virtual bool try_write(net_conn* pconn, const char* buff, size_t len) = 0;
 
     ///< 创建获取监听套接口
     virtual net_conn* try_listen(USHORT uLocalPort) = 0;

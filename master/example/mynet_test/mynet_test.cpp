@@ -30,7 +30,7 @@ public:
                 "hello world"
                 ;
 
-            net_facade_->get_network()->post_write(pNewConn, str.c_str(), str.size());
+            net_facade_->get_network()->try_write(pNewConn, str.c_str(), str.size());
         }
         return true;
     }
@@ -38,9 +38,8 @@ public:
     virtual bool on_disconnect(net_conn* pConn)  
     {
         printf("连接断开，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
-        // net_facade_->GetNetwork()->FreeConnection(pConn);
+    
 
-        // net_facade_->get_network()->release_conn()
         return true;
     }
 
@@ -64,7 +63,7 @@ public:
             "Accept: */*\r\n"
             "\r\n\r\n";
 
-        net_facade_->get_network()->post_write(pConn, str.c_str(), str.size());
+        net_facade_->get_network()->try_write(pConn, str.c_str(), str.size());
     
         
         return true;

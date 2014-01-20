@@ -45,7 +45,7 @@ public:
         state_ = TS_EXIT;
     }
 
-    bool start( thread_func_type &thread_func, void *p = NULL )
+    bool start(const thread_func_type &thread_func, void *p = NULL )
     {
         assert( state_ == TS_INVALID && "thread::start : invalid call!" );
         param_.this_ = this;

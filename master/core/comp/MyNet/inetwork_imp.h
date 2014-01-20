@@ -7,6 +7,7 @@
 #include <Mswsock.h>
 
 #include <core/timer_mgr.h>
+#include <kthread/thread.h>
 
 //----------------------------------------------------------------------
 // 单句柄数据
@@ -84,7 +85,7 @@ protected:
     // 定时器相关
 
 protected:
-    static unsigned int WINAPI work_thread_(void* param);                   ///< 工作线程
+    void worker_thread_(void* param);                 ///< 工作线程
     void check_and_disconnect(net_conn* pConn);                             ///< 判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
 
 private:
@@ -92,6 +93,7 @@ private:
     HANDLE                  hiocp_;                                         ///< 完成端口句柄
     inet_tcp_handler*       net_event_handler_;                             ///< 移交上层处理的接口
     LPFN_ACCEPTEX           m_lpfnAcceptEx;                                 ///< AcceptEx函数指针
+    klib::kthread::Thread   work_thread_;
 
     // overlapped 
     typedef std::list<net_overLapped*> OverLappedListType;                  ///< 保存net_overLapped的链表类型

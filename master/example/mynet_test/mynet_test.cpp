@@ -116,7 +116,7 @@ int _tmain(int argc, _TCHAR* argv[])
     tcp_facade_->init();
     tcp_facade_->add_event_handler(&thehandler);
 
-    //net_conn* pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
+    net_conn* pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
 
     tcp_facade_->get_network()->try_listen(900);
 

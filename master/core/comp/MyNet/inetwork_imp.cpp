@@ -47,9 +47,6 @@ inetwork_imp::~inetwork_imp(void)
 
 bool inetwork_imp::init_network(inet_tcp_handler* handler)
 {
-//     WSADATA wsaData;
-//     WSAStartup(MAKEWORD(2,2), &wsaData);
-
     // 创建完成端口
     hiocp_ = CreateIoCompletionPort(INVALID_HANDLE_VALUE,NULL,(ULONG_PTR)0, 0);
     _ASSERT(hiocp_);
@@ -67,8 +64,7 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler)
 
 bool inetwork_imp::run_network() 
 {
-    HANDLE hThread = (HANDLE)_beginthreadex(NULL, 0, &inetwork_imp::work_thread_, this, 0, NULL);
-    CloseHandle(hThread);
+    work_thread_.start(std::bind(&inetwork_imp::worker_thread_, this, std::tr1::placeholders::_1), 0);
 
     tmr_mgr_.start();
 
@@ -601,16 +597,9 @@ bool inetwork_imp::release_conn(net_conn* pConn)
     return true;
 }
 
-unsigned int WINAPI inetwork_imp::work_thread_(void* param)
+void inetwork_imp::worker_thread_(void* param)
 {
     //使用完成端口模型
-    inetwork_imp* network_imp_ = (inetwork_imp*)param;
-    inet_tcp_handler* event_handler_ = network_imp_->net_event_handler_;
-
-    _ASSERT(network_imp_);
-    _ASSERT(network_imp_->hiocp_);
-    _ASSERT(event_handler_);
-
     net_overLapped *lpOverlapped = NULL;
     DWORD		    dwByteTransfered = 0;
     net_conn*       pConn = NULL;
@@ -621,7 +610,7 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
 
         // 下面的函数调用就是去I/O出口那里等待，并获得I/O操作结果
         BOOL bResult = GetQueuedCompletionStatus(
-            network_imp_->hiocp_, // 指定从哪个IOCP那里或地数据
+            this->hiocp_, // 指定从哪个IOCP那里或地数据
             &dwByteTransfered, // 或得或是发送了多少字节的数据
             (PULONG_PTR)&pConn, // socket关联到IOCP时指定的一个关联值
             (LPWSAOVERLAPPED*)&lpOverlapped,  // 或得ConnectEx 传进来的结构
@@ -631,7 +620,7 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
         if (lpOverlapped == NULL)  
         {
             //TRACE(TEXT("退出...."));
-            return 0;
+            return ;
         }
 
         if (bResult) 
@@ -639,38 +628,38 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
             if(dwByteTransfered == -1 && lpOverlapped == NULL) 
             {
                 //TRACE(TEXT("退出线程并结束..."));
-                return 1L;
+                return ;
             }
 
             switch(lpOverlapped->operate_type_ )
             {
             case OP_READ:
                 {
-                    network_imp_->on_read(pConn, (const char*) lpOverlapped->buff_, dwByteTransfered);
+                    this->on_read(pConn, (const char*) lpOverlapped->buff_, dwByteTransfered);
                 }
                 break;
 
             case OP_WRITE:
                 {
-                    network_imp_->on_write(pConn, dwByteTransfered);
+                    this->on_write(pConn, dwByteTransfered);
                 }
                 break;
             case OP_ACCEPT:
                 {
                     net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;
-                    network_imp_->on_accept(pConn, pAcceptConn);
+                    this->on_accept(pConn, pAcceptConn);
                 }
                 break;
 
             case OP_CONNECT:
                 {
-                    network_imp_->on_connect(pConn, true);
+                    this->on_connect(pConn, true);
                 }
                 break;
             }
 
             //释放lpOverlapped结构，每次有请求的时候重新获取
-            network_imp_->release_net_overlapped(lpOverlapped);
+            this->release_net_overlapped(lpOverlapped);
         }
         else 
         {
@@ -690,33 +679,33 @@ unsigned int WINAPI inetwork_imp::work_thread_(void* param)
             {
                 // 主动连接失败的时候，先关闭连接，通知上层处理，然后释放连接对象
                 pConn->dis_connect();
-                event_handler_->on_connect(pConn, false);
+                net_event_handler_->on_connect(pConn, false);
 
-                network_imp_->release_conn(pConn);
+                this->release_conn(pConn);
             }
             else if (lpOverlapped->operate_type_ == OP_ACCEPT) 
             {
                 // 接受连接失败,释放连接
                 net_conn* pListConn = pConn;                                    // 监听套接字
                 net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;   // 接收的连接
-                network_imp_->post_accept(pListConn);                              // 继续投递接受连接请求
-                event_handler_->on_accept(pListConn, pAcceptConn, false);    // 通知上层接受连接失败
+                this->post_accept(pListConn);                              // 继续投递接受连接请求
+                net_event_handler_->on_accept(pListConn, pAcceptConn, false);    // 通知上层接受连接失败
 
-                network_imp_->release_conn(pAcceptConn);                           // 释放
+                this->release_conn(pAcceptConn);                           // 释放
             }
             else 
             {
                 // 处理其它操作（如需要释放连接）
                 pConn->dis_connect();
-                network_imp_->check_and_disconnect(pConn);
-                network_imp_->release_conn(pConn);
+                this->check_and_disconnect(pConn);
+                this->release_conn(pConn);
             }
 
-            network_imp_->release_net_overlapped(lpOverlapped);
+            this->release_net_overlapped(lpOverlapped);
         } //if (bResult) {
     }
 
-    return 0;
+    return;
 }
 
 void inetwork_imp::init_fixed_overlapped_list(size_t nCount)

@@ -7,13 +7,10 @@
 #include <vector>
 #include <Mswsock.h>
 
-#include <core/timer_mgr.h>
 #include <kthread/thread.h>
 #include <kthread/thread_local.h>
-#include <util/timeout_checker.h>
 
 using namespace klib::kthread;
-using namespace klib::util;
 
 typedef std::vector<Thread> thread_vec_type;
 
@@ -52,7 +49,6 @@ public:
     // 接口实现
     virtual bool init_network(inet_tcp_handler* handler, size_t thread_num = 1) ;
     
-    virtual bool set_conn_timeout(size_t tm_seconds); ///< 设置连接超时时间
     virtual bool run_network() ;                 ///< 启动网络层-》创建线程
 
     virtual bool try_write(net_conn* pconn, const char* buff, size_t len);          ///< 尝试发送数据
@@ -116,7 +112,4 @@ private:
     INetConnListType        free_net_conn_list_;                            ///< 保存网络连接接口链表
     mutex                   free_net_conn_mutex_;                           ///< 同步访问free_net_conn_list_
 
-    // time out
-    size_t                  conn_timeout_;
-    timeout_checker<net_conn*>   conn_tmout_checker_;
 };

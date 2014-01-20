@@ -7,6 +7,7 @@
 
 #include <kthread/auto_lock.h>
 #include <io/mem_seg_stream.h>
+#include <inttype.h>
 
 using namespace klib::kthread;
 
@@ -27,13 +28,14 @@ enum em_operation_type
 typedef klib::io::mem_seg_stream<2048> net_stream_type;
 
 class net_packet;
-class tcp_net_facade_imp;
+class inet_conn_mgr_imp;
 class inetwork_imp;
 
 //----------------------------------------------------------------------
 ///< 网络连接类,需要同步的在外部加锁
 class net_conn
 {
+    friend inet_conn_mgr_imp;
     friend inetwork_imp;
 public:
     net_conn(void);
@@ -108,10 +110,11 @@ protected:
 protected:
     net_socket m_socket;		            // 套接字
     DWORD     last_active_tm_;	            // 最后活跃时间
+    int64_t   tmout_id_;
 
     USHORT    peer_port_;		            // 对端端口,主机序
     DWORD     peer_addr_dw_;		        // 对端地址，网络字节序
-    char      peer_addr_str_[50];		    // 字符串地址
+    char      peer_addr_str_[30];		    // 字符串地址
 
     USHORT    local_port_;                  // 本地端口，做监听用的
     USHORT    post_read_count_;             // 投递接收的数量

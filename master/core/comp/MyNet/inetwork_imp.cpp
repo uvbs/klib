@@ -36,7 +36,6 @@ inetwork_imp::inetwork_imp(void)
 {
     m_lpfnAcceptEx = NULL;
     hiocp_ = INVALID_HANDLE_VALUE;
-    conn_timeout_ = 60 * 1000;
 
     //初始链表
     init_fixed_overlapped_list(100);
@@ -62,12 +61,6 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler, size_t thread_num/* =
 
     thread_num_ = thread_num;
 
-    return true;
-}
-
-bool inetwork_imp::set_conn_timeout(size_t tm_seconds)
-{
-    conn_timeout_ = tm_seconds;
     return true;
 }
 
@@ -705,8 +698,6 @@ void inetwork_imp::worker_thread_(void* param)
         }
         else 
         {
-            //@todo 需要处理断开连接的处理
-
             // 更新投递计数
             if (lpOverlapped->operate_type_ == OP_READ) 
             {

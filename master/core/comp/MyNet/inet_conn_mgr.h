@@ -18,6 +18,7 @@ public:
     // 都可以访问
     virtual bool is_exist_conn(net_conn* pConn) = 0;
     virtual size_t get_conn_count() = 0;
+    virtual bool set_conn_timeout(size_t tm_seconds) = 0; ///< 设置连接超时时间
 
 protected:
     // 只允许特定的类访问

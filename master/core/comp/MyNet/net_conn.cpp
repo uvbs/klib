@@ -7,6 +7,7 @@ net_conn::net_conn(void)
     post_write_count_ = 0;
     is_closing_ = FALSE;
     last_active_tm_ = 0;
+    tmout_id_ = 0;
     peer_port_ = 0;
     local_port_ = 0;
     bind_key_ = 0;
@@ -21,6 +22,7 @@ net_conn::~net_conn(void)
     post_write_count_ = 0;
     is_closing_ = FALSE;
     last_active_tm_ = 0;
+    tmout_id_ = 0;
     peer_port_ = 0;
     local_port_ = 0;
     bind_key_ = 0;

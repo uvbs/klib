@@ -16,6 +16,9 @@ public:
     ///< 初始化网络层接口，由tcp_net_facade调用
     virtual bool init_network(inet_tcp_handler* handler, size_t thread_num = 1) = 0; 
 
+    ///< 设置连接超时时间
+    virtual bool set_conn_timeout(size_t tm_seconds) = 0;
+
     ///< 运行网络层，创建线程这些
     virtual bool run_network() = 0;
 

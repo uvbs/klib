@@ -36,6 +36,7 @@ inetwork_imp::inetwork_imp(void)
 {
     m_lpfnAcceptEx = NULL;
     hiocp_ = INVALID_HANDLE_VALUE;
+    conn_timeout_ = 60 * 1000;
 
     //³õÊ¼Á´±í
     init_fixed_overlapped_list(100);
@@ -64,6 +65,12 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler, size_t thread_num/* =
     return true;
 }
 
+bool inetwork_imp::set_conn_timeout(size_t tm_seconds)
+{
+    conn_timeout_ = tm_seconds;
+    return true;
+}
+
 bool inetwork_imp::run_network() 
 {
     work_threads_.resize(thread_num_);
@@ -71,8 +78,6 @@ bool inetwork_imp::run_network()
     {
         itr->start(std::bind(&inetwork_imp::worker_thread_, this, std::tr1::placeholders::_1), 0);
     }
-
-    tmr_mgr_.start();
 
     return true;
 }

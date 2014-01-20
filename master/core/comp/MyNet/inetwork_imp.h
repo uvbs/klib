@@ -51,7 +51,7 @@ public:
     virtual bool run_network() ;                 ///< 启动网络层-》创建线程
 
     virtual bool try_write(net_conn* pconn, const char* buff, size_t len);          ///< 尝试发送数据
-    virtual bool try_read(net_conn* pConn) ;
+    virtual bool try_read(net_conn* pConn) ;                                        ///< 读
 
     virtual net_conn* try_listen(USHORT local_port) ;                                  ///< 监听端口
     virtual net_conn* try_connect(const char* addr, USHORT uport, void* bind_key) ;    ///< 投递连接到服务器

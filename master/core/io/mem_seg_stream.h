@@ -252,13 +252,13 @@ public:
         size_t tmp_min_size;
         while (readed_size < len)
         {
-            if (r_seg_bf_->read_space() == 0) {
-                r_seg_bf_ = buff_list_[++ peek_pos];
-            }
-
             tmp_min_size = std::min<size_t>(len - readed_size, r_seg_bf_->read_space());
             r_seg_bf_->read(bf + readed_size, tmp_min_size);
             readed_size += tmp_min_size;
+
+            if (r_seg_bf_->read_space() == 0) {
+                r_seg_bf_ = buff_list_[++ peek_pos];
+            }
         }
 
         buff_len_ -= readed_size;

@@ -24,13 +24,13 @@ bool inet_conn_mgr_imp::add_conn(net_conn* pConn)
 
 bool inet_conn_mgr_imp::del_conn(net_conn* pConn) 
 {
+    KLIB_ASSERT(pConn->tmout_id_ > 0);
+    conn_tmout_checker_.remove(pConn->tmout_id_);
     return conn_list_x_.remove_item(pConn);
 }
 
 bool inet_conn_mgr_imp::is_exist_conn(net_conn* pConn) 
 {
-    KLIB_ASSERT(pConn->tmout_id_ > 0);
-    conn_tmout_checker_.remove(pConn->tmout_id_);
     return conn_list_x_.find_item(pConn);
 }
 

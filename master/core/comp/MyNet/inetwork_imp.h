@@ -4,10 +4,14 @@
 #include "net_socket.h"
 
 #include <list>
+#include <vector>
 #include <Mswsock.h>
 
 #include <core/timer_mgr.h>
 #include <kthread/thread.h>
+
+using namespace klib::kthread;
+typedef std::vector<Thread> thread_vec_type;
 
 //----------------------------------------------------------------------
 // 单句柄数据
@@ -23,7 +27,7 @@ public:
     void*     pend_data_;               ///< 附带其它数据的
     DWORD     transfer_bytes_;          ///< 传输了的数据
     WSABUF    wsaBuf_;                  ///< 缓冲区对象
-    char      buff_[2 * 1024];			///< 传输数据的buf
+    char      recv_buff_[2 * 1024];		///< 接收数据的buf
     
 public:
     net_overLapped() : bFixed(false), pend_data_(0), transfer_bytes_(0)
@@ -42,7 +46,7 @@ public:
 public:
     //----------------------------------------------------------------------
     // 接口实现
-    virtual bool init_network(inet_tcp_handler* handler) ;   
+    virtual bool init_network(inet_tcp_handler* handler, size_t thread_num = 1) ;   
     virtual bool run_network() ;                 ///< 启动网络层-》创建线程
 
     virtual bool try_write(net_conn* pconn, const char* buff, size_t len);          ///< 尝试发送数据
@@ -93,7 +97,8 @@ private:
     HANDLE                  hiocp_;                                         ///< 完成端口句柄
     inet_tcp_handler*       net_event_handler_;                             ///< 移交上层处理的接口
     LPFN_ACCEPTEX           m_lpfnAcceptEx;                                 ///< AcceptEx函数指针
-    klib::kthread::Thread   work_thread_;
+    thread_vec_type         work_threads_;
+    size_t                  thread_num_;
 
     // overlapped 
     typedef std::list<net_overLapped*> OverLappedListType;                  ///< 保存net_overLapped的链表类型

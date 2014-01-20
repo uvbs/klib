@@ -13,10 +13,8 @@
 
 using namespace std;
 
-namespace klib
-{
-    namespace kthread
-    {
+namespace klib {
+namespace kthread {
 
 
 

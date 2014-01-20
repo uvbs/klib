@@ -114,36 +114,30 @@ void net_conn::upsate_last_active_tm()
 
 void net_conn::inc_post_read_count() 
 {
-    guard helper(mutex_);
     ++ post_read_count_;
 }
 
 void net_conn::dec_post_read_count()
 {
-    guard helper(mutex_);
     -- post_read_count_;
 }
 
 USHORT net_conn::get_post_read_count()
 {
-    guard helper(mutex_);
     return post_read_count_;
 }
 
 void net_conn::inc_post_write_count()
 {
-    guard helper(mutex_);
     ++ post_write_count_;
 }
 
 void net_conn::dec_post_write_count()
 {
-    guard helper(mutex_);
     -- post_write_count_;
 }
 
 USHORT net_conn::get_post_write_count()
 {
-    guard helper(mutex_);
     return post_write_count_;
 }

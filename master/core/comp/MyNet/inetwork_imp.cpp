@@ -45,7 +45,7 @@ inetwork_imp::~inetwork_imp(void)
 {
 }
 
-bool inetwork_imp::init_network(inet_tcp_handler* handler)
+bool inetwork_imp::init_network(inet_tcp_handler* handler, size_t thread_num/* = 1*/)
 {
     // 创建完成端口
     hiocp_ = CreateIoCompletionPort(INVALID_HANDLE_VALUE,NULL,(ULONG_PTR)0, 0);
@@ -59,12 +59,18 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler)
     _ASSERT(handler);
     net_event_handler_ = handler;
 
+    thread_num_ = thread_num;
+
     return true;
 }
 
 bool inetwork_imp::run_network() 
 {
-    work_thread_.start(std::bind(&inetwork_imp::worker_thread_, this, std::tr1::placeholders::_1), 0);
+    work_threads_.resize(thread_num_);
+    for (auto itr = work_threads_.begin(); itr != work_threads_.end(); ++ itr)
+    {
+        itr->start(std::bind(&inetwork_imp::worker_thread_, this, std::tr1::placeholders::_1), 0);
+    }
 
     tmr_mgr_.start();
 
@@ -81,6 +87,9 @@ bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
     if (pconn->get_post_write_count() > 0) {
         return true;
     }
+
+    // 一定有数据可以发送
+    KLIB_ASSERT(pconn->get_send_length() > 0);
 
     // 先发送流中的数据
     auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
@@ -200,7 +209,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
 
     BOOL brt = m_lpfnAcceptEx(pListenConn->get_socket(),
         sockAccept,
-        lpOverlapped->buff_, 
+        lpOverlapped->recv_buff_, 
         0,//lpToverlapped->dwBufSize,
         sizeof(sockaddr_in) + 16, 
         sizeof(sockaddr_in) + 16, 
@@ -345,8 +354,8 @@ bool inetwork_imp::post_read(net_conn* pConn)
 
     pMyoverlapped->hEvent = NULL;	// 
     pMyoverlapped->operate_type_ = OP_READ ; // 读操作
-    pMyoverlapped->wsaBuf_.buf = pMyoverlapped->buff_;
-    pMyoverlapped->wsaBuf_.len = sizeof(pMyoverlapped->buff_);
+    pMyoverlapped->wsaBuf_.buf = pMyoverlapped->recv_buff_;
+    pMyoverlapped->wsaBuf_.len = sizeof(pMyoverlapped->recv_buff_);
 
     int nResult = WSARecv (pConn->get_socket(),  // 已经和IOCP关联的socket
         &pMyoverlapped->wsaBuf_,			// 接收数据的WSABUF结构
@@ -370,6 +379,7 @@ bool inetwork_imp::post_read(net_conn* pConn)
         }
     }
 
+    guard guard_(pConn->get_lock());
     pConn->inc_post_read_count();
     return true;
 }
@@ -419,6 +429,7 @@ bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len)
         //TRACE(TEXT("发送完成了"));
     }
 
+    guard guard_(pconn->get_lock());
     pconn->inc_post_write_count();
     return true;
 }
@@ -427,7 +438,11 @@ bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len)
 // 
 void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransfered)
 {
-    pConn->dec_post_read_count();
+    {
+        guard guard_(pConn->get_lock());
+        pConn->dec_post_read_count();
+    }
+
     if (dwByteTransfered == 0) 
     {
         // _ASSERT(FALSE && "这里出现是对方直接关闭了连接");
@@ -435,8 +450,12 @@ void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransf
     }
     else 
     {
-        // 写入到流中
-        pConn->write_recv_stream(buff, dwByteTransfered);
+        {
+            guard guard_(pConn->get_lock());
+
+            // 写入到流中
+            pConn->write_recv_stream(buff, dwByteTransfered);
+        }
 
         // 统计该套接字的读字节数
         pConn->add_readed_bytes(dwByteTransfered);
@@ -452,22 +471,40 @@ void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransf
     pConn->upsate_last_active_tm();
 }
 
-void inetwork_imp::on_write(net_conn* pConn, DWORD dwByteTransfered)
+void inetwork_imp::on_write(net_conn* pconn, DWORD dwByteTransfered)
 {
-    // 标记已写了的数据
-    pConn->mark_send_stream(dwByteTransfered);
+    {// 加锁操作
+        guard guard_(pconn->get_lock());
 
-    // 减少该套接字上的写投递计数
-    pConn->dec_post_write_count();
+        // 标记已写了的数据
+        pconn->mark_send_stream(dwByteTransfered);
 
-    // 统计该套接字的写字节数
-    pConn->add_rwited_bytes(dwByteTransfered);
+        // 减少该套接字上的写投递计数
+        pconn->dec_post_write_count();
+
+        // 统计该套接字的写字节数
+        pconn->add_rwited_bytes(dwByteTransfered);
+    }
 
     // 通知上层处理写事件
-    net_event_handler_->on_write(pConn, dwByteTransfered);
+    net_event_handler_->on_write(pconn, dwByteTransfered);
 
     // 更新上次活跃的时间戳
-    pConn->upsate_last_active_tm();
+    pconn->upsate_last_active_tm();
+
+    {// 加锁操作
+        guard guard_(pconn->get_lock());
+
+        // 接着发送没有发送完的数据
+        if (pconn->get_send_length() > 0) 
+        {
+            // 再发送流中的数据
+            auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
+            auto seg_len = pconn->get_send_stream().get_read_seg_len();
+
+            this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
+        }
+    }
 }
 
 void inetwork_imp::on_accept(net_conn* listen_conn, net_conn* accept_conn)
@@ -635,7 +672,7 @@ void inetwork_imp::worker_thread_(void* param)
             {
             case OP_READ:
                 {
-                    this->on_read(pConn, (const char*) lpOverlapped->buff_, dwByteTransfered);
+                    this->on_read(pConn, (const char*) lpOverlapped->recv_buff_, dwByteTransfered);
                 }
                 break;
 
@@ -668,10 +705,12 @@ void inetwork_imp::worker_thread_(void* param)
             // 更新投递计数
             if (lpOverlapped->operate_type_ == OP_READ) 
             {
+                guard guard_(pConn->get_lock());
                 pConn->dec_post_read_count();
             }
             else if (lpOverlapped->operate_type_ == OP_WRITE) 
             {
+                guard guard_(pConn->get_lock());
                 pConn->dec_post_write_count();
             }
 

@@ -14,7 +14,7 @@ public:
 
 public:
     ///< 初始化网络层接口，由tcp_net_facade调用
-    virtual bool init_network(inet_tcp_handler* handler) = 0; 
+    virtual bool init_network(inet_tcp_handler* handler, size_t thread_num = 1) = 0; 
 
     ///< 运行网络层，创建线程这些
     virtual bool run_network() = 0;

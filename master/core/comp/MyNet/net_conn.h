@@ -92,6 +92,7 @@ protected:
     void inc_post_read_count();
     void dec_post_read_count();
     USHORT get_post_read_count();
+
     void inc_post_write_count();
     void dec_post_write_count();
     USHORT get_post_write_count();

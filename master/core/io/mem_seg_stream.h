@@ -171,14 +171,14 @@ public:
         size_t tmp_min_size;
         while (readed_size < len)
         {
+            tmp_min_size = std::min<size_t>(len - readed_size, r_seg_bf_->read_space());
+            r_seg_bf_->read(bf + readed_size, tmp_min_size);
+            readed_size += tmp_min_size;
+
             if (r_seg_bf_->read_space() == 0) {
                 free_first_buffer();
                 r_seg_bf_ = buff_list_[0];
             }
-
-            tmp_min_size = std::min<size_t>(len - readed_size, r_seg_bf_->read_space());
-            r_seg_bf_->read(bf + readed_size, tmp_min_size);
-            readed_size += tmp_min_size;
         }
 
         buff_len_ -= readed_size;
@@ -221,14 +221,16 @@ public:
         size_t tmp_min_size;
         while (readed_size < len)
         {
+            // 判断最小的并跳过
+            tmp_min_size = std::min<size_t>(len - readed_size, r_seg_bf_->read_space());
+            r_seg_bf_->skip_read(tmp_min_size);
+            readed_size += tmp_min_size;
+
+            // 最后处理这个，方便read_space为0时可以跳到下一块去
             if (r_seg_bf_->read_space() == 0) {
                 free_first_buffer();
                 r_seg_bf_ = buff_list_[0];
             }
-
-            tmp_min_size = std::min<size_t>(len - readed_size, r_seg_bf_->read_space());
-            r_seg_bf_->skip_read(tmp_min_size);
-            readed_size += tmp_min_size;
         }
 
         buff_len_ -= readed_size;

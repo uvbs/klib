@@ -2,6 +2,10 @@
 
 class net_conn;
 class inetwork;
+
+
+//----------------------------------------------------------------------
+// tcp回调处理器
 class inet_tcp_handler
 {
 public:

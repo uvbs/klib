@@ -15,7 +15,7 @@ using namespace klib::kthread;
 
 //------------------------------------------------------------------------
 // 操作类型
-enum emOperationType
+enum em_operation_type
 {
     OP_NONE,
     OP_ACCEPT,              ///< 接受连接请求
@@ -31,7 +31,7 @@ class tcp_net_facade_imp;
 class inetwork_imp;
 
 //----------------------------------------------------------------------
-///< 网络连接类
+///< 网络连接类,需要同步的在外部加锁
 class net_conn
 {
     friend tcp_net_facade_imp;

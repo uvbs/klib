@@ -24,18 +24,6 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ICombiner.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="INetwork.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MyNet.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="MyNetModule.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="stream.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -78,24 +66,27 @@
     <ClInclude Include="inet_tcp_handler.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="icombiner.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="imynetdef.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="inetwork.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="my_net.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="my_net_module.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="mynet.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ICombiner.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ICombinerImp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MyNetModule.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stream.cpp">
@@ -120,6 +111,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="net_socket.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="icombiner.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="icombinerImp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="my_net.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="my_net_module.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

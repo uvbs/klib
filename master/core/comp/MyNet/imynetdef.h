@@ -11,10 +11,10 @@
 // 定义接口
 
 // {9B9F6A14-10A1-4F9D-8842-829A93CC15DC}
-static const GUID IID_IMyNet = 
+static const GUID IID_imy_net = 
 { 0x9b9f6a14, 0x10a1, 0x4f9d, { 0x88, 0x42, 0x82, 0x9a, 0x93, 0xcc, 0x15, 0xdc } };
 
-struct IMyNet
+struct imy_net
 {
     /// @brief
     /// 创建一个TCP客户操作接口

@@ -20,7 +20,8 @@ public:
 
         if (pListen->get_bind_key() == 0) 
         {
-            std::string str = "HTTP/1.1 200 OK\r\n"
+            std::string str = 
+                "HTTP/1.1 200 OK\r\n"
                 "Server: Microsoft-IIS/4.0\r\n"
                 "Date: Mon, 3 Jan 2005 13:13:33 GMT\r\n"
                 "Content-Type: text/html\r\n"
@@ -29,6 +30,8 @@ public:
                 "\r\n"
                 "hello world"
                 ;
+
+            pListen->set_bind_key(pListen);
 
             net_facade_->get_network()->try_write(pNewConn, str.c_str(), str.size());
         }

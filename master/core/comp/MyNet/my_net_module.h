@@ -5,16 +5,16 @@
 
 using namespace klib::aom;
 
-class CMyNetModule : 
+class my_net_module : 
     public module_imp,
-    public IMyNet
+    public imy_net
 {
 public:
-    CMyNetModule(void);
-    ~CMyNetModule(void);
+    my_net_module(void);
+    ~my_net_module(void);
 
     BEGIN_INTERFACE_ENTRY
-        INTERFACE_ENTRY(IID_IMyNet, IMyNet)
+        INTERFACE_ENTRY(IID_imy_net, imy_net)
     END_INTERFACE_ENTRY
 
 public:

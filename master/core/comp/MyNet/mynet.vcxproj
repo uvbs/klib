@@ -79,9 +79,13 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ICombiner.h" />
+    <ClInclude Include="icombiner.h" />
     <ClInclude Include="icombiner_imp.h" />
     <ClInclude Include="dispatcher_handler.h" />
+    <ClInclude Include="imynetdef.h" />
+    <ClInclude Include="inetwork.h" />
+    <ClInclude Include="my_net.h" />
+    <ClInclude Include="my_net_module.h" />
     <ClInclude Include="tcp_net_facade.h" />
     <ClInclude Include="tcp_net_facade_imp.h" />
     <ClInclude Include="net_conn.h" />
@@ -90,10 +94,7 @@
     <ClInclude Include="inet_tcp_handler.h" />
     <ClInclude Include="inetpacket_mgr.h" />
     <ClInclude Include="inetpacket_mgr_imp.h" />
-    <ClInclude Include="INetwork.h" />
     <ClInclude Include="inetwork_imp.h" />
-    <ClInclude Include="MyNet.h" />
-    <ClInclude Include="MyNetModule.h" />
     <ClInclude Include="net_socket.h" />
     <ClInclude Include="net_packet.h" />
     <ClInclude Include="stdafx.h" />
@@ -109,15 +110,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ICombiner.cpp" />
-    <ClCompile Include="ICombinerImp.cpp" />
+    <ClCompile Include="icombiner.cpp" />
+    <ClCompile Include="icombinerImp.cpp" />
+    <ClCompile Include="my_net.cpp" />
+    <ClCompile Include="my_net_module.cpp" />
     <ClCompile Include="tcp_net_facade_imp.cpp" />
     <ClCompile Include="net_conn.cpp" />
     <ClCompile Include="inet_conn_mgr_imp.cpp" />
     <ClCompile Include="inetpacket_mgr_imp.cpp" />
     <ClCompile Include="inetwork_imp.cpp" />
-    <ClCompile Include="mynet.cpp" />
-    <ClCompile Include="MyNetModule.cpp" />
     <ClCompile Include="net_packet.cpp" />
     <ClCompile Include="net_socket.cpp" />
     <ClCompile Include="stdafx.cpp">

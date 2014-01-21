@@ -1,9 +1,11 @@
-// mynet_test.cpp : 定义控制台应用程序的入口点。
+// echo_server.cpp : 定义控制台应用程序的入口点。
 //
 
 #include "stdafx.h"
-#include <crtdbg.h>
 
+
+#include <inttype.h>
+#include <aom/iframework_imp.h>
 #include <comp/MyNet/imynetdef.h>
 
 
@@ -18,23 +20,6 @@ public:
     {
         printf("接受连接，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
 
-        if (pListen->get_bind_key() == 0) 
-        {
-            std::string str = 
-                "HTTP/1.1 200 OK\r\n"
-                "Server: Microsoft-IIS/4.0\r\n"
-                "Date: Mon, 3 Jan 2005 13:13:33 GMT\r\n"
-                "Content-Type: text/html\r\n"
-                "Last-Modified: Mon, 11 Jan 2004 13:23:42 GMT\r\n"
-                "Content-Length: 12\r\n"
-                "\r\n"
-                "hello world!"
-                ;
-
-            pListen->set_bind_key(pListen);
-
-            net_facade_->get_network()->try_write(pNewConn, str.c_str(), str.size());
-        }
         return true;
     }
 
@@ -42,15 +27,18 @@ public:
     {
         printf("连接断开，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
     
-
         return true;
     }
 
     virtual bool on_read(net_conn* pConn, const char* buff, size_t len)
     {
-        printf("%.*s", len, buff);
+        //printf("%.*s", len, buff);
+
+        net_facade_->get_network()->try_write(pConn, buff, len);
+
         return true;
     }
+
     virtual bool on_write(net_conn* pConn, size_t len) 
     {
         return true;
@@ -58,17 +46,6 @@ public:
 
     virtual bool on_connect(net_conn* pConn, bool bConnected /* = true */) 
     {
-        printf("建立连接，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
-
-        
-        std::string str = "GET / HTTP/1.1\r\n"
-            "Host: www.baidu.com\r\n"
-            "Accept: */*\r\n"
-            "\r\n\r\n";
-
-        net_facade_->get_network()->try_write(pConn, str.c_str(), str.size());
-    
-        
         return true;
     }
 
@@ -76,12 +53,13 @@ protected:
     tcp_net_facade* net_facade_;
 };
 
+
 int _tmain(int argc, _TCHAR* argv[])
 {
     klib::aom::iframework* pframework = klib::aom::framework::instance();
 
     HRESULT hr = pframework->load_module(_T("mynet.dll"));
-    _ASSERT(S_OK == hr);
+    KLIB_ASSERT(S_OK == hr);
 
     imy_net* pNet = NULL;
 
@@ -94,11 +72,11 @@ int _tmain(int argc, _TCHAR* argv[])
     tcp_facade_->init();
     tcp_facade_->add_event_handler(&thehandler);
 
-    net_conn* pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
 
-    tcp_facade_->get_network()->try_listen(900);
+    tcp_facade_->get_network()->try_listen(9000);
 
     Sleep(-1);
+
 	return 0;
 }
 

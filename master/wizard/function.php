@@ -14,6 +14,24 @@ function create_guid()
 	return $uuid;
 }
 
+ // 原目录，复制到的目录
+function recurse_copy($src,$dst) { 
+
+    $dir = opendir($src);
+    @mkdir($dst);
+    while(false !== ( $file = readdir($dir)) ) {
+        if (( $file != '.' ) && ( $file != '..' )) {
+            if ( is_dir($src . '/' . $file) ) {
+                recurse_copy($src . '/' . $file,$dst . '/' . $file);
+            }
+            else {
+                copy($src . '/' . $file,$dst . '/' . $file);
+            }
+        }
+    }
+    closedir($dir);
+}
+
 // 生成cpp内容
 function generate_module_hpp($module_name)
 {
@@ -27,7 +45,8 @@ function generate_module_hpp($module_name)
 #include <set>
 #include <string>
 #include <core/lock_stl.h>
-#include <kthread/auto_cs.h>
+#include <kthread/auto_lock.h>
+#include "MainFrameWnd.h"
 
 using namespace klib::stl;
 
@@ -49,7 +68,7 @@ protected:
     virtual void on_post_stop();
 
 private:
-	
+	CMainFrameWnd* m_pMainFrameWnd;
 };
 	
 EOF;
@@ -66,7 +85,7 @@ function generate_module_cpp($module_name)
 	$module_name_template = "{<Module_Name>}";
 
 	$template_contents =<<<EOF
-#include "StdAfx.h"
+#include "stdafx.h"
 
 #include "{<Module_Name>}.h"
 
@@ -89,6 +108,35 @@ BOOL {<Module_Name>}::on_run()
 
 void {<Module_Name>}::on_post_run()
 {
+	CPaintManagerUI::SetInstance(GetModuleHandle(NULL));
+    CPaintManagerUI::SetResourcePath(CPaintManagerUI::GetInstancePath() + _T("skins"));
+
+    HRESULT Hr = ::CoInitialize(NULL);
+    if( FAILED(Hr) ) return ;
+    
+#ifdef _DEBUG
+    const TCHAR* strWatchXml = _T("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"yes\" ?>")
+        _T("<Window size=\"100,50\" sizebox=\"4,4,6,6\" caption=\"0,0,0,29\" mininfo=\"100,50\" roundcorner=\"2,2\" >")
+            _T("<Font name=\"宋体\" size=\"12\" bold=\"true\" italic=\"false\" />")
+            _T("<VerticalLayout bordersize=\"1\" bkcolor=\"#FFFFFFFF\" bordercolor=\"#FF1B6212\">")
+                _T("<HorizontalLayout  height=\"27\" >")
+                    _T("<Edit name=\"wndInfo\"/>")
+                _T("</HorizontalLayout>")
+            _T("</VerticalLayout>")
+        _T("</Window>");
+#endif
+
+    m_pMainFrameWnd = new CMainFrameWnd();
+    if(m_pMainFrameWnd == NULL ) return ;
+    //pFrame->Create(NULL, _T("这是一个最简单的测试用exe，修改test1.xml就可以看到效果"), UI_WNDSTYLE_FRAME, WS_EX_WINDOWEDGE);
+    //m_pMainFrameWnd->CreateX(NULL, UI_WNDSTYLE_FRAME, _T("mainframe.xml"));
+    m_pMainFrameWnd->CreateX(NULL, UI_WNDSTYLE_FRAME, _T("mainframe.xml"));
+    m_pMainFrameWnd->CenterWindow();
+    m_pMainFrameWnd->ShowWindow(true);
+
+    CPaintManagerUI::MessageLoop();
+
+    ::CoUninitialize();
 }
 
 void {<Module_Name>}::on_post_stop()

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <codecvt>
+#include <sstream>
 
 namespace klib {
 namespace util {
@@ -40,8 +41,17 @@ std::string to_string(const T& t)
 
 
 
+template<class out_type,class in_type>
+out_type convert(const in_type & t)
+{
+	stringstream stream;
+	out_type result;	//这里存储转换结果
 
+	stream << t;		//向流中传值
+	stream >> result;	//向result中写入值
 
+	return result;
+}
 
 
 

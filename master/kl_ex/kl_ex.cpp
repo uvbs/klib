@@ -35,21 +35,9 @@ std::string get_content(std::string file)
     return std::move(content);
 }
 
-void test_seg_buff()
-{
-    typedef klib::io::mem_seg_stream<11, char> test_buff_type;
-
-    test_buff_type s;
-    s.write("abcdefghijklmnopqrst1234567890QWERTYUIOP", 30);
-
-    test_buff_type::value_type buff[2048];
-    s.read(buff, s.size());
-    // s.read();
-}
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    test_seg_buff();
 
     variable var;
     var = 10;

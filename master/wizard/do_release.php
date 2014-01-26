@@ -3,11 +3,11 @@ include 'function.php';
 
 // 用户模板配置项 
 $solution_name = "template_solution";		// 解决方案名称
-$solution_path = 'd:\test_template';		// 解决方案路径
-$project_name = "template_project";			// 项目名称
-$main_module_name = "xLaunch";				// 模块的名称
+$solution_path = 'E:\\project\\git\\pea';		// 解决方案路径
+$project_name = "pea";			// 项目名称
+$main_module_name = "pea";				// 模块的名称
 $common_name 	  = "common";
-$klib_path = "E:\\project\\xlib\\trunk\\core";	// klib路径
+$klib_path = "E:\\project\\git\\klib\\master\\core";	// klib路径
 
 $debug_mode = true;							// 是否是调试状态
 
@@ -26,6 +26,8 @@ $project_guid  = create_guid();
 $solution_name_path = $solution_path . "\\" . $solution_name . ".sln";
 $project_name_path  = $solution_path . "\\" . $project_name . "\\" . $project_name . ".vcxproj";
 $common_name_path   = $solution_path . "\\" . $common_name;
+$project_bin_path 	= $solution_path . '\\' . 'bin';
+$project_skins_path = $project_bin_path . '\\' . 'skins';
 
 $module_cpp_path   = $solution_path . "\\" . $project_name . "\\" . $main_module_name . ".cpp" ;
 $module_h_path   = $solution_path . "\\" . $project_name . "\\" . $main_module_name . ".h" ;
@@ -77,10 +79,20 @@ if (file_exists($solution_path) )
  4, create other files
 */
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// create directory 
 @mkdir($solution_path);
 @mkdir($common_name_path);
 @mkdir(dirname($project_name_path));
+@mkdir($project_bin_path);
+@mkdir($project_skins_path);
 echo "create directory ... \r\n";
+
+if (!$debug_mode)
+{
+	if (file_exists($solution_name_path))
+		die("solution already exists!!! \r\n");
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 // 以下是处理解决方案的内容
@@ -116,6 +128,16 @@ file_put_contents($module_stdafx_h_path, $module_contents);
 $module_contents = generate_stdafx_cpp($main_module_name);
 file_put_contents($module_stdafx_cpp_path, $module_contents);
 
+// 拷贝文件
+@copy("template\\src\\MainFrameWnd.h", dirname($project_name_path) . "/MainFrameWnd.h");
+@copy("template\\src\\MainFrameWnd.cpp", dirname($project_name_path) . "/MainFrameWnd.cpp");
+
+@copy("template\\src\\UIWindow.h", dirname($project_name_path) . "/UIWindow.h");
+@copy("template\\src\\UIWindow.cpp", dirname($project_name_path) . "/UIWindow.cpp");
+
+@copy("template\\modules.xml", "$solution_path\\Bin\\modules.xml");
+@copy("template\\skins\\mainframe.xml", $project_skins_path . '\\mainframe.xml');
+@recurse_copy("template\\loader", "$solution_path\\loader");
 
 
 // 链接klib模块 $klib_path  mklink /J include 

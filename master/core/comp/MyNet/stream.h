@@ -8,7 +8,7 @@
 
 typedef klib::mem::mem_buffer<1024*1024*60, 10*1024, FALSE>  net_mem_type;
 
-namespace net
+namespace stream
 {
 
 class istream

@@ -3,10 +3,10 @@
 
 #include <set>
 #include <functional>
+#include "../inttype.h"
 
 namespace klib{
 namespace util {
-
 
 
 /*

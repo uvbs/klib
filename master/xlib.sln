@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "proxy_server", "example\pro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "proxy_client", "example\proxy\proxy_client\proxy_client.vcxproj", "{1F4E3692-CECD-429B-B3BD-3E227CD26837}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "echo_server", "example\echo_server\echo_server.vcxproj", "{FEC804B3-4521-4848-A41A-3A09FAC6022F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -61,6 +63,10 @@ Global
 		{1F4E3692-CECD-429B-B3BD-3E227CD26837}.Debug|Win32.Build.0 = Debug|Win32
 		{1F4E3692-CECD-429B-B3BD-3E227CD26837}.Release|Win32.ActiveCfg = Release|Win32
 		{1F4E3692-CECD-429B-B3BD-3E227CD26837}.Release|Win32.Build.0 = Release|Win32
+		{FEC804B3-4521-4848-A41A-3A09FAC6022F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FEC804B3-4521-4848-A41A-3A09FAC6022F}.Debug|Win32.Build.0 = Debug|Win32
+		{FEC804B3-4521-4848-A41A-3A09FAC6022F}.Release|Win32.ActiveCfg = Release|Win32
+		{FEC804B3-4521-4848-A41A-3A09FAC6022F}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

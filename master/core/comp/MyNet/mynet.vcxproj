@@ -79,23 +79,24 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ICombiner.h" />
-    <ClInclude Include="ICombinerImp.h" />
-    <ClInclude Include="IDispatchHandler.h" />
-    <ClInclude Include="INetClient.h" />
-    <ClInclude Include="INetClientImp.h" />
+    <ClInclude Include="icombiner.h" />
+    <ClInclude Include="icombiner_imp.h" />
+    <ClInclude Include="dispatcher_handler.h" />
+    <ClInclude Include="imynetdef.h" />
+    <ClInclude Include="inetwork.h" />
+    <ClInclude Include="my_net.h" />
+    <ClInclude Include="my_net_module.h" />
+    <ClInclude Include="tcp_net_facade.h" />
+    <ClInclude Include="tcp_net_facade_imp.h" />
     <ClInclude Include="net_conn.h" />
-    <ClInclude Include="INetConnectionMgr.h" />
-    <ClInclude Include="INetConnectionMgrImp.h" />
-    <ClInclude Include="INetEventHandler.h" />
-    <ClInclude Include="INetPacketMgr.h" />
-    <ClInclude Include="INetPacketMgrImp.h" />
-    <ClInclude Include="INetwork.h" />
-    <ClInclude Include="INetworkImp.h" />
-    <ClInclude Include="MyNet.h" />
-    <ClInclude Include="MyNetModule.h" />
-    <ClInclude Include="MySocket.h" />
-    <ClInclude Include="NetPacket.h" />
+    <ClInclude Include="inet_conn_mgr.h" />
+    <ClInclude Include="inet_conn_mgr_imp.h" />
+    <ClInclude Include="inet_tcp_handler.h" />
+    <ClInclude Include="inetpacket_mgr.h" />
+    <ClInclude Include="inetpacket_mgr_imp.h" />
+    <ClInclude Include="inetwork_imp.h" />
+    <ClInclude Include="net_socket.h" />
+    <ClInclude Include="net_packet.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stream.h" />
     <ClInclude Include="targetver.h" />
@@ -109,22 +110,17 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ICombiner.cpp" />
-    <ClCompile Include="ICombinerImp.cpp" />
-    <ClCompile Include="IDispatchHandler.cpp" />
-    <ClCompile Include="INetClient.cpp" />
-    <ClCompile Include="INetClientImp.cpp" />
+    <ClCompile Include="icombiner.cpp" />
+    <ClCompile Include="icombinerImp.cpp" />
+    <ClCompile Include="my_net.cpp" />
+    <ClCompile Include="my_net_module.cpp" />
+    <ClCompile Include="tcp_net_facade_imp.cpp" />
     <ClCompile Include="net_conn.cpp" />
-    <ClCompile Include="INetConnectionMgrImp.cpp" />
-    <ClCompile Include="INetEventHandler.cpp" />
-    <ClCompile Include="INetPacketMgr.cpp" />
-    <ClCompile Include="INetPacketMgrImp.cpp" />
-    <ClCompile Include="INetwork.cpp" />
-    <ClCompile Include="INetworkImp.cpp" />
-    <ClCompile Include="mynet.cpp" />
-    <ClCompile Include="MyNetModule.cpp" />
-    <ClCompile Include="NetPacket.cpp" />
-    <ClCompile Include="NetSocket.cpp" />
+    <ClCompile Include="inet_conn_mgr_imp.cpp" />
+    <ClCompile Include="inetpacket_mgr_imp.cpp" />
+    <ClCompile Include="inetwork_imp.cpp" />
+    <ClCompile Include="net_packet.cpp" />
+    <ClCompile Include="net_socket.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

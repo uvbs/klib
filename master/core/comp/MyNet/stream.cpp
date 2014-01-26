@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "stream.h"
 
-namespace net {
+namespace stream {
 
 istream::istream(void)
 {

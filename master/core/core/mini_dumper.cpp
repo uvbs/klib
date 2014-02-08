@@ -5,7 +5,7 @@
 
 //#include "stdafx.h"
 #include <time.h>
-#include "MiniDumper.h"
+#include "mini_dumper.h"
 
 #pragma comment(lib, "version.lib")
 
@@ -21,14 +21,14 @@ typedef BOOL (WINAPI *MINIDUMPWRITEDUMP)(HANDLE hProcess, DWORD dwPid, HANDLE hF
 									CONST PMINIDUMP_CALLBACK_INFORMATION CallbackParam
 									);
 
-MiniDumper *MiniDumper::gpDumper = NULL;
+mini_dumper *mini_dumper::gpDumper = NULL;
 
 //
-// MiniDumper::MiniDumper			
+// mini_dumper::mini_dumper			
 //
-MiniDumper::MiniDumper(bool headless)
+mini_dumper::mini_dumper(bool headless)
 {
-	// Detect if there is more than one MiniDumper.
+	// Detect if there is more than one mini_dumper.
 	_ASSERT(!gpDumper);
 
 	if (!gpDumper)
@@ -41,9 +41,9 @@ MiniDumper::MiniDumper(bool headless)
 
 
 //
-// MiniDumper::Handler			
+// mini_dumper::Handler			
 //
-LONG MiniDumper::Handler(_EXCEPTION_POINTERS *pExceptionInfo)
+LONG mini_dumper::Handler(_EXCEPTION_POINTERS *pExceptionInfo)
 {
 	LONG retval = EXCEPTION_CONTINUE_SEARCH;
 
@@ -56,9 +56,9 @@ LONG MiniDumper::Handler(_EXCEPTION_POINTERS *pExceptionInfo)
 }
 
 //
-// MiniDumper::WriteMiniDump			
+// mini_dumper::WriteMiniDump			
 //
-LONG MiniDumper::WriteMiniDump(_EXCEPTION_POINTERS *pExceptionInfo )
+LONG mini_dumper::WriteMiniDump(_EXCEPTION_POINTERS *pExceptionInfo )
 {    
     GetLocalTime(&m_stSysTime);
 
@@ -160,7 +160,7 @@ LONG MiniDumper::WriteMiniDump(_EXCEPTION_POINTERS *pExceptionInfo )
 
 	TerminateProcess(GetCurrentProcess(), 0);
 	
-	// MLM Note: ExitThread will work, and it allows the MiniDumper to kill a crashed thread
+	// MLM Note: ExitThread will work, and it allows the mini_dumper to kill a crashed thread
 	// without affecting the rest of the application. The question of the day:
 	//   Is That A Good Idea??? Answer: ABSOLUTELY NOT!!!!!!!
 	//
@@ -170,9 +170,9 @@ LONG MiniDumper::WriteMiniDump(_EXCEPTION_POINTERS *pExceptionInfo )
 }
 
 //
-// MiniDumper::VSetDumpFileName				
+// mini_dumper::VSetDumpFileName				
 //
-void MiniDumper::VSetDumpFileName(void)
+void mini_dumper::VSetDumpFileName(void)
 {
 	//_tcssprintf(m_szDumpPath, _T("%s%s.%ld.dmp"), m_szAppPath, m_szAppBaseName, m_lTime);
 	wsprintf(m_szDumpPath,

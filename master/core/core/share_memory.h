@@ -16,11 +16,11 @@ using namespace klib;
 /*
  内存共享类
 */
-class CShareMemory
+class share_memory
 {
 public:
-	CShareMemory(void);
-	~CShareMemory(void);
+	share_memory(void);
+	~share_memory(void);
 
 public:
     /**
@@ -28,32 +28,32 @@ public:
      * @param  name  共享内存的名字
      * @param  nSize 共享内存的大小
      */
-	void Create(tstring name, size_t nSize);
+	void create(tstring name, size_t nSize);
 
     /**
      * 关闭共享内存
      */
-    void Close();
+    void close();
 
     /**
      * @brief 获取共享内存的长度
      */
-    size_t GetSize() { return m_buffer_size; }
+    size_t size() { return m_buffer_size; }
 
     /**
      * @brief 获取共享内存地址
      */
-    void*  GetAddr() { return m_pShareMemoryAddress; }
+    void*  get_addr() { return m_pShareMemoryAddress; }
 
     /**
      * @brief 读取内存，以string返回
      */
-	string ReadString();
+	string read_string();
 
     /**
      * @brief 将string写入共享内存
      */
-	void WriteString(string& content);
+	void write_string(string& content);
 
     /**
      * @brief 从缓冲区中读取一定长度的数据
@@ -62,7 +62,7 @@ public:
      * @param  nStartPos  开始读取的位置
      * @param  pReadedLen 返回实际读取的长度
      */
-    bool Read(char* pszBuff, size_t nReadLen, size_t nStartPos, size_t* pReadedLen);
+    bool read(char* pszBuff, size_t nReadLen, size_t nStartPos, size_t* pReadedLen);
 
     /**
      * @brief 将缓冲区的数据写入共享内存
@@ -71,7 +71,7 @@ public:
      * @param  nDataLen    要写入共享内存的长度
      * @param  pWritedLem  实际被写入的长度
      */
-    bool Write(size_t nWritePos, const char* pSrc, size_t nDataLen, size_t* pWritedLem);
+    bool write(size_t nWritePos, const char* pSrc, size_t nDataLen, size_t* pWritedLem);
 
 private:
 	HANDLE m_hSharememoryHandle;            ///< 共享内存句柄

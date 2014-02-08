@@ -1,4 +1,4 @@
-#include "ShareMemory.h"
+#include "share_memory.h"
 #include <Windows.h>
 #include <tchar.h>
 
@@ -6,16 +6,16 @@ namespace klib{
 namespace mem{
 
 
-CShareMemory::CShareMemory(void) : m_hSharememoryHandle(NULL)
+share_memory::share_memory(void) : m_hSharememoryHandle(NULL)
 {
 }
 
-CShareMemory::~CShareMemory(void)
+share_memory::~share_memory(void)
 {
-    Close();
+    close();
 }
 
-void CShareMemory::Create(tstring name, size_t nSize )
+void share_memory::create(tstring name, size_t nSize )
 {
 	m_hSharememoryHandle = CreateFileMapping(INVALID_HANDLE_VALUE,NULL, PAGE_READWRITE, 0, nSize, name.c_str());
 	if(m_hSharememoryHandle)
@@ -33,19 +33,19 @@ void CShareMemory::Create(tstring name, size_t nSize )
 	m_buffer_size = nSize;
 }
 
-void CShareMemory::Close()
+void share_memory::close()
 {
     CloseHandle(m_hSharememoryHandle);
 }
 
 
-std::string CShareMemory::ReadString()
+std::string share_memory::read_string()
 {
     std::string str = (char*)m_pShareMemoryAddress;
     return std::move(str);
 }
 
-void CShareMemory::WriteString(string& content)
+void share_memory::write_string(string& content)
 {
     size_t nCopySize = content.size() >= m_buffer_size ? m_buffer_size - 1 : content.size();
 
@@ -53,7 +53,7 @@ void CShareMemory::WriteString(string& content)
     ((char*)m_pShareMemoryAddress)[nCopySize] = '\0';
 }
 
-bool CShareMemory::Read(char* pszBuff, size_t nReadLen, size_t nStartPos, size_t* pReadedLen)
+bool share_memory::read(char* pszBuff, size_t nReadLen, size_t nStartPos, size_t* pReadedLen)
 {
     if (NULL == pszBuff) 
     {
@@ -80,7 +80,7 @@ bool CShareMemory::Read(char* pszBuff, size_t nReadLen, size_t nStartPos, size_t
     return true;
 }
 
-bool CShareMemory::Write(size_t nWritePos, const char* pSrc, size_t nDataLen, size_t* pWritedLem)
+bool share_memory::write(size_t nWritePos, const char* pSrc, size_t nDataLen, size_t* pWritedLem)
 {
     // 计算能够写的长度
     size_t nWritedLen;

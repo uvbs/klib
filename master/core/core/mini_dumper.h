@@ -14,13 +14,13 @@ namespace klib {
 namespace debug {
 
 
-class MiniDumper
+class mini_dumper
 {
 public:
-	MiniDumper(bool headless);
+	mini_dumper(bool headless);
 
 protected:
-	static MiniDumper *gpDumper;
+	static mini_dumper *gpDumper;
 	static LONG WINAPI Handler( struct _EXCEPTION_POINTERS *pExceptionInfo );
 
 	virtual void VSetDumpFileName(void);

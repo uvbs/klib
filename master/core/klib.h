@@ -11,9 +11,9 @@
 
 #include "core/console_screen.h"
 #include "core/ini_file.h"
-#include "core/MemStream.h"
+#include "core/share_memory.h"
 #include "core/DateTime.h"
-#include "core/MiniDumper.h"
+#include "core/mini_dumper.h"
 #include "core/logger.h"
 #include "core/private_heap.h"
 #include "core/ensure.h"

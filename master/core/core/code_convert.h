@@ -24,6 +24,9 @@ public:
     static std::string unicode_2_gbk(const std::wstring& wstrcode); 
     static std::wstring gbk_2_unicode(std::string& strascii);  
     static std::string gbk_2_utf8(std::string& strAsciiCode);  
+
+    static bool is_gbk(const char* gb, int length);
+    static bool is_utf8(const char* str, int length);
 };
 
 

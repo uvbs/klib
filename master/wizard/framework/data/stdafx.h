@@ -16,3 +16,6 @@
 // TODO: 在此处引用程序需要的其他头文件
 
 #include <aom/iframework.h>
+#include <klib_link.h>
+
+#pragma comment(lib, "sqlite3.lib")

@@ -23,7 +23,7 @@
 
 #include <aom/iframework.h>
 #include <third/duiLib/UIlib.h>
-#include "..\common\tsinfo.h"
+#include "../common/tsinfo.h"
 
 using namespace DuiLib;
 

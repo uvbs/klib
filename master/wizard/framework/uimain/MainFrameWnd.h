@@ -9,6 +9,8 @@ using namespace klib::ui;
 
 class CUIMainModule;
 
+//----------------------------------------------------------------------
+// 主窗口对象，与界面交互的入口窗口
 class CMainFrameWnd : public DuiLib::CWindowUI
 {
 public:
@@ -39,8 +41,8 @@ public:
     // control func
     void EnableFlashIcon(BOOL bEnable);
 
-
 protected:
+    // 需要被修改的
     bool OnBtnHomePageClick( void* param );
 
 protected:

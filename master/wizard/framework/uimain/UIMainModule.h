@@ -5,7 +5,8 @@
 #include "MainFrameWnd.h"
 #include "core/singleton.h"
 
-
+//----------------------------------------------------------------------
+// uiµÄÖ÷Ä£¿é
 class CUIMainModule:
     public klib::aom::module_imp,
     public IUIMain

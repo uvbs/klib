@@ -1,7 +1,8 @@
 #pragma once
 
-
+#ifdef _MSC_VER
 #include <windows.h>
+#endif
 #include <set>
 #include <map>
 #include <stdio.h>
@@ -288,6 +289,30 @@ void RegisterAllState()                                         \
 
 
 /*
+
+enum status_test
+{
+LogicState,
+NewVerState,
+OnlineState
+}
+
+BEGIN_STATE_DECLARE(CQueryLogicState, LogicState)
+{
+virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
+}
+
+BEGIN_STATE_DECLARE(CQueryNewVerState, NewVerState)
+{
+virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
+}
+
+BEGIN_STATE_DECLARE(COnlineState, OnlineState)
+{
+virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
+}
+
+
 ///< 状态机的定义
 BEGIN_FSM(ClientAppFsm)
     BEGIN_REGISTER_STATE()
@@ -298,6 +323,8 @@ BEGIN_FSM(ClientAppFsm)
 END
 
 ClientAppFsm    m_fsm;
+m_fsm.Start();
+
 */
 
 

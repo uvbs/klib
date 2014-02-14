@@ -7,7 +7,7 @@
 
 #include <third/duilib/UIlib.h>
 #include <aom/iframework_imp.h>
-#include <core/MiniDumper.h>
+#include <core/mini_dumper.h>
 using namespace DuiLib;
 
 
@@ -18,7 +18,7 @@ using namespace DuiLib;
 #endif
 
 
-klib::debug::MiniDumper g_MiniDump(true);
+klib::debug::mini_dumper g_mini_dumper(true);
 
 int APIENTRY _tWinMain(HINSTANCE hInstance,
                      HINSTANCE hPrevInstance,

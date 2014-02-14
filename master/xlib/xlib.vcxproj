@@ -170,6 +170,7 @@
     <ClInclude Include="..\core\net\udp_socket.h" />
     <ClInclude Include="..\core\net\wininet_httpclient.h" />
     <ClInclude Include="..\core\net\winsockInit.h" />
+    <ClInclude Include="..\core\pattern\actor.h" />
     <ClInclude Include="..\core\pattern\aspec.h" />
     <ClInclude Include="..\core\pattern\factory.h" />
     <ClInclude Include="..\core\pattern\fsm.h" />
@@ -225,6 +226,7 @@
     <ClCompile Include="..\core\net\udp_client.cpp" />
     <ClCompile Include="..\core\net\udp_socket.cpp" />
     <ClCompile Include="..\core\net\wininet_httpclient.cpp" />
+    <ClCompile Include="..\core\pattern\actor.cpp" />
     <ClCompile Include="..\core\pattern\sync_invoke.cpp" />
     <ClCompile Include="..\core\sys\cpu.cpp" />
     <ClCompile Include="..\core\sys\sys.cpp" />

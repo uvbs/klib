@@ -22,8 +22,8 @@ TEST(util, ×Ö·û´®²âÊÔ)
     std::wstring str_w = klib::util::toWString(dv);
 
     float f = 1.0;
-    std::string str_f = klib::util::to_string(f);
-    EXPECT_TRUE(str_f == "1.0");
+    std::string str_f = klib::util::converter::to_string(f);
+    EXPECT_TRUE(str_f == "1");
 
     /*
     std::random_device rd;

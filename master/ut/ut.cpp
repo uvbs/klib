@@ -37,6 +37,7 @@
 #include "bitmap_test.h"
 #include "bloom_test.h"
 #include "stream_test.h"
+#include "actor_test.h"
 
 
 #include "third/letter.h"

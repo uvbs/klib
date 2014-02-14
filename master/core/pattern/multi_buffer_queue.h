@@ -10,6 +10,10 @@
 typedef klib::kthread::mutex MutexType;
 typedef klib::kthread::guard MutexGuardType;
 
+namespace klib {
+namespace pattern {
+
+
 /*
  多写单读队列
  MaxElement : 允许的最大存储个数
@@ -113,6 +117,11 @@ protected:
     size_t          write_index_;                       // 写索引
     size_t          element_count_;                     // 元素的个数
 };
+
+
+
+}}
+
 
 
 #endif  // _CSDCS_MULTI_BUFFER_QUEUE_H_

@@ -29,5 +29,7 @@ TEST(actor, 1)
         act.send(i);
     }
 
-    Sleep(1000);
+    // Sleep(4000);
+
+    //
 }

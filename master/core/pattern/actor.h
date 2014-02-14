@@ -6,7 +6,6 @@
 #include "../kthread/kthreadpool.h"
 #include "../core/lock_stl.h"
 
-using namespace klib::kthread;
 
 namespace klib {
 namespace pattern{
@@ -14,6 +13,7 @@ namespace actor {
 
 namespace detail
 {
+    /* internal use of message queue */
     template<typename msg_type>
     class msg_queue
     {
@@ -30,6 +30,7 @@ namespace detail
     };
 }
 
+/* actor base class  */
 class engine;
 class actor_base
 {
@@ -43,7 +44,7 @@ protected:
     virtual void set_queued(bool isqueue) = 0;
 };
 
-
+/* actor engine framework */
 class engine
 {
     struct loop_task;
@@ -61,6 +62,7 @@ protected:
     klib::kthread::kthread_pool pool_;
 };
 
+/* actor imp class */
 template<class subclass, typename msg_type>
 class actor_imp : public actor_base
 {
@@ -68,9 +70,7 @@ protected:
     virtual bool handle() 
     {
         if (mq_.size() == 0) 
-        {
             return false;
-        }
 
         msg_queue_type::value_type t;
         if (mq_.pop(t)) 
@@ -82,21 +82,11 @@ protected:
         return false;
     };
 
-    size_t msg_count()
-    {
-        return mq_.size();
-    }
+    size_t msg_count()  {   return mq_.size();   }
+    bool is_queued()    {   return queued_;      }
+    void set_queued(bool flag)  {  queued_ = flag;   }
 
-    bool is_queued() 
-    {
-        return queued_;
-    }
-
-    void set_queued(bool flag) 
-    {
-        queued_ = flag;
-    }
-
+    /* to implement */
     virtual void execute(msg_type& t) = 0;
 
 public:
@@ -105,10 +95,7 @@ public:
         fr.regist(this);
     }
     
-    void send(const msg_type& t)
-    {
-        mq_.push(t);
-    }
+    void send(const msg_type& t) {   mq_.push(t);    }
 
 protected:
     typedef detail::msg_queue<msg_type> msg_queue_type;

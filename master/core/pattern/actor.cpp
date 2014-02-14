@@ -1,5 +1,7 @@
 #include "actor.h"
 
+using namespace klib::kthread;
+
 namespace klib {
 namespace pattern{
 namespace actor{

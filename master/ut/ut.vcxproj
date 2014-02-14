@@ -80,6 +80,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="active_object_test.h" />
     <ClInclude Include="actor_test.h" />
     <ClInclude Include="array_template_test.h" />
     <ClInclude Include="aspect_test.h" />

@@ -71,6 +71,7 @@
 #include "pattern/object_reuser.h"
 #include "pattern/object_pool.h"
 #include "pattern/actor.h"
+#include "pattern/active_object.h"
 
 #include "aom/iframework_imp.h"
 

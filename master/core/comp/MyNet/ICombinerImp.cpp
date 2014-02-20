@@ -2,7 +2,7 @@
 #include "icombiner_imp.h"
 
 
-bool icombiner_imp::IsIntactPacket(const net_stream_type& stream, int& packetlen)
+bool icombiner_imp::is_intact_packet(const net_stream_type& stream, int& packetlen)
 {
 //   if (*(UINT*)buff == len) {
 //     return true;

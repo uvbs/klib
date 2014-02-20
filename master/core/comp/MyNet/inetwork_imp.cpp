@@ -69,7 +69,7 @@ bool inetwork_imp::run_network()
     work_threads_.resize(thread_num_);
     for (auto itr = work_threads_.begin(); itr != work_threads_.end(); ++ itr)
     {
-        itr->start(std::bind(&inetwork_imp::worker_thread_, this, std::tr1::placeholders::_1), 0);
+        itr->start(std::bind(&inetwork_imp::worker_thread_, this, std::placeholders::_1), 0);
     }
 
     return true;
@@ -481,7 +481,7 @@ void inetwork_imp::on_write(net_conn* pconn, DWORD dwByteTransfered)
         pconn->dec_post_write_count();
 
         // 统计该套接字的写字节数
-        pconn->add_rwited_bytes(dwByteTransfered);
+        pconn->add_writed_bytes(dwByteTransfered);
     }
 
     // 通知上层处理写事件

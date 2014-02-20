@@ -7,7 +7,7 @@ inetpacket_mgr_imp::inetpacket_mgr_imp(void)
 {
     read_packet_pos_ = 0;
 
-    InitPacketMgr();
+    init_packet_mgr();
 }
 
 inetpacket_mgr_imp::~inetpacket_mgr_imp(void)
@@ -16,7 +16,7 @@ inetpacket_mgr_imp::~inetpacket_mgr_imp(void)
 
 bool inetpacket_mgr_imp::add_packet(net_packet* pPacket) 
 {
-    int iPos =  HashFun(pPacket->pConn);
+    int iPos =  _hash_func(pPacket->pConn);
     auto_lock helper(combin_list_mutex_[iPos]);
 
     NetConnMapType::const_iterator itrMap;
@@ -112,7 +112,7 @@ net_packet* inetpacket_mgr_imp::get_packet(bool bRemoveFlag/* = true*/)
 bool inetpacket_mgr_imp::free_conn_packets(net_conn* pConn)
 {
     _ASSERT(pConn);
-    int ipos =  HashFun(pConn);
+    int ipos =  _hash_func(pConn);
     auto_lock helper(combin_list_mutex_[ipos]);
 
     NetConnMapType::const_iterator itrMap;
@@ -222,7 +222,7 @@ bool inetpacket_mgr_imp::free_net_packet(net_packet* pPacket)
     return true;
 }
 
-bool inetpacket_mgr_imp::InitPacketMgr(UINT uInitPacketNum/* = 300*/) 
+bool inetpacket_mgr_imp::init_packet_mgr(UINT uInitPacketNum/* = 300*/) 
 {
     auto_lock helper(free_packet_list_mutex_);
 
@@ -245,7 +245,7 @@ bool inetpacket_mgr_imp::InitPacketMgr(UINT uInitPacketNum/* = 300*/)
     return true;
 }
 
-int inetpacket_mgr_imp::HashFun(void* param)
+int inetpacket_mgr_imp::_hash_func(void* param)
 {
     return ((int)param % NET_MAX_NETPACKET_LIST_LENGTH);
 }

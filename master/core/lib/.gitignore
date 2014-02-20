@@ -18,24 +18,10 @@
 *.ilk
 *.exe
 *.exp
-*.tlog
-*.log
-*.idb
-*.sdf
-*.pch
-*.suo
-*.opensdf
-*.ipch
-*.lastbuildstate
-*.unsuccessfulbuild
-*.filters
-*.user
-*.manifest
-*.res
-*.dll
 
 *.lib
 *_d.lib
 *_ud.lib
+xlib_d.lib
 Debug
 Release

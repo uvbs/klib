@@ -104,7 +104,7 @@ protected:
     inline void set_is_closing(bool bClose = TRUE) { is_closing_ = bClose; }
 
     // 设置流量统计
-    inline size_t add_rwited_bytes(size_t dwBytes) { return (writed_bytes_+=dwBytes); }
+    inline size_t add_writed_bytes(size_t dwBytes) { return (writed_bytes_+=dwBytes); }
     inline size_t add_readed_bytes(size_t dwBytes) { return readed_bytes_ += dwBytes; }
 
 protected:

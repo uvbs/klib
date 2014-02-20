@@ -19,7 +19,7 @@
 #include <crtdbg.h>
 #include <atltrace.h>
 
-
+#include <klib_link.h>
 
 #include <kthread/auto_lock.h>
 using namespace klib::kthread;

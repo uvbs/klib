@@ -2,10 +2,11 @@
 #define _actor_h_
 
 
-#include "multi_buffer_queue.h"
 #include "../kthread/thread_local.h"
 #include "../kthread/kthreadpool.h"
 #include "../core/lock_stl.h"
+
+#include "multi_buffer_queue.h"
 
 
 namespace klib {
@@ -26,7 +27,15 @@ namespace detail
         size_t size() { return queue_.size(); }
         bool pop(msg_type& t) { return queue_.pop(t); }
         
-        bool push_now(const msg_type& t) { return queue_.push(t); };
+        bool push_now(const msg_type& t) 
+        {
+            local_msg_list_type::value_type_ptr v = local_lst_.get();
+            if (!v->empty())
+                sync();
+
+            return queue_.push(t); 
+        }
+
         bool push(const msg_type& t) 
         {
             local_msg_list_type::value_type_ptr v = local_lst_.get();

@@ -48,7 +48,6 @@ public:
     //----------------------------------------------------------------------
     // 接口实现
     virtual bool init_network(inet_tcp_handler* handler, size_t thread_num = 1) ;
-    
     virtual bool run_network() ;                 ///< 启动网络层-》创建线程
 
     virtual bool try_write(net_conn* pconn, const char* buff, size_t len);          ///< 尝试发送数据

@@ -198,7 +198,7 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
     int iPacketLen = 0;
     bool bIsCombined = false;
 
-    bIsCombined = icombiner_->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
+    bIsCombined = icombiner_->is_intact_packet(pConn->get_recv_stream(), iPacketLen);
 
     while (bIsCombined) 
     {
@@ -236,7 +236,7 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
             break;
         }
 
-        bIsCombined = icombiner_->IsIntactPacket(pConn->get_recv_stream(), iPacketLen);
+        bIsCombined = icombiner_->is_intact_packet(pConn->get_recv_stream(), iPacketLen);
     }
     
     INetEventHandlerListType::const_iterator itr;

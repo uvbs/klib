@@ -5,5 +5,5 @@
 class icombiner_imp : public icombiner
 {
 public:
-  virtual bool IsIntactPacket(const net_stream_type& stream, int& packetlen) ;
+  virtual bool is_intact_packet(const net_stream_type& stream, int& packetlen) ;
 };

@@ -29,8 +29,8 @@ public:
     virtual bool free_net_packet(net_packet* pPacket) ;              ///< 释放网络封包
 
 protected:
-    bool InitPacketMgr(UINT uInitPacketNum = 900) ; //nCount表示初始封包个数
-    int  HashFun(void* param);
+    bool init_packet_mgr(UINT uInitPacketNum = 900) ; //nCount表示初始封包个数
+    int  _hash_func(void* param);
 
 protected:
     typedef std::list<net_packet*> NetPacketListType;

@@ -14,6 +14,7 @@ class thread_local
 {
 public:
     typedef thread_local<t_host_type>  self_type;
+    typedef t_host_type*               value_type_ptr;
 
     thread_local()
     {
@@ -22,13 +23,23 @@ public:
     
     t_host_type* get()
     {
-        t_host_type* v = TlsGetValue(tls_index_);
+        t_host_type* v = (t_host_type*)TlsGetValue(tls_index_);
         if (NULL == v) {
             v = new t_host_type;
             TlsSetValue(tls_index_, v);
         }
 
         return v;
+    }
+
+    void _free()
+    {
+        t_host_type* v = get();
+        if (NULL != v) 
+        {
+            delete v;
+            TlsSetValue(tls_index_, 0);
+        }
     }
 
 protected:

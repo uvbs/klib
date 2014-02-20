@@ -51,7 +51,7 @@ public:
     void stop()  {   thread_.exit(true);   }
 
     /* send message */
-    bool send(const msg_type& t) 
+    bool send(msg_type t) 
     { 
         auto ret = queue_.push(t); 
         if (queue_.size() <= 1) {

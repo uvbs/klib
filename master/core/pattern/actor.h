@@ -3,6 +3,7 @@
 
 
 #include "multi_buffer_queue.h"
+#include "../kthread/thread_local.h"
 #include "../kthread/kthreadpool.h"
 #include "../core/lock_stl.h"
 
@@ -13,19 +14,43 @@ namespace actor {
 
 namespace detail
 {
-    /* internal use of message queue */
-    template<typename msg_type>
+    /* internal use of message queue, local_store_num 本地存储的个数 */
+    template<typename msg_type, int local_store_num = 100>
     class msg_queue
     {
     public:
         typedef msg_type value_type;
+        typedef klib::kthread::thread_local<std::list<msg_type>> local_msg_list_type;
 
     public:
         size_t size() { return queue_.size(); }
         bool pop(msg_type& t) { return queue_.pop(t); }
-        bool push(const msg_type& t) { return queue_.push(t); };
+        
+        bool push_now(const msg_type& t) { return queue_.push(t); };
+        bool push(const msg_type& t) 
+        {
+            local_msg_list_type::value_type_ptr v = local_lst_.get();
+            v->push_back(t);
+            if (v->size() >= local_store_num) 
+            {
+                queue_.push(*v); 
+                v->clear();
+            }
+            return true;
+        };
+        void sync()
+        {
+            local_msg_list_type::value_type_ptr v = local_lst_.get();
+            if (!v->empty())
+            {
+                queue_.push(*v); 
+                v->clear();
+            }
+            return ;
+        }
 
     protected:
+        local_msg_list_type local_lst_;
         multi_buffer_queue<1000000, 5, msg_type> queue_;
     };
 }
@@ -95,7 +120,8 @@ public:
         fr.regist(this);
     }
     
-    void send(const msg_type& t) {   mq_.push(t);    }
+    void send(const msg_type& t) { mq_.push(t); }
+    void sync() { mq_.sync(); }
 
 protected:
     typedef detail::msg_queue<msg_type> msg_queue_type;

@@ -24,12 +24,13 @@ TEST(actor, 1)
 
     myactor act(ngn);
 
-    for (int i=0; i< 100; ++i) 
+    for (int i=0; i< 1001; ++i) 
     {
         act.send(i);
     }
+    act.sync();
 
-    // Sleep(4000);
+    Sleep(4000);
 
     //
 }

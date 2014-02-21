@@ -47,9 +47,23 @@ bool network_worker::execute(worker_context*& ctx)
         g_worker_contex_pool_.Free(ctx);
     );
 
-    auto dwByteTransfered = ctx->dwByteTransfered;
-    auto lpOverlapped = ctx->lpOverlapped;
-    auto bResult = ctx->bResult;
+    if (ctx->ctx_type_ == context_recv_ctx) 
+    {
+        return this->on_recv_ctx(ctx);
+    }
+    else if (ctx->ctx_type_ == context_send_ctx) 
+    {
+        return this->on_send_ctx(ctx);
+    }
+
+    return true;
+}
+
+bool network_worker::on_recv_ctx(worker_context*& ctx)
+{
+    auto dwByteTransfered = ctx->recv_info.dwByteTransfered;
+    auto lpOverlapped = ctx->recv_info.lpOverlapped;
+    auto bResult = ctx->recv_info.bResult;
     auto pConn = ctx->pConn;
     inetwork_imp* pimp = ctx->network_;
 
@@ -87,12 +101,10 @@ bool network_worker::execute(worker_context*& ctx)
         // 更新投递计数
         if (lpOverlapped->operate_type_ == OP_READ) 
         {
-            guard guard_(pConn->get_lock());
             pConn->dec_post_read_count();
         }
         else if (lpOverlapped->operate_type_ == OP_WRITE) 
         {
-            guard guard_(pConn->get_lock());
             pConn->dec_post_write_count();
         }
 
@@ -128,6 +140,37 @@ bool network_worker::execute(worker_context*& ctx)
     return true;
 }
 
+bool network_worker::on_send_ctx(worker_context*& ctx)
+{
+    ON_SCOPE_EXIT(
+        if (ctx->send_info.buff_ptr_) 
+        {
+            delete [] ctx->send_info.buff_ptr_;
+        }
+    );
+
+    auto pimp  = ctx->network_;
+    auto pConn = ctx->pConn;
+    auto buff  = ctx->send_info.buff_ptr_;
+    auto len   = ctx->send_info.buff_len_;
+
+    // 先将要发送的数据放入流中(支持多线程)
+    pConn->write_send_stream(buff, len);
+
+    //@todo 需要计算速率，看是否需要控制速率
+    if (pConn->get_post_write_count() > 0) {
+        return true;
+    }
+
+    // 一定有数据可以发送
+    KLIB_ASSERT(pConn->get_send_length() > 0);
+
+    // 先发送流中的数据
+    auto seg_ptr = pConn->get_send_stream().get_read_seg_ptr();
+    auto seg_len = pConn->get_send_stream().get_read_seg_len();
+
+    return pimp->post_placement_write(pConn, (char*)seg_ptr, seg_len);
+}
 
 //----------------------------------------------------------------------
 //
@@ -166,42 +209,46 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler,
 
 bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
 {
+    //@todo 转为导步的发送方式(缓冲区最好支持引用计数)
+    char* pbuff = new char[len];
+    if (NULL == pbuff) {
+        return false;
+    }
+
+    memcpy(pbuff, buff, len);
+    worker_context* ctx = g_worker_contex_pool_.Alloc();
+    ctx->network_ = this;
+    ctx->pConn = pconn;
+    ctx->ctx_type_ = context_send_ctx;
+    ctx->send_info.buff_ptr_ = pbuff;
+    ctx->send_info.buff_len_ = len;
+    return get_workder(pconn)->send(ctx);
+
+
     // 先将要发送的数据放入流中(支持多线程)
-    guard guard_(pconn->get_lock());
-    pconn->write_send_stream(buff, len);
-
-    //@todo 需要计算速率，看是否需要控制速率
-    if (pconn->get_post_write_count() > 0) {
-        return true;
-    }
-
-    // 一定有数据可以发送
-    KLIB_ASSERT(pconn->get_send_length() > 0);
-
-    // 先发送流中的数据
-    auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
-    auto seg_len = pconn->get_send_stream().get_read_seg_len();
-
-    return this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
-}
-
-bool inetwork_imp::try_read(net_conn* pconn) 
-{
-    // @todo 也需要限制客户端发送的速率（如果达到速率则暂停发送,定时恢复发送）
-    guard guard_(pconn->get_lock());
-    if (pconn->get_post_read_count() > 0) {
-        return true;
-    }
-
-    return this->post_read(pconn);
+//     guard guard_(pconn->get_lock());
+//     pconn->write_send_stream(buff, len);
+// 
+//     //@todo 需要计算速率，看是否需要控制速率
+//     if (pconn->get_post_write_count() > 0) {
+//         return true;
+//     }
+// 
+//     // 一定有数据可以发送
+//     KLIB_ASSERT(pconn->get_send_length() > 0);
+// 
+//     // 先发送流中的数据
+//     auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
+//     auto seg_len = pconn->get_send_stream().get_read_seg_len();
+// 
+//     return this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
 }
 
 net_conn* inetwork_imp::try_listen(USHORT local_port) 
 {
     net_conn* pconn =  this->create_listen_conn(local_port);
-    if (NULL == pconn) {
+    if (NULL == pconn) 
         return NULL;
-    }
 
     this->post_accept(pconn);
     return pconn;
@@ -466,7 +513,6 @@ bool inetwork_imp::post_read(net_conn* pConn)
         }
     }
 
-    guard guard_(pConn->get_lock());
     pConn->inc_post_read_count();
     return true;
 }
@@ -516,7 +562,6 @@ bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len)
         //TRACE(TEXT("发送完成了"));
     }
 
-    guard guard_(pconn->get_lock());
     pconn->inc_post_write_count();
     return true;
 }
@@ -525,10 +570,7 @@ bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len)
 // 
 void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransfered)
 {
-    {
-        guard guard_(pConn->get_lock());
-        pConn->dec_post_read_count();
-    }
+     pConn->dec_post_read_count();
 
     if (dwByteTransfered == 0) 
     {
@@ -537,12 +579,8 @@ void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransf
     }
     else 
     {
-        {
-            guard guard_(pConn->get_lock());
-
-            // 写入到流中
-            pConn->write_recv_stream(buff, dwByteTransfered);
-        }
+        // 写入到流中
+        pConn->write_recv_stream(buff, dwByteTransfered);
 
         // 统计该套接字的读字节数
         pConn->add_readed_bytes(dwByteTransfered);
@@ -560,18 +598,14 @@ void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransf
 
 void inetwork_imp::on_write(net_conn* pconn, DWORD dwByteTransfered)
 {
-    {// 加锁操作
-        guard guard_(pconn->get_lock());
+    // 标记已写了的数据
+    pconn->mark_send_stream(dwByteTransfered);
 
-        // 标记已写了的数据
-        pconn->mark_send_stream(dwByteTransfered);
+    // 减少该套接字上的写投递计数
+    pconn->dec_post_write_count();
 
-        // 减少该套接字上的写投递计数
-        pconn->dec_post_write_count();
-
-        // 统计该套接字的写字节数
-        pconn->add_writed_bytes(dwByteTransfered);
-    }
+    // 统计该套接字的写字节数
+    pconn->add_writed_bytes(dwByteTransfered);
 
     // 通知上层处理写事件
     net_event_handler_->on_write(pconn, dwByteTransfered);
@@ -579,18 +613,14 @@ void inetwork_imp::on_write(net_conn* pconn, DWORD dwByteTransfered)
     // 更新上次活跃的时间戳
     pconn->upsate_last_active_tm();
 
-    {// 加锁操作
-        guard guard_(pconn->get_lock());
+    // 接着发送没有发送完的数据
+    if (pconn->get_send_length() > 0) 
+    {
+        // 再发送流中的数据
+        auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
+        auto seg_len = pconn->get_send_stream().get_read_seg_len();
 
-        // 接着发送没有发送完的数据
-        if (pconn->get_send_length() > 0) 
-        {
-            // 再发送流中的数据
-            auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
-            auto seg_len = pconn->get_send_stream().get_read_seg_len();
-
-            this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
-        }
+        this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
     }
 }
 
@@ -687,22 +717,12 @@ bool inetwork_imp::init_threads(size_t thread_num)                 ///< 启动网络
 
 bool inetwork_imp::init_workers(size_t worker_num)
 {
-    worker_num_ = worker_num;
-    worker_arr_ = new network_worker[worker_num];
-    if (NULL == worker_arr_) {
-        return false;
-    }
-
-    for (size_t index=0; index < worker_num; ++ index)
-    {
-        (worker_arr_ + index)->start();
-    }
-    return true;
+    return worker_mgr_.init(worker_num);
 }
 
 network_worker* inetwork_imp::get_workder(void* p)
 {
-    return worker_arr_ + ((size_t)p % worker_num_);
+    return worker_mgr_.choose_worker(p);
 }
 
 void inetwork_imp::worker_thread_(void* param)
@@ -726,23 +746,21 @@ void inetwork_imp::worker_thread_(void* param)
 
         _ASSERT(lpOverlapped);
         if (lpOverlapped == NULL)  // 退出
-        {
             return ;
-        }
 
         worker_context* ctx = g_worker_contex_pool_.Alloc();
         if (NULL == ctx) {
             return;
         }
 
-        ctx->bResult            = bResult;
-        ctx->dwByteTransfered   = dwByteTransfered;
-        ctx->lpOverlapped       = lpOverlapped;
-        ctx->network_           = this;
-        ctx->pConn              = pConn;
-        get_workder(pConn)->send(ctx);
+        ctx->network_                     = this;
+        ctx->pConn                        = pConn;
+        ctx->ctx_type_                    = context_recv_ctx;
 
-        
+        ctx->recv_info.bResult            = bResult;
+        ctx->recv_info.dwByteTransfered   = dwByteTransfered;
+        ctx->recv_info.lpOverlapped       = lpOverlapped;
+        get_workder(pConn)->send(ctx);        
     }
 
     return;

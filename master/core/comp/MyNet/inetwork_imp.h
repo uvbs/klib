@@ -37,21 +37,44 @@ public:
     }
 };
 
+enum contex_type
+{
+    context_recv_ctx,
+    context_send_ctx,
+};
+
 class inetwork_imp;
 class worker_context
 {
 public:
+    contex_type         ctx_type_;
     inetwork_imp*       network_;
-    net_overLapped*     lpOverlapped;
-    DWORD		        dwByteTransfered;
     net_conn*           pConn;
-    BOOL                bResult;
+    union
+    {
+        struct recv_info
+        {
+            net_overLapped*     lpOverlapped;
+            DWORD		        dwByteTransfered;
+            BOOL                bResult;
+        } recv_info;
+
+        struct send_info
+        {
+            char*               buff_ptr_;
+            size_t              buff_len_;
+        } send_info;
+    };
 };
 
 class network_worker : public active_object<worker_context*>
 {
 public:
-     virtual bool execute(worker_context*& ctx);
+    virtual bool execute(worker_context*& ctx);
+
+protected:
+    bool on_recv_ctx(worker_context*& ctx);
+    bool on_send_ctx(worker_context*& ctx);
 };
 
 
@@ -72,7 +95,6 @@ public:
         size_t worker_num = 7) ;
 
     virtual bool try_write(net_conn* pconn, const char* buff, size_t len);          ///< 尝试发送数据
-    virtual bool try_read(net_conn* pConn) ;                                        ///< 读
 
     virtual net_conn* try_listen(USHORT local_port) ;                                  ///< 监听端口
     virtual net_conn* try_connect(const char* addr, USHORT uport, void* bind_key) ;    ///< 投递连接到服务器
@@ -104,14 +126,13 @@ protected:
     // 定时器相关
 
     //----------------------------------------------------------------------
-    // 
-    bool init_threads(size_t thread_num) ;                 ///< 启动网络层-》创建线程
-    bool init_workers(size_t worker_num);
-
-    network_worker* get_workder(void*);
+    // 初始化
+    bool init_threads(size_t thread_num) ;                                  ///< 启动网络层-》创建线程
+    bool init_workers(size_t worker_num);                                   ///< 初始化工作对象
+    network_worker* get_workder(void*);                                     ///< 获取worker
 
 protected:
-    void worker_thread_(void* param);                 ///< 工作线程
+    void worker_thread_(void* param);                                       ///< 工作线程
     void check_and_disconnect(net_conn* pConn);                             ///< 判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
 
 private:
@@ -124,8 +145,7 @@ private:
     thread_vec_type         work_threads_;
     size_t                  thread_num_;
 
-    network_worker*         worker_arr_;
-    size_t                  worker_num_;
+    active_obj_mgr<network_worker> worker_mgr_;
 
     CObjectPool<net_overLapped, 1000, 1000>     net_overlapped_pool_;       // overlapped 
     CObjectPool<net_conn, 1000, 1000>           net_conn_pool_;             // net_conn

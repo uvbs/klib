@@ -17,9 +17,6 @@ public:
     virtual bool init_network(inet_tcp_handler* handler, 
         size_t thread_num = 1,
         size_t worker_num = 6) = 0; 
-    
-    ///< 在建立的连接上投递一个读请求
-    virtual bool try_read(net_conn* pConn) = 0;
 
     ///< 投递一个写请求
     virtual bool try_write(net_conn* pconn, const char* buff, size_t len) = 0;

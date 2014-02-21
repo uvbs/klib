@@ -21,9 +21,9 @@ namespace detail
 
         t_host_type at(size_t index) 
         {
-            if (index < t_fix_size) {
+            if (index < t_fix_size) 
                 return buff_[index];
-            }
+
             throw std::exception();
         }
 
@@ -38,9 +38,7 @@ namespace detail
         bool write(const pointer p, size_t len)
         {
             if (write_pos_ + len > t_fix_size)
-            {
                 return false;
-            }
 
             memcpy(&buff_[write_pos_], p, len);
             write_pos_ += len;
@@ -49,9 +47,8 @@ namespace detail
 
         bool read(pointer p, size_t len)
         {
-            if ((t_fix_size - read_pos_) < len) {
+            if ((t_fix_size - read_pos_) < len) 
                 return false;
-            }
 
             memcpy(p, &buff_[read_pos_], len);
             read_pos_ += len;
@@ -60,9 +57,8 @@ namespace detail
 
         bool skip_read(size_t len)
         {
-            if ((t_fix_size - read_pos_) < len) {
+            if ((t_fix_size - read_pos_) < len) 
                 return false;
-            }
 
             read_pos_ += len;
             return true;
@@ -159,13 +155,11 @@ public:
 
     size_t read(buff_type bf, size_t len)
     {
-        if (buff_len_ < len) {
+        if (buff_len_ < len)
             return 0;
-        }
 
-        if (r_seg_bf_ == 0) {
+        if (r_seg_bf_ == 0) 
             r_seg_bf_ = buff_list_[0];
-        }
 
         size_t readed_size = 0;
         size_t tmp_min_size;
@@ -175,9 +169,12 @@ public:
             r_seg_bf_->read(bf + readed_size, tmp_min_size);
             readed_size += tmp_min_size;
 
-            if (r_seg_bf_->read_space() == 0) {
+            if (r_seg_bf_->read_space() == 0) 
+            {
                 free_first_buffer();
-                r_seg_bf_ = buff_list_[0];
+
+                if (!buff_list_.empty()) 
+                    r_seg_bf_ = buff_list_[0];
             }
         }
 
@@ -189,9 +186,8 @@ public:
     {
         seg_buff_type* seg_bf = buff_list_[0];
 
-        if (seg_bf->size() == 0) {
+        if (seg_bf->size() == 0) 
             seg_bf = buff_list_[1];
-        }
 
         return seg_bf->get_read_ptr();
     }
@@ -200,22 +196,19 @@ public:
     {
         seg_buff_type* seg_bf = buff_list_[0];
 
-        if (seg_bf->size() == 0) {
+        if (seg_bf->size() == 0) 
             seg_bf = buff_list_[1];
-        }
 
         return seg_bf->size();
     }
 
     bool skip_read(size_t len)
     {
-        if (len > buff_len_) {
+        if (len > buff_len_) 
             return false;
-        }
 
-        if (r_seg_bf_ == 0) {
+        if (r_seg_bf_ == 0) 
             r_seg_bf_ = buff_list_[0];
-        }
 
         size_t readed_size = 0;
         size_t tmp_min_size;
@@ -239,13 +232,11 @@ public:
 
     int peek(buff_type bf, size_t len) const
     {
-        if (buff_len_ < len) {
+        if (buff_len_ < len) 
             return 0;
-        }
 
-        if (r_seg_bf_ == 0) {
+        if (r_seg_bf_ == 0)
             r_seg_bf_ = buff_list_[0];
-        }
 
         size_t peek_pos = 0;
         size_t readed_size = 0;
@@ -256,9 +247,8 @@ public:
             r_seg_bf_->read(bf + readed_size, tmp_min_size);
             readed_size += tmp_min_size;
 
-            if (r_seg_bf_->read_space() == 0) {
+            if (r_seg_bf_->read_space() == 0) 
                 r_seg_bf_ = buff_list_[++ peek_pos];
-            }
         }
 
         buff_len_ -= readed_size;
@@ -282,13 +272,11 @@ protected:
             p->clear();
         }
 
-        if (0 == p) {
+        if (0 == p) 
             p = new seg_buff_type;
-        }
 
-        if (0 == p) {
+        if (0 == p) 
             return false;
-        }
 
         buff_list_.push_back(p);
         w_seg_bf_ = p;
@@ -299,9 +287,8 @@ protected:
     //@todo ÐÞ¸ÄÔ­ÐÍ
     bool free_first_buffer()
     {
-        if (buff_list_.empty()) {
+        if (buff_list_.empty())
             return false;
-        }
 
         seg_buff_type* p = buff_list_.front();
         seg_free_list_type* l = get_free_list();

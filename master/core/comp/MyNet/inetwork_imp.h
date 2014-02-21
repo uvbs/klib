@@ -80,8 +80,6 @@ protected:
     //----------------------------------------------------------------------
     // net_conn 资源管理 
     virtual net_conn* create_listen_conn(USHORT uLocalPort) ;	            ///< 创建返回监听套接字，返回一个net_conn结构，用于接受连接
-    virtual net_conn* create_conn() ;			                            ///< 创建一个连接套接字
-    virtual bool release_conn(net_conn* pConn);		                        ///< 释放连接
 
     //----------------------------------------------------------------------
     // overlapped 资源管理
@@ -105,10 +103,7 @@ private:
 
     // overlapped 
     CObjectPool<net_overLapped, 1000, 1000>     net_overlapped_pool_;
-
+    CObjectPool<net_conn, 1000, 1000>           net_conn_pool_;
     // net_conn
-    typedef std::list<net_conn*> INetConnListType;                          ///< 接口列表类型定义
-    INetConnListType        free_net_conn_list_;                            ///< 保存网络连接接口链表
-    mutex                   free_net_conn_mutex_;                           ///< 同步访问free_net_conn_list_
 
 };

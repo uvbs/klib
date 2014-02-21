@@ -121,7 +121,7 @@ net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_k
         return NULL;
     }
 
-    net_conn* pconn = create_conn();
+    net_conn* pconn = net_conn_pool_.Alloc();
     if (NULL == pconn) {
         return NULL;
     }
@@ -173,7 +173,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
         }
     }
 
-    net_conn* pNewConn = create_conn();
+    net_conn* pNewConn = net_conn_pool_.Alloc();
     if (NULL == pNewConn) {
         closesocket(sockAccept);
         release_net_overlapped(lpOverlapped);
@@ -184,7 +184,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
     if (NULL == hResult) {
         closesocket(sockAccept);
         release_net_overlapped(lpOverlapped);
-        release_conn(pNewConn);
+        net_conn_pool_.Free(pNewConn);
         _ASSERT(FALSE);
         return NULL;
     }
@@ -216,7 +216,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
     {
         closesocket(sockAccept);
         release_net_overlapped(lpOverlapped);
-        release_conn(pNewConn);
+        net_conn_pool_.Free(pNewConn);
 
         DWORD dwErrorCode = WSAGetLastError();
         //TRACE(TEXT("fail at lpfnAcceptEx,error code:%d\n"), dwErrorCode);
@@ -542,7 +542,7 @@ void inetwork_imp::on_connect(net_conn* pConn, bool bsuccess)
 
 net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
 {
-    net_conn* pListenConn = create_conn();
+    net_conn* pListenConn = net_conn_pool_.Alloc();
     if (NULL == pListenConn) {
         return NULL;
     }
@@ -553,7 +553,7 @@ net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
     pListenConn->dis_connect();
     sockListen = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
     if (INVALID_SOCKET == sockListen) {
-        release_conn(pListenConn);
+        net_conn_pool_.Free(pListenConn);
         return NULL;
     }
 
@@ -566,7 +566,7 @@ net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
 
     if (SOCKET_ERROR == irt) 
     {
-        release_conn(pListenConn);
+        net_conn_pool_.Free(pListenConn);
         return NULL;
     }
 
@@ -574,59 +574,11 @@ net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
     if (NULL == hResult) 
     {
         _ASSERT(FALSE);
-        release_conn(pListenConn);
+        net_conn_pool_.Free(pListenConn);
         return NULL;
     }
 
     return pListenConn;
-}
-
-net_conn* inetwork_imp::create_conn() 
-{
-    net_conn* pConn = NULL;
-    guard guard_(free_net_conn_mutex_);
-    if (!free_net_conn_list_.empty()) 
-    {
-        pConn = free_net_conn_list_.front();
-        new (pConn) net_conn;                   //placement new
-        free_net_conn_list_.pop_front();
-    }
-    else 
-    {
-        pConn = new net_conn;
-    }
-    return pConn;
-}
-
-bool inetwork_imp::release_conn(net_conn* pConn)
-{
-    _ASSERT(pConn);
-    auto_lock helper(free_net_conn_mutex_);
-
-#ifdef _DEBUG
-
-    INetConnListType::const_iterator itr;
-    itr = free_net_conn_list_.begin();
-    for (; itr != free_net_conn_list_.end(); ++itr) 
-    {
-        if ((*itr) == pConn) 
-        {
-            _ASSERT(FALSE && "设计有问题，请检查设计!");
-        }
-    }
-#endif
-
-    if (free_net_conn_list_.size() > 1000) 
-    {
-        delete pConn;
-    }
-    else 
-    {
-        pConn->~net_conn();
-        free_net_conn_list_.push_back(pConn);
-    }
-
-    return true;
 }
 
 void inetwork_imp::worker_thread_(void* param)
@@ -713,7 +665,7 @@ void inetwork_imp::worker_thread_(void* param)
                 pConn->dis_connect();
                 net_event_handler_->on_connect(pConn, false);
 
-                this->release_conn(pConn);
+                this->net_conn_pool_.Free(pConn);
             }
             else if (lpOverlapped->operate_type_ == OP_ACCEPT) 
             {
@@ -723,14 +675,14 @@ void inetwork_imp::worker_thread_(void* param)
                 this->post_accept(pListConn);                              // 继续投递接受连接请求
                 net_event_handler_->on_accept(pListConn, pAcceptConn, false);    // 通知上层接受连接失败
 
-                this->release_conn(pAcceptConn);                           // 释放
+                this->net_conn_pool_.Free(pAcceptConn);                           // 释放
             }
             else 
             {
                 // 处理其它操作（如需要释放连接）
                 pConn->dis_connect();
                 this->check_and_disconnect(pConn);
-                this->release_conn(pConn);
+                this->net_conn_pool_.Free(pConn);
             }
 
             this->release_net_overlapped(lpOverlapped);

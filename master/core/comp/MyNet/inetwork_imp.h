@@ -129,7 +129,7 @@ protected:
     // 初始化
     bool init_threads(size_t thread_num) ;                                  ///< 启动网络层-》创建线程
     bool init_workers(size_t worker_num);                                   ///< 初始化工作对象
-    network_worker* get_workder(void*);                                     ///< 获取worker
+    network_worker* get_worker(void*);                                     ///< 获取worker
 
 protected:
     void worker_thread_(void* param);                                       ///< 工作线程

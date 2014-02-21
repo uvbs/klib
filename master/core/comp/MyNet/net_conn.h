@@ -74,12 +74,7 @@ public:
     // 绑定数据
     inline void  set_bind_key(void* key) { bind_key_ = key; }
     inline void* get_bind_key() { return bind_key_; }
-
-    // 提供给外部的锁，用于相关必须要用到锁的场景
-    mutex& get_lock() { return mutex_; }
-    void lock() { mutex_.lock(); }
-    void unlock(){ mutex_.unlock() ;}
-
+    
     // 获取流量统计
     inline size_t get_writed_bytes()               { return writed_bytes_; }
     inline size_t get_readed_bytes()               { return readed_bytes_; }

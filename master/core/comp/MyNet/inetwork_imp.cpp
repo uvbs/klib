@@ -67,6 +67,13 @@ bool network_worker::on_recv_ctx(worker_context*& ctx)
     auto pConn = ctx->pConn;
     inetwork_imp* pimp = ctx->network_;
 
+    ON_SCOPE_EXIT(
+        if (NULL != lpOverlapped) 
+        {
+            pimp->net_overlapped_pool_.Free(lpOverlapped);  //释放lpOverlapped结构，每次有请求的时候重新获取
+        }            
+    );
+
     if (bResult) 
     {
         if(-1 == dwByteTransfered && NULL == lpOverlapped) 
@@ -93,8 +100,6 @@ bool network_worker::on_recv_ctx(worker_context*& ctx)
             break;
         }
 
-        //释放lpOverlapped结构，每次有请求的时候重新获取
-        pimp->net_overlapped_pool_.Free(lpOverlapped);
     }
     else 
     {
@@ -133,8 +138,6 @@ bool network_worker::on_recv_ctx(worker_context*& ctx)
             pimp->check_and_disconnect(pConn);
             pimp->net_conn_pool_.Free(pConn);
         }
-
-        pimp->net_overlapped_pool_.Free(lpOverlapped);
     } //if (bResult) {
 
     return true;
@@ -145,6 +148,7 @@ bool network_worker::on_send_ctx(worker_context*& ctx)
     ON_SCOPE_EXIT(
         if (ctx->send_info.buff_ptr_) 
         {
+            // 考虑更好的发送方式
             delete [] ctx->send_info.buff_ptr_;
         }
     );
@@ -220,28 +224,10 @@ bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
     ctx->network_ = this;
     ctx->pConn = pconn;
     ctx->ctx_type_ = context_send_ctx;
+
     ctx->send_info.buff_ptr_ = pbuff;
     ctx->send_info.buff_len_ = len;
-    return get_workder(pconn)->send(ctx);
-
-
-    // 先将要发送的数据放入流中(支持多线程)
-//     guard guard_(pconn->get_lock());
-//     pconn->write_send_stream(buff, len);
-// 
-//     //@todo 需要计算速率，看是否需要控制速率
-//     if (pconn->get_post_write_count() > 0) {
-//         return true;
-//     }
-// 
-//     // 一定有数据可以发送
-//     KLIB_ASSERT(pconn->get_send_length() > 0);
-// 
-//     // 先发送流中的数据
-//     auto seg_ptr = pconn->get_send_stream().get_read_seg_ptr();
-//     auto seg_len = pconn->get_send_stream().get_read_seg_len();
-// 
-//     return this->post_placement_write(pconn, (char*)seg_ptr, seg_len);
+    return get_worker(pconn)->send(ctx);
 }
 
 net_conn* inetwork_imp::try_listen(USHORT local_port) 
@@ -720,7 +706,7 @@ bool inetwork_imp::init_workers(size_t worker_num)
     return worker_mgr_.init(worker_num);
 }
 
-network_worker* inetwork_imp::get_workder(void* p)
+network_worker* inetwork_imp::get_worker(void* p)
 {
     return worker_mgr_.choose_worker(p);
 }
@@ -760,7 +746,7 @@ void inetwork_imp::worker_thread_(void* param)
         ctx->recv_info.bResult            = bResult;
         ctx->recv_info.dwByteTransfered   = dwByteTransfered;
         ctx->recv_info.lpOverlapped       = lpOverlapped;
-        get_workder(pConn)->send(ctx);        
+        get_worker(pConn)->send(ctx);        
     }
 
     return;
@@ -779,16 +765,12 @@ net_overLapped* inetwork_imp::get_net_overlapped()
 
 void inetwork_imp::check_and_disconnect(net_conn* pConn)
 {
-    pConn->lock();
-    if (!pConn->get_is_closing() && pConn->get_post_read_count() == 0 && pConn->get_post_read_count() == 0) 
+    if (!pConn->get_is_closing() && 
+        pConn->get_post_read_count() == 0 && 
+        pConn->get_post_read_count() == 0) 
     {
         pConn->set_is_closing(TRUE);
-        pConn->unlock();
 
         net_event_handler_->on_disconnect(pConn);
-    }
-    else 
-    {
-        pConn->unlock();
     }
 }

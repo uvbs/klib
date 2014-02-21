@@ -47,11 +47,6 @@ bool net_conn::init_peer_info()
     return false;
 }
 
-// void net_conn::set_peer_addr_str(const char* straddr)
-// {
-//     strncpy(peer_addr_str_, straddr, sizeof(peer_addr_str_) - 1);
-// }
-
 char* net_conn::get_peer_addr_str() 
 {
     if (peer_addr_str_[0] == '\0') {

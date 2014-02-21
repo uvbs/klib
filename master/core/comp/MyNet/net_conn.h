@@ -30,6 +30,7 @@ typedef klib::io::mem_seg_stream<2048> net_stream_type;
 class net_packet;
 class inet_conn_mgr_imp;
 class inetwork_imp;
+class network_worker;
 
 //----------------------------------------------------------------------
 ///< 网络连接类,需要同步的在外部加锁
@@ -37,6 +38,8 @@ class net_conn
 {
     friend inet_conn_mgr_imp;
     friend inetwork_imp;
+    friend network_worker;
+
 public:
     net_conn(void);
     ~net_conn(void);

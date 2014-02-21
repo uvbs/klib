@@ -41,14 +41,17 @@ class inetwork_imp;
 class worker_context
 {
 public:
-    inetwork_imp*  network_;
-
+    inetwork_imp*       network_;
+    net_overLapped*     lpOverlapped;
+    DWORD		        dwByteTransfered;
+    net_conn*           pConn;
+    BOOL                bResult;
 };
 
 class network_worker : public active_object<worker_context*>
 {
 public:
-     virtual bool execute(worker_context*& c);
+     virtual bool execute(worker_context*& ctx);
 };
 
 
@@ -105,6 +108,8 @@ protected:
     bool init_threads(size_t thread_num) ;                 ///< 启动网络层-》创建线程
     bool init_workers(size_t worker_num);
 
+    network_worker* get_workder(void*);
+
 protected:
     void worker_thread_(void* param);                 ///< 工作线程
     void check_and_disconnect(net_conn* pConn);                             ///< 判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
@@ -114,12 +119,13 @@ private:
     HANDLE                  hiocp_;                                         ///< 完成端口句柄
     inet_tcp_handler*       net_event_handler_;                             ///< 移交上层处理的接口
     LPFN_ACCEPTEX           m_lpfnAcceptEx;                                 ///< AcceptEx函数指针
+    bool                    m_bstop;
 
     thread_vec_type         work_threads_;
     size_t                  thread_num_;
 
     network_worker*         worker_arr_;
-    size_t                  workder_num_;
+    size_t                  worker_num_;
 
     CObjectPool<net_overLapped, 1000, 1000>     net_overlapped_pool_;       // overlapped 
     CObjectPool<net_conn, 1000, 1000>           net_conn_pool_;             // net_conn

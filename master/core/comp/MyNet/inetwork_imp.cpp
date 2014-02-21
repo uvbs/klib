@@ -7,6 +7,10 @@
 #include <net/addr_resolver.h>
 #include <net/winsockInit.h>
 
+#include <core/scope_guard.h>
+
+using namespace klib::core;
+
 #include <BaseTsd.h>
 #include <MSWSock.h>
 
@@ -32,11 +36,94 @@ typedef
 
 klib::net::winsock_init g_winsock_init_;
 
+CObjectPool<worker_context, 10000, 1000> g_worker_contex_pool_;
+
 
 //----------------------------------------------------------------------
 //
-bool network_worker::execute(worker_context*& c)
+bool network_worker::execute(worker_context*& ctx)
 {
+    ON_SCOPE_EXIT(
+        g_worker_contex_pool_.Free(ctx);
+    );
+
+    auto dwByteTransfered = ctx->dwByteTransfered;
+    auto lpOverlapped = ctx->lpOverlapped;
+    auto bResult = ctx->bResult;
+    auto pConn = ctx->pConn;
+    inetwork_imp* pimp = ctx->network_;
+
+    if (bResult) 
+    {
+        if(-1 == dwByteTransfered && NULL == lpOverlapped) 
+        {
+            return true;
+        }
+
+        switch(lpOverlapped->operate_type_ )
+        {
+        case OP_READ:
+            pimp->on_read(pConn, (const char*) lpOverlapped->recv_buff_, dwByteTransfered);
+            break;
+
+        case OP_WRITE:
+            pimp->on_write(pConn, dwByteTransfered);
+            break;
+
+        case OP_ACCEPT:
+            pimp->on_accept(pConn, (net_conn*) lpOverlapped->pend_data_);  // AcceptConn
+            break;
+
+        case OP_CONNECT:
+            pimp->on_connect(pConn, true);
+            break;
+        }
+
+        //释放lpOverlapped结构，每次有请求的时候重新获取
+        pimp->net_overlapped_pool_.Free(lpOverlapped);
+    }
+    else 
+    {
+        // 更新投递计数
+        if (lpOverlapped->operate_type_ == OP_READ) 
+        {
+            guard guard_(pConn->get_lock());
+            pConn->dec_post_read_count();
+        }
+        else if (lpOverlapped->operate_type_ == OP_WRITE) 
+        {
+            guard guard_(pConn->get_lock());
+            pConn->dec_post_write_count();
+        }
+
+        if (lpOverlapped->operate_type_ == OP_CONNECT) 
+        {
+            // 主动连接失败的时候，先关闭连接，通知上层处理，然后释放连接对象
+            pConn->dis_connect();
+            pimp->net_event_handler_->on_connect(pConn, false);
+
+            pimp->net_conn_pool_.Free(pConn);
+        }
+        else if (lpOverlapped->operate_type_ == OP_ACCEPT) 
+        {
+            // 接受连接失败,释放连接
+            net_conn* pListConn = pConn;                                     // 监听套接字
+            net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;    // 接收的连接
+            pimp->post_accept(pListConn);                                    // 继续投递接受连接请求
+            pimp->net_event_handler_->on_accept(pListConn, pAcceptConn, false);    // 通知上层接受连接失败
+
+            pimp->net_conn_pool_.Free(pAcceptConn);                                   // 释放
+        }
+        else 
+        {
+            // 处理其它操作（如需要释放连接）
+            pConn->dis_connect();
+            pimp->check_and_disconnect(pConn);
+            pimp->net_conn_pool_.Free(pConn);
+        }
+
+        pimp->net_overlapped_pool_.Free(lpOverlapped);
+    } //if (bResult) {
 
     return true;
 }
@@ -48,6 +135,8 @@ inetwork_imp::inetwork_imp(void)
 {
     m_lpfnAcceptEx = NULL;
     hiocp_ = INVALID_HANDLE_VALUE;
+
+    m_bstop = false;
 }
 
 inetwork_imp::~inetwork_imp(void)
@@ -598,7 +687,7 @@ bool inetwork_imp::init_threads(size_t thread_num)                 ///< 启动网络
 
 bool inetwork_imp::init_workers(size_t worker_num)
 {
-    workder_num_ = worker_num;
+    worker_num_ = worker_num;
     worker_arr_ = new network_worker[worker_num];
     if (NULL == worker_arr_) {
         return false;
@@ -611,6 +700,11 @@ bool inetwork_imp::init_workers(size_t worker_num)
     return true;
 }
 
+network_worker* inetwork_imp::get_workder(void* p)
+{
+    return worker_arr_ + ((size_t)p % worker_num_);
+}
+
 void inetwork_imp::worker_thread_(void* param)
 {
     //使用完成端口模型
@@ -618,7 +712,7 @@ void inetwork_imp::worker_thread_(void* param)
     DWORD		    dwByteTransfered = 0;
     net_conn*       pConn = NULL;
 
-    while (true)
+    while (!this->m_bstop)
     {
         lpOverlapped = NULL;
 
@@ -636,77 +730,19 @@ void inetwork_imp::worker_thread_(void* param)
             return ;
         }
 
-        if (bResult) 
-        {
-            if(-1 == dwByteTransfered && NULL == lpOverlapped) 
-            {
-                return ;
-            }
-
-            switch(lpOverlapped->operate_type_ )
-            {
-            case OP_READ:
-                    this->on_read(pConn, (const char*) lpOverlapped->recv_buff_, dwByteTransfered);
-                break;
-
-            case OP_WRITE:
-                    this->on_write(pConn, dwByteTransfered);
-                break;
-
-            case OP_ACCEPT:
-                    this->on_accept(pConn, (net_conn*) lpOverlapped->pend_data_);  // AcceptConn
-                break;
-
-            case OP_CONNECT:
-                    this->on_connect(pConn, true);
-                break;
-            }
-
-            //释放lpOverlapped结构，每次有请求的时候重新获取
-            net_overlapped_pool_.Free(lpOverlapped);
+        worker_context* ctx = g_worker_contex_pool_.Alloc();
+        if (NULL == ctx) {
+            return;
         }
-        else 
-        {
-            // 更新投递计数
-            if (lpOverlapped->operate_type_ == OP_READ) 
-            {
-                guard guard_(pConn->get_lock());
-                pConn->dec_post_read_count();
-            }
-            else if (lpOverlapped->operate_type_ == OP_WRITE) 
-            {
-                guard guard_(pConn->get_lock());
-                pConn->dec_post_write_count();
-            }
 
-            if (lpOverlapped->operate_type_ == OP_CONNECT) 
-            {
-                // 主动连接失败的时候，先关闭连接，通知上层处理，然后释放连接对象
-                pConn->dis_connect();
-                net_event_handler_->on_connect(pConn, false);
+        ctx->bResult            = bResult;
+        ctx->dwByteTransfered   = dwByteTransfered;
+        ctx->lpOverlapped       = lpOverlapped;
+        ctx->network_           = this;
+        ctx->pConn              = pConn;
+        get_workder(pConn)->send(ctx);
 
-                net_conn_pool_.Free(pConn);
-            }
-            else if (lpOverlapped->operate_type_ == OP_ACCEPT) 
-            {
-                // 接受连接失败,释放连接
-                net_conn* pListConn = pConn;                                     // 监听套接字
-                net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;    // 接收的连接
-                this->post_accept(pListConn);                                    // 继续投递接受连接请求
-                net_event_handler_->on_accept(pListConn, pAcceptConn, false);    // 通知上层接受连接失败
-
-                net_conn_pool_.Free(pAcceptConn);                                   // 释放
-            }
-            else 
-            {
-                // 处理其它操作（如需要释放连接）
-                pConn->dis_connect();
-                this->check_and_disconnect(pConn);
-                net_conn_pool_.Free(pConn);
-            }
-
-            net_overlapped_pool_.Free(lpOverlapped);
-        } //if (bResult) {
+        
     }
 
     return;

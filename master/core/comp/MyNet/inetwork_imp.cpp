@@ -147,7 +147,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
 
     SOCKET sockAccept = WSASocket(AF_INET,SOCK_STREAM, IPPROTO_TCP, NULL, NULL,WSA_FLAG_OVERLAPPED);
     if (sockAccept == INVALID_SOCKET) {
-        release_net_overlapped(lpOverlapped);
+        net_overlapped_pool_.Free(lpOverlapped);
         //TRACE(TEXT("Error at socket(): %ld\n"));
         return NULL;
     }
@@ -167,7 +167,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
         if (irt == SOCKET_ERROR)
         {
             closesocket(sockAccept);
-            release_net_overlapped(lpOverlapped);
+            net_overlapped_pool_.Free(lpOverlapped);
             //TRACE(TEXT("fail at WSAIoctl-AcceptEx,Error Code:%d\n"));
             return NULL;
         }
@@ -176,14 +176,14 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
     net_conn* pNewConn = net_conn_pool_.Alloc();
     if (NULL == pNewConn) {
         closesocket(sockAccept);
-        release_net_overlapped(lpOverlapped);
+        net_overlapped_pool_.Free(lpOverlapped);
         return NULL;
     }
 
     hResult = CreateIoCompletionPort((HANDLE)sockAccept, hiocp_, (ULONG_PTR)pNewConn, 0);
     if (NULL == hResult) {
         closesocket(sockAccept);
-        release_net_overlapped(lpOverlapped);
+        net_overlapped_pool_.Free(lpOverlapped);
         net_conn_pool_.Free(pNewConn);
         _ASSERT(FALSE);
         return NULL;
@@ -215,7 +215,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
     if(brt == FALSE && WSA_IO_PENDING != WSAGetLastError()) 
     {
         closesocket(sockAccept);
-        release_net_overlapped(lpOverlapped);
+        net_overlapped_pool_.Free(lpOverlapped);
         net_conn_pool_.Free(pNewConn);
 
         DWORD dwErrorCode = WSAGetLastError();
@@ -366,7 +366,7 @@ bool inetwork_imp::post_read(net_conn* pConn)
         }
         else 
         {
-            release_net_overlapped(pMyoverlapped);
+            net_overlapped_pool_.Free(pMyoverlapped);
 
             _ASSERT(net_event_handler_);
             check_and_disconnect(pConn);
@@ -643,7 +643,7 @@ void inetwork_imp::worker_thread_(void* param)
             }
 
             //释放lpOverlapped结构，每次有请求的时候重新获取
-            this->release_net_overlapped(lpOverlapped);
+            this->net_overlapped_pool_.Free(lpOverlapped);
         }
         else 
         {
@@ -685,7 +685,7 @@ void inetwork_imp::worker_thread_(void* param)
                 this->net_conn_pool_.Free(pConn);
             }
 
-            this->release_net_overlapped(lpOverlapped);
+            this->net_overlapped_pool_.Free(lpOverlapped);
         } //if (bResult) {
     }
 
@@ -701,13 +701,6 @@ net_overLapped* inetwork_imp::get_net_overlapped()
     }
 
     return ptmp;
-}
-
-bool inetwork_imp::release_net_overlapped(net_overLapped* pMyoverlapped)
-{
-    net_overlapped_pool_.Free(pMyoverlapped);
-
-    return true;
 }
 
 void inetwork_imp::check_and_disconnect(net_conn* pConn)

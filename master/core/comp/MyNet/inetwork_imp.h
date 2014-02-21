@@ -80,11 +80,7 @@ protected:
     //----------------------------------------------------------------------
     // net_conn 资源管理 
     virtual net_conn* create_listen_conn(USHORT uLocalPort) ;	            ///< 创建返回监听套接字，返回一个net_conn结构，用于接受连接
-
-    //----------------------------------------------------------------------
-    // overlapped 资源管理
     net_overLapped* get_net_overlapped();                                   ///< 申请重叠结构
-    bool release_net_overlapped(net_overLapped* pMyoverlapped);	            ///< 释放重叠结构
 
     //----------------------------------------------------------------------
     // 定时器相关
@@ -101,9 +97,7 @@ private:
     thread_vec_type         work_threads_;
     size_t                  thread_num_;
 
-    // overlapped 
-    CObjectPool<net_overLapped, 1000, 1000>     net_overlapped_pool_;
-    CObjectPool<net_conn, 1000, 1000>           net_conn_pool_;
-    // net_conn
-
+    CObjectPool<net_overLapped, 1000, 1000>     net_overlapped_pool_;       // overlapped 
+    CObjectPool<net_conn, 1000, 1000>           net_conn_pool_;             // net_conn
+    
 };

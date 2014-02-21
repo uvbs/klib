@@ -94,11 +94,20 @@ int _tmain(int argc, _TCHAR* argv[])
     tcp_facade_->init();
     tcp_facade_->add_event_handler(&thehandler);
 
-    net_conn* pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
+    net_conn* pConn = NULL;
+    for (int i=0; i<100; ++i)
+    {
+        pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
+    }
 
     tcp_facade_->get_network()->try_listen(900);
 
-    Sleep(-1);
+    while (true)
+    {
+        printf("connection num: %d \r\n", tcp_facade_->get_net_conn_mgr()->get_conn_count());
+
+        Sleep(2000);
+    }
 	return 0;
 }
 

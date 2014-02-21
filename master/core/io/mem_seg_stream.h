@@ -173,8 +173,9 @@ public:
             {
                 free_first_buffer();
 
-                if (!buff_list_.empty()) 
-                    r_seg_bf_ = buff_list_[0];
+                if (NULL == r_seg_bf_) {
+                    break;
+                }
             }
         }
 

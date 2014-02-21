@@ -32,6 +32,18 @@ typedef
 
 klib::net::winsock_init g_winsock_init_;
 
+
+//----------------------------------------------------------------------
+//
+bool network_worker::execute(worker_context*& c)
+{
+
+    return true;
+}
+
+
+//----------------------------------------------------------------------
+//
 inetwork_imp::inetwork_imp(void)
 {
     m_lpfnAcceptEx = NULL;
@@ -42,32 +54,23 @@ inetwork_imp::~inetwork_imp(void)
 {
 }
 
-bool inetwork_imp::init_network(inet_tcp_handler* handler, size_t thread_num/* = 1*/)
+bool inetwork_imp::init_network(inet_tcp_handler* handler, 
+    size_t thread_num/* = 1*/,
+    size_t worker_num/* = 7*/)
 {
     // 创建完成端口
     hiocp_ = CreateIoCompletionPort(INVALID_HANDLE_VALUE,NULL,(ULONG_PTR)0, 0);
     _ASSERT(hiocp_);
     if (NULL == hiocp_) 
-    {
         return false;
-    }
     
     // 设置事件处理器
     _ASSERT(handler);
     net_event_handler_ = handler;
 
-    thread_num_ = thread_num;
+    init_threads(thread_num);
 
-    return true;
-}
-
-bool inetwork_imp::run_network() 
-{
-    work_threads_.resize(thread_num_);
-    for (auto itr = work_threads_.begin(); itr != work_threads_.end(); ++ itr)
-    {
-        itr->start(std::bind(&inetwork_imp::worker_thread_, this, std::placeholders::_1), 0);
-    }
+    init_workers(worker_num);
 
     return true;
 }
@@ -581,6 +584,33 @@ net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
     return pListenConn;
 }
 
+bool inetwork_imp::init_threads(size_t thread_num)                 ///< 启动网络层-》创建线程
+{
+    thread_num_ = thread_num;
+
+    work_threads_.resize(thread_num_);
+    for (auto itr = work_threads_.begin(); itr != work_threads_.end(); ++ itr)
+    {
+        itr->start(std::bind(&inetwork_imp::worker_thread_, this, std::placeholders::_1), 0);
+    }
+    return true;
+}
+
+bool inetwork_imp::init_workers(size_t worker_num)
+{
+    workder_num_ = worker_num;
+    worker_arr_ = new network_worker[worker_num];
+    if (NULL == worker_arr_) {
+        return false;
+    }
+
+    for (size_t index=0; index < worker_num; ++ index)
+    {
+        (worker_arr_ + index)->start();
+    }
+    return true;
+}
+
 void inetwork_imp::worker_thread_(void* param)
 {
     //使用完成端口模型
@@ -594,16 +624,15 @@ void inetwork_imp::worker_thread_(void* param)
 
         // 下面的函数调用就是去I/O出口那里等待，并获得I/O操作结果
         BOOL bResult = GetQueuedCompletionStatus(
-            this->hiocp_, // 指定从哪个IOCP那里或地数据
-            &dwByteTransfered, // 或得或是发送了多少字节的数据
-            (PULONG_PTR)&pConn, // socket关联到IOCP时指定的一个关联值
-            (LPWSAOVERLAPPED*)&lpOverlapped,  // 或得ConnectEx 传进来的结构
-            INFINITE);				// 一直等待，直到有结果
+            this->hiocp_,                       // 指定从哪个IOCP那里或地数据
+            &dwByteTransfered,                  // 或得或是发送了多少字节的数据
+            (PULONG_PTR)&pConn,                 // socket关联到IOCP时指定的一个关联值
+            (LPWSAOVERLAPPED*)&lpOverlapped,    // 或得ConnectEx 传进来的结构
+            INFINITE);				            // 一直等待，直到有结果
 
         _ASSERT(lpOverlapped);
-        if (lpOverlapped == NULL)  
+        if (lpOverlapped == NULL)  // 退出
         {
-            //TRACE(TEXT("退出...."));
             return ;
         }
 
@@ -656,27 +685,27 @@ void inetwork_imp::worker_thread_(void* param)
                 pConn->dis_connect();
                 net_event_handler_->on_connect(pConn, false);
 
-                this->net_conn_pool_.Free(pConn);
+                net_conn_pool_.Free(pConn);
             }
             else if (lpOverlapped->operate_type_ == OP_ACCEPT) 
             {
                 // 接受连接失败,释放连接
-                net_conn* pListConn = pConn;                                    // 监听套接字
-                net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;   // 接收的连接
-                this->post_accept(pListConn);                              // 继续投递接受连接请求
+                net_conn* pListConn = pConn;                                     // 监听套接字
+                net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;    // 接收的连接
+                this->post_accept(pListConn);                                    // 继续投递接受连接请求
                 net_event_handler_->on_accept(pListConn, pAcceptConn, false);    // 通知上层接受连接失败
 
-                this->net_conn_pool_.Free(pAcceptConn);                           // 释放
+                net_conn_pool_.Free(pAcceptConn);                                   // 释放
             }
             else 
             {
                 // 处理其它操作（如需要释放连接）
                 pConn->dis_connect();
                 this->check_and_disconnect(pConn);
-                this->net_conn_pool_.Free(pConn);
+                net_conn_pool_.Free(pConn);
             }
 
-            this->net_overlapped_pool_.Free(lpOverlapped);
+            net_overlapped_pool_.Free(lpOverlapped);
         } //if (bResult) {
     }
 

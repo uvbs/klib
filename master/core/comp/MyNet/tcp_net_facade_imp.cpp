@@ -62,7 +62,6 @@ bool tcp_net_facade_imp::init()
     inetwork_ = new inetwork_imp;
     _ASSERT(inetwork_);
     inetwork_->init_network(this);
-    inetwork_->run_network();
 
     // 初始化默认的处理器
     NULL == icombiner_? icombiner_ = new icombiner_imp : (void)0;

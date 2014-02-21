@@ -11,6 +11,7 @@
 #include <kthread/thread_local.h>
 
 #include <pattern/object_pool.h>
+#include <pattern/active_object.h>
 
 using namespace klib::kthread;
 using namespace klib::pattern;
@@ -36,10 +37,26 @@ public:
     }
 };
 
+class inetwork_imp;
+class worker_context
+{
+public:
+    inetwork_imp*  network_;
+
+};
+
+class network_worker : public active_object<worker_context*>
+{
+public:
+     virtual bool execute(worker_context*& c);
+};
+
 
 /// 网络库实现
 class inetwork_imp : public inetwork
 {
+    friend network_worker;
+
 public:
     inetwork_imp(void);
     ~inetwork_imp(void);
@@ -47,8 +64,9 @@ public:
 public:
     //----------------------------------------------------------------------
     // 接口实现
-    virtual bool init_network(inet_tcp_handler* handler, size_t thread_num = 1) ;
-    virtual bool run_network() ;                 ///< 启动网络层-》创建线程
+    virtual bool init_network(inet_tcp_handler* handler, 
+        size_t thread_num = 1,
+        size_t worker_num = 7) ;
 
     virtual bool try_write(net_conn* pconn, const char* buff, size_t len);          ///< 尝试发送数据
     virtual bool try_read(net_conn* pConn) ;                                        ///< 读
@@ -82,6 +100,11 @@ protected:
     //----------------------------------------------------------------------
     // 定时器相关
 
+    //----------------------------------------------------------------------
+    // 
+    bool init_threads(size_t thread_num) ;                 ///< 启动网络层-》创建线程
+    bool init_workers(size_t worker_num);
+
 protected:
     void worker_thread_(void* param);                 ///< 工作线程
     void check_and_disconnect(net_conn* pConn);                             ///< 判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
@@ -91,8 +114,12 @@ private:
     HANDLE                  hiocp_;                                         ///< 完成端口句柄
     inet_tcp_handler*       net_event_handler_;                             ///< 移交上层处理的接口
     LPFN_ACCEPTEX           m_lpfnAcceptEx;                                 ///< AcceptEx函数指针
+
     thread_vec_type         work_threads_;
     size_t                  thread_num_;
+
+    network_worker*         worker_arr_;
+    size_t                  workder_num_;
 
     CObjectPool<net_overLapped, 1000, 1000>     net_overlapped_pool_;       // overlapped 
     CObjectPool<net_conn, 1000, 1000>           net_conn_pool_;             // net_conn

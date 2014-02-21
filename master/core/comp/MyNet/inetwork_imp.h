@@ -23,9 +23,6 @@ typedef std::vector<Thread> thread_vec_type;
 class net_overLapped: public OVERLAPPED
 {
 public:
-    ///<  以下是用户需要的信息
-    bool bFixed;                        ///< 表示是否是固定的内存，不允许释放
-
     //外部使用
     int       operate_type_;            ///< 提交的操作类型
     void*     pend_data_;               ///< 附带其它数据的
@@ -34,7 +31,7 @@ public:
     char      recv_buff_[2 * 1024];		///< 接收数据的buf
     
 public:
-    net_overLapped() : bFixed(false), pend_data_(0), transfer_bytes_(0)
+    net_overLapped() : pend_data_(0), transfer_bytes_(0)
     {
     }
 };

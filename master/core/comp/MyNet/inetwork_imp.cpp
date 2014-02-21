@@ -609,41 +609,32 @@ void inetwork_imp::worker_thread_(void* param)
 
         if (bResult) 
         {
-            if(dwByteTransfered == -1 && lpOverlapped == NULL) 
+            if(-1 == dwByteTransfered && NULL == lpOverlapped) 
             {
-                //TRACE(TEXT("退出线程并结束..."));
                 return ;
             }
 
             switch(lpOverlapped->operate_type_ )
             {
             case OP_READ:
-                {
                     this->on_read(pConn, (const char*) lpOverlapped->recv_buff_, dwByteTransfered);
-                }
                 break;
 
             case OP_WRITE:
-                {
                     this->on_write(pConn, dwByteTransfered);
-                }
                 break;
+
             case OP_ACCEPT:
-                {
-                    net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;
-                    this->on_accept(pConn, pAcceptConn);
-                }
+                    this->on_accept(pConn, (net_conn*) lpOverlapped->pend_data_);  // AcceptConn
                 break;
 
             case OP_CONNECT:
-                {
                     this->on_connect(pConn, true);
-                }
                 break;
             }
 
             //释放lpOverlapped结构，每次有请求的时候重新获取
-            this->net_overlapped_pool_.Free(lpOverlapped);
+            net_overlapped_pool_.Free(lpOverlapped);
         }
         else 
         {

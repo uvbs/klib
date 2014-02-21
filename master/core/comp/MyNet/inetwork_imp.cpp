@@ -36,9 +36,6 @@ inetwork_imp::inetwork_imp(void)
 {
     m_lpfnAcceptEx = NULL;
     hiocp_ = INVALID_HANDLE_VALUE;
-
-    //初始链表
-    init_fixed_overlapped_list(100);
 }
 
 inetwork_imp::~inetwork_imp(void)
@@ -743,38 +740,12 @@ void inetwork_imp::worker_thread_(void* param)
     return;
 }
 
-void inetwork_imp::init_fixed_overlapped_list(size_t nCount)
-{
-    net_overLapped* pList = new net_overLapped[nCount];
-    if (NULL == pList) {
-        return;
-    }
-
-    for (size_t i=0; i<nCount; ++i)
-    {
-        pList[i].bFixed = true;
-        overlapped_list_.push_back(&pList[i]);
-    }
-}
-
 net_overLapped* inetwork_imp::get_net_overlapped()
 {
-    auto_lock helper(overlapped_list_mutex_);
-
-    net_overLapped* ptmp = NULL;
-    if (!overlapped_list_.empty()) {
-        ptmp = overlapped_list_.front();
-        overlapped_list_.pop_front();
-
-        bool bFix = ptmp->bFixed;
+    net_overLapped* ptmp = net_overlapped_pool_.Alloc();
+    if (ptmp) 
+    {
         memset(ptmp, 0, sizeof(OVERLAPPED));
-        ptmp->bFixed = bFix;
-
-        //TRACE(TEXT("中内存池中获取net_overLapped..."));
-    }
-    else {
-        //TRACE(TEXT("新建net_overLapped结构..."));
-        ptmp = new net_overLapped;
     }
 
     return ptmp;
@@ -782,21 +753,7 @@ net_overLapped* inetwork_imp::get_net_overlapped()
 
 bool inetwork_imp::release_net_overlapped(net_overLapped* pMyoverlapped)
 {
-    _ASSERT(pMyoverlapped);
-    if (NULL == pMyoverlapped) {
-        return false;
-    }
-
-    auto_lock helper(overlapped_list_mutex_);
-
-    if (!pMyoverlapped->bFixed) {
-        delete pMyoverlapped;
-        //TRACE(TEXT("没保存，释放内存..."));
-    }
-    else {
-        //TRACE(TEXT("保存Overlapped到链表中..."));
-        overlapped_list_.push_back(pMyoverlapped);
-    }
+    net_overlapped_pool_.Free(pMyoverlapped);
 
     return true;
 }

@@ -10,7 +10,10 @@
 #include <kthread/thread.h>
 #include <kthread/thread_local.h>
 
+#include <pattern/object_pool.h>
+
 using namespace klib::kthread;
+using namespace klib::pattern;
 
 typedef std::vector<Thread> thread_vec_type;
 
@@ -82,7 +85,6 @@ protected:
 
     //----------------------------------------------------------------------
     // overlapped 资源管理
-    void init_fixed_overlapped_list(size_t nCount);                         ///< 初始固定的Overlapped的个数，这部分内存不能被释放
     net_overLapped* get_net_overlapped();                                   ///< 申请重叠结构
     bool release_net_overlapped(net_overLapped* pMyoverlapped);	            ///< 释放重叠结构
 
@@ -102,9 +104,7 @@ private:
     size_t                  thread_num_;
 
     // overlapped 
-    typedef std::list<net_overLapped*> OverLappedListType;                  ///< 保存net_overLapped的链表类型
-    OverLappedListType      overlapped_list_;                               ///< 申明链表，用来保存net_overLapped
-    mutex                   overlapped_list_mutex_;                         ///< 同步访问overlapped_list_
+    CObjectPool<net_overLapped, 1000, 1000>     net_overlapped_pool_;
 
     // net_conn
     typedef std::list<net_conn*> INetConnListType;                          ///< 接口列表类型定义

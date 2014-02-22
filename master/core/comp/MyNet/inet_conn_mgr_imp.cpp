@@ -48,15 +48,23 @@ size_t inet_conn_mgr_imp::get_conn_count()
 bool inet_conn_mgr_imp::check_valid_conn()
 {
     conn_tmout_checker_.check(conn_timeout_,
-        [&](net_conn* pconn)
+        [&](net_conn* pconn) -> bool
     {
         if (!is_exist_conn(pconn)) 
         {
-            return ;
+            return false;
         }
 
-        // 如果超时了直接关闭连接
-        pconn->dis_connect();
+        DWORD dwtick = GetTickCount();
+        if (dwtick - pconn->get_last_active_tm() >= 60*1000) 
+        {
+            // 如果超时了直接关闭连接
+            pconn->dis_connect();
+            return false;
+        }
+
+        // 没有超过的话继续检测
+        return true;
     });
 
     return true;

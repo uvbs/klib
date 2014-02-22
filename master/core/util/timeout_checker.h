@@ -34,7 +34,7 @@ public:
     };
 
     typedef std::set<st_timeout_info> TimeoutSetType;
-    typedef std::function<void(const KeyType& key)> CallBack;
+    typedef std::function<bool(const KeyType& key)> timer_call_back;
 
     //------------------------------------------------------------------------
     // 判断是否为空
@@ -72,7 +72,7 @@ public:
 
     //------------------------------------------------------------------------
     // 超时时长:tmout 单位为毫秒
-    void check(time_stamp_type tmout, const CallBack& fun)
+    void check(time_stamp_type tmout, const timer_call_back& fun)
     {
         if (timeout_set_.empty())  {  return;   }
 
@@ -85,7 +85,12 @@ public:
             {
                 auto key = itr_tmout->key_;
                 timeout_set_.erase(itr_tmout);
-                fun(key);
+                
+                // 如果返回true则需要重新插入超时项
+                if (fun(key))
+                {
+                    insert(key);
+                }
             }
             else
             {

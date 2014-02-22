@@ -17,7 +17,6 @@ public:
     char* get_buff() ;
 
 protected:
-    bool        is_fixed_mem_;                  // 表示是否是固定的，即不需要被delete掉的
     net_conn*   pConn;	                        // 属于哪个连接
 
     size_t      bf_size_;                       // 缓存区中保存数据的大小

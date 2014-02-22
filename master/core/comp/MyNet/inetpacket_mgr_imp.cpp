@@ -7,7 +7,6 @@ inetpacket_mgr_imp::inetpacket_mgr_imp(void)
 {
     read_packet_pos_ = 0;
 
-    init_packet_mgr();
 }
 
 inetpacket_mgr_imp::~inetpacket_mgr_imp(void)
@@ -172,76 +171,14 @@ bool inetpacket_mgr_imp::free_conn_packets(net_conn* pConn)
 
 net_packet* inetpacket_mgr_imp::alloc_net_packet() 
 {
-    net_packet* pPacket = NULL;
-
-    auto_lock helper(free_packet_list_mutex_);
-
-    // 如果空闲列表中有则从空闲列表中获取，并初始化
-    // 否则就从内存中申请
-    if (!free_packet_list_.empty())
-    {
-        pPacket = free_packet_list_.front();
-
-        bool bFixed = pPacket->is_fixed_mem_;
-        new(pPacket) net_packet;
-        pPacket->is_fixed_mem_ = bFixed;
-
-        free_packet_list_.pop_front();
-    }
-    else 
-    {
-        pPacket = new net_packet;
-    }
-
-    return pPacket;
+    return packet_pool_.Alloc();
 }
 
 bool inetpacket_mgr_imp::free_net_packet(net_packet* pPacket) 
 {
     _ASSERT(pPacket);
-    auto_lock helper(free_packet_list_mutex_);
 
-    // 空闲列表中的对象比较多的时候要将非固定申请的内存给释放掉
-    if (free_packet_list_.size() > NET_MAX_PACKET_COUNT)
-    {
-        if (!pPacket->is_fixed_mem_)
-        {
-            delete pPacket;
-            return true;
-        }
-        else 
-        {
-            free_packet_list_.push_back(pPacket);
-        }
-    }
-    else 
-    {
-        free_packet_list_.push_back(pPacket);
-    }
-
-    return true;
-}
-
-bool inetpacket_mgr_imp::init_packet_mgr(UINT uInitPacketNum/* = 300*/) 
-{
-    auto_lock helper(free_packet_list_mutex_);
-
-    net_packet* buff = new net_packet[uInitPacketNum];
-    if (NULL == buff) 
-    {
-        _ASSERT(FALSE && "out of memory!!!");
-        return false;
-    }
-
-    // 将申请的内存保存到链表中，先不初始化，在使用的时候初始化(placement new)
-    net_packet* pPacket = NULL;
-    for (UINT i=0; i<uInitPacketNum; ++ i) 
-    {
-        pPacket = (net_packet*) & buff[i];
-        pPacket->is_fixed_mem_ = TRUE;
-        free_packet_list_.push_back(pPacket);
-    }
-
+    packet_pool_.Free(pPacket);
     return true;
 }
 

@@ -4,7 +4,6 @@
 
 net_packet::net_packet(void)
 {
-    is_fixed_mem_	= false;
     pConn		    = NULL;
 
     bf_size_        = 0;
@@ -15,6 +14,7 @@ net_packet::~net_packet(void)
 {
     if (NULL != bf_ptr_) {
         delete[] bf_ptr_;
+        bf_ptr_ = NULL;
     }
 }
 

@@ -62,7 +62,8 @@ void net_conn::dis_connect()
 
 bool net_conn::mark_send_stream(size_t len)
 {
-    return send_stream_.skip_read(len);
+    send_stream_.read(NULL, len);
+    return true;
 }
 
 bool net_conn::write_recv_stream(const char* buff, size_t len) 

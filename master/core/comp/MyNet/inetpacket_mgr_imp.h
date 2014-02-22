@@ -6,6 +6,9 @@
 #include <hash_map>
 #include <queue>
 
+#include <pattern/object_pool.h>
+using namespace klib::pattern;
+
 #define  NET_MAX_NETPACKET_LIST_LENGTH 9                        // 定义hash数组的长度
 #define  NET_MAX_PACKET_COUNT	5000                            // 封包管理中允许的最大个数
 
@@ -29,7 +32,6 @@ public:
     virtual bool free_net_packet(net_packet* pPacket) ;              ///< 释放网络封包
 
 protected:
-    bool init_packet_mgr(UINT uInitPacketNum = 900) ; //nCount表示初始封包个数
     int  _hash_func(void* param);
 
 protected:
@@ -57,7 +59,6 @@ protected:
     
     int                  read_packet_pos_;               ///< 表示上次读取到数组中的下标
         
-    NetPacketListType    free_packet_list_;              ///< 申请封包申请与释放相关
-    mutex                free_packet_list_mutex_;        ///< 同步对象 
+    CObjectPool<net_packet, 10000, 10000> packet_pool_;
 
 };

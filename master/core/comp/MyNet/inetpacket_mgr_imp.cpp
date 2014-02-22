@@ -16,10 +16,10 @@ inetpacket_mgr_imp::~inetpacket_mgr_imp(void)
 bool inetpacket_mgr_imp::add_packet(net_packet* pPacket) 
 {
     int iPos =  _hash_func(pPacket->pConn);
-    auto_lock helper(combin_list_mutex_[iPos]);
+    auto_lock helper(combine_list_mutex_[iPos]);
 
     NetConnMapType::const_iterator itrMap;
-    stConnPacketHash& stPair = combin_list_[iPos];
+    stConnPacketHash& stPair = combine_list_[iPos];
     itrMap = stPair.connMapExists.find(pPacket->pConn);
     if (itrMap == stPair.connMapExists.end()) 
     {
@@ -58,12 +58,12 @@ net_packet* inetpacket_mgr_imp::get_packet(bool bRemoveFlag/* = true*/)
         read_packet_pos_ %= NET_MAX_NETPACKET_LIST_LENGTH;
         ipos = read_packet_pos_;
         ++ read_packet_pos_;
-        if (combin_list_[ipos].connMapExists.empty()) {
+        if (combine_list_[ipos].connMapExists.empty()) {
             continue;
         }
 
-        auto_lock helper(combin_list_mutex_[ipos]);
-        stConnPacketHash& stpair = combin_list_[ipos];
+        auto_lock helper(combine_list_mutex_[ipos]);
+        stConnPacketHash& stpair = combine_list_[ipos];
         BOOL bRepeatFlag = FALSE;
 
         do 
@@ -87,7 +87,8 @@ net_packet* inetpacket_mgr_imp::get_packet(bool bRemoveFlag/* = true*/)
                     bRepeatFlag = TRUE;
                 }
             }
-            else {
+            else 
+            {
                 //全访问过了，将访问过的全部添加到队列中去
                 NetConnMapType::const_iterator itrRebuild;
                 itrRebuild = stpair.connMapVisited.begin();
@@ -112,10 +113,10 @@ bool inetpacket_mgr_imp::free_conn_packets(net_conn* pConn)
 {
     _ASSERT(pConn);
     int ipos =  _hash_func(pConn);
-    auto_lock helper(combin_list_mutex_[ipos]);
+    auto_lock helper(combine_list_mutex_[ipos]);
 
     NetConnMapType::const_iterator itrMap;
-    stConnPacketHash& stpair = combin_list_[ipos];
+    stConnPacketHash& stpair = combine_list_[ipos];
     itrMap = stpair.connMapExists.find(pConn);
     if (itrMap == stpair.connMapExists.end()) 
     {

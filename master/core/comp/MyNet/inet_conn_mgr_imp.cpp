@@ -50,7 +50,8 @@ bool inet_conn_mgr_imp::check_valid_conn()
     conn_tmout_checker_.check(conn_timeout_,
         [&](net_conn* pconn)
     {
-        if (!is_exist_conn(pconn)) {
+        if (!is_exist_conn(pconn)) 
+        {
             return ;
         }
 

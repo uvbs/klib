@@ -10,7 +10,6 @@
 using namespace klib::pattern;
 
 #define  NET_MAX_NETPACKET_LIST_LENGTH 9                        // 定义hash数组的长度
-#define  NET_MAX_PACKET_COUNT	5000                            // 封包管理中允许的最大个数
 
 //----------------------------------------------------------------------
 // Summary:
@@ -54,8 +53,8 @@ protected:
         NetConnMapType  connMapExists;              // 以map形式保存所有的连接
     };
 
-    stConnPacketHash     combin_list_[NET_MAX_NETPACKET_LIST_LENGTH];               ///< 以hash数组形式保存链接，以便快速查找
-    mutex                combin_list_mutex_[NET_MAX_NETPACKET_LIST_LENGTH];         ///< 与上面对应的同步对象
+    stConnPacketHash     combine_list_[NET_MAX_NETPACKET_LIST_LENGTH];               ///< 以hash数组形式保存链接，以便快速查找
+    mutex                combine_list_mutex_[NET_MAX_NETPACKET_LIST_LENGTH];         ///< 与上面对应的同步对象
     
     int                  read_packet_pos_;               ///< 表示上次读取到数组中的下标
         

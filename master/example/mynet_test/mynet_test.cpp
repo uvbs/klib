@@ -101,6 +101,10 @@ int _tmain(int argc, _TCHAR* argv[])
     }
 
     tcp_facade_->get_network()->try_listen(900);
+    for (int i=0; i<100; ++i)
+    {
+        tcp_facade_->get_network()->try_connect("127.0.0.1", 900);
+    }
 
     while (true)
     {

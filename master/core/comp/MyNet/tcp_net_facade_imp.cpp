@@ -116,28 +116,21 @@ bool tcp_net_facade_imp::on_connect(net_conn* pConn, bool bConnected/* = true*/)
 {
     if (bConnected) 
     {
-        //const char *msg = "GET / HTTP/1.1\r\nAccept: */*\r\nHost: www.baidu.com\r\n\r\n";
-        //inetwork_->post_write(pConn, msg, strlen(msg));
-    }
-    else 
-    {
-        //TRACE(TEXT("连接失败!\r\n"));
-    }
-
 #ifdef _DEBUG
-    if (net_conn_mgr_) 
-    {
-        if (net_conn_mgr_->is_exist_conn(pConn)) 
+        if (net_conn_mgr_) 
         {
-            _ASSERT(FALSE && "连接添加错误，设计错误");
+            if (net_conn_mgr_->is_exist_conn(pConn)) 
+            {
+                _ASSERT(FALSE && "连接添加错误，设计错误");
+            }
         }
-    }
 #endif
 
-    //将连接添加到连接管理器里
-    if (net_conn_mgr_) 
-    {
-        net_conn_mgr_->add_conn(pConn);
+        //将连接添加到连接管理器里
+        if (net_conn_mgr_) 
+        {
+            net_conn_mgr_->add_conn(pConn);
+        }
     }
 
     // 通知上层处理连接事件
@@ -198,7 +191,6 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
     bool bIsCombined = false;
 
     bIsCombined = icombiner_->is_intact_packet(pConn->get_recv_stream(), iPacketLen);
-
     while (bIsCombined) 
     {
         //添加封包

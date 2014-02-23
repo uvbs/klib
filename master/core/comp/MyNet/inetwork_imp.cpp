@@ -56,6 +56,7 @@ bool network_worker::execute(worker_context*& ctx)
         return this->on_send_ctx(ctx);
     }
 
+    KLIB_ASSERT(FALSE);
     return true;
 }
 

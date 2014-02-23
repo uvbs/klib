@@ -6,6 +6,16 @@
 
 #include <comp/MyNet/imynetdef.h>
 
+std::string http_response_str = 
+    "HTTP/1.1 200 OK\r\n"
+    "Server: Microsoft-IIS/4.0\r\n"
+    "Date: Mon, 3 Jan 2005 13:13:33 GMT\r\n"
+    "Content-Type: text/html\r\n"
+    "Last-Modified: Mon, 11 Jan 2004 13:23:42 GMT\r\n"
+    "Content-Length: 12\r\n"
+    "\r\n"
+    "hello world!"
+    ;
 
 class my_tcp_handler : public inet_tcp_handler
 {
@@ -20,20 +30,12 @@ public:
 
         if (pListen->get_bind_key() == 0) 
         {
-            std::string str = 
-                "HTTP/1.1 200 OK\r\n"
-                "Server: Microsoft-IIS/4.0\r\n"
-                "Date: Mon, 3 Jan 2005 13:13:33 GMT\r\n"
-                "Content-Type: text/html\r\n"
-                "Last-Modified: Mon, 11 Jan 2004 13:23:42 GMT\r\n"
-                "Content-Length: 12\r\n"
-                "\r\n"
-                "hello world!"
-                ;
 
             pListen->set_bind_key(pListen);
 
-            net_facade_->get_network()->try_write(pNewConn, str.c_str(), str.size());
+            net_facade_->get_network()->try_write(pNewConn, 
+                http_response_str.c_str(), 
+                http_response_str.size());
         }
         return true;
     }
@@ -49,6 +51,7 @@ public:
     virtual bool on_read(net_conn* pConn, const char* buff, size_t len)
     {
         printf("%.*s", len, buff);
+
         return true;
     }
     virtual bool on_write(net_conn* pConn, size_t len) 
@@ -95,11 +98,12 @@ int _tmain(int argc, _TCHAR* argv[])
     tcp_facade_->add_event_handler(&thehandler);
 
     net_conn* pConn = NULL;
-    for (int i=0; i<100; ++i)
-    {
-        pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
-    }
+//     for (int i=0; i<100; ++i)
+//     {
+//         pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
+//     }
 
+    tcp_facade_->get_network()->try_listen(800);
     tcp_facade_->get_network()->try_listen(900);
     for (int i=0; i<100; ++i)
     {

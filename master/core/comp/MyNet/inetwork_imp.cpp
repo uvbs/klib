@@ -237,6 +237,8 @@ net_conn* inetwork_imp::try_listen(USHORT local_port)
     if (NULL == pconn) 
         return NULL;
 
+    // 投递2个接受请求
+    this->post_accept(pconn);
     this->post_accept(pconn);
     return pconn;
 }
@@ -255,7 +257,11 @@ net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_k
     pconn->set_bind_key(bind_key);
     pconn->set_peer_addr_str(addr);
     pconn->set_peer_port(uport);
-    this->post_connection(pconn);
+    if (!this->post_connection(pconn))
+    {
+        net_conn_pool_.Free(pconn);
+        return NULL;
+    }
 
     return pconn;
 }
@@ -268,7 +274,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
     DWORD dwBytes = 0;
     net_overLapped* lpOverlapped = get_net_overlapped();
     if (lpOverlapped == NULL) {
-        return false;
+        return NULL;
     }
 
     SOCKET sockAccept = WSASocket(AF_INET,SOCK_STREAM, IPPROTO_TCP, NULL, NULL,WSA_FLAG_OVERLAPPED);
@@ -450,10 +456,11 @@ bool inetwork_imp::post_connection(net_conn* pConn)
             // 调用失败
             closesocket(sock);
             _ASSERT(FALSE);
+            net_overlapped_pool_.Free(pmyoverlapped);
             return FALSE;
         }
         else 
-        {//操作未决（正在进行中…）
+        {
             //TRACE(TEXT("WSAGetLastError() == ERROR_IO_PENDING\n"));// 操作正在进行中
         }
     }

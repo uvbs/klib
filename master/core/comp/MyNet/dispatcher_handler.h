@@ -1,6 +1,6 @@
 #pragma once
 
-class net_packet;
+#include "net_packet.h"
 
 //处理封包的
 class dispatcher_handler

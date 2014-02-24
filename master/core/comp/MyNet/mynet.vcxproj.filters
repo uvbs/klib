@@ -39,12 +39,6 @@
     <ClInclude Include="inet_conn_mgr_imp.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="inetpacket_mgr.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="inetpacket_mgr_imp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="net_socket.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -98,16 +92,10 @@
     <ClCompile Include="inet_conn_mgr_imp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="inetpacket_mgr_imp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="inetwork_imp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="tcp_net_facade_imp.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="net_packet.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="net_socket.cpp">

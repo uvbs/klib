@@ -18,22 +18,19 @@ public:
 
     virtual bool on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess) 
     {
-        printf("接受连接，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
-
+        //printf("接受连接，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
         return true;
     }
 
     virtual bool on_disconnect(net_conn* pConn)  
     {
-        printf("连接断开，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
-    
+        //printf("连接断开，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
         return true;
     }
 
     virtual bool on_read(net_conn* pConn, const char* buff, size_t len)
     {
-        //printf("%.*s", len, buff);
-
+        printf("%.*s", len, buff);
         net_facade_->get_network()->try_write(pConn, buff, len);
 
         return true;
@@ -75,6 +72,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
     tcp_facade_->get_network()->try_listen(9000);
 
+    
+    printf("echo server started ... \r\n");
     Sleep(-1);
 
 	return 0;

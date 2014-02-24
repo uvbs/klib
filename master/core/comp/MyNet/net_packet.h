@@ -2,23 +2,53 @@
 
 class net_conn;
 class tcp_net_facade_imp;
-class inetpacket_mgr_imp;
 
 // 保存网络数据包的
-class net_packet
+template<size_t t_fix_buf_size>
+class net_packet_t
 {
     friend tcp_net_facade_imp;
-    friend inetpacket_mgr_imp;
 public:
-    net_packet(void);
-    ~net_packet(void);
+    net_packet_t(void)
+    {
+        conn_		      = NULL;
+        buff_size_        = 0;
+        buff_ptr_         = NULL;
+    }
 
-    bool init_buff(size_t bf_size);
-    char* get_buff() ;
+    ~net_packet_t(void)
+    {
+        if (buff_size_ > t_fix_buf_size) {
+            delete [] buff_ptr_;
+        }
+    }
+
+    bool init_buff(size_t bf_size)
+    {
+        if (bf_size < t_fix_buf_size) {
+            buff_ptr_  = fix_buff_;
+            buff_size_ = bf_size;
+            return true;
+        }
+
+        delete [] buff_ptr_;
+
+        buff_size_ = bf_size;
+        buff_ptr_  = new char[bf_size];
+        return (NULL != buff_ptr_);
+    }
+
+    char* get_buff() 
+    {
+        return buff_ptr_;
+    }
 
 protected:
-    net_conn*   pConn;	                        // 属于哪个连接
+    net_conn*   conn_;	                            // 属于哪个连接
 
-    size_t      bf_size_;                       // 缓存区中保存数据的大小
-    char*       bf_ptr_;                        // 缓冲区
+    size_t      buff_size_;                         // 缓存区中保存数据的大小
+    char*       buff_ptr_;                          // 缓冲区
+    char        fix_buff_[t_fix_buf_size];               // 固定缓冲区
 };
+
+typedef net_packet_t<1024> net_packet;

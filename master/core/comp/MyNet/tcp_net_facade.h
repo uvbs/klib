@@ -19,12 +19,10 @@ public:
   // 接口设置(必须在调用init前设置)
   virtual bool set_icombiner(icombiner* pCombiner) = 0;
   virtual bool set_dispatch_handler(dispatcher_handler* pHandler) = 0;
-  virtual bool set_net_conn_mgr(inet_conn_mgr* pMgr) = 0;
   virtual bool init() = 0;
 
   // 管理接口
   virtual inetwork* get_network() = 0;
-  virtual inetpacket_mgr* get_net_packet_mgr() = 0;
   virtual inet_conn_mgr* get_net_conn_mgr() = 0;
 
   // 事件处理器

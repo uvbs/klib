@@ -231,11 +231,13 @@ bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
     return get_worker(pconn)->send(ctx);
 }
 
-net_conn* inetwork_imp::try_listen(USHORT local_port) 
+net_conn* inetwork_imp::try_listen(USHORT local_port, void* bind_key/* = NULL*/) 
 {
     net_conn* pconn =  this->create_listen_conn(local_port);
     if (NULL == pconn) 
         return NULL;
+
+    pconn->set_bind_key(bind_key);
 
     // 投递2个接受请求
     this->post_accept(pconn);

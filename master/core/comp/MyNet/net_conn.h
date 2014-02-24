@@ -2,6 +2,7 @@
 #pragma warning(disable: 4996)
 
 #include "net_socket.h"
+#include "net_packet.h"
 #include <string>
 #include <list>
 
@@ -27,7 +28,6 @@ enum em_operation_type
 
 typedef klib::io::mem_seg_stream<2048> net_stream_type;
 
-class net_packet;
 class inet_conn_mgr_imp;
 class inetwork_imp;
 class network_worker;

@@ -158,8 +158,8 @@ bool network_worker::on_send_ctx(worker_context*& ctx)
     auto pConn = ctx->pConn;
     auto buff  = ctx->send_info.buff_ptr_;
     auto len   = ctx->send_info.buff_len_;
-    if (0 == len) {
-        return true;
+    if (0 == len || NULL == pConn) {
+        return false;
     }
 
     // 先将要发送的数据放入流中(支持多线程)

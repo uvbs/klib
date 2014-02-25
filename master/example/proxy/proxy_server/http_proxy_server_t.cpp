@@ -257,55 +257,6 @@ void http_proxy_server_t::on_read(net_conn* pconn, const char* buff, size_t len)
     evt.ctx_  = ctx;
     evt.svr_  = this;
     ctx->fsm_.OnEvent(&evt);
-
-//     if (ctx->local_conn_ == pconn) 
-//     {
-//         recv_buff_.append(buff, len);
-// 
-//         // 解析,如果成功的话，则发送数据
-//         int index = recv_buff_.find("\r\n\r\n", 4, 0, false);
-//         if (-1 == index) {
-//             return;
-//         }
-// 
-//         size_t parsed_pos = 0;
-//         size_t parsed_size = 0;
-//         char buff[20];
-//         recv_buff_.copy(buff, 0, 10);
-//         if (strnicmp(buff, "CONNECT", 6) == 0) 
-//         {
-//             index = recv_buff_.find("\r\n", 2, 0, false);
-//             if (index != -1) 
-//             {
-//                 parsed_pos = index;
-//                 parsed_size = recv_buff_.size() - index;
-//             }
-//             else
-//             {
-//                 parsed_pos = 0;
-//                 parsed_size = recv_buff_.size();
-//             }
-// 
-//             if (parsed_size > 1024) 
-//             {
-// 
-//             }
-//             else 
-//             {
-//                 char send_buf[1024];
-//                 recv_buff_.copy(send_buf, parsed_pos, parsed_size);
-//                 auto conn_ = get_network()->try_connect("", 80, ctx);
-//                 ctx->remote_conn_ = conn_;
-// 
-// 
-//             }
-//         }
-//     }
-//     else
-//     {
-//         recv_buff_.clear();
-//         get_network()->try_write(ctx->local_conn_, buff, len);
-//     }
 }
 
 void http_proxy_server_t::on_disconnect(net_conn* pconn)
@@ -326,13 +277,30 @@ void http_proxy_server_t::on_disconnect(net_conn* pconn)
         if (ctx->local_conn_ == pconn) 
         {
             printf("local connection disconnect ~~~~~~ \r\n");
+            if (ctx->remote_conn_) 
+            {
+                ctx->remote_conn_->dis_connect();
+                ctx->local_conn_ = NULL;
+            }
         }
         else
         {
             printf("remote connection disconnect ~~~~~~ \r\n");
-            ctx->local_conn_->dis_connect();
+            if (ctx->local_conn_) 
+            {
+                ctx->local_conn_->dis_connect();
+                ctx->remote_conn_ = NULL;
+            }
         }
 
         conn_session_map_.remove_item(pconn);
+
+        if (NULL == ctx->local_conn_ &&
+            NULL == ctx->remote_conn_) 
+        {
+            proxy_ctx_pool_.Free(ctx);
+        }
+
+        //@todo 释放ctx的时间问题
     }
 }

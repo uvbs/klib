@@ -82,14 +82,24 @@
     <ClInclude Include="http_proxy_server_t.h" />
     <ClInclude Include="proxy_server_i.h" />
     <ClInclude Include="proxy_server_t.h" />
+    <ClInclude Include="sock5_proxy_server_t.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\core\comp\MyNet\net_conn.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\core\comp\MyNet\net_socket.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="http_proxy_server_t.cpp" />
     <ClCompile Include="proxy_server.cpp" />
     <ClCompile Include="proxy_server_i.cpp" />
     <ClCompile Include="proxy_server_t.cpp" />
+    <ClCompile Include="sock5_proxy_server_t.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

@@ -339,6 +339,42 @@ namespace util
             return str.substr(pos + 1);
     }
 
+    template<typename TString>
+    TString getMid(const TString& str,const typename TString::value_type* begin_str, const typename TString::value_type* end_str)
+    {
+        size_t begin_pos = str.find(begin_str);
+        if (begin_pos == TString::npos) {
+            return TString();
+        }
 
+        size_t end_pos = str.find(end_str, begin_pos + 1);
+        if (end_pos == TString::npos) {
+            return TString();
+        }
+
+        return str.substr(begin_pos, end_pos - begin_pos);
+    }
+
+    template<typename TString>
+    TString replaceMid(const TString& str, 
+        const typename TString::value_type* begin_str, 
+        const typename TString::value_type* end_str,
+        const typename TString::value_type* replace_str)
+    {
+        size_t begin_pos = str.find(begin_str);
+        if (begin_pos == TString::npos) {
+            return str;
+        }
+
+        size_t end_pos = str.find(end_str, begin_pos + 1);
+        if (end_pos == TString::npos) {
+            return str;
+        }
+
+        TString tmp = str;
+        tmp.replace(begin_pos, end_pos - begin_pos + strlen(end_str), replace_str);
+
+        return std::move(tmp);
+    }
 
 }}

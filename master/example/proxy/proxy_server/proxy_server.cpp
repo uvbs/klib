@@ -7,11 +7,10 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
     proxy_server_t* p = proxy_server_t::instance();
     p->start();
 
-
+    Sleep(-1);
 	return 0;
 }
 

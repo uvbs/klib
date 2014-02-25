@@ -1,9 +1,6 @@
 #pragma once
 
 
-#include <comp/MyNet/imynetdef.h>
-#include <core/singleton.h>
-using namespace klib::core;
 
 #include "http_proxy_server_t.h"
 
@@ -25,7 +22,7 @@ protected:
     virtual bool on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess = true) ;
 
 protected:
-    http_proxy_server_t* http_proxy_;
+    proxy_server_i* http_proxy_;
 
 };
 

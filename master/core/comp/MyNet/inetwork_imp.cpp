@@ -158,6 +158,9 @@ bool network_worker::on_send_ctx(worker_context*& ctx)
     auto pConn = ctx->pConn;
     auto buff  = ctx->send_info.buff_ptr_;
     auto len   = ctx->send_info.buff_len_;
+    if (0 == len) {
+        return true;
+    }
 
     // 先将要发送的数据放入流中(支持多线程)
     pConn->write_send_stream(buff, len);
@@ -214,6 +217,10 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler,
 
 bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
 {
+    if (0 == len) {
+        return true;
+    }
+
     //@todo 转为导步的发送方式(缓冲区最好支持引用计数)
     char* pbuff = new char[len];
     if (NULL == pbuff) {
@@ -377,6 +384,7 @@ bool inetwork_imp::post_connection(net_conn* pConn)
         return false;
     }
     uPeerAddr = ip_resolver_.at(0);
+    pConn->peer_addr_dw_ = uPeerAddr;
 
     SOCKET& sock = pConn->get_socket();
     sock = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);

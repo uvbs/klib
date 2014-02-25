@@ -6,11 +6,11 @@ class net_conn;
 class inet_tcp_handler;
 
 ///< 网络接口类
-class inetwork
+class network_i
 {
 public:
-    inetwork(void) {}
-    virtual ~inetwork(void) {}
+    network_i(void) {}
+    virtual ~network_i(void) {}
 
 public:
     ///< 初始化网络层接口，由tcp_net_facade调用

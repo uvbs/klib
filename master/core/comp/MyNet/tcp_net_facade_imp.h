@@ -21,7 +21,7 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
     // 获取其它接口
-    virtual inetwork*       get_network() { return inetwork_; }					//返回网络层接口
+    virtual network_i*       get_network() { return inetwork_; }					//返回网络层接口
     virtual inet_conn_mgr*  get_net_conn_mgr() { return net_conn_mgr_; }	        //返回连接管理接口
 
     //////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ protected:
     bool                        init_success_;                      //表示是否初始化成功
     icombiner*                  icombiner_;                         //包完整性判断,基于应用层的协议
     dispatcher_handler*         dispatch_handler_;                  //派遣接口
-    inetwork*                   inetwork_;                          //网络接口
+    network_i*                   inetwork_;                          //网络接口
     inet_conn_mgr*              net_conn_mgr_;                      //网络连接管理器
 
     mutex                       mutex_;                             //同步结构

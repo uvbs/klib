@@ -22,7 +22,7 @@ public:
   virtual bool init() = 0;
 
   // 管理接口
-  virtual inetwork* get_network() = 0;
+  virtual network_i* get_network() = 0;
   virtual inet_conn_mgr* get_net_conn_mgr() = 0;
 
   // 事件处理器

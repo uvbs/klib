@@ -15,3 +15,11 @@
 // TODO: 在此处引用程序需要的其他头文件
 #include <WinSock2.h>
 #include <windows.h>
+
+
+#include <comp/MyNet/imynetdef.h>
+#include <core/singleton.h>
+#include <pattern/object_pool.h>
+using namespace klib::core;
+
+#include <klib_link.h>

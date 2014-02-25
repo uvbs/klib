@@ -28,6 +28,13 @@ public:
     FsmEvent() {}
     FsmEvent(UINT uEventType) { m_uEventType = uEventType; }
 
+    void set_evt_type(UINT utype) { m_uEventType = utype; }
+    UINT get_evt_type() { return m_uEventType; }
+
+    void set_evt_data(UINT64 udata) {  m_uEventData = udata; } 
+    UINT64 get_evt_data() { return m_uEventData; }
+
+protected:
     UINT    m_uEventType;         ///< 表示事件类型
     UINT64  m_uEventData;         ///< 携带事件数据
 };
@@ -77,7 +84,7 @@ public:
 private:
     UINT        m_uParentID;                ///< 父状态ID
     UINT        m_uStateID;                 ///< 当前状态ID
-    char        m_szStateName[20];          ///< 当前状态名称
+    char        m_szStateName[40];          ///< 当前状态名称
 };
 
 ///< 状态机
@@ -298,19 +305,19 @@ OnlineState
 }
 
 BEGIN_STATE_DECLARE(CQueryLogicState, LogicState)
-{
+
 virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
-}
+END
 
 BEGIN_STATE_DECLARE(CQueryNewVerState, NewVerState)
-{
+
 virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
-}
+END
 
 BEGIN_STATE_DECLARE(COnlineState, OnlineState)
-{
+
 virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
-}
+END
 
 
 ///< 状态机的定义

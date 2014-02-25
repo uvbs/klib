@@ -79,7 +79,7 @@ protected:
 
 
 /// ÍøÂç¿âÊµÏÖ
-class inetwork_imp : public inetwork
+class inetwork_imp : public network_i
 {
     friend network_worker;
 

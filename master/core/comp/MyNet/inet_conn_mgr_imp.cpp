@@ -24,6 +24,8 @@ bool inet_conn_mgr_imp::add_conn(net_conn* pConn)
 
 bool inet_conn_mgr_imp::del_conn(net_conn* pConn) 
 {
+    klib::kthread::guard guard_(mutex_);
+
     KLIB_ASSERT(pConn->tmout_id_ > 0);
     conn_tmout_checker_.remove(pConn->tmout_id_);
     return conn_list_x_.remove_item(pConn);
@@ -47,6 +49,8 @@ size_t inet_conn_mgr_imp::get_conn_count()
 
 bool inet_conn_mgr_imp::check_valid_conn()
 {
+    klib::kthread::guard guard_(mutex_);
+
     conn_tmout_checker_.check(conn_timeout_,
         [&](net_conn* pconn) -> bool
     {

@@ -1,7 +1,7 @@
 #pragma once
 
 class net_conn;
-class inetwork;
+class network_i;
 
 
 //----------------------------------------------------------------------

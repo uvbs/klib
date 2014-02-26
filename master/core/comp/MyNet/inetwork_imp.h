@@ -79,7 +79,7 @@ protected:
 
 
 /// 网络库实现
-class inetwork_imp : public inetwork
+class inetwork_imp : public network_i
 {
     friend network_worker;
 
@@ -96,7 +96,7 @@ public:
 
     virtual bool try_write(net_conn* pconn, const char* buff, size_t len);          ///< 尝试发送数据
 
-    virtual net_conn* try_listen(USHORT local_port) ;                                  ///< 监听端口
+    virtual net_conn* try_listen(USHORT local_port, void* bind_key = NULL) ;                                  ///< 监听端口
     virtual net_conn* try_connect(const char* addr, USHORT uport, void* bind_key) ;    ///< 投递连接到服务器
 
 protected:
@@ -147,7 +147,7 @@ private:
 
     active_obj_mgr<network_worker> worker_mgr_;
 
-    CObjectPool<net_overLapped, 1000, 1000>     net_overlapped_pool_;       // overlapped 
-    CObjectPool<net_conn, 1000, 1000>           net_conn_pool_;             // net_conn
+    CObjectPool<net_overLapped, 2000, 2000>     net_overlapped_pool_;       // overlapped 
+    CObjectPool<net_conn, 2000, 2000>           net_conn_pool_;             // net_conn
     
 };

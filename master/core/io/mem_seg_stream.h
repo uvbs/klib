@@ -188,7 +188,11 @@ public:
         seg_buff_type* seg_bf = buff_list_[0];
 
         if (seg_bf->size() == 0) 
-            seg_bf = buff_list_[1];
+        {
+            if (buff_list_.size() > 1) {
+                seg_bf = buff_list_[1];
+            }
+        }
 
         return seg_bf->get_read_ptr();
     }
@@ -198,7 +202,11 @@ public:
         seg_buff_type* seg_bf = buff_list_[0];
 
         if (seg_bf->size() == 0) 
-            seg_bf = buff_list_[1];
+        {
+            if (buff_list_.size() > 1) {
+                seg_bf = buff_list_[1];
+            }
+        }
 
         return seg_bf->size();
     }

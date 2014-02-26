@@ -5,7 +5,6 @@
 #include "net_conn.h"
 #include "inetwork_imp.h"
 #include "icombiner_imp.h"
-#include "inetpacket_mgr_imp.h"
 #include "dispatcher_handler.h"
 #include "inet_conn_mgr_imp.h"
 
@@ -13,7 +12,6 @@ tcp_net_facade_imp::tcp_net_facade_imp(void)
 {
     icombiner_        = NULL;
     inetwork_         = NULL;
-    net_packet_mgr_   = NULL;
     net_conn_mgr_     = NULL;
 
     dispatch_handler_ = NULL;
@@ -42,15 +40,6 @@ bool tcp_net_facade_imp::set_dispatch_handler(dispatcher_handler* pHandler)
     return dispatch_handler_ != NULL;
 }
 
-bool tcp_net_facade_imp::set_net_conn_mgr(inet_conn_mgr* pMgr) 
-{
-    _ASSERT(pMgr);
-    guard helper(mutex_);
-
-    net_conn_mgr_ = pMgr;
-    return net_conn_mgr_ != NULL;
-}
-
 bool tcp_net_facade_imp::init()
 {
     if (init_success_)
@@ -64,11 +53,10 @@ bool tcp_net_facade_imp::init()
     inetwork_->init_network(this);
 
     // 初始化默认的处理器
-    NULL == icombiner_? icombiner_ = new icombiner_imp : (void)0;
-    NULL == net_packet_mgr_ ? net_packet_mgr_ = new inetpacket_mgr_imp : (void)0;
+    //NULL == icombiner_? icombiner_ = new icombiner_imp : (void)0;
     NULL == net_conn_mgr_ ? net_conn_mgr_ = new inet_conn_mgr_imp : (void)0;
 
-    init_success_ = (icombiner_ && net_packet_mgr_ && net_conn_mgr_);
+    init_success_ = (icombiner_ && net_conn_mgr_);
 
     return init_success_;
 }
@@ -170,64 +158,33 @@ bool tcp_net_facade_imp::on_disconnect(net_conn* pConn)
 
     // 删除连接
     if (net_conn_mgr_) 
-    {
         net_conn_mgr_->del_conn(pConn);
-    }
-
-    // 释放所有的数据包
-    if (net_packet_mgr_) 
-    {
-        net_packet_mgr_->free_conn_packets(pConn);
-    }
 
     return true;
 }
 
 bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
 {
-    //MyPrtLog("有数据来啦Len: %d", len);
-    _ASSERT(buff);
+    _ASSERT(pConn && buff && len > 0);
     int iPacketLen = 0;
     bool bIsCombined = false;
+    net_packet packet_;
 
-    bIsCombined = icombiner_->is_intact_packet(pConn->get_recv_stream(), iPacketLen);
-    while (bIsCombined) 
+    while (icombiner_ && (bIsCombined = icombiner_->is_intact_packet(pConn->get_recv_stream(), iPacketLen))) 
     {
-        //添加封包
-        //MyPrtLog("已构成完整封包....\r\n");
-
-        net_packet* pPacket = net_packet_mgr_->alloc_net_packet();
-        if (NULL == pPacket) 
-        {
-            _ASSERT(FALSE);
-            return false;
-        }
-
-        //TRACE(TEXT("封包生成..."));
-        pPacket->pConn    = pConn;
-        pPacket->bf_size_ = iPacketLen;
+        // 初始化packet
+        net_packet* pPacket = & packet_;
+        pPacket->conn_      = pConn;
+        pPacket->buff_size_ = iPacketLen;
         if (!pPacket->init_buff(iPacketLen)) 
-        {
             return false;
-        }
+
+        // 拷贝到缓冲区中
         pConn->read_recv_stream(pPacket->get_buff(), iPacketLen);
 
+        // 分派调用
         if (dispatch_handler_) 
-        {
             dispatch_handler_->dispatch_packet(pPacket);
-            net_packet_mgr_->free_net_packet(pPacket);
-        }
-        else 
-        {
-            net_packet_mgr_->add_packet(pPacket);
-        }
-
-        if (pConn->get_recv_length() <= 0)
-        {
-            break;
-        }
-
-        bIsCombined = icombiner_->is_intact_packet(pConn->get_recv_stream(), iPacketLen);
     }
     
     INetEventHandlerListType::const_iterator itr;

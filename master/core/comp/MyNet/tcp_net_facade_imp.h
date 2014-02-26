@@ -3,6 +3,8 @@
 #include "tcp_net_facade.h"
 #include <vector>
 
+#include <pattern/object_pool.h>
+using namespace klib::pattern;
 
 class tcp_net_facade_imp : public tcp_net_facade
 {
@@ -15,13 +17,11 @@ public:
     // 初始设置接口
     virtual bool set_icombiner(icombiner* pCombiner) ;                  //设置分包处理接口
     virtual bool set_dispatch_handler(dispatcher_handler* pHandler) ;   //设置分派接口,如果不设置这个，则封包进入封包管理器中
-    virtual bool set_net_conn_mgr(inet_conn_mgr* pMgr) ;                //连接管理器
     virtual bool init();                                         //初始化客户端
 
     //////////////////////////////////////////////////////////////////////////
     // 获取其它接口
-    virtual inetpacket_mgr* get_net_packet_mgr() { return net_packet_mgr_;}         //返回网络封包管理接口
-    virtual inetwork*       get_network() { return inetwork_; }					//返回网络层接口
+    virtual network_i*       get_network() { return inetwork_; }					//返回网络层接口
     virtual inet_conn_mgr*  get_net_conn_mgr() { return net_conn_mgr_; }	        //返回连接管理接口
 
     //////////////////////////////////////////////////////////////////////////
@@ -42,8 +42,7 @@ protected:
     bool                        init_success_;                      //表示是否初始化成功
     icombiner*                  icombiner_;                         //包完整性判断,基于应用层的协议
     dispatcher_handler*         dispatch_handler_;                  //派遣接口
-    inetwork*                   inetwork_;                          //网络接口
-    inetpacket_mgr*             net_packet_mgr_;                    //封包管理器
+    network_i*                   inetwork_;                          //网络接口
     inet_conn_mgr*              net_conn_mgr_;                      //网络连接管理器
 
     mutex                       mutex_;                             //同步结构

@@ -158,6 +158,9 @@ bool network_worker::on_send_ctx(worker_context*& ctx)
     auto pConn = ctx->pConn;
     auto buff  = ctx->send_info.buff_ptr_;
     auto len   = ctx->send_info.buff_len_;
+    if (0 == len || NULL == pConn) {
+        return false;
+    }
 
     // 先将要发送的数据放入流中(支持多线程)
     pConn->write_send_stream(buff, len);
@@ -214,6 +217,10 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler,
 
 bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
 {
+    if (0 == len) {
+        return true;
+    }
+
     //@todo 转为导步的发送方式(缓冲区最好支持引用计数)
     char* pbuff = new char[len];
     if (NULL == pbuff) {
@@ -231,12 +238,16 @@ bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
     return get_worker(pconn)->send(ctx);
 }
 
-net_conn* inetwork_imp::try_listen(USHORT local_port) 
+net_conn* inetwork_imp::try_listen(USHORT local_port, void* bind_key/* = NULL*/) 
 {
     net_conn* pconn =  this->create_listen_conn(local_port);
     if (NULL == pconn) 
         return NULL;
 
+    pconn->set_bind_key(bind_key);
+
+    // 投递2个接受请求
+    this->post_accept(pconn);
     this->post_accept(pconn);
     return pconn;
 }
@@ -255,7 +266,11 @@ net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_k
     pconn->set_bind_key(bind_key);
     pconn->set_peer_addr_str(addr);
     pconn->set_peer_port(uport);
-    this->post_connection(pconn);
+    if (!this->post_connection(pconn))
+    {
+        net_conn_pool_.Free(pconn);
+        return NULL;
+    }
 
     return pconn;
 }
@@ -268,7 +283,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
     DWORD dwBytes = 0;
     net_overLapped* lpOverlapped = get_net_overlapped();
     if (lpOverlapped == NULL) {
-        return false;
+        return NULL;
     }
 
     SOCKET sockAccept = WSASocket(AF_INET,SOCK_STREAM, IPPROTO_TCP, NULL, NULL,WSA_FLAG_OVERLAPPED);
@@ -369,6 +384,7 @@ bool inetwork_imp::post_connection(net_conn* pConn)
         return false;
     }
     uPeerAddr = ip_resolver_.at(0);
+    pConn->peer_addr_dw_ = uPeerAddr;
 
     SOCKET& sock = pConn->get_socket();
     sock = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
@@ -450,10 +466,11 @@ bool inetwork_imp::post_connection(net_conn* pConn)
             // 调用失败
             closesocket(sock);
             _ASSERT(FALSE);
+            net_overlapped_pool_.Free(pmyoverlapped);
             return FALSE;
         }
         else 
-        {//操作未决（正在进行中…）
+        {
             //TRACE(TEXT("WSAGetLastError() == ERROR_IO_PENDING\n"));// 操作正在进行中
         }
     }

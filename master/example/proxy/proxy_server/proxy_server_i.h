@@ -10,8 +10,8 @@ public:
     {
     }
 
-    net_conn* local_conn_;
-    net_conn* remote_conn_;
+    net_conn_ptr local_conn_;
+    net_conn_ptr remote_conn_;
     bool  verified_;
 };
 
@@ -24,10 +24,10 @@ public:
 
 public:
     virtual network_i* get_network() = 0;
-    virtual void on_accept(net_conn* pconn, net_conn* paccept_conn, bool bsuccess) = 0;
-    virtual void on_connect(net_conn* pconn, bool bConnected) = 0;
-    virtual void on_read(net_conn* pconn, const char* buff, size_t len) = 0;
-    virtual void on_disconnect(net_conn* pconn) = 0;
+    virtual void on_accept(net_conn_ptr pconn, net_conn_ptr paccept_conn, bool bsuccess) = 0;
+    virtual void on_connect(net_conn_ptr pconn, bool bConnected) = 0;
+    virtual void on_read(net_conn_ptr pconn, const char* buff, size_t len) = 0;
+    virtual void on_disconnect(net_conn_ptr pconn) = 0;
 };
 
 class proxy_server_imp : public proxy_server_i

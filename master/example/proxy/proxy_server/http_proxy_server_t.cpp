@@ -105,17 +105,21 @@ bool extract_content(const std::string& str, std::string& content)
 
 void local_read_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 {
-    if (e->get_evt_type() == event_read) 
+    if (e->get_evt_type() == event_disconnect) 
+    {
+        //do nothing
+    }
+    else if (e->get_evt_type() == event_read) 
     {
         proxy_event_read* evt = (proxy_event_read*)e;
         evt->ctx_->recv_buff_.append(evt->buff, evt->len);
 
         // 解析,如果成功的话，则发送数据
         int index = evt->ctx_->recv_buff_.find("\r\n\r\n", 4, 0, false);
-//         if (-1 == index) {
-//             printf("recv not ok: %.*s", evt->len, evt->buff);
-//             return;
-//         }
+        if (-1 == index) {
+            printf("recv not ok: %.*s", evt->len, evt->buff);
+            return;
+        }
 
         uNewStateID = status_connect_remote;
 
@@ -127,8 +131,9 @@ void local_read_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 
         if (extract_info(str_req, str_host, uport)) 
         {
-            net_conn* new_conn = evt->svr_->get_network()->try_connect(str_host.c_str(), uport, evt->ctx_);
-            if (NULL != new_conn) {
+            net_conn_ptr new_conn = evt->svr_->get_network()->try_connect(str_host.c_str(), uport, evt->ctx_);
+            if (nullptr != new_conn) 
+            {
                 printf("try connect: %s:%d success !!!\r\n", str_host.c_str(), uport);
                 evt->svr_->conn_session_map_.add_item(new_conn, evt->ctx_);
             }
@@ -148,6 +153,7 @@ void local_read_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 
 void connect_remote_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 {
+    //KLIB_ASSERT(e->get_evt_type() == event_connect);
     if (e->get_evt_type() == event_connect) 
     {
         proxy_event_connect* evt = (proxy_event_connect*)e;
@@ -177,6 +183,9 @@ void connect_remote_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 
 void interactive_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 {
+    KLIB_ASSERT(e->get_evt_type() == event_read ||
+        e->get_evt_type() == event_disconnect);
+
     if (e->get_evt_type() == event_read) 
     {
         proxy_event_read* evt = (proxy_event_read*) e;
@@ -184,11 +193,20 @@ void interactive_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
         if (evt->pconn == evt->ctx_->local_conn_) 
         {
             evt->svr_->get_network()->try_write(evt->ctx_->remote_conn_, evt->buff, evt->len);
+
+            printf("interactive %s -> %s  \r\n", 
+                evt->ctx_->remote_conn_->get_peer_addr_str(),
+                evt->ctx_->local_conn_->get_peer_addr_str());
         }
         else
         {
             evt->svr_->get_network()->try_write(evt->ctx_->local_conn_, evt->buff, evt->len);
+
+            printf("interactive %s -> %s \r\n", 
+                evt->ctx_->local_conn_->get_peer_addr_str(),
+                evt->ctx_->remote_conn_->get_peer_addr_str());
         }
+
     }
 }
 
@@ -202,7 +220,7 @@ http_proxy_server_t::~http_proxy_server_t(void)
 {
 }
 
-void http_proxy_server_t::on_accept(net_conn* listen_conn, net_conn* accept_conn, bool bsuccess /*= true*/)
+void http_proxy_server_t::on_accept(net_conn_ptr listen_conn, net_conn_ptr accept_conn, bool bsuccess /*= true*/)
 {
     http_prxy_context* ctx = NULL;
     if (conn_session_map_.get_item(listen_conn, ctx)) 
@@ -221,7 +239,7 @@ void http_proxy_server_t::on_accept(net_conn* listen_conn, net_conn* accept_conn
     conn_session_map_.add_item(accept_conn, ctx);
 }
 
-void http_proxy_server_t::on_connect(net_conn* pconn, bool bConnected)
+void http_proxy_server_t::on_connect(net_conn_ptr pconn, bool bConnected)
 {
     http_prxy_context* ctx;
     bool bret = conn_session_map_.get_item(pconn, ctx);
@@ -230,8 +248,8 @@ void http_proxy_server_t::on_connect(net_conn* pconn, bool bConnected)
 
     proxy_event_connect evt;
     evt.set_evt_type(event_connect) ;
-    evt.pconn = pconn;
-    evt.bConnected = bConnected;
+    evt.pconn       = pconn;
+    evt.bConnected  = bConnected;
 
     evt.ctx_  = ctx;
     evt.svr_  = this;
@@ -240,7 +258,7 @@ void http_proxy_server_t::on_connect(net_conn* pconn, bool bConnected)
     return;
 }
 
-void http_proxy_server_t::on_read(net_conn* pconn, const char* buff, size_t len)
+void http_proxy_server_t::on_read(net_conn_ptr pconn, const char* buff, size_t len)
 {
     http_prxy_context* ctx;
     if (!conn_session_map_.get_item(pconn, ctx)) 
@@ -259,7 +277,7 @@ void http_proxy_server_t::on_read(net_conn* pconn, const char* buff, size_t len)
     ctx->fsm_.OnEvent(&evt);
 }
 
-void http_proxy_server_t::on_disconnect(net_conn* pconn)
+void http_proxy_server_t::on_disconnect(net_conn_ptr pconn)
 {
     http_prxy_context* ctx;
     if (conn_session_map_.get_item(pconn, ctx)) 
@@ -267,10 +285,8 @@ void http_proxy_server_t::on_disconnect(net_conn* pconn)
         proxy_event_disconnect evt;
         evt.set_evt_type(event_disconnect);
         evt.pconn = pconn;
-
         evt.ctx_  = ctx;
         evt.svr_  = this;
-
         ctx->fsm_.OnEvent(&evt);
 
         //----------------------------------------------------------------------
@@ -280,27 +296,26 @@ void http_proxy_server_t::on_disconnect(net_conn* pconn)
             if (ctx->remote_conn_) 
             {
                 ctx->remote_conn_->dis_connect();
-                ctx->local_conn_ = NULL;
             }
         }
         else
         {
             printf("remote connection disconnect ~~~~~~ \r\n");
-            if (ctx->local_conn_) 
-            {
-                ctx->local_conn_->dis_connect();
-                ctx->remote_conn_ = NULL;
-            }
+            ctx->local_conn_->dis_connect();
         }
 
         conn_session_map_.remove_item(pconn);
 
-        if (NULL == ctx->local_conn_ &&
-            NULL == ctx->remote_conn_) 
+        //@todo 释放ctx的时间问题
+        if ((nullptr == ctx->local_conn_ || ctx->local_conn_.use_count() == 1) &&
+            nullptr == ctx->remote_conn_ || ctx->remote_conn_.use_count() == 1) 
         {
             proxy_ctx_pool_.Free(ctx);
         }
 
-        //@todo 释放ctx的时间问题
+    }
+    else
+    {
+        printf("conn_session_map_.get_item(pconn, ctx) failed \r\n");
     }
 }

@@ -5,9 +5,8 @@
 
 
 class icombiner;
-class inetpacket_mgr;
 class dispatcher_handler;
-class inet_conn_mgr;
+class net_conn_mgr_i;
 
 
 //----------------------------------------------------------------------
@@ -23,7 +22,7 @@ public:
 
   // 管理接口
   virtual network_i* get_network() = 0;
-  virtual inet_conn_mgr* get_net_conn_mgr() = 0;
+  virtual net_conn_mgr_i* get_net_conn_mgr() = 0;
 
   // 事件处理器
   virtual bool add_event_handler(inet_tcp_handler* handler) = 0;

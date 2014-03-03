@@ -31,10 +31,12 @@ enum http_proxy_event
 
 class http_proxy_server_t;
 class http_prxy_context;
+
+
 class proxy_event_base : public FsmEvent
 {
 public:
-    net_conn* local_conn_;
+    net_conn_ptr local_conn_;
     http_prxy_context* ctx_;
     http_proxy_server_t* svr_;
 };
@@ -42,14 +44,14 @@ public:
 class proxy_event_connect : public proxy_event_base
 {
 public:
-    net_conn* pconn;
+    net_conn_ptr pconn;
     bool bConnected;
 };
 
 class proxy_event_read : public proxy_event_base
 {
 public:
-    net_conn* pconn;
+    net_conn_ptr pconn;
     const char* buff;
     size_t len;
 };
@@ -57,7 +59,7 @@ public:
 class proxy_event_disconnect : public proxy_event_base
 {
 public:
-    net_conn* pconn;
+    net_conn_ptr pconn;
 };
 
 BEGIN_STATE_DECLARE(local_read_state, status_local_read)
@@ -96,6 +98,8 @@ public:
     http_proxy_fsm   fsm_;
 };
 
+typedef http_prxy_context http_prxy_context_ptr;
+
 class http_proxy_server_t : public proxy_server_imp
 {
 public:
@@ -103,13 +107,13 @@ public:
     ~http_proxy_server_t(void);
 
 protected:
-    virtual void on_accept(net_conn* listen_conn, net_conn* accept_conn, bool bsuccess);
-    virtual void on_connect(net_conn* pconn, bool bConnected);
-    virtual void on_read(net_conn* pconn, const char* buff, size_t len);
-    virtual void on_disconnect(net_conn* pconn);
+    virtual void on_accept(net_conn_ptr listen_conn, net_conn_ptr accept_conn, bool bsuccess);
+    virtual void on_connect(net_conn_ptr pconn, bool bConnected);
+    virtual void on_read(net_conn_ptr pconn, const char* buff, size_t len);
+    virtual void on_disconnect(net_conn_ptr pconn);
 
 public:
-    lock_bucket_map<net_conn*, http_prxy_context*, 16>      conn_session_map_;
+    lock_map<net_conn_ptr, http_prxy_context*>              conn_session_map_;
     CObjectPool<http_prxy_context, 10000, 10000>            proxy_ctx_pool_;
     buffer_list_type                                        recv_buff_;
 };

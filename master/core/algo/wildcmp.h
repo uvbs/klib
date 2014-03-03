@@ -1,7 +1,9 @@
+#ifndef _klib_wildcmp_h_
+#define _klib_wildcmp_h_
 
 
 
-int wildcmp(const char *wild, const char *string) 
+inline int wildcmp(const char *wild, const char *string) 
 {
   // Written by Jack Handy - <A href="mailto:jakkhandy@hotmail.com">jakkhandy@hotmail.com</A>
   const char *cp = NULL, *mp = NULL;
@@ -35,3 +37,7 @@ int wildcmp(const char *wild, const char *string)
   }
   return !*wild;
 }
+
+
+#endif // _klib_wildcmp_h_
+

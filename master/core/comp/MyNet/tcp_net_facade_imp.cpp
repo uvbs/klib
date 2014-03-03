@@ -3,16 +3,15 @@
 
 #include "icombiner.h"
 #include "net_conn.h"
-#include "inetwork_imp.h"
+#include "network_imp.h"
 #include "icombiner_imp.h"
 #include "dispatcher_handler.h"
-#include "inet_conn_mgr_imp.h"
+#include "net_conn_mgr_imp.h"
 
 tcp_net_facade_imp::tcp_net_facade_imp(void)
 {
     icombiner_        = NULL;
     inetwork_         = NULL;
-    net_conn_mgr_     = NULL;
 
     dispatch_handler_ = NULL;
     init_success_     = false;
@@ -48,15 +47,11 @@ bool tcp_net_facade_imp::init()
     }
 
     // 初始化网络库
-    inetwork_ = new inetwork_imp;
+    inetwork_ = new network_imp;
     _ASSERT(inetwork_);
     inetwork_->init_network(this);
 
-    // 初始化默认的处理器
-    //NULL == icombiner_? icombiner_ = new icombiner_imp : (void)0;
-    NULL == net_conn_mgr_ ? net_conn_mgr_ = new inet_conn_mgr_imp : (void)0;
-
-    init_success_ = (icombiner_ && net_conn_mgr_);
+    init_success_ = (nullptr != inetwork_ );
 
     return init_success_;
 }
@@ -100,25 +95,10 @@ bool tcp_net_facade_imp::del_event_handler(inet_tcp_handler* handler)
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool tcp_net_facade_imp::on_connect(net_conn* pConn, bool bConnected/* = true*/) 
+bool tcp_net_facade_imp::on_connect(net_conn_ptr pConn, bool bConnected/* = true*/) 
 {
     if (bConnected) 
     {
-#ifdef _DEBUG
-        if (net_conn_mgr_) 
-        {
-            if (net_conn_mgr_->is_exist_conn(pConn)) 
-            {
-                _ASSERT(FALSE && "连接添加错误，设计错误");
-            }
-        }
-#endif
-
-        //将连接添加到连接管理器里
-        if (net_conn_mgr_) 
-        {
-            net_conn_mgr_->add_conn(pConn);
-        }
     }
 
     // 通知上层处理连接事件
@@ -132,22 +112,8 @@ bool tcp_net_facade_imp::on_connect(net_conn* pConn, bool bConnected/* = true*/)
     return true;
 }
 
-bool tcp_net_facade_imp::on_disconnect(net_conn* pConn) 
+bool tcp_net_facade_imp::on_disconnect(net_conn_ptr pConn) 
 {
-    //MyPrtLog("连接断开了...\r\n");
-
-#ifdef _DEBUG
-    if (net_conn_mgr_) 
-    {
-        if (!net_conn_mgr_->is_exist_conn(pConn)) 
-        {
-            // 这里可能是由于刚才连接上还没有添加到mgr里面，进行投递读请求就会出错;
-            _ASSERT(FALSE && "连接关闭错误，设计错误");
-            return true;
-        }
-    }
-#endif
-
     //这里是先交给上层处理再释放
     INetEventHandlerListType::const_iterator itr;
     itr  = net_event_list_.begin();
@@ -156,14 +122,10 @@ bool tcp_net_facade_imp::on_disconnect(net_conn* pConn)
         (*itr)->on_disconnect(pConn);
     }
 
-    // 删除连接
-    if (net_conn_mgr_) 
-        net_conn_mgr_->del_conn(pConn);
-
     return true;
 }
 
-bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
+bool tcp_net_facade_imp::on_read(net_conn_ptr pConn, const char* buff, size_t len)
 {
     _ASSERT(pConn && buff && len > 0);
     int iPacketLen = 0;
@@ -197,7 +159,7 @@ bool tcp_net_facade_imp::on_read(net_conn* pConn, const char* buff, size_t len)
     return true;
 }
 
-bool tcp_net_facade_imp::on_write(net_conn* pConn, size_t len) 
+bool tcp_net_facade_imp::on_write(net_conn_ptr pConn, size_t len) 
 {
     //MyPrtLog("写数据完毕..\r\n");
     
@@ -211,19 +173,8 @@ bool tcp_net_facade_imp::on_write(net_conn* pConn, size_t len)
     return true;
 }
 
-bool tcp_net_facade_imp::on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess/* = true*/) 
+bool tcp_net_facade_imp::on_accept(net_conn_ptr pListen, net_conn_ptr pNewConn, bool bSuccess/* = true*/) 
 {
-    if (net_conn_mgr_ && bSuccess) 
-    {
-#ifdef _DEBUG
-        if (net_conn_mgr_->is_exist_conn(pNewConn)) 
-        {
-            _ASSERT(FALSE && "重复添加连接，这里设计出错!");
-        }
-#endif
-        net_conn_mgr_->add_conn(pNewConn);
-    }
-
     if (bSuccess) 
     {
         //MyPrtLog("连接来啦...");

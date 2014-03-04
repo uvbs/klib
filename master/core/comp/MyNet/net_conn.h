@@ -2,9 +2,9 @@
 #pragma warning(disable: 4996)
 
 #include "net_socket.h"
-#include "net_packet.h"
 #include <string>
 #include <list>
+#include <memory>
 
 #include <kthread/auto_lock.h>
 #include <io/mem_seg_stream.h>
@@ -28,16 +28,16 @@ enum em_operation_type
 
 typedef klib::io::mem_seg_stream<2048> net_stream_type;
 
-class inet_conn_mgr_imp;
-class inetwork_imp;
+class net_conn_mgr_i_imp;
+class network_imp;
 class network_worker;
 
 //----------------------------------------------------------------------
 ///< 网络连接类,需要同步的在外部加锁
 class net_conn
 {
-    friend inet_conn_mgr_imp;
-    friend inetwork_imp;
+    friend net_conn_mgr_i_imp;
+    friend network_imp;
     friend network_worker;
 
 public:
@@ -128,3 +128,5 @@ protected:
     net_stream_type  recv_stream_;          // 接收流
     net_stream_type  send_stream_;          // 发送流
 };
+
+typedef std::shared_ptr<net_conn> net_conn_ptr;

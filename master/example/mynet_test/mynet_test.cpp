@@ -24,14 +24,13 @@ public:
         net_facade_ = client;
     }
 
-    virtual bool on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess) 
+    virtual bool on_accept(net_conn_ptr pListen, net_conn_ptr pNewConn, bool bSuccess) 
     {
         printf("接受连接，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
 
         if (pListen->get_bind_key() == 0) 
         {
-
-            pListen->set_bind_key(pListen);
+            pListen->set_bind_key(pListen.get());
 
             net_facade_->get_network()->try_write(pNewConn, 
                 http_response_str.c_str(), 
@@ -40,7 +39,7 @@ public:
         return true;
     }
 
-    virtual bool on_disconnect(net_conn* pConn)  
+    virtual bool on_disconnect(net_conn_ptr pConn)  
     {
         printf("连接断开，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
     
@@ -48,18 +47,18 @@ public:
         return true;
     }
 
-    virtual bool on_read(net_conn* pConn, const char* buff, size_t len)
+    virtual bool on_read(net_conn_ptr pConn, const char* buff, size_t len)
     {
         printf("%.*s", len, buff);
 
         return true;
     }
-    virtual bool on_write(net_conn* pConn, size_t len) 
+    virtual bool on_write(net_conn_ptr pConn, size_t len) 
     {
         return true;
     }
 
-    virtual bool on_connect(net_conn* pConn, bool bConnected /* = true */) 
+    virtual bool on_connect(net_conn_ptr pConn, bool bConnected /* = true */) 
     {
         printf("建立连接，当前连接数 ：%d \r\n", net_facade_->get_net_conn_mgr()->get_conn_count());
 
@@ -97,22 +96,22 @@ int _tmain(int argc, _TCHAR* argv[])
     tcp_facade_->init();
     tcp_facade_->add_event_handler(&thehandler);
 
-    net_conn* pConn = NULL;
+    net_conn_ptr pConn = NULL;
+    for (int i=0; i<3; ++i)
+    {
+        pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
+    }
+
+//     tcp_facade_->get_network()->try_listen(800);
+//     tcp_facade_->get_network()->try_listen(900);
 //     for (int i=0; i<100; ++i)
 //     {
-//         pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
+//         tcp_facade_->get_network()->try_connect("127.0.0.1", 900);
 //     }
-
-    tcp_facade_->get_network()->try_listen(800);
-    tcp_facade_->get_network()->try_listen(900);
-    for (int i=0; i<100; ++i)
-    {
-        tcp_facade_->get_network()->try_connect("127.0.0.1", 900);
-    }
 
     while (true)
     {
-        printf("connection num: %d \r\n", tcp_facade_->get_net_conn_mgr()->get_conn_count());
+        printf("connection num: %d \r", tcp_facade_->get_net_conn_mgr()->get_conn_count());
 
         Sleep(2000);
     }

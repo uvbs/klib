@@ -1,9 +1,11 @@
 #include "StdAfx.h"
-#include "inetwork_imp.h"
+#include "network_imp.h"
 #include <process.h>
 
 #include "inet_tcp_handler.h"
 #include "net_conn.h"
+#include "net_conn_mgr_imp.h"
+
 #include <net/addr_resolver.h>
 #include <net/winsockInit.h>
 
@@ -16,23 +18,6 @@ using namespace klib::core;
 
 #define  MAX_BUF_SIZE 1024
 
-#if (_MSC_VER == 1200)
-typedef
-    BOOL
-    (PASCAL FAR * LPFN_CONNECTEX) (
-    SOCKET s,
-    const struct sockaddr FAR *name,
-    int namelen,
-    PVOID lpSendBuffer,
-    DWORD dwSendDataLength,
-    LPDWORD lpdwBytesSent,
-    LPOVERLAPPED lpOverlapped
-    );
-
-#define WSAID_CONNECTEX \
-{0x25a207b9,0xddf3,0x4660,{0x8e,0xe9,0x76,0xe5,0x8c,0x74,0x06,0x3e}}
-
-#endif
 
 klib::net::winsock_init g_winsock_init_;
 
@@ -66,7 +51,7 @@ bool network_worker::on_recv_ctx(worker_context*& ctx)
     auto lpOverlapped = ctx->recv_info.lpOverlapped;
     auto bResult = ctx->recv_info.bResult;
     auto pConn = ctx->pConn;
-    inetwork_imp* pimp = ctx->network_;
+    network_imp* pimp = ctx->network_;
 
     ON_SCOPE_EXIT(
         if (NULL != lpOverlapped) 
@@ -93,7 +78,7 @@ bool network_worker::on_recv_ctx(worker_context*& ctx)
             break;
 
         case OP_ACCEPT:
-            pimp->on_accept(pConn, (net_conn*) lpOverlapped->pend_data_);  // AcceptConn
+            pimp->on_accept(lpOverlapped->listen_conn_, lpOverlapped->op_conn_);  // AcceptConn
             break;
 
         case OP_CONNECT:
@@ -120,24 +105,24 @@ bool network_worker::on_recv_ctx(worker_context*& ctx)
             pConn->dis_connect();
             pimp->net_event_handler_->on_connect(pConn, false);
 
-            pimp->net_conn_pool_.Free(pConn);
+            // pimp->net_conn_pool_.Free(pConn);
         }
         else if (lpOverlapped->operate_type_ == OP_ACCEPT) 
         {
             // 接受连接失败,释放连接
-            net_conn* pListConn = pConn;                                     // 监听套接字
-            net_conn* pAcceptConn = (net_conn*) lpOverlapped->pend_data_;    // 接收的连接
-            pimp->post_accept(pListConn);                                    // 继续投递接受连接请求
-            pimp->net_event_handler_->on_accept(pListConn, pAcceptConn, false);    // 通知上层接受连接失败
+            net_conn_ptr pListConn = pConn;                                     // 监听套接字            
+            net_conn_ptr pAcceptConn = lpOverlapped->op_conn_;                  // 接收的连接
+            pimp->post_accept(pListConn);                                       // 继续投递接受连接请求
+            pimp->net_event_handler_->on_accept(pListConn, pAcceptConn, false); // 通知上层接受连接失败
 
-            pimp->net_conn_pool_.Free(pAcceptConn);                                   // 释放
+            //pimp->net_conn_pool_.Free(pAcceptConn);                           // 释放
         }
         else 
         {
             // 处理其它操作（如需要释放连接）
             pConn->dis_connect();
             pimp->check_and_disconnect(pConn);
-            pimp->net_conn_pool_.Free(pConn);
+            //pimp->net_conn_pool_.Free(pConn);
         }
     } //if (bResult) {
 
@@ -182,24 +167,25 @@ bool network_worker::on_send_ctx(worker_context*& ctx)
 
 //----------------------------------------------------------------------
 //
-inetwork_imp::inetwork_imp(void)
+network_imp::network_imp(void)
 {
-    m_lpfnAcceptEx = NULL;
-    hiocp_ = INVALID_HANDLE_VALUE;
+    m_lpfnAcceptEx  = NULL;
+    m_lpfnConnectEx = NULL;
+    hiocp_          = INVALID_HANDLE_VALUE;
 
     m_bstop = false;
 }
 
-inetwork_imp::~inetwork_imp(void)
+network_imp::~network_imp(void)
 {
 }
 
-bool inetwork_imp::init_network(inet_tcp_handler* handler, 
+bool network_imp::init_network(inet_tcp_handler* handler, 
     size_t thread_num/* = 1*/,
     size_t worker_num/* = 7*/)
 {
     // 创建完成端口
-    hiocp_ = CreateIoCompletionPort(INVALID_HANDLE_VALUE,NULL,(ULONG_PTR)0, 0);
+    hiocp_ = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, (ULONG_PTR)0, 0);
     _ASSERT(hiocp_);
     if (NULL == hiocp_) 
         return false;
@@ -212,14 +198,15 @@ bool inetwork_imp::init_network(inet_tcp_handler* handler,
 
     init_workers(worker_num);
 
+    net_conn_mgr_i_.reset(new net_conn_mgr_i_imp);
+
     return true;
 }
 
-bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
+bool network_imp::try_write(net_conn_ptr pconn, const char* buff, size_t len)
 {
-    if (0 == len) {
+    if (0 == len)
         return true;
-    }
 
     //@todo 转为导步的发送方式(缓冲区最好支持引用计数)
     char* pbuff = new char[len];
@@ -229,36 +216,39 @@ bool inetwork_imp::try_write(net_conn* pconn, const char* buff, size_t len)
 
     memcpy(pbuff, buff, len);
     worker_context* ctx = g_worker_contex_pool_.Alloc();
-    ctx->network_ = this;
-    ctx->pConn = pconn;
+    ctx->network_  = this;
+    ctx->pConn     = pconn;
     ctx->ctx_type_ = context_send_ctx;
 
     ctx->send_info.buff_ptr_ = pbuff;
     ctx->send_info.buff_len_ = len;
-    return get_worker(pconn)->send(ctx);
+    return get_worker(pconn.get())->send(ctx);
 }
 
-net_conn* inetwork_imp::try_listen(USHORT local_port, void* bind_key/* = NULL*/) 
+net_conn_ptr network_imp::try_listen(USHORT local_port, void* bind_key/* = NULL*/) 
 {
-    net_conn* pconn =  this->create_listen_conn(local_port);
+    net_conn_ptr pconn =  this->create_listen_conn(local_port);
     if (NULL == pconn) 
         return NULL;
 
     pconn->set_bind_key(bind_key);
 
     // 投递2个接受请求
+    KLIB_ASSERT(pconn.use_count() == 1);
     this->post_accept(pconn);
-    this->post_accept(pconn);
+    //this->post_accept(pconn);
+
+    listen_conns_.push_back(pconn);
     return pconn;
 }
 
-net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_key) 
+net_conn_ptr network_imp::try_connect(const char* addr, USHORT uport, void* bind_key) 
 {
     if (NULL == addr) {
         return NULL;
     }
 
-    net_conn* pconn = net_conn_pool_.Alloc();
+    net_conn_ptr pconn(new net_conn); //= net_conn_pool_.Alloc();
     if (NULL == pconn) {
         return NULL;
     }
@@ -268,8 +258,8 @@ net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_k
     pconn->set_peer_port(uport);
     if (!this->post_connection(pconn))
     {
-        net_conn_pool_.Free(pconn);
-        return NULL;
+        //net_conn_pool_.Free(pconn);
+        return nullptr;
     }
 
     return pconn;
@@ -277,7 +267,7 @@ net_conn* inetwork_imp::try_connect(const char* addr, USHORT uport, void* bind_k
 
 //----------------------------------------------------------------------
 // 
-net_conn* inetwork_imp::post_accept(net_conn* pListenConn) 
+net_conn_ptr network_imp::post_accept(net_conn_ptr pListenConn) 
 {
     HANDLE hResult;
     DWORD dwBytes = 0;
@@ -286,6 +276,7 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
         return NULL;
     }
 
+    KLIB_ASSERT(pListenConn.use_count() >= 2);
     SOCKET sockAccept = WSASocket(AF_INET,SOCK_STREAM, IPPROTO_TCP, NULL, NULL,WSA_FLAG_OVERLAPPED);
     if (sockAccept == INVALID_SOCKET) {
         net_overlapped_pool_.Free(lpOverlapped);
@@ -314,21 +305,25 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
         }
     }
 
-    net_conn* pNewConn = net_conn_pool_.Alloc();
-    if (NULL == pNewConn) {
+    net_conn_ptr pNewConn(new net_conn) ;//= net_conn_pool_.Alloc();
+    if (nullptr == pNewConn) {
         closesocket(sockAccept);
         net_overlapped_pool_.Free(lpOverlapped);
         return NULL;
     }
 
-    hResult = CreateIoCompletionPort((HANDLE)sockAccept, hiocp_, (ULONG_PTR)pNewConn, 0);
+    hResult = CreateIoCompletionPort((HANDLE)sockAccept, 
+        hiocp_, 
+        (ULONG_PTR) 0, 
+        0);
     if (NULL == hResult) {
         closesocket(sockAccept);
         net_overlapped_pool_.Free(lpOverlapped);
-        net_conn_pool_.Free(pNewConn);
+        //net_conn_pool_.Free(pNewConn);
         _ASSERT(FALSE);
         return NULL;
     }
+    KLIB_ASSERT(pNewConn.use_count() == 1);
 
     // 以可以调用getpeername获取套接字信息
     BOOL bSetUpdate = TRUE;
@@ -338,10 +333,12 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
         (char *)& bSetUpdate,
         sizeof(bSetUpdate) );
 
-    pNewConn->get_socket() = sockAccept;
+    pNewConn->get_socket()      = sockAccept;
     lpOverlapped->operate_type_ = OP_ACCEPT;
-    lpOverlapped->pend_data_ = (void*) pNewConn;  // 这里比较特殊，和其它情况不同
-    lpOverlapped->hEvent = NULL;
+    lpOverlapped->op_conn_      = pNewConn;
+    lpOverlapped->listen_conn_  = pListenConn;
+    lpOverlapped->hEvent        = NULL;
+    KLIB_ASSERT(pNewConn.use_count() == 2);
 
     BOOL brt = m_lpfnAcceptEx(pListenConn->get_socket(),
         sockAccept,
@@ -352,12 +349,11 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
         &(lpOverlapped->transfer_bytes_), 
         (LPOVERLAPPED)lpOverlapped);
 
-
     if(brt == FALSE && WSA_IO_PENDING != WSAGetLastError()) 
     {
         closesocket(sockAccept);
         net_overlapped_pool_.Free(lpOverlapped);
-        net_conn_pool_.Free(pNewConn);
+        //net_conn_pool_.Free(pNewConn);
 
         DWORD dwErrorCode = WSAGetLastError();
         //TRACE(TEXT("fail at lpfnAcceptEx,error code:%d\n"), dwErrorCode);
@@ -365,15 +361,20 @@ net_conn* inetwork_imp::post_accept(net_conn* pListenConn)
     }
     else if (WSA_IO_PENDING == WSAGetLastError()) 
     {
+        KLIB_ASSERT(pNewConn.use_count() >= 2);
+        KLIB_ASSERT(pListenConn.use_count() >= 2);
+
         //成功
         return pNewConn;
     }
 
+    KLIB_ASSERT(pNewConn.use_count() == 2);
+    KLIB_ASSERT(pListenConn.use_count() == 1);
     //成功
     return pNewConn;
 }
 
-bool inetwork_imp::post_connection(net_conn* pConn) 
+bool network_imp::post_connection(net_conn_ptr pConn) 
 {
     _ASSERT(pConn);
 
@@ -406,27 +407,33 @@ bool inetwork_imp::post_connection(net_conn* pConn)
         return false;
     }
 
-    HANDLE hResult = CreateIoCompletionPort((HANDLE)sock,hiocp_, (ULONG_PTR)pConn,0);
+    HANDLE hResult = CreateIoCompletionPort((HANDLE)sock,
+        hiocp_, 
+        (ULONG_PTR) 0, 
+        0);
     if (NULL == hResult) 
     {
         closesocket(sock);
         _ASSERT(FALSE);
         return false;
     }
+    KLIB_ASSERT(pConn.use_count() >= 2);
 
-    LPFN_CONNECTEX m_lpfnConnectEx = NULL;
-    DWORD dwBytes = 0;
-    GUID GuidConnectEx = WSAID_CONNECTEX;
+    DWORD dwBytes                  = 0;
+    GUID GuidConnectEx             = WSAID_CONNECTEX;
 
-    // 重点，获得ConnectEx函数的指针
-    if (SOCKET_ERROR == WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER,
-        &GuidConnectEx, sizeof (GuidConnectEx),
-        &m_lpfnConnectEx, sizeof (m_lpfnConnectEx), &dwBytes, 0, 0))
+    if (nullptr == m_lpfnConnectEx)
     {
-        closesocket(sock);
-        //TRACE( TEXT("WSAIoctl is failed. Error code = %d"));//, WSAGetLastError());
-        _ASSERT(FALSE);
-        return FALSE;
+        // 重点，获得ConnectEx函数的指针
+        if (SOCKET_ERROR == WSAIoctl(sock, SIO_GET_EXTENSION_FUNCTION_POINTER,
+            &GuidConnectEx, sizeof (GuidConnectEx),
+            &m_lpfnConnectEx, sizeof (m_lpfnConnectEx), &dwBytes, 0, 0))
+        {
+            closesocket(sock);
+            //TRACE( TEXT("WSAIoctl is failed. Error code = %d"));//, WSAGetLastError());
+            _ASSERT(FALSE);
+            return FALSE;
+        }
     }
 
     net_overLapped *pmyoverlapped = get_net_overlapped(); // socket和I/O通讯的载体
@@ -436,14 +443,15 @@ bool inetwork_imp::post_connection(net_conn* pConn)
         return false;
     }
     pmyoverlapped->operate_type_ = OP_CONNECT;  // 设置请求类型，得到I/O结果时根据此                                   //                                         //来识别请求类型
-    pmyoverlapped->hEvent = NULL;  // 非事件模型
+    pmyoverlapped->hEvent        = NULL;  // 非事件模型
+    pmyoverlapped->op_conn_      = pConn;
 
     // 设置连接目标地址
     sockaddr_in addrPeer;  
     ZeroMemory(&addrPeer, sizeof(sockaddr_in));
-    addrPeer.sin_family = AF_INET;
+    addrPeer.sin_family      = AF_INET;
     addrPeer.sin_addr.s_addr = uPeerAddr;
-    addrPeer.sin_port = htons( pConn->get_peer_port() );
+    addrPeer.sin_port        = htons( pConn->get_peer_port() );
 
     int nLen = sizeof(addrPeer);
     PVOID lpSendBuffer = NULL;
@@ -478,7 +486,7 @@ bool inetwork_imp::post_connection(net_conn* pConn)
     return true;
 }
 
-bool inetwork_imp::post_read(net_conn* pConn) 
+bool network_imp::post_read(net_conn_ptr pConn) 
 {
     DWORD dwRecvedBytes = 0;
     DWORD dwFlag = 0;
@@ -486,21 +494,22 @@ bool inetwork_imp::post_read(net_conn* pConn)
     net_overLapped* pMyoverlapped = get_net_overlapped();
     if (NULL == pMyoverlapped) 
     {
-        _ASSERT(pMyoverlapped);
+        KLIB_ASSERT(pMyoverlapped);
         return false;
     }
 
-    pMyoverlapped->hEvent = NULL;	// 
+    pMyoverlapped->op_conn_      = pConn;
+    pMyoverlapped->hEvent        = NULL;	// 
     pMyoverlapped->operate_type_ = OP_READ ; // 读操作
-    pMyoverlapped->wsaBuf_.buf = pMyoverlapped->recv_buff_;
-    pMyoverlapped->wsaBuf_.len = sizeof(pMyoverlapped->recv_buff_);
+    pMyoverlapped->wsaBuf_.buf   = pMyoverlapped->recv_buff_;
+    pMyoverlapped->wsaBuf_.len   = sizeof(pMyoverlapped->recv_buff_);
 
     int nResult = WSARecv (pConn->get_socket(),  // 已经和IOCP关联的socket
         &pMyoverlapped->wsaBuf_,			// 接收数据的WSABUF结构
-        1,
-        &transfer_bytes_, // 如立刻完成，则返回接收得到的字节数
-        &dwFlag,
-        (OVERLAPPED*)pMyoverlapped,  //在这里传入OVERLADDED结构
+        1,                              // 缓冲区个数
+        &transfer_bytes_,               // 如立刻完成，则返回接收得到的字节数
+        &dwFlag,                        // 
+        (OVERLAPPED*) pMyoverlapped,    // 在这里传入OVERLADDED结构
         NULL);
     if (SOCKET_ERROR  == nResult) 
     {
@@ -521,7 +530,7 @@ bool inetwork_imp::post_read(net_conn* pConn)
     return true;
 }
 
-bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len) 	///< 投递写请求
+bool network_imp::post_placement_write(net_conn_ptr pconn, char* buff, size_t len) 	///< 投递写请求
 {
     // 下面提交发送请求
     DWORD dwWriteLen = 0;
@@ -531,9 +540,10 @@ bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len)
         return false;
     }
 
+    pmyoverlapped->op_conn_      = pconn;
     pmyoverlapped->operate_type_ = OP_WRITE;  // 设置I/O操作类型
-    pmyoverlapped->wsaBuf_.buf = buff;
-    pmyoverlapped->wsaBuf_.len = len;
+    pmyoverlapped->wsaBuf_.buf   = buff;
+    pmyoverlapped->wsaBuf_.len   = len;
 
     int nResult = WSASend(                  // 开始发送
         pconn->get_socket(),                // 已连接的socket
@@ -572,7 +582,7 @@ bool inetwork_imp::post_placement_write(net_conn* pconn, char* buff, size_t len)
 
 //----------------------------------------------------------------------
 // 
-void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransfered)
+void network_imp::on_read(net_conn_ptr pConn, const char* buff, DWORD dwByteTransfered)
 {
      pConn->dec_post_read_count();
 
@@ -600,7 +610,7 @@ void inetwork_imp::on_read(net_conn* pConn, const char* buff, DWORD dwByteTransf
     pConn->upsate_last_active_tm();
 }
 
-void inetwork_imp::on_write(net_conn* pconn, DWORD dwByteTransfered)
+void network_imp::on_write(net_conn_ptr pconn, DWORD dwByteTransfered)
 {
     // 标记已写了的数据
     pconn->mark_send_stream(dwByteTransfered);
@@ -628,8 +638,19 @@ void inetwork_imp::on_write(net_conn* pconn, DWORD dwByteTransfered)
     }
 }
 
-void inetwork_imp::on_accept(net_conn* listen_conn, net_conn* accept_conn)
+void network_imp::on_accept(net_conn_ptr listen_conn, net_conn_ptr accept_conn)
 {
+    if (net_conn_mgr_i_) 
+    {
+#ifdef _DEBUG
+        if (net_conn_mgr_i_->is_exist_conn(accept_conn)) 
+        {
+            _ASSERT(FALSE && "重复添加连接，这里设计出错!");
+        }
+#endif
+        net_conn_mgr_i_->add_conn(accept_conn);
+    }
+
     // 设置套接字更新上下文（以便可以通过getpeername获取到ip地址）
     setsockopt(accept_conn->get_socket(), 
         SOL_SOCKET, 
@@ -654,10 +675,27 @@ void inetwork_imp::on_accept(net_conn* listen_conn, net_conn* accept_conn)
     this->post_read(accept_conn);
 }
 
-void inetwork_imp::on_connect(net_conn* pConn, bool bsuccess)
+void network_imp::on_connect(net_conn_ptr pConn, bool bsuccess)
 {
+    if (bsuccess)
+    {
+#ifdef _DEBUG
+    if (net_conn_mgr_i_) 
+    {
+        if (net_conn_mgr_i_->is_exist_conn(pConn)) 
+        {
+            _ASSERT(FALSE && "连接添加错误，设计错误");
+        }
+    }
+
+#endif
+
+    net_conn_mgr_i_->add_conn(pConn);
+    }
+
+
     // 连接成功，通知上层处理事件
-    net_event_handler_->on_connect(pConn, true);
+    net_event_handler_->on_connect(pConn, bsuccess);
 
     // 更新上次活跃的时间戳
     pConn->upsate_last_active_tm();
@@ -666,11 +704,11 @@ void inetwork_imp::on_connect(net_conn* pConn, bool bsuccess)
     this->post_read(pConn);
 }
 
-net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
+net_conn_ptr network_imp::create_listen_conn(USHORT uLocalPort)
 {
-    net_conn* pListenConn = net_conn_pool_.Alloc();
-    if (NULL == pListenConn) {
-        return NULL;
+    net_conn_ptr pListenConn(new net_conn) ;//= net_conn_pool_.Alloc();
+    if (nullptr == pListenConn) {
+        return nullptr;
     }
 
     SOCKET& sockListen = pListenConn->get_socket();
@@ -679,8 +717,8 @@ net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
     pListenConn->dis_connect();
     sockListen = ::WSASocket(AF_INET, SOCK_STREAM, IPPROTO_TCP, NULL, NULL, WSA_FLAG_OVERLAPPED);
     if (INVALID_SOCKET == sockListen) {
-        net_conn_pool_.Free(pListenConn);
-        return NULL;
+        //net_conn_pool_.Free(pListenConn);
+        return nullptr;
     }
 
     sockaddr_in local_addr;
@@ -692,85 +730,90 @@ net_conn* inetwork_imp::create_listen_conn(USHORT uLocalPort)
 
     if (SOCKET_ERROR == irt) 
     {
-        net_conn_pool_.Free(pListenConn);
-        return NULL;
+        return nullptr;
     }
 
-    HANDLE hResult = CreateIoCompletionPort((HANDLE)sockListen,hiocp_, (ULONG_PTR)pListenConn, 0);
-    if (NULL == hResult) 
+    HANDLE hResult = CreateIoCompletionPort((HANDLE)sockListen,
+        hiocp_, 
+        (ULONG_PTR) 0, 
+        0);
+    if (nullptr == hResult) 
     {
         _ASSERT(FALSE);
-        net_conn_pool_.Free(pListenConn);
-        return NULL;
+        return nullptr;
     }
 
     return pListenConn;
 }
 
-bool inetwork_imp::init_threads(size_t thread_num)                 ///< 启动网络层-》创建线程
+bool network_imp::init_threads(size_t thread_num)                 ///< 启动网络层-》创建线程
 {
     thread_num_ = thread_num;
 
     work_threads_.resize(thread_num_);
     for (auto itr = work_threads_.begin(); itr != work_threads_.end(); ++ itr)
     {
-        itr->start(std::bind(&inetwork_imp::worker_thread_, this, std::placeholders::_1), 0);
+        itr->start(std::bind(&network_imp::worker_thread_, this, std::placeholders::_1), 0);
     }
     return true;
 }
 
-bool inetwork_imp::init_workers(size_t worker_num)
+bool network_imp::init_workers(size_t worker_num)
 {
     return worker_mgr_.init(worker_num);
 }
 
-network_worker* inetwork_imp::get_worker(void* p)
+network_worker* network_imp::get_worker(void* p)
 {
     return worker_mgr_.choose_worker(p);
 }
 
-void inetwork_imp::worker_thread_(void* param)
+void network_imp::worker_thread_(void* param)
 {
     //使用完成端口模型
-    net_overLapped *lpOverlapped = NULL;
+    net_overLapped *lpOverlapped = nullptr;
     DWORD		    dwByteTransfered = 0;
-    net_conn*       pConn = NULL;
+    void*           bind_key = nullptr;
 
     while (!this->m_bstop)
     {
-        lpOverlapped = NULL;
+        lpOverlapped = nullptr;
 
         // 下面的函数调用就是去I/O出口那里等待，并获得I/O操作结果
         BOOL bResult = GetQueuedCompletionStatus(
             this->hiocp_,                       // 指定从哪个IOCP那里或地数据
             &dwByteTransfered,                  // 或得或是发送了多少字节的数据
-            (PULONG_PTR)&pConn,                 // socket关联到IOCP时指定的一个关联值
+            (PULONG_PTR)&bind_key,              // socket关联到IOCP时指定的一个关联值
             (LPWSAOVERLAPPED*)&lpOverlapped,    // 或得ConnectEx 传进来的结构
             INFINITE);				            // 一直等待，直到有结果
 
-        _ASSERT(lpOverlapped);
-        if (lpOverlapped == NULL)  // 退出
-            return ;
+        KLIB_ASSERT(lpOverlapped);
+        if (nullptr == lpOverlapped)  // 退出
+            return;
+
+        KLIB_ASSERT(nullptr == bind_key);
+        KLIB_ASSERT(lpOverlapped->op_conn_.get());
 
         worker_context* ctx = g_worker_contex_pool_.Alloc();
-        if (NULL == ctx) {
+        if (nullptr == ctx || nullptr == lpOverlapped->op_conn_.get()) 
+        {
             return;
         }
 
         ctx->network_                     = this;
-        ctx->pConn                        = pConn;
+        ctx->pConn                        = lpOverlapped->op_conn_;
         ctx->ctx_type_                    = context_recv_ctx;
 
         ctx->recv_info.bResult            = bResult;
         ctx->recv_info.dwByteTransfered   = dwByteTransfered;
         ctx->recv_info.lpOverlapped       = lpOverlapped;
-        get_worker(pConn)->send(ctx);        
+        get_worker(ctx->pConn.get())->send(ctx);        
     }
 
     return;
 }
 
-net_overLapped* inetwork_imp::get_net_overlapped()
+net_overLapped* network_imp::get_net_overlapped()
 {
     net_overLapped* ptmp = net_overlapped_pool_.Alloc();
     if (ptmp) 
@@ -781,7 +824,7 @@ net_overLapped* inetwork_imp::get_net_overlapped()
     return ptmp;
 }
 
-void inetwork_imp::check_and_disconnect(net_conn* pConn)
+void network_imp::check_and_disconnect(net_conn_ptr pConn)
 {
     if (!pConn->get_is_closing() && 
         pConn->get_post_read_count() == 0 && 
@@ -789,6 +832,23 @@ void inetwork_imp::check_and_disconnect(net_conn* pConn)
     {
         pConn->set_is_closing(TRUE);
 
+
+#ifdef _DEBUG
+        if (net_conn_mgr_i_) 
+        {
+            if (!net_conn_mgr_i_->is_exist_conn(pConn)) 
+            {
+                // 这里可能是由于刚才连接上还没有添加到mgr里面，进行投递读请求就会出错;
+                _ASSERT(FALSE && "连接关闭错误，设计错误");
+                return ;
+            }
+        }
+#endif
+
         net_event_handler_->on_disconnect(pConn);
+
+        // 删除连接
+        if (net_conn_mgr_i_) 
+            net_conn_mgr_i_->del_conn(pConn);
     }
 }

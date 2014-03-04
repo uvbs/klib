@@ -1,10 +1,10 @@
 #pragma once
 
 #include "tcp_net_facade.h"
-#include "INetwork.h"
+#include "network_i.h"
 #include "inet_tcp_handler.h"
 #include "net_conn.h"
-#include "inet_conn_mgr.h"
+#include "net_conn_mgr_i.h"
 #include "icombiner.h"
 
 // 定义接口

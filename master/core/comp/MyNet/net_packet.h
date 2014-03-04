@@ -1,6 +1,6 @@
 #pragma once
 
-class net_conn;
+#include "net_conn.h"
 class tcp_net_facade_imp;
 
 // 保存网络数据包的
@@ -11,7 +11,6 @@ class net_packet_t
 public:
     net_packet_t(void)
     {
-        conn_		      = NULL;
         buff_size_        = 0;
         buff_ptr_         = NULL;
     }
@@ -44,7 +43,7 @@ public:
     }
 
 protected:
-    net_conn*   conn_;	                            // 属于哪个连接
+    std::weak_ptr<net_conn>   conn_;	                            // 属于哪个连接
 
     size_t      buff_size_;                         // 缓存区中保存数据的大小
     char*       buff_ptr_;                          // 缓冲区

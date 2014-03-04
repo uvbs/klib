@@ -43,31 +43,31 @@ bool proxy_server_t::start()
     return true;
 }
 
-bool proxy_server_t::on_connect(net_conn* pConn, bool bConnected /*= true*/) 
+bool proxy_server_t::on_connect(net_conn_ptr pConn, bool bConnected /*= true*/) 
 {
     http_proxy_->on_connect(pConn, bConnected);
     return true;
 }
 
-bool proxy_server_t::on_disconnect(net_conn* pConn) 
+bool proxy_server_t::on_disconnect(net_conn_ptr pConn) 
 {
     http_proxy_->on_disconnect(pConn);
     return true;
 }
 
-bool proxy_server_t::on_read(net_conn* pConn, const char* buff, size_t len) 
+bool proxy_server_t::on_read(net_conn_ptr pConn, const char* buff, size_t len) 
 {
     http_proxy_->on_read(pConn, buff, len);
     return true;
 }
 
-bool proxy_server_t::on_write(net_conn* pConn, size_t len) 
+bool proxy_server_t::on_write(net_conn_ptr pConn, size_t len) 
 {
 
     return true;
 }
 
-bool proxy_server_t::on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess /* = true*/) 
+bool proxy_server_t::on_accept(net_conn_ptr pListen, net_conn_ptr pNewConn, bool bSuccess /* = true*/) 
 {
     http_proxy_->on_accept(pListen, pNewConn, bSuccess);
     return true;

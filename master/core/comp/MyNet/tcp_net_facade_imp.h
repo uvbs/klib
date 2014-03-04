@@ -1,6 +1,7 @@
 #pragma once
 
 #include "tcp_net_facade.h"
+#include "network_i.h"
 #include <vector>
 
 #include <pattern/object_pool.h>
@@ -22,7 +23,7 @@ public:
     //////////////////////////////////////////////////////////////////////////
     // 获取其它接口
     virtual network_i*       get_network() { return inetwork_; }					//返回网络层接口
-    virtual inet_conn_mgr*  get_net_conn_mgr() { return net_conn_mgr_; }	        //返回连接管理接口
+    virtual net_conn_mgr_i*  get_net_conn_mgr() { return inetwork_->get_net_conn_mgr(); }	        //返回连接管理接口
 
     //////////////////////////////////////////////////////////////////////////
     // 事件处理接口
@@ -32,18 +33,17 @@ public:
 protected:
     //----------------------------------------------------------------------
     // 网络消息处理器
-    virtual bool on_connect(net_conn* pConn, bool bConnected = true) ;
-    virtual bool on_disconnect(net_conn* pConn) ;
-    virtual bool on_read(net_conn* pConn, const char* buff, size_t len);
-    virtual bool on_write(net_conn* pConn, size_t len) ;
-    virtual bool on_accept(net_conn* pListen, net_conn* pNewConn, bool bSuccess = true) ;
+    virtual bool on_connect(net_conn_ptr pConn, bool bConnected = true) ;
+    virtual bool on_disconnect(net_conn_ptr pConn) ;
+    virtual bool on_read(net_conn_ptr pConn, const char* buff, size_t len);
+    virtual bool on_write(net_conn_ptr pConn, size_t len) ;
+    virtual bool on_accept(net_conn_ptr pListen, net_conn_ptr pNewConn, bool bSuccess = true) ;
 
 protected:
     bool                        init_success_;                      //表示是否初始化成功
     icombiner*                  icombiner_;                         //包完整性判断,基于应用层的协议
     dispatcher_handler*         dispatch_handler_;                  //派遣接口
-    network_i*                   inetwork_;                          //网络接口
-    inet_conn_mgr*              net_conn_mgr_;                      //网络连接管理器
+    network_i*                   inetwork_;                         //网络接口
 
     mutex                       mutex_;                             //同步结构
 

@@ -57,6 +57,8 @@ protected:
 typedef auto_cs   mutex;
 typedef auto_lock guard;
 
+// scope lock
+template<typename T, typename F> void lock( T& t, F f ) { guard hold(t); f(); }
 
 #endif
 

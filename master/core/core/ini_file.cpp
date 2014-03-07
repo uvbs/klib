@@ -13,19 +13,19 @@ ini_file::~ini_file(void)
 {
 }
 
-void ini_file::set_file(const TCHAR* file)
+void ini_file::set_file(const const TCHAR* file)
 {
 	_tcsncpy(m_iniFile, file, _countof(m_iniFile));
 }
 
-tstring ini_file::get_string(TCHAR* AppName, TCHAR* KeyName, TCHAR*  default_val)
+tstring ini_file::get_string(const TCHAR* AppName, const TCHAR* KeyName, const TCHAR*  default_val)
 {
 	TCHAR buf[MAX_PATH];
 	::GetPrivateProfileString(AppName, KeyName, default_val, buf, sizeof(buf), m_iniFile);
 	return tstring(buf);
 }
 
-double ini_file::get_double(TCHAR* AppName,TCHAR* KeyName,double default_val)
+double ini_file::get_double(const TCHAR* AppName,const TCHAR* KeyName,double default_val)
 {
 	TCHAR buf[MAX_PATH] = {0};
 	TCHAR default_val_buff[200] = {0};
@@ -34,12 +34,12 @@ double ini_file::get_double(TCHAR* AppName,TCHAR* KeyName,double default_val)
 	return _ttof(buf);
 }
 
-int ini_file::get_int(TCHAR* AppName,TCHAR* KeyName,int default_val)
+int ini_file::get_int(const TCHAR* AppName,const TCHAR* KeyName,int default_val)
 {
 	return ::GetPrivateProfileInt(AppName, KeyName, default_val, m_iniFile);
 }
 
-unsigned long ini_file::get_dword(TCHAR* AppName,TCHAR* KeyName,unsigned long default_val)
+unsigned long ini_file::get_dword(const TCHAR* AppName,const TCHAR* KeyName,unsigned long default_val)
 {
 	TCHAR buf[MAX_PATH];
 	TCHAR default_val_buf[200] = {0};
@@ -48,7 +48,7 @@ unsigned long ini_file::get_dword(TCHAR* AppName,TCHAR* KeyName,unsigned long de
 	return _ttol(buf);
 }
 
-UINT64  ini_file::get_uint64(TCHAR* AppName, TCHAR* KeyName, UINT64 uDefault /*= 0*/)
+UINT64  ini_file::get_uint64(const TCHAR* AppName, const TCHAR* KeyName, UINT64 uDefault /*= 0*/)
 {
     TCHAR buf[MAX_PATH];
     TCHAR default_val_buf[200] = {0};
@@ -57,7 +57,7 @@ UINT64  ini_file::get_uint64(TCHAR* AppName, TCHAR* KeyName, UINT64 uDefault /*=
     return _ttoi64(buf);
 }
 
-BOOL  ini_file::get_bool(TCHAR* AppName, TCHAR* KeyName, BOOL default_val/* = false*/)
+BOOL  ini_file::get_bool(const TCHAR* AppName, const TCHAR* KeyName, BOOL default_val/* = false*/)
 {
 	tstring strVal = get_string(AppName, KeyName, default_val ? _T("true") : _T("false"));
 	if (_ttol(strVal.c_str()) == 1) 
@@ -73,26 +73,26 @@ BOOL  ini_file::get_bool(TCHAR* AppName, TCHAR* KeyName, BOOL default_val/* = fa
 	return false;
 }
 
-BOOL ini_file::set_string(TCHAR* AppName,TCHAR* KeyName,TCHAR* val)
+BOOL ini_file::set_string(const TCHAR* AppName,const TCHAR* KeyName,const TCHAR* val)
 {
 	return ::WritePrivateProfileString(AppName, KeyName, val, m_iniFile);
 }
 
-BOOL ini_file::set_int(TCHAR* AppName,TCHAR* KeyName,int val)
+BOOL ini_file::set_int(const TCHAR* AppName,const TCHAR* KeyName,int val)
 {
 	TCHAR buff[MAX_PATH] = {0};
 	_ltot(val, buff, 10);
 	return ::WritePrivateProfileString(AppName, KeyName, buff, m_iniFile);
 }
 
-BOOL ini_file::set_double(TCHAR* AppName,TCHAR* KeyName,double val)
+BOOL ini_file::set_double(const TCHAR* AppName,const TCHAR* KeyName,double val)
 {
 	TCHAR buff[MAX_PATH] = {0};
 	_stprintf(buff, _T("%f"), val);
 	return ::WritePrivateProfileString(AppName, KeyName, buff, m_iniFile);
 }
 
-BOOL ini_file::set_dword(TCHAR* AppName,TCHAR* KeyName, unsigned long val)
+BOOL ini_file::set_dword(const TCHAR* AppName,const TCHAR* KeyName, unsigned long val)
 {
 	TCHAR buff[MAX_PATH] = {0};
 	_stprintf(buff, _T("%d"), val);
@@ -100,13 +100,13 @@ BOOL ini_file::set_dword(TCHAR* AppName,TCHAR* KeyName, unsigned long val)
 	return ::WritePrivateProfileString(AppName, KeyName, buff, m_iniFile);
 }
 
-BOOL ini_file::set_bool(TCHAR* AppName, TCHAR* KeyName, BOOL val)
+BOOL ini_file::set_bool(const TCHAR* AppName, const TCHAR* KeyName, BOOL val)
 {
 	DWORD dwVal = val ? 1 : 0;
 	return set_dword(AppName, KeyName, dwVal);
 }
 
-UINT64 ini_file::set_uint64(TCHAR* AppName, TCHAR* KeyName, UINT64 uVal)
+UINT64 ini_file::set_uint64(const TCHAR* AppName, const TCHAR* KeyName, UINT64 uVal)
 {
     TCHAR buff[MAX_PATH] = {0};
     _i64tot(uVal, buff, 10);

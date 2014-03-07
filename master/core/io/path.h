@@ -30,6 +30,7 @@ public:
     static tstring del_file_ext(const tstring& szFile);
 
     static tstring get_system_path();
+    static tstring get_specify_path(int folderid);
     static tstring get_temp_path(const LPCTSTR  lpszPrefixString = _T("klib_"));    ///< 获取临时文件夹名字
 
     static BOOL get_app_path(tstring& strAppPath);      ///< 获取应用程序文件夹路径

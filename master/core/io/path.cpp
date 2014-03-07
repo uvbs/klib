@@ -1,10 +1,11 @@
 #include "path.h"
-
+#include <core/klib_core.h>
 
 
 #ifdef _MSC_VER
 #include <windows.h>
 #include <tchar.h>
+#include <Shlobj.h>
 #endif
 
 #include <vector>
@@ -161,6 +162,15 @@ tstring path::get_system_path()
     GetWindowsDirectory(szChar, _countof(szChar));
     tstring str = szChar;
     return add_slash(str);
+}
+
+tstring path::get_specify_path(int folderid)
+{ 
+    TCHAR szbuf[MAX_PATH * 2] = {0};
+    HRESULT ret = SHGetFolderPath(NULL, folderid, NULL, 0, szbuf);
+    KLIB_ASSERT(SUCCEEDED(ret));
+
+    return tstring(szbuf);
 }
 
 tstring path::get_temp_path(const LPCTSTR  lpszPrefixString/* = _TEXT("klib_")*/)

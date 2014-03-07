@@ -97,7 +97,7 @@ int _tmain(int argc, _TCHAR* argv[])
     tcp_facade_->add_event_handler(&thehandler);
 
     net_conn_ptr pConn = NULL;
-    for (int i=0; i<3; ++i)
+    for (int i=0; i<100; ++i)
     {
         pConn = tcp_facade_->get_network()->try_connect("www.baidu.com", 80);
     }

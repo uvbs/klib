@@ -236,9 +236,8 @@ net_conn_ptr network_imp::try_listen(USHORT local_port, void* bind_key/* = NULL*
     // 投递2个接受请求
     KLIB_ASSERT(pconn.use_count() == 1);
     this->post_accept(pconn);
-    //this->post_accept(pconn);
+    this->post_accept(pconn);
 
-    listen_conns_.push_back(pconn);
     return pconn;
 }
 

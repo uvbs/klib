@@ -4,6 +4,7 @@
 
 
 #include <cstdio>
+#include <string>
 #include "tcp_socket.h"
 
 
@@ -35,7 +36,7 @@ public:
 	BOOL download(const char* pszHttpUrl, const char* pszSaveFile);
 
     ///< 直接获取url路径的内容
-	BOOL get_url_content(const char* pszHttpUrl, char* pszBuff, int iBuffLen);
+	BOOL get_url_content(const char* pszHttpUrl, std::string& str_content);
     	
 protected:
 	tcp_socket m_socket;                        ///< TCP套接字对象

@@ -177,6 +177,5 @@ private:
 
     CObjectPool<net_overLapped, 2000, 2000>     net_overlapped_pool_;       // overlapped 
     
-    std::list<net_conn_ptr>  listen_conns_;
     std::shared_ptr<net_conn_mgr_i> net_conn_mgr_i_;
 };

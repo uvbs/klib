@@ -1,0 +1,2 @@
+1、检测是否是一个完整的包的时候考虑零拷贝到上层
+   参考：http://www.cnblogs.com/zhiranok/archive/2012/07/28/chaos_buffer.html

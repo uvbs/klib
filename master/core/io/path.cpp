@@ -1,5 +1,5 @@
 #include "path.h"
-#include <core/klib_core.h>
+#include "../core/klib_core.h"
 
 
 #ifdef _MSC_VER
@@ -9,6 +9,8 @@
 #endif
 
 #include <vector>
+
+#pragma warning(disable: 4996)
 
 
 namespace klib{

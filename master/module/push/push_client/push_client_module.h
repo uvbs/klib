@@ -9,7 +9,7 @@ public:
 
 public:
     BEGIN_INTERFACE_ENTRY
-        //INTERFACE_ENTRY()
+        INTERFACE_ENTRY(IID_PUSH_FRAMEWORK, push_client_i)
     END_INTERFACE_ENTRY
 
 protected:

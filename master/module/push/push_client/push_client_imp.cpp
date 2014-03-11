@@ -12,12 +12,12 @@
 
 //----------------------------------------------------------------------
 // 状态相关
-void query_logic_state::Enter(IState* s)
+void query_logic_state::Enter(state_i* s)
 {
     query_addr_watch_.reset();
 }
 
-void query_logic_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void query_logic_state::on_event(FsmEvent* e, UINT& uNewStateID)
 {
     push_client_imp* pclient = push_client_imp::instance();
 
@@ -44,13 +44,13 @@ void query_logic_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
     }
 }
 
-void query_newver_state::Enter(IState* s)
+void query_newver_state::Enter(state_i* s)
 {
     // 需要重置定时监视器
     newver_watch_.reset();
 }
 
-void query_newver_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void query_newver_state::on_event(FsmEvent* e, UINT& uNewStateID)
 {
     push_client_imp* pclient = push_client_imp::instance();
 
@@ -81,7 +81,7 @@ void query_newver_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
     }
 }
 
-void online_state::Enter(IState* s)
+void online_state::Enter(state_i* s)
 {
     UINT64 uTimeNow = _time64(NULL);
 
@@ -91,7 +91,7 @@ void online_state::Enter(IState* s)
     m_bOnlined = FALSE;
 }
 
-void online_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void online_state::on_event(FsmEvent* e, UINT& uNewStateID)
 {
     push_client_imp* pclient = push_client_imp::instance();
 
@@ -153,7 +153,7 @@ void push_client_imp::stop()
 
 push_client_status push_client_imp::get_status()
 {
-    return status_connecting;
+    return (push_client_status) push_fsm_.get_cur_statei_d();
 }
 
 void push_client_imp::on_msg(udp_client* client_, UINT32 uAddr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
@@ -182,6 +182,7 @@ void push_client_imp::send_query_logic_addr()
         ar.get_data_len());
 
     if (!bSendResult) {
+        //@todo 
         //client_.send_to(BALANCE_SERVER_IP, BALANCE_SERVER_UDP_PORT, ar.GetBuff(), ar.GetDataLength());
     }
 }
@@ -260,7 +261,7 @@ void push_client_imp::send_msg_ack(UINT64 uMsgID)
 bool push_client_imp::timer_check_status() 
 {
     timer_event ev(3000);
-    push_fsm_.OnEvent(&ev);
+    push_fsm_.on_event(&ev);
 
     return TRUE;
 }

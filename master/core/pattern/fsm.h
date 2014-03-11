@@ -40,46 +40,46 @@ protected:
 };
 
 ///< 状态接口
-class IState
+class state_i
 {
 public:
-    virtual UINT GetStateID() = 0;                      ///< 返回状态的ID编号
-    virtual void SetStateID(UINT uStateID) = 0;         ///< 设置状态的ID编号
+    virtual UINT get_state_id() = 0;                      ///< 返回状态的ID编号
+    virtual void set_state_id(UINT uStateID) = 0;         ///< 设置状态的ID编号
 
-    virtual char*  GetStateName() = 0;                  ///< 获取状态名称
-    virtual void   SetStateName(char* pszStateName) = 0;   ///< 设置状态名称
+    virtual char*  get_state_name() = 0;                  ///< 获取状态名称
+    virtual void   set_state_name(char* pszStateName) = 0;   ///< 设置状态名称
 
-    virtual void SetParentID(UINT uParentID) = 0;       ///< 设置父状态
-    virtual UINT GetParentID() = 0;                     ///< 设置父状态
+    virtual void set_parent_id(UINT uParentID) = 0;       ///< 设置父状态
+    virtual UINT get_parent_id() = 0;                     ///< 设置父状态
 
-    virtual void Enter(IState* s) = 0;                  ///< 进入状态
-    virtual void Leave() = 0;                           ///< 离开状态
-    virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) = 0;                 ///< 处理事件
+    virtual void enter(state_i* s) = 0;                  ///< 进入状态
+    virtual void leave() = 0;                           ///< 离开状态
+    virtual void on_event(FsmEvent* e, UINT& uNewStateID) = 0;                 ///< 处理事件
 };
 
 ///< 状态基础类
-class CState : public IState
+class CState : public state_i
 {
 public:
     CState() : m_uParentID(0), m_uStateID(0) { m_szStateName[0] = 0; }
     CState(UINT uStateID) : m_uParentID(0), m_uStateID(uStateID) { m_szStateName[0] = 0; }
     virtual ~CState() {}
 
-    virtual UINT GetStateID() {return m_uStateID;}
-    virtual void SetStateID(UINT uStateID) { m_uStateID = uStateID; }
+    virtual UINT get_state_id() {return m_uStateID;}
+    virtual void set_state_id(UINT uStateID) { m_uStateID = uStateID; }
 
-    virtual char*  GetStateName() { return m_szStateName; }
-    virtual void   SetStateName(char* pszStateName) 
+    virtual char*  get_state_name() { return m_szStateName; }
+    virtual void   set_state_name(char* pszStateName) 
     { 
         strncpy_s(m_szStateName, _countof(m_szStateName) -1, pszStateName, strlen(pszStateName)); 
     }
 
-    virtual void SetParentID(UINT uParentID) { m_uParentID = uParentID; }
-    virtual UINT GetParentID() { return m_uStateID; }
+    virtual void set_parent_id(UINT uParentID) { m_uParentID = uParentID; }
+    virtual UINT get_parent_id() { return m_uStateID; }
 
-    virtual void Enter(IState* s) {}
-    virtual void Leave() {}
-    virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
+    virtual void enter(state_i* s) {}
+    virtual void leave() {}
+    virtual void on_event(FsmEvent* e, UINT& uNewStateID) {}
 
 private:
     UINT        m_uParentID;                ///< 父状态ID
@@ -91,7 +91,7 @@ private:
 class CFsm
 {
 public:
-    CFsm() : m_pCurState(NULL), m_pExitState(NULL)  {}
+    CFsm() : cur_state_(NULL), exit_state_(NULL)  {}
     ~CFsm() 
     {
         auto itr = m_StateMap.begin();
@@ -104,31 +104,31 @@ public:
 
 public:
     ///< 获得当前的状态ID
-    UINT GetCurStateID() 
+    UINT get_cur_statei_d() 
     {
-        if (m_pCurState) 
+        if (cur_state_) 
         {
-            return m_pCurState->GetStateID();
+            return cur_state_->get_state_id();
         }
 
         return ~0;
     }
 
     ///< 设置和获取初始状态
-    void SetInitState(IState* s)  { m_pCurState = s; }
-    IState* GetInitState() { return m_pCurState; }
+    void set_init_state(state_i* s)  { cur_state_ = s; }
+    state_i* get_init_state() { return cur_state_; }
 
     ///< 设置和获取退出状态
-    void SetExitState(IState* s) { m_pExitState = s; }
-    IState* GetExitState(IState* s) { return m_pExitState; }
+    void set_exit_state(state_i* s) { exit_state_ = s; }
+    state_i* get_exit_state(state_i* s) { return exit_state_; }
 
     ///< 添加状态
-    void AddState(IState* s) { m_StateMap.insert(std::make_pair(s->GetStateID(), s)); }
+    void add_state(state_i* s) { m_StateMap.insert(std::make_pair(s->get_state_id(), s)); }
 
     ///< 删除相应的状态
-    void DelState(UINT uStateID) 
+    void del_state(UINT uStateID) 
     {
-        IState* s = GetState(uStateID);
+        state_i* s = get_state(uStateID);
         if (s) 
         {
             m_StateMap.erase(uStateID);
@@ -137,7 +137,7 @@ public:
     }
 
     ///< 根据状态ID获取状态
-    IState* GetState(UINT uStateID) 
+    state_i* get_state(UINT uStateID) 
     {
         auto itr = m_StateMap.find(uStateID);
         if (itr != m_StateMap.end()) 
@@ -149,63 +149,63 @@ public:
     }
 
     ///< 开始状态机
-    void Start()
+    void start()
     {
-        if (m_pCurState) 
+        if (cur_state_) 
         {
-            m_pCurState->Enter(m_pCurState);
+            cur_state_->enter(cur_state_);
         }
     }
 
     ///< 停止状态机
-    void Stop()
+    void stop()
     {
-        if (m_pCurState && m_pCurState == m_pExitState) 
+        if (cur_state_ && cur_state_ == exit_state_) 
         {
-            m_pCurState->Leave();
+            cur_state_->leave();
         }
     }
 
     ///< 改变状态
     void ChangeState(UINT uStateID)
     {
-        if (m_pCurState) 
+        if (cur_state_) 
         {
-            if (uStateID != m_pCurState->GetStateID()) 
+            if (uStateID != cur_state_->get_state_id()) 
             {
-                IState* pOldState = m_pCurState;
+                state_i* pOldState = cur_state_;
 
-                m_pCurState->Leave();
-                m_pCurState = GetState(uStateID);
-                m_pCurState->Enter(pOldState);
+                cur_state_->leave();
+                cur_state_ = get_state(uStateID);
+                cur_state_->enter(pOldState);
             }
         }
     }
 
 public:
-    void OnEvent(FsmEvent* e)
+    void on_event(FsmEvent* e)
     {
-        if (m_pCurState) 
+        if (cur_state_) 
         {
-            UINT uNewStateID = m_pCurState->GetStateID();
-            m_pCurState->OnEvent(e, uNewStateID);
+            UINT uNewStateID = cur_state_->get_state_id();
+            cur_state_->on_event(e, uNewStateID);
 
-            if (uNewStateID != m_pCurState->GetStateID()) 
+            if (uNewStateID != cur_state_->get_state_id()) 
             {
-                IState* pOldState = m_pCurState;
+                state_i* pOldState = cur_state_;
 
-                m_pCurState->Leave();
-                m_pCurState = GetState(uNewStateID);
-                m_pCurState->Enter(pOldState);
+                cur_state_->leave();
+                cur_state_ = get_state(uNewStateID);
+                cur_state_->enter(pOldState);
             }
         }
     }
 
 protected:
-    std::map<UINT, IState*> m_StateMap;   ///< 状态表
+    std::map<UINT, state_i*> m_StateMap;   ///< 状态表
 
-    IState* m_pCurState;                  ///< 当前状态指针
-    IState* m_pExitState;
+    state_i* cur_state_;                  ///< 当前状态指针
+    state_i* exit_state_;
 };
 
 
@@ -222,33 +222,33 @@ class State_Name : public CState                                \
     enum {STATE_ID = State_ID};                                 \
     public: State_Name() : CState(State_Name::STATE_ID)         \
     {                                                           \
-        this->SetStateName(#State_Name);                        \
+        this->set_state_name(#State_Name);                        \
     }
 
-///< 开始定义OnEvent
+///< 开始定义on_event
 #define  BEGIN_ON_EVENT()                                       \
-public: void OnEvent(Event* e, UINT& uNewStateID)               \
+public: void on_event(Event* e, UINT& uNewStateID)               \
 {
 
-///< 结束定义OnEvent
+///< 结束定义on_event
 #define  END_ON_EVENT                                           \
 }
 
-///< 开始定义Leave
+///< 开始定义leave
 #define  BEGIN_LEAVE()                                          \
-public: void Leave()                                            \
+public: void leave()                                            \
 {
 
-///< 结束定义Leave
+///< 结束定义leave
 #define  END_LEAVE                                              \
 }
 
-///< 开始定义Enter
+///< 开始定义enter
 #define  BEGIN_ENTER()                                          \
-public: void Enter(IState* s)                                   \
+public: void enter(state_i* s)                                   \
 {
 
-///< 结束定义Enter
+///< 结束定义enter
 #define  END_ENTER                                              \
 }
 
@@ -266,25 +266,25 @@ public:                                                         \
 #define  BEGIN_REGISTER_STATE()                                 \
 void RegisterAllState()                                         \
 {                                                               \
-    IState* s = NULL;
+    state_i* s = NULL;
 
 ///< 注册状态
 #define  REGISTER_STATE(State_Name)                             \
-    this->AddState(new State_Name);                             \
+    this->add_state(new State_Name);                             \
 
 ///< 注册初始状态
 #define REGISTER_INIT_STATE(State_Name)                         \
     s = new State_Name;                                         \
     if (s) {                                                    \
-        this->AddState(s);                                      \
-        this->SetInitState(s);                                  \
+        this->add_state(s);                                      \
+        this->set_init_state(s);                                  \
     }
 
 ///< 注册结束状态
 #define REGISTER_EXIT_STATE(State_Name)                         \
     s = new State_Name;                                         \
-    this->AddState(s);                                          \
-    this->SetExitState(s);
+    this->add_state(s);                                          \
+    this->set_exit_state(s);
 
 ///< 结束注册状态
 #define  END_REGISTER_STATE                                     \
@@ -306,17 +306,17 @@ OnlineState
 
 BEGIN_STATE_DECLARE(CQueryLogicState, LogicState)
 
-virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
+virtual void on_event(FsmEvent* e, UINT& uNewStateID) {}
 END
 
 BEGIN_STATE_DECLARE(CQueryNewVerState, NewVerState)
 
-virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
+virtual void on_event(FsmEvent* e, UINT& uNewStateID) {}
 END
 
 BEGIN_STATE_DECLARE(COnlineState, OnlineState)
 
-virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) {}
+virtual void on_event(FsmEvent* e, UINT& uNewStateID) {}
 END
 
 
@@ -330,7 +330,7 @@ BEGIN_FSM(ClientAppFsm)
 END
 
 ClientAppFsm    m_fsm;
-m_fsm.Start();
+m_fsm.start();
 
 */
 

@@ -44,8 +44,8 @@ public:
         query_addr_watch_(DEFAULT_WATCH_TIMEOUT) {}
 
 public:
-    virtual void Enter(IState* s);
-    virtual void OnEvent(FsmEvent* e, UINT& uNewStateID);
+    virtual void Enter(state_i* s);
+    virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 
 protected:
     stop_watch query_addr_watch_;      ///< 在线处理
@@ -62,8 +62,8 @@ public:
     {}
 
 public: 
-    virtual void Enter(IState* s);
-    virtual void OnEvent(FsmEvent* e, UINT& uNewStateID);
+    virtual void Enter(state_i* s);
+    virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 
 protected:
     //BOOL  m_bDownloading;
@@ -84,10 +84,10 @@ public:
 
 public:
     ///< 需要初始化变量
-    virtual void Enter(IState* s);
+    virtual void Enter(state_i* s);
 
     ///< 处理定时器事件，及消息事件
-    virtual void OnEvent(FsmEvent* e, UINT& uNewStateID);
+    virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 
 protected:
     BOOL m_bOnlined;                   ///< 指示是否在线成功

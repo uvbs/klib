@@ -14,3 +14,8 @@
 
 
 // TODO: 在此处引用程序需要的其他头文件
+#include "../../../core/aom/iframework.h"
+#include "../../../core/aom/iframework_imp.h"
+
+using namespace klib::core;
+using namespace klib::aom;

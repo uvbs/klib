@@ -65,14 +65,14 @@ std::string code_convert::unicode_2_gbk(const std::wstring& wstrcode)
     return std::string(&resultstring[0]);  
 }  
 
-std::string code_convert::utf8_2_gbk(std::string& strUtf8Code)  
+std::string code_convert::utf8_2_gbk(const std::string& strUtf8Code)  
 {  
     std::string strRet;
     std::wstring wstr = utf8_2_unicode(strUtf8Code);
     return unicode_2_gbk(wstr);
 }
 
-std::wstring code_convert::gbk_2_unicode(std::string& strascii)  
+std::wstring code_convert::gbk_2_unicode(const std::string& strascii)  
 {  
     int widesize = MultiByteToWideChar (CP_ACP, 0, (char*)strascii.c_str(), -1, NULL, 0);  
     if (0 == widesize)  
@@ -115,7 +115,7 @@ std::string code_convert::unicode_2_utf8(const std::wstring& widestring)
     return std::string(&resultstring[0]);  
 }
 
-std::string code_convert::gbk_2_utf8(std::string& strAsciiCode)  
+std::string code_convert::gbk_2_utf8(const std::string& strAsciiCode)  
 {
     std::string strRet;
     std::wstring wstr = gbk_2_unicode(strAsciiCode);

@@ -7,7 +7,7 @@
 #include "net_conn_mgr_imp.h"
 
 #include <net/addr_resolver.h>
-#include <net/winsockInit.h>
+#include <net/winsock_init.h>
 
 #include <core/scope_guard.h>
 

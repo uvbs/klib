@@ -195,9 +195,6 @@
     <ClInclude Include="..\core\net\wininet_httpclient.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\net\winsockInit.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\kthread\auto_lock.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -346,6 +343,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\pattern\actor.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\winsock_init.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>

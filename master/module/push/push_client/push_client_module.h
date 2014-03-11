@@ -18,6 +18,6 @@ public:
 
 
 protected:
-
+    udp_client client_;
 };
 

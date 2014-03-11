@@ -171,7 +171,7 @@
     <ClInclude Include="..\core\net\udp_client.h" />
     <ClInclude Include="..\core\net\udp_socket.h" />
     <ClInclude Include="..\core\net\wininet_httpclient.h" />
-    <ClInclude Include="..\core\net\winsockInit.h" />
+    <ClInclude Include="..\core\net\winsock_init.h" />
     <ClInclude Include="..\core\pattern\actor.h" />
     <ClInclude Include="..\core\pattern\aspec.h" />
     <ClInclude Include="..\core\pattern\factory.h" />

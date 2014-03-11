@@ -44,7 +44,7 @@ public:
         query_addr_watch_(DEFAULT_WATCH_TIMEOUT) {}
 
 public:
-    virtual void Enter(state_i* s);
+    virtual void enter(state_i* s);
     virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 
 protected:
@@ -62,7 +62,7 @@ public:
     {}
 
 public: 
-    virtual void Enter(state_i* s);
+    virtual void enter(state_i* s);
     virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 
 protected:
@@ -84,7 +84,7 @@ public:
 
 public:
     ///< 需要初始化变量
-    virtual void Enter(state_i* s);
+    virtual void enter(state_i* s);
 
     ///< 处理定时器事件，及消息事件
     virtual void on_event(FsmEvent* e, UINT& uNewStateID);

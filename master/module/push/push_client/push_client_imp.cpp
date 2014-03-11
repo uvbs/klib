@@ -12,7 +12,7 @@
 
 //----------------------------------------------------------------------
 // 状态相关
-void query_logic_state::Enter(state_i* s)
+void query_logic_state::enter(state_i* s)
 {
     query_addr_watch_.reset();
 }
@@ -44,7 +44,7 @@ void query_logic_state::on_event(FsmEvent* e, UINT& uNewStateID)
     }
 }
 
-void query_newver_state::Enter(state_i* s)
+void query_newver_state::enter(state_i* s)
 {
     // 需要重置定时监视器
     newver_watch_.reset();
@@ -81,7 +81,7 @@ void query_newver_state::on_event(FsmEvent* e, UINT& uNewStateID)
     }
 }
 
-void online_state::Enter(state_i* s)
+void online_state::enter(state_i* s)
 {
     UINT64 uTimeNow = _time64(NULL);
 

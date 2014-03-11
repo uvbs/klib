@@ -29,6 +29,7 @@
 #include <core/singleton.h>
 #include <debuglog.h>
 #include <pattern/fsm.h>
+#include <kthread/thread.h>
 
 using namespace klib::core;
 using namespace klib::aom;

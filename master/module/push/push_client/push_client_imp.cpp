@@ -12,18 +12,18 @@
 
 //----------------------------------------------------------------------
 // 状态相关
-void CQueryLogicState::Enter(IState* s)
+void query_logic_state::Enter(IState* s)
 {
     query_addr_watch_.reset();
 }
 
-void CQueryLogicState::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void query_logic_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 {
     push_client_imp* pclient = push_client_imp::instance();
 
     if (e->get_evt_type() == event_timer) 
     {
-        pclient->SendQueryLogicAddr();
+        pclient->send_query_logic_addr();
 
         if (query_addr_watch_.is_triggerd()) 
         {
@@ -44,26 +44,20 @@ void CQueryLogicState::OnEvent(FsmEvent* e, UINT& uNewStateID)
     }
 }
 
-void CQueryNewVerState::Enter(IState* s)
+void query_newver_state::Enter(IState* s)
 {
     // 需要重置定时监视器
     newver_watch_.reset();
 }
 
-void CQueryNewVerState::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void query_newver_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 {
     push_client_imp* pclient = push_client_imp::instance();
 
     if (e->get_evt_type() == event_timer) 
     {
-        // 如果正在升级则不作任务判断
-        if (pclient->get_updating()) 
-        {
-            return;
-        }
-
         // 发送查询最新版本消息
-        pclient->SendQueryCurVer();
+        pclient->send_query_curver();
 
         // 判断是否超时触发了
         if (newver_watch_.is_triggerd()) 
@@ -87,7 +81,7 @@ void CQueryNewVerState::OnEvent(FsmEvent* e, UINT& uNewStateID)
     }
 }
 
-void COnlineState::Enter(IState* s)
+void online_state::Enter(IState* s)
 {
     UINT64 uTimeNow = _time64(NULL);
 
@@ -97,7 +91,7 @@ void COnlineState::Enter(IState* s)
     m_bOnlined = FALSE;
 }
 
-void COnlineState::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void online_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
 {
     push_client_imp* pclient = push_client_imp::instance();
 
@@ -110,14 +104,14 @@ void COnlineState::OnEvent(FsmEvent* e, UINT& uNewStateID)
             if (online_watch_.is_triggerd()) 
             {
                 online_watch_.reset();
-                pclient->SendOnline();
+                pclient->send_online();
             }
         }
         else
         {
             // 按规律发送
             online_watch_.reset();
-            pclient->SendOnline();
+            pclient->send_online();
         }
 
         // 处理长时间未收到在线消息回馈的情况，需要重新获取逻辑地址
@@ -141,16 +135,16 @@ void COnlineState::OnEvent(FsmEvent* e, UINT& uNewStateID)
     }
 }
 
-
 //----------------------------------------------------------------------
 //
 void push_client_imp::start()
 {
+    timer_mgr_.start();
+    timer_mgr_.add(3000, std::bind(&push_client_imp::timer_check_status, this));
 }
 
 void push_client_imp::stop()
 {
-
 }
 
 push_client_status push_client_imp::get_status()
@@ -159,8 +153,7 @@ push_client_status push_client_imp::get_status()
 }
 
 //
-
-void push_client_imp::SendQueryLogicAddr()
+void push_client_imp::send_query_logic_addr()
 {
     MyPrtLog("发送查询逻辑服务器：%d消息...", app_data::instance()->get_svr_port());
 
@@ -184,7 +177,7 @@ void push_client_imp::SendQueryLogicAddr()
     }
 }
 
-void push_client_imp::SendQueryCurVer()
+void push_client_imp::send_query_curver()
 {
     MyPrtLog(_T("发送查询最新版本消息"));
 
@@ -203,7 +196,7 @@ void push_client_imp::SendQueryCurVer()
         ar.get_data_len());
 }
 
-void push_client_imp::SendOnline()
+void push_client_imp::send_online()
 {
     MyPrtLog("发送在线消息...");
     app_data* data = app_data::instance();
@@ -232,7 +225,7 @@ void push_client_imp::SendOnline()
         ar.get_data_len());
 }
 
-void push_client_imp::SendMessageAck(UINT64 uMsgID)
+void push_client_imp::send_msg_ack(UINT64 uMsgID)
 {
     MyPrtLog("发送消息确认消息...");
 
@@ -253,4 +246,12 @@ void push_client_imp::SendMessageAck(UINT64 uMsgID)
         app_data::instance()->get_logic_port(), 
         ar.get_buff(), 
         ar.get_data_len());
+}
+
+bool push_client_imp::timer_check_status() 
+{
+    timer_event ev(3000);
+    push_fsm_.OnEvent(&ev);
+
+    return TRUE;
 }

@@ -3,7 +3,7 @@
 
 
 #include "../../include/push_interface.h"
-
+#include <core/timer_mgr.h>
 
 ///< 事件类型
 enum em_event_type
@@ -18,29 +18,29 @@ enum em_event_type
 #define  DEFAULT_WATCH_TIMEOUT      (30)
 
 ///< 定时器事件结构定义
-class CTimerEvent : public FsmEvent
+class timer_event : public FsmEvent
 {
 public:
-    CTimerEvent(UINT uElapse) : FsmEvent(event_timer)
+    timer_event(UINT uElapse) : FsmEvent(event_timer)
     {
         set_evt_data(uElapse);
     }
 };
 
 ///< 消息事件定义
-class CMessageEvent : public FsmEvent
+class message_event : public FsmEvent
 {
 public: 
-    CMessageEvent(UINT uMsg) : FsmEvent(uMsg)
+    message_event(UINT uMsg) : FsmEvent(uMsg)
     {
     }
 };
 
 ///< 初始状态
-class CQueryLogicState : public CState
+class query_logic_state : public CState
 {
 public:
-    CQueryLogicState() : CState(status_query_logic_addr), 
+    query_logic_state() : CState(status_query_logic_addr), 
         query_addr_watch_(DEFAULT_WATCH_TIMEOUT) {}
 
 public:
@@ -52,10 +52,10 @@ protected:
 };
 
 ///< 查询新版本状态
-class CQueryNewVerState : public CState
+class query_newver_state : public CState
 {
 public:
-    CQueryNewVerState() : 
+    query_newver_state() : 
         CState(status_query_newver), 
         newver_watch_(DEFAULT_WATCH_TIMEOUT)//, 
         //m_bDownloading(FALSE) 
@@ -71,10 +71,10 @@ protected:
 };
 
 ///< 在线状态
-class COnlineState : public CState
+class online_state : public CState
 {
 public:
-    COnlineState() : CState(status_online) , online_watch_(DEFAULT_WATCH_TIMEOUT)
+    online_state() : CState(status_online) , online_watch_(DEFAULT_WATCH_TIMEOUT)
     {
         m_bOnlined = FALSE;
     }
@@ -98,9 +98,9 @@ protected:
 ///< 状态机的定义
 BEGIN_FSM(push_client_fsm)
     BEGIN_REGISTER_STATE()
-        REGISTER_INIT_STATE(CQueryLogicState)
-        REGISTER_STATE(CQueryNewVerState)
-        REGISTER_STATE(COnlineState)
+        REGISTER_INIT_STATE(query_logic_state)
+        REGISTER_STATE(query_newver_state)
+        REGISTER_STATE(online_state)
     END_REGISTER_STATE
 END
 
@@ -109,27 +109,28 @@ END
 class push_client_imp : public singleton<push_client_imp>
 {
     DECLARE_SINGLETON_CLASS(push_client_imp);
-public:
 
+public:
     void start();
     void stop();
     push_client_status get_status();
 
     DEFINE_ACCESS_FUN_REF2(udp_client, udp_client, client_);
-    DEFINE_ACCESS_FUN2(bool, updating, updating_);
 
 public:
-    void SendQueryLogicAddr();
-    void SendQueryCurVer();                          ///< 发送查询当前版本消息
-    void SendOnline();                               ///< 发送在线消息 
-    void SendOffline();                              ///< 发送离线消息 
-    void SendMessageAck(UINT64 uMsgID);              ///< 发送ack消息
+    void send_query_logic_addr();
+    void send_query_curver();                           ///< 发送查询当前版本消息
+    void send_online();                                 ///< 发送在线消息 
+    void send_offline();                                ///< 发送离线消息 
+    void send_msg_ack(UINT64 uMsgID);                   ///< 发送ack消息
+
+protected:
+    bool timer_check_status() ;           ///< 检查应用的状态
 
 protected:
     udp_client client_;
     push_client_fsm push_fsm_;
-
-    bool updating_;  // @todo
+    timer_mgr       timer_mgr_;
 };
 
 

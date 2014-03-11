@@ -9,7 +9,7 @@ static const GUID IID_PUSH_FRAMEWORK =
 
 interface push_client_i
 {
-    
+    virtual bool start() = 0;
 };
 
 interface push_server_i

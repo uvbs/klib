@@ -200,7 +200,7 @@ BOOL udp_client::send_to_svr(const char* buff, int iLen)
 	return this->send_to(m_uSvrAddr, m_uSvrPort, buff, iLen);
 }
 
-BOOL udp_client::send_to(char* strAddr, USHORT uPort, const char*buff, int iLen)
+BOOL udp_client::send_to(const char* strAddr, USHORT uPort, const char*buff, int iLen)
 {
 	addr_resolver resolver(strAddr);
 

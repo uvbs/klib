@@ -51,7 +51,7 @@ public:
 
 	virtual void set_svr_info(UINT32 uAddrServer, USHORT uPortServer) ;//地址和端口为网络序
 	virtual BOOL send_to(UINT32 uAddr, USHORT uPort, const char* buff, int iLen);//地址和端口为网络序
-	virtual BOOL send_to(char* strAddr, USHORT uPort, const char*buff, int iLen);//端口为主机序
+	virtual BOOL send_to(const char* strAddr, USHORT uPort, const char*buff, int iLen);//端口为主机序
 	virtual BOOL send_to_svr(const char* buff, int iLen);
 
 private:

@@ -26,17 +26,17 @@ class FsmEvent
 {
 public:
     FsmEvent() {}
-    FsmEvent(UINT uEventType) { m_uEventType = uEventType; }
+    FsmEvent(UINT uEventType) { event_type_ = uEventType; }
 
-    void set_evt_type(UINT utype) { m_uEventType = utype; }
-    UINT get_evt_type() { return m_uEventType; }
+    void set_evt_type(UINT utype) { event_type_ = utype; }
+    UINT get_evt_type() { return event_type_; }
 
-    void set_evt_data(UINT64 udata) {  m_uEventData = udata; } 
-    UINT64 get_evt_data() { return m_uEventData; }
+    void set_evt_data(UINT64 udata) {  event_data_ = udata; } 
+    UINT64 get_evt_data() { return event_data_; }
 
 protected:
-    UINT    m_uEventType;         ///< 表示事件类型
-    UINT64  m_uEventData;         ///< 携带事件数据
+    UINT    event_type_;         ///< 表示事件类型
+    UINT64  event_data_;         ///< 携带事件数据
 };
 
 ///< 状态接口

@@ -5,14 +5,15 @@
 static const GUID IID_PUSH_FRAMEWORK = 
 { 0x5dbca606, 0x57ca, 0x4d08, { 0x96, 0xa3, 0x2a, 0x11, 0x75, 0x50, 0xdb, 0x85 } };
 
-#define  interface struct
 
-interface push_client_i
+#include <net/udp_client.h>
+
+class push_client_i
 {
-    virtual bool start() = 0;
+    virtual bool set_option(std::string& domain, USHORT uport) = 0;
 };
 
-interface push_server_i
+class push_server_i
 {
 
 };

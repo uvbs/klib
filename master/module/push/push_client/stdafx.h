@@ -24,6 +24,7 @@
 #include <net/winsock_link.h>
 
 #include <util/stop_watch.h>
+#include <core/singleton.h>
 
 using namespace klib::core;
 using namespace klib::aom;

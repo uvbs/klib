@@ -73,24 +73,40 @@ inline UINT64 KNTOH64(UINT64 uValue)
 ///< 定义访问成员的函数
 #define DEFINE_ACCESS_FUN(Type, Target)         \
 public:                                         \
-    inline Type Get_##Target()                  \
-    {                                           \
+    inline Type get_##Target() {                \
         return Target;                          \
     }                                           \
-    inline void Set_##Target(Type t)            \
-    {                                           \
+    inline void set_##Target(Type t)  {         \
+        Target = t;                             \
+    }
+
+///< 定义访问成员的函数
+#define DEFINE_ACCESS_FUN2(Type, Name, Target)   \
+public:                                         \
+    inline Type get_##Name() {                \
+        return Target;                          \
+    }                                           \
+    inline void set_##Name(Type t)  {         \
         Target = t;                             \
     }
 
 ///< 定义引用访问成员的函数
 #define DEFINE_ACCESS_FUN_REF(Type, Target)     \
 public:                                         \
-    inline Type& Get_##Target()                 \
-    {                                           \
+    inline Type& get_##Target()   {             \
         return Target;                          \
     }                                           \
-    inline void Set_##Target(Type& t)           \
-    {                                           \
+    inline void set_##Target(Type& t)   {       \
+        Target = t;                             \
+    }
+
+///< 定义引用访问成员的函数
+#define DEFINE_ACCESS_FUN_REF2(Type, Name, Target)     \
+public:                                         \
+    inline Type& get_##Name()   {             \
+        return Target;                          \
+    }                                           \
+    inline void set_##Name(Type& t)   {       \
         Target = t;                             \
     }
 
@@ -101,16 +117,12 @@ public:                                         \
  */
 #define  DEFINE_MEMBER_FUN(Type, Target)        \
 public:                                         \
-    inline Type  Get_##Target()                 \
-    {                                           \
+    inline Type  get_##Target()  {              \
         return  m_##Target;                     \
     }                                           \
-                                                \
-    inline void Set_##Target(Type theVal)       \
-    {                                           \
+    inline void set_##Target(Type theVal)  {    \
         m_##Target = theVal;                    \
     }                                           \
-                                                \
     Type  m_##Target;
 
 /**
@@ -120,16 +132,12 @@ public:                                         \
  */
 #define DEFINE_MEMBER_FUN_REF(Type, Target)     \
 public:                                         \
-    inline Type&  Get_##Target()                \
-    {                                           \
-    return  m_##Target;                         \
+    inline Type&  get_##Target()  {             \
+        return  m_##Target;                         \
     }                                           \
-                                                \
-    inline void Set_##Target(const Type& theVal)  \
-    {                                           \
-    m_##Target = theVal;                        \
+    inline void set_##Target(const Type& theVal)  {   \
+       m_##Target = theVal;                        \
     }                                           \
-                                                \
     Type  m_##Target;
 
 

@@ -106,7 +106,9 @@ END
 
 //----------------------------------------------------------------------
 // 客户端的具体实现类
-class push_client_imp : public singleton<push_client_imp>
+class push_client_imp : 
+    public singleton<push_client_imp>,
+    public udp_handler
 {
     DECLARE_SINGLETON_CLASS(push_client_imp);
 
@@ -116,6 +118,9 @@ public:
     push_client_status get_status();
 
     DEFINE_ACCESS_FUN_REF2(udp_client, udp_client, client_);
+
+protected:
+    virtual void on_msg(udp_client* client_, UINT32 uAddr, USHORT uPort, char* buff, int iLen) ;		///< UDP消息回调接口
 
 public:
     void send_query_logic_addr();

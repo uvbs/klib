@@ -141,6 +141,10 @@ void push_client_imp::start()
 {
     timer_mgr_.start();
     timer_mgr_.add(3000, std::bind(&push_client_imp::timer_check_status, this));
+
+    client_.start(FALSE);
+    client_.enable_udpreset(TRUE);
+    client_.set_handler(this);
 }
 
 void push_client_imp::stop()
@@ -150,6 +154,11 @@ void push_client_imp::stop()
 push_client_status push_client_imp::get_status()
 {
     return status_connecting;
+}
+
+void push_client_imp::on_msg(udp_client* client_, UINT32 uAddr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
+{
+    MyPrtLog("message comming!!!");
 }
 
 //

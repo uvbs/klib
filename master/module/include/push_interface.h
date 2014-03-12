@@ -13,9 +13,6 @@ static const GUID IID_PUSH_SERVER =
 #include <net/udp_client.h>
 #include <functional>
 
-typedef std::function<void(udp_client*client_, char* buff, size_t len)> 
-    push_client_callback;
-
 class push_msg
 {
 public:
@@ -31,6 +28,14 @@ public:
 };
 typedef std::shared_ptr<push_msg> push_msg_ptr;
 
+// 处理数据回调
+typedef std::function<void(udp_client*client_, char* buff, size_t len)> 
+    handle_data_callback;
+
+// 处理消息回调
+typedef std::function<void(push_msg_ptr)> 
+    handle_msg_callback;
+
 enum push_client_status
 {
     status_connecting,
@@ -41,7 +46,8 @@ enum push_client_status
 class push_client_i
 {
     virtual bool set_option(std::string& domain, USHORT uport) = 0;
-    virtual bool set_callback(push_client_callback& callback_) = 0;
+    virtual bool set_data_callback(handle_data_callback& callback) = 0;
+    virtual bool set_msg_callback(handle_msg_callback& callback) = 0;
     virtual bool set_client_info(const std::string& channel,
         const std::string& mac,
         const std::string& user,

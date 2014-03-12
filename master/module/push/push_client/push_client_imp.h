@@ -132,11 +132,11 @@ public:
 
 protected:
     // 处理网络来的消息 
-    void OnQueryLogicServerAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
-    void OnOnlineMsgAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);///< CMD_ONLINE_ACK
-    void OnMessageNotify(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
-    void OnMessageContent(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
-    void OnCurrentVersionAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_query_logic_svr_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_online_msg_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);///< CMD_ONLINE_ACK
+    void on_msg_notify(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_msg_content(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_cur_ver_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
 
 protected:
     bool timer_check_status() ;           ///< 检查应用的状态

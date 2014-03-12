@@ -21,7 +21,8 @@ public:
 
     DEFINE_ACCESS_FUN_REF2(std::string, svr_domain, svr_domain_);
     DEFINE_ACCESS_FUN_REF2(USHORT,      svr_port,   svr_port_);
-    DEFINE_ACCESS_FUN_REF2(push_client_callback, client_callback, client_callback_);
+    DEFINE_ACCESS_FUN_REF2(handle_data_callback, data_callback, data_callback_);
+    DEFINE_ACCESS_FUN_REF2(handle_msg_callback, msg_callback, msg_callback_);
 
     DEFINE_ACCESS_FUN_REF2(UINT32,      logic_addr,   logic_addr_);
     DEFINE_ACCESS_FUN_REF2(USHORT,      logic_port,   logic_port_);
@@ -41,6 +42,7 @@ protected:
     UINT32      logic_addr_;
     USHORT      logic_port_;
 
-    push_client_callback client_callback_;
+    handle_data_callback data_callback_;
+    handle_msg_callback msg_callback_;
 };
 

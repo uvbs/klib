@@ -7,6 +7,7 @@
 #include <time.h>
 #include "mini_dumper.h"
 
+#pragma warning(disable: 4996)
 #pragma comment(lib, "version.lib")
 
 using namespace klib::debug;

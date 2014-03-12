@@ -5,6 +5,7 @@
 #include "../../third/xyssl/src/bignum.c"
 #include "../../third/xyssl/src/certs.c"
 #include "../../third/xyssl/src/debug.c"
+#include "../../third/xyssl/src/des.c"
 #include "../../third/xyssl/src/dhm.c"
 #include "../../third/xyssl/src/havege.c"
 #include "../../third/xyssl/src/md2.c"

@@ -13,6 +13,7 @@ static const GUID IID_PUSH_SERVER =
 #include <net/udp_client.h>
 #include <functional>
 
+// 推送的消息定义
 class push_msg
 {
 public:
@@ -60,6 +61,9 @@ class push_client_i
     virtual push_client_status get_status() = 0;
 };
 
+
+//----------------------------------------------------------------------
+// 
 class push_server_i
 {
 

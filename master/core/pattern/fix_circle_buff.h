@@ -6,7 +6,7 @@
 
 
 namespace klib {
-namespace mem {
+namespace pattern {
 
 using namespace klib::kthread;
 

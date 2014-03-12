@@ -23,6 +23,8 @@
 #include <net/winsock_init.h>
 #include <net/winsock_link.h>
 
+#include <core/small_string.h>
+
 using namespace klib::core;
 using namespace klib::aom;
 

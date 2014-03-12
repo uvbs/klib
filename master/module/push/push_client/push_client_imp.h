@@ -4,6 +4,7 @@
 
 #include "../../include/push_interface.h"
 #include <core/timer_mgr.h>
+#include <comp/sign_verify/verify_helper.h>
 
 ///< 事件类型
 enum em_event_type
@@ -130,12 +131,21 @@ public:
     void send_msg_ack(UINT64 uMsgID);                   ///< 发送ack消息
 
 protected:
+    // 处理网络来的消息 
+    void OnQueryLogicServerAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void OnOnlineMsgAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);///< CMD_ONLINE_ACK
+    void OnMessageNotify(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void OnMessageContent(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void OnCurrentVersionAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+
+protected:
     bool timer_check_status() ;           ///< 检查应用的状态
 
 protected:
     udp_client client_;
     push_client_fsm push_fsm_;
     timer_mgr       timer_mgr_;
+    verify_helper   verify_helper_;
 };
 
 

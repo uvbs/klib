@@ -145,6 +145,11 @@ void push_client_imp::start()
     client_.start(FALSE);
     client_.enable_udpreset(TRUE);
     client_.set_handler(this);
+
+    push_fsm_.start();
+
+    verify_helper_.set_pub_info("BA3F7EFF8A7AD3A6A445FD8C16E373F43C45A81D23E27588E13FCB8CA8A44F6E0E60AFD2E880759FF916A11025B1682A318FF0ADB3F45B5EE559E3D402A844B5DBEF71273D21AB8CE46F775964CE80617C645DF0994274041D993257A7F90BD50F0CDC84EA6AA31C766B2EB9A9832C0D13EE59EFF745B638AA0CCBAE6A939835", 
+        "010001");
 }
 
 void push_client_imp::stop()
@@ -256,6 +261,172 @@ void push_client_imp::send_msg_ack(UINT64 uMsgID)
         app_data::instance()->get_logic_port(), 
         ar.get_buff(), 
         ar.get_data_len());
+}
+
+void push_client_imp::OnQueryLogicServerAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+{
+    MyPrtLog("收到逻辑服务器查询回复消息...");
+
+    PT_CMD_QUERY_LOGIC_SERVER_ACK ack;
+    ar >> ack;
+
+    if (ar.get_error()) 
+    {
+        MyPrtLog(_T("响应查询逻辑服务器地址，协议出错!!!"));
+        return;
+    }
+
+    _ASSERT(push_fsm_.get_cur_statei_d() == status_query_logic_addr);
+    if (push_fsm_.get_cur_statei_d() == status_query_logic_addr) 
+    {
+        // 获得服务器的地址及端口
+        app_data::instance()->set_logic_addr(ack.uLogicIP);
+        app_data::instance()->set_logic_port(ack.uLogicUdpPort);
+
+        _ASSERT(ack.uLogicIP > 0);
+        _ASSERT(ack.uLogicUdpPort > 0);
+
+        // 状态机事件 
+        message_event ev(event_query_logic_ack_msg);
+        push_fsm_.on_event(&ev);
+
+        MyPrtLog("逻辑服务器地址获取成功:%s:%d...", 
+            inet_ntoa(*(in_addr*)& ack.uLogicIP), 
+            ntohs(ack.uLogicUdpPort));
+    }
+}
+
+void push_client_imp::OnOnlineMsgAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+{
+    MyPrtLog(_T("服务器回复在线消息..."));
+
+    if (uAddr == app_data::instance()->get_logic_addr()) 
+    {
+        PT_CMD_ONLINE_ACK ptOnlineAck;
+        ar >> ptOnlineAck;
+        if (ar.get_error()) 
+        {
+            MyPrtLog(_T("解析消息服务器在线消息出错..."));
+            return;
+        }
+
+        // 处理在线消息
+        message_event ev(event_online_ack_msg);
+        push_fsm_.on_event(&ev);
+    }
+    else
+    {
+        MyPrtLog(_T("不是来自逻辑服务器的消息"));
+    }
+}
+
+void push_client_imp::OnMessageNotify(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+{
+    MyPrtLog(_T("服务器消息通知..."));
+    _ASSERT(FALSE && _T("暂未实现!!!"));
+
+    PT_CMD_MESSAGE_NOTIFY ptNotify;
+
+    ar  >> ptNotify;
+    if (ar.get_error()) 
+    {
+        MyPrtLog(_T("解析消息通知出错"));
+        return;
+    }
+
+    app_data* data = app_data::instance();
+    if (ptNotify.msgID <= data->get_last_msg_id())
+    {
+        return;
+    }
+}
+
+void push_client_imp::OnMessageContent(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+{
+    MyPrtLog(_T("服务器消息内容推送..."));
+    PT_CMD_MESSAGE_CONTENT ptMsg;
+    ar >> ptMsg;
+
+    if (ar.get_error()) {
+        MyPrtLog(_T("解析消息内容出错..."));
+        return;
+    }
+
+    if (uAddr != app_data::instance()->get_logic_addr()) {
+        MyPrtLog(_T("不是来自逻辑服务器的消息..."));
+        return;
+    }
+
+    BOOL bSignResult = verify_helper_.verify_sign(ptMsg.strSign, ptMsg.strMsgContent);
+    if (bSignResult) 
+    {
+        app_data* data = app_data::instance();
+        if (data->get_last_msg_id() == ptMsg.uMsgID) 
+        {
+            MyPrtLog(_T("pClientData->m_uLastMsgId == ptMsg.uMsgID 已接收过该消息"));
+            send_msg_ack(ptMsg.uMsgID);
+            return;
+        }
+
+        // 发送反馈消息
+        send_msg_ack(ptMsg.uMsgID);
+
+        // 更新最新的消息ID
+        data->set_last_msg_id(ptMsg.uMsgID);
+        data->save();
+
+        // 申请消息对象
+        push_msg_ptr msg_(new push_msg);
+        if (nullptr == msg_) {
+            MyPrtLog(_T("申请消息内存空间失败!!!"));
+            return;
+        }
+
+        // 验证通过后保存到消息列表中
+        msg_->msg_id_            = ptMsg.uMsgID;
+        msg_->msg_type_          = ptMsg.uMsgType;
+        msg_->show_time_         = ptMsg.uShowTime;
+        msg_->str_sign_          = std::move(ptMsg.strSign);
+        msg_->content_           = std::move(ptMsg.strMsgContent);
+        msg_->delay_fetch_       = ptMsg.uDelayFetch;
+        msg_->delay_show_        = ptMsg.uDelayShow;
+     
+        // 提交到上层处理
+
+    }
+    else {
+        MyPrtLog(_T("收到的消息验证不成功，判断不是来自服务器"));
+    }
+}
+
+void push_client_imp::OnCurrentVersionAck(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+{
+    PT_CMD_QUERY_CURRENT_VERSION_ACK ptCurVersionAck;
+    app_data* data_ = app_data::instance();
+
+    // 读取消息内容
+    ar >> ptCurVersionAck;
+
+    // 非自动更新，且不是强制更新的话那么不进行升级
+//     if (!pClientData->GetIsAutoUpdate() && !ptCurVersionAck.bForceUpdate) 
+//     {
+//         return;
+//     }
+
+    // 需要进行更新
+    if (ptCurVersionAck.uVersionValue > CURRENT_CLIENT_VERSION_VALUE) 
+    {
+        // 开始下载最新的版本，并执行升级操作
+        MyPrtLog(_T("发现更高级的版本,ptCurVersionAck.uVersionValue > CURRENT_CLIENT_VERSION_VALUE..."));
+
+        // 更新
+    }
+
+    MyPrtLog(_T("状态转换，转为: state_query_new_ver_ok"));
+
+    // 发送状态事件
+    message_event ev(event_query_ver_ack_msg);
+    push_fsm_.on_event(&ev);
 }
 
 bool push_client_imp::timer_check_status() 

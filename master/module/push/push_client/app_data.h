@@ -17,7 +17,7 @@ public:
     DEFINE_ACCESS_FUN_REF2(std::string, user, user_)
     DEFINE_ACCESS_FUN_REF2(std::string, pass, pass_)
     DEFINE_ACCESS_FUN_REF2(std::string, appid, appid_)
-    DEFINE_ACCESS_FUN_REF2(UINT64, last_msg_id, last_msg_id_)
+    DEFINE_ACCESS_FUN_REF2(UINT64,      last_msg_id, last_msg_id_)
 
     DEFINE_ACCESS_FUN_REF2(std::string, svr_domain, svr_domain_);
     DEFINE_ACCESS_FUN_REF2(USHORT,      svr_port,   svr_port_);
@@ -26,6 +26,7 @@ public:
     DEFINE_ACCESS_FUN_REF2(UINT32,      logic_addr,   logic_addr_);
     DEFINE_ACCESS_FUN_REF2(USHORT,      logic_port,   logic_port_);
 
+    void save(){}
 protected:
     std::string channel_;
     std::string mac_;

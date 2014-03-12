@@ -16,6 +16,21 @@ static const GUID IID_PUSH_SERVER =
 typedef std::function<void(udp_client*client_, char* buff, size_t len)> 
     push_client_callback;
 
+class push_msg
+{
+public:
+    push_msg() : msg_id_(0), msg_type_(0), delay_fetch_(0), delay_show_(0) {}
+
+    UINT64           msg_id_;             ///< 消息编号
+    UINT32           msg_type_;           ///< 消息类型
+    UINT32           show_time_;          ///< 显示的时间（即要显示多长时间）
+    UINT32           delay_fetch_;        ///< 延迟多长时间获取消息
+    UINT32           delay_show_;         ///< 显示延迟时间（即指需要延迟多少时间显示）
+    std::string      str_sign_;           ///< 消息内容的签名（计算出内容的md5值,使用签名算法签名）
+    std::string      content_;            ///< 消息内容(xml内容)
+};
+typedef std::shared_ptr<push_msg> push_msg_ptr;
+
 enum push_client_status
 {
     status_connecting,

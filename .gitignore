@@ -39,3 +39,5 @@
 *_ud.lib
 Debug
 Release
+/master/core/lib/*.lib
+/master/Debug

@@ -5,6 +5,10 @@
 
 #include "../common/protocol.h"
 #include <net/udp_server.h>
+#include <net/proto/net_archive.h>
+#include <net/proto/local_archive.h>
+#include <core/lock_stl.h>
+#include <kthread/auto_lock.h>
 
 using namespace std::placeholders;
 
@@ -28,6 +32,7 @@ protected:
     END_REGISTER_DISPATCH
 
 protected:
+    virtual bool add_logic_info(logic_addr_info info) ;
     virtual bool start(USHORT work_port, USHORT maintain_port);
 
 protected:
@@ -36,6 +41,9 @@ protected:
 protected:
     USHORT work_port_;
     USHORT maintain_port_;
+    volatile long query_logic_count_;
+
+    logic_addr_info logic_addr_info_;
 };
 
 

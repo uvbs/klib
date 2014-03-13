@@ -14,7 +14,7 @@ static const GUID IID_PUSH_LOGIC_SERVER =
 { 0xa71e5c2e, 0x947c, 0x425d, { 0xbe, 0xa2, 0x2b, 0x9d, 0xf8, 0xc6, 0x42, 0xa } };
 
 
-
+#include <net/ip_v4.h>
 #include <net/udp_client.h>
 #include <functional>
 
@@ -69,11 +69,19 @@ class push_client_i
 
 //----------------------------------------------------------------------
 // 
+struct logic_addr_info 
+{
+    logic_addr_info() : addr_(0), uport_(0) {}
+    ip_v4   addr_;
+    USHORT  uport_;
+};
+
 class push_balance_server_i
 {
 public:
+    virtual bool add_logic_info(logic_addr_info info) = 0;
     virtual bool start(USHORT work_port, USHORT maintain_port) = 0;
-//    virtual bool start() = 0;
+    
 };
 
 class push_logic_server_i

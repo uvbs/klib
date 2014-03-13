@@ -26,7 +26,7 @@ udp_socket::~udp_socket(void)
     }
 }
 
-BOOL udp_socket::init(USHORT uBindPort)
+BOOL udp_socket::init(USHORT uBindPort/* = 0*/)
 {
 	if (m_bInitSocket && m_socket != INVALID_SOCKET) 
     {
@@ -85,6 +85,37 @@ BOOL udp_socket::enable_broadcast(BOOL bBroadCast/* = TRUE*/)
     return TRUE;
 }
 
+BOOL udp_socket::enable_udpreset(BOOL bEnable/* = FALSE*/)
+{
+    // 以下解决10054问题， ref: http://blog.csdn.net/ccnucjp8136/article/details/4515002
+    DWORD dwBytesReturned = 0;
+    BOOL bNewBehavior = FALSE;
+    DWORD status;
+#define SIO_UDP_CONNRESET _WSAIOW(IOC_VENDOR,12)
+    // disable  new behavior using
+    // IOCTL: SIO_UDP_CONNRESET
+    status = WSAIoctl(m_socket, SIO_UDP_CONNRESET,
+        &bNewBehavior, sizeof(bNewBehavior),
+        NULL, 0, &dwBytesReturned,
+        NULL, NULL);
+    if (SOCKET_ERROR == status)
+    {
+        DWORD dwErr = WSAGetLastError();
+        if (WSAEWOULDBLOCK == dwErr)
+        {
+            // nothing to do
+            return(FALSE);
+        }
+        else
+        {
+            printf("WSAIoctl(SIO_UDP_CONNRESET) Error: %d/n", dwErr);
+            return(FALSE);
+        }
+    }
+
+    return TRUE;
+}
+
 BOOL udp_socket::start_async()
 {
     klib::kthread::Thread::thread_func_type f = std::bind(&udp_socket::work_func, this, std::tr1::placeholders::_1);
@@ -103,7 +134,10 @@ BOOL udp_socket::stop_async(DWORD dwMilliseconds/* = INFINITE*/)
 
 BOOL udp_socket::uninit()
 {
-	closesocket(m_socket);
+    if (INVALID_SOCKET != m_socket) {
+        closesocket(m_socket);
+    }
+
 	m_bInitSocket = FALSE;
 	m_bConnected = FALSE;
 	m_socket = INVALID_SOCKET;
@@ -127,8 +161,7 @@ UINT udp_socket::get_ttl()
     UINT uTTL = 0;
     int iLen = sizeof(uTTL);
     int ret = ::getsockopt(m_socket, IPPROTO_IP, IP_TTL, (char*)&uTTL, &iLen);
-    if (SOCKET_ERROR != ret) 
-    {
+    if (SOCKET_ERROR != ret) {
         return uTTL;
     }
     return 0;
@@ -138,8 +171,7 @@ BOOL udp_socket::connect(const char* strSvrIp, USHORT uSvrPort)
 {
 	addr_resolver resolver(strSvrIp);
 
-	if (resolver.size() <= 0)
-    {
+	if (resolver.size() <= 0) {
 		return FALSE;
 	}
 
@@ -149,8 +181,7 @@ BOOL udp_socket::connect(const char* strSvrIp, USHORT uSvrPort)
 	addrSvr.sin_family = AF_INET;
 
 	int ret = ::connect(m_socket, (sockaddr*)&addrSvr, sizeof(addrSvr));
-	if (SOCKET_ERROR == ret) 
-    {
+	if (SOCKET_ERROR == ret) {
 		return FALSE;
 	}
 
@@ -160,14 +191,12 @@ BOOL udp_socket::connect(const char* strSvrIp, USHORT uSvrPort)
 
 int udp_socket::send(const char* buff, int iLen)
 {
-	if (!m_bConnected) 
-    {
+	if (!m_bConnected) {
 		return SOCKET_ERROR;
 	}
 
 	int ret = ::send(m_socket, buff, iLen, 0);
-	if (SOCKET_ERROR == ret) 
-    {
+	if (SOCKET_ERROR == ret) {
 		return SOCKET_ERROR;
 	}
 
@@ -178,8 +207,7 @@ BOOL udp_socket::send_to(const char* strSvrIp, USHORT uSvrPort, const char* buff
 {
 	addr_resolver resolver(strSvrIp);
 
-	if (resolver.size() <= 0) 
-    {
+	if (resolver.size() <= 0) {
 		return FALSE;
 	}
 
@@ -198,8 +226,7 @@ BOOL udp_socket::send_to(ip_v4 svrIp, USHORT uSvrPort, const char* buff, int iLe
 	svrAddr.sin_family = AF_INET;
 
 	int ret = ::sendto(m_socket, buff, iLen, 0, (sockaddr*)&svrAddr, sizeof(svrAddr));
-	if (SOCKET_ERROR == ret) 
-    {
+	if (SOCKET_ERROR == ret) {
 		return FALSE;
 	}
 
@@ -234,20 +261,19 @@ void udp_socket::work_func(void*)
 
     while (TRUE)
     {
-        if (thread_.state() == klib::kthread::Thread::TS_EXIT) 
-        {
+        if (thread_.state() == klib::kthread::Thread::TS_EXIT) {
             break;
         }
 
         iRecvRet = recv_from(&addrfrom, buffer, sizeof(buffer));
-        if(iRecvRet == SOCKET_ERROR || iRecvRet == 0 ) 
-        {
+        if(iRecvRet == SOCKET_ERROR || iRecvRet == 0 ) {
             continue;
         }
         buffer[iRecvRet] = '\0';
 
         //发送信号
-        SignMsgRecv(addrfrom.sin_addr.s_addr,
+        sign_msg_recv(this,
+                    addrfrom.sin_addr.s_addr,
                     addrfrom.sin_port,
                     buffer,
                     iRecvRet);

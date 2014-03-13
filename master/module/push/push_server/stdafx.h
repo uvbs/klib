@@ -22,6 +22,9 @@
 #include <net/udp_client.h>
 #include <net/winsock_init.h>
 #include <net/winsock_link.h>
+#include <net/proto/net_archive.h>
+#include <net/proto/command_header.h>
+#include <net/ip_v4.h>
 
 #include <core/small_string.h>
 

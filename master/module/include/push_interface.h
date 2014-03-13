@@ -6,8 +6,13 @@ static const GUID IID_PUSH_CLIENT =
 { 0x5dbca606, 0x57ca, 0x4d08, { 0x96, 0xa3, 0x2a, 0x11, 0x75, 0x50, 0xdb, 0x85 } };
 
 // {DC52BBBC-45C7-44fd-86F0-C8C00C21F7EB}
-static const GUID IID_PUSH_SERVER = 
+static const GUID IID_PUSH_BALANCE_SERVER = 
 { 0xdc52bbbc, 0x45c7, 0x44fd, { 0x86, 0xf0, 0xc8, 0xc0, 0xc, 0x21, 0xf7, 0xeb } };
+
+// {A71E5C2E-947C-425d-BEA2-2B9DF8C6420A}
+static const GUID IID_PUSH_LOGIC_SERVER = 
+{ 0xa71e5c2e, 0x947c, 0x425d, { 0xbe, 0xa2, 0x2b, 0x9d, 0xf8, 0xc6, 0x42, 0xa } };
+
 
 
 #include <net/udp_client.h>
@@ -64,8 +69,16 @@ class push_client_i
 
 //----------------------------------------------------------------------
 // 
-class push_server_i
+class push_balance_server_i
 {
+public:
+    virtual bool start(USHORT work_port, USHORT maintain_port) = 0;
+//    virtual bool start() = 0;
+};
+
+class push_logic_server_i
+{
+ //   virtual bool start() = 0;
 
 };
 

@@ -16,7 +16,7 @@ typedef std::function<void(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&)>
 class udp_server : public sigslot::has_slots<>  
 {
 public:
-    void start();
+    bool start(USHORT uport);
 
 protected:
     void on_udp_msg(udp_socket*, ip_v4, USHORT, char*, int);

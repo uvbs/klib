@@ -169,6 +169,7 @@
     <ClInclude Include="..\core\net\proto_def.h" />
     <ClInclude Include="..\core\net\tcp_socket.h" />
     <ClInclude Include="..\core\net\udp_client.h" />
+    <ClInclude Include="..\core\net\udp_server.h" />
     <ClInclude Include="..\core\net\udp_socket.h" />
     <ClInclude Include="..\core\net\wininet_httpclient.h" />
     <ClInclude Include="..\core\net\winsock_init.h" />
@@ -226,6 +227,7 @@
     <ClCompile Include="..\core\net\http_down.cpp" />
     <ClCompile Include="..\core\net\tcp_socket.cpp" />
     <ClCompile Include="..\core\net\udp_client.cpp" />
+    <ClCompile Include="..\core\net\udp_server.cpp" />
     <ClCompile Include="..\core\net\udp_socket.cpp" />
     <ClCompile Include="..\core\net\wininet_httpclient.cpp" />
     <ClCompile Include="..\core\pattern\actor.cpp" />

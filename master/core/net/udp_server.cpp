@@ -3,13 +3,17 @@
 namespace klib {
 namespace net {
 
-
-void udp_server::start()
+bool udp_server::start(USHORT uport)
 {
+    if (0 == uport)
+        return false;
+
+    socket_.init(uport);
     socket_.sign_msg_recv.connect(this, &udp_server::on_udp_msg);
     socket_.start_async();
 
     this->register_dispatcher_();
+    return true;
 }
 
 void udp_server::on_udp_msg(udp_socket*, ip_v4 addr, USHORT port, char* buff, int ilen)

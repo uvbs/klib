@@ -108,8 +108,7 @@ END
 //----------------------------------------------------------------------
 // 客户端的具体实现类
 class push_client_imp : 
-    public singleton<push_client_imp>,
-    public udp_handler
+    public singleton<push_client_imp>
 {
     DECLARE_SINGLETON_CLASS(push_client_imp);
 
@@ -142,7 +141,7 @@ protected:
     bool timer_check_status() ;           ///< 检查应用的状态
 
 protected:
-    udp_client client_;
+    udp_client      client_;
     push_client_fsm push_fsm_;
     timer_mgr       timer_mgr_;
     verify_helper   verify_helper_;

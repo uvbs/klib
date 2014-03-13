@@ -10,6 +10,8 @@
 
 #pragma comment(lib, "sign_verify")
 
+using namespace std::placeholders;
+
 //----------------------------------------------------------------------
 //
 
@@ -147,7 +149,8 @@ void push_client_imp::start()
 
     client_.start(FALSE);
     client_.enable_udpreset(TRUE);
-    client_.set_handler(this);
+    client_.set_callback(std::bind(&push_client_imp::on_msg,
+        this, _1, _2, _3, _4, _5));
 
     push_fsm_.start();
 
@@ -215,7 +218,7 @@ void push_client_imp::send_query_logic_addr()
         ar.get_data_len());
 
     if (!bSendResult) {
-        //@todo 
+        //@todo 向特定的ip发送数据
         //client_.send_to(BALANCE_SERVER_IP, BALANCE_SERVER_UDP_PORT, ar.GetBuff(), ar.GetDataLength());
     }
 }

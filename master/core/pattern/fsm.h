@@ -75,7 +75,7 @@ public:
     }
 
     virtual void set_parent_id(UINT uParentID) { m_uParentID = uParentID; }
-    virtual UINT get_parent_id() { return m_uStateID; }
+    virtual UINT get_parent_id() { return m_uParentID; }
 
     virtual void enter(state_i* s) {}
     virtual void leave() {}
@@ -104,7 +104,7 @@ public:
 
 public:
     ///< 获得当前的状态ID
-    UINT get_cur_statei_d() 
+    UINT get_cur_state_id() 
     {
         if (cur_state_) 
         {
@@ -167,7 +167,7 @@ public:
     }
 
     ///< 改变状态
-    void ChangeState(UINT uStateID)
+    void change_state(UINT uStateID)
     {
         if (cur_state_) 
         {

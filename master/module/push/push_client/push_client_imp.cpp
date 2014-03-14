@@ -164,7 +164,7 @@ void push_client_imp::stop()
 
 push_client_status push_client_imp::get_status()
 {
-    return (push_client_status) push_fsm_.get_cur_statei_d();
+    return (push_client_status) push_fsm_.get_cur_state_id();
 }
 
 void push_client_imp::on_msg(udp_client* client_, UINT32 uAddr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
@@ -307,8 +307,8 @@ void push_client_imp::on_query_logic_svr_ack(UINT32 uAddr, USHORT uPort, cmd_hea
         return;
     }
 
-    _ASSERT(push_fsm_.get_cur_statei_d() == status_query_logic_addr);
-    if (push_fsm_.get_cur_statei_d() == status_query_logic_addr) 
+    _ASSERT(push_fsm_.get_cur_state_id() == status_query_logic_addr);
+    if (push_fsm_.get_cur_state_id() == status_query_logic_addr) 
     {
         // 获得服务器的地址及端口
         app_data::instance()->set_logic_addr(ack.uLogicIP);

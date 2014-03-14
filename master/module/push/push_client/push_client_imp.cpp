@@ -35,7 +35,7 @@ void query_logic_state::on_event(FsmEvent* e, UINT& uNewStateID)
             query_addr_watch_.reset();
 
             // 判断是可能因为端口被限制，所以需要重新绑定端口
-            pclient->get_udp_client().reinit();
+            pclient->reinit();
         }
     }
     else if (e->get_evt_type() == event_query_logic_ack_msg)
@@ -72,7 +72,7 @@ void query_newver_state::on_event(FsmEvent* e, UINT& uNewStateID)
             uNewStateID = status_query_logic_addr;
 
             // 判断是可能因为端口被限制，所以需要重新绑定端口
-            pclient->get_udp_client().reinit();
+            pclient->reinit();
         }
     }
     else if (e->get_evt_type() == event_query_ver_ack_msg) 
@@ -91,9 +91,9 @@ void online_state::enter(state_i* s)
     UINT64 uTimeNow = _time64(NULL);
 
     // 假设收到了在线的回馈消息
-    m_uLastOnlineAckTime = uTimeNow;
+    last_online_ack_time_ = uTimeNow;
 
-    m_bOnlined = FALSE;
+    is_online_ = FALSE;
 }
 
 void online_state::on_event(FsmEvent* e, UINT& uNewStateID)
@@ -103,7 +103,7 @@ void online_state::on_event(FsmEvent* e, UINT& uNewStateID)
     if (e->get_evt_type() == event_timer) 
     {
         // 如果已经在线了，则要每隔30秒的时间再发送
-        if (m_bOnlined) 
+        if (is_online_) 
         {
             // 大于30秒的时候发送一次心跳记录
             if (online_watch_.is_triggerd()) 
@@ -121,9 +121,9 @@ void online_state::on_event(FsmEvent* e, UINT& uNewStateID)
 
         // 处理长时间未收到在线消息回馈的情况，需要重新获取逻辑地址
         UINT64 uTimeNow = _time64(NULL);
-        if (uTimeNow - m_uLastOnlineAckTime > DEFAULT_ONLINE_TIME_OUT) 
+        if (uTimeNow - last_online_ack_time_ > DEFAULT_ONLINE_TIME_OUT) 
         {
-            m_bOnlined = FALSE;
+            is_online_ = FALSE;
             uNewStateID = status_query_logic_addr;  // 切换到查询逻辑服务器状态
             MyPrtLog("切换到查询逻辑服务器地址状态!!!");
         }
@@ -131,8 +131,8 @@ void online_state::on_event(FsmEvent* e, UINT& uNewStateID)
     else if (e->get_evt_type() == event_online_ack_msg)
     {
         // 更新状态
-        m_bOnlined = TRUE;
-        m_uLastOnlineAckTime = _time64(NULL);
+        is_online_ = TRUE;
+        last_online_ack_time_ = _time64(NULL);
     }
     else
     {
@@ -165,6 +165,11 @@ void push_client_imp::stop()
 push_client_status push_client_imp::get_status()
 {
     return (push_client_status) push_fsm_.get_cur_state_id();
+}
+
+void push_client_imp::reinit()
+{
+    client_.reinit();
 }
 
 void push_client_imp::on_msg(udp_client* client_, UINT32 uAddr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
@@ -412,13 +417,13 @@ void push_client_imp::on_msg_content(UINT32 uAddr, USHORT uPort, cmd_header& hea
         }
 
         // 验证通过后保存到消息列表中
-        msg_->msg_id_            = ptMsg.uMsgID;
-        msg_->msg_type_          = ptMsg.uMsgType;
-        msg_->show_time_         = ptMsg.uShowTime;
-        msg_->str_sign_          = std::move(ptMsg.strSign);
-        msg_->content_           = std::move(ptMsg.strMsgContent);
-        msg_->delay_fetch_       = ptMsg.uDelayFetch;
-        msg_->delay_show_        = ptMsg.uDelayShow;
+        msg_->set_msg_id(ptMsg.uMsgID);
+        msg_->set_msg_type(ptMsg.uMsgType);
+        msg_->set_show_time(ptMsg.uShowTime);
+        msg_->set_str_sign(std::move(ptMsg.strSign));
+        msg_->set_content(std::move(ptMsg.strMsgContent));
+        msg_->set_delay_fetch(ptMsg.uDelayFetch);
+        msg_->set_delay_show(ptMsg.uDelayShow);
      
         // 提交到上层处理
         auto& callback = data_->get_msg_callback();

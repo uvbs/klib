@@ -81,12 +81,12 @@ public:                                         \
     }
 
 ///< 定义访问成员的函数
-#define DEFINE_ACCESS_FUN2(Type, Name, Target)   \
+#define DEFINE_ACCESS_FUN2(Type, Name, Target)  \
 public:                                         \
-    inline Type get_##Name() {                \
+    inline const Type get_##Name() const {      \
         return Target;                          \
     }                                           \
-    inline void set_##Name(Type t)  {         \
+    inline void set_##Name(const Type t)  {     \
         Target = t;                             \
     }
 
@@ -103,10 +103,10 @@ public:                                         \
 ///< 定义引用访问成员的函数
 #define DEFINE_ACCESS_FUN_REF2(Type, Name, Target)     \
 public:                                         \
-    inline Type& get_##Name()   {             \
+    inline const Type& get_##Name() const  {    \
         return Target;                          \
     }                                           \
-    inline void set_##Name(Type& t)   {       \
+    inline void set_##Name(const Type& t)   {   \
         Target = t;                             \
     }
 

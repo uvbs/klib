@@ -17,6 +17,8 @@ static const GUID IID_PUSH_LOGIC_SERVER =
 #include <net/ip_v4.h>
 #include <net/udp_client.h>
 #include <functional>
+#include <macro.h>
+
 
 // 推送的消息定义
 class push_msg
@@ -24,6 +26,7 @@ class push_msg
 public:
     push_msg() : msg_id_(0), msg_type_(0), delay_fetch_(0), delay_show_(0) {}
 
+protected:
     UINT64           msg_id_;             ///< 消息编号
     UINT32           msg_type_;           ///< 消息类型
     UINT32           show_time_;          ///< 显示的时间（即要显示多长时间）
@@ -31,6 +34,14 @@ public:
     UINT32           delay_show_;         ///< 显示延迟时间（即指需要延迟多少时间显示）
     std::string      str_sign_;           ///< 消息内容的签名（计算出内容的md5值,使用签名算法签名）
     std::string      content_;            ///< 消息内容(xml内容)
+    
+    DEFINE_ACCESS_FUN_REF2(UINT64, msg_id, msg_id_);
+    DEFINE_ACCESS_FUN_REF2(UINT32, msg_type, msg_type_);
+    DEFINE_ACCESS_FUN_REF2(UINT32, show_time, show_time_);
+    DEFINE_ACCESS_FUN_REF2(UINT32, delay_fetch, delay_fetch_);
+    DEFINE_ACCESS_FUN_REF2(UINT32, delay_show, delay_show_);
+    DEFINE_ACCESS_FUN_REF2(std::string, str_sign, str_sign_);
+    DEFINE_ACCESS_FUN_REF2(std::string, content, content_);
 };
 typedef std::shared_ptr<push_msg> push_msg_ptr;
 
@@ -86,7 +97,7 @@ public:
 
 class push_logic_server_i
 {
- //   virtual bool start() = 0;
+    virtual bool start(USHORT uport) = 0;
 
 };
 

@@ -18,6 +18,7 @@
 #include <aom/iframework_imp.h>
 #include <klib_link.h>
 #include <pattern/fsm.h>
+#include <debuglog.h>
 
 #include <net/udp_client.h>
 #include <net/winsock_init.h>
@@ -28,6 +29,7 @@
 
 #include <core/small_string.h>
 
+using namespace klib::debug;
 using namespace klib::core;
 using namespace klib::aom;
 

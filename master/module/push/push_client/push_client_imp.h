@@ -77,7 +77,7 @@ class online_state : public CState
 public:
     online_state() : CState(status_online) , online_watch_(DEFAULT_WATCH_TIMEOUT)
     {
-        m_bOnlined = FALSE;
+        is_online_ = FALSE;
     }
 
     ///< 判断超时的时间值，如果超过这个值没有服务器的回应消息那么就会，转到查询逻辑服务器状态
@@ -91,9 +91,9 @@ public:
     virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 
 protected:
-    BOOL m_bOnlined;                   ///< 指示是否在线成功
-    UINT64  m_uLastOnlineAckTime;      ///< 上次的在线时间
-    stop_watch online_watch_;      ///< 在线处理
+    BOOL is_online_;                   ///< 指示是否在线成功
+    UINT64  last_online_ack_time_;      ///< 上次的在线时间
+    stop_watch online_watch_;           ///< 在线处理
 };
 
 ///< 状态机的定义
@@ -116,6 +116,7 @@ public:
     void start();
     void stop();
     push_client_status get_status();
+    void reinit();
 
     DEFINE_ACCESS_FUN_REF2(udp_client, udp_client, client_);
 

@@ -84,6 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client_info.h" />
+    <ClInclude Include="msg_send_mgr.h" />
+    <ClInclude Include="push_balance_server.h" />
+    <ClInclude Include="push_logic_server.h" />
     <ClInclude Include="push_server_module.h" />
     <ClInclude Include="server_data.h" />
     <ClInclude Include="stdafx.h" />
@@ -99,6 +102,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
       </PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="msg_send_mgr.cpp" />
+    <ClCompile Include="push_balance_server.cpp" />
+    <ClCompile Include="push_logic_server.cpp" />
     <ClCompile Include="push_server.cpp" />
     <ClCompile Include="push_server_module.cpp" />
     <ClCompile Include="server_data.cpp" />

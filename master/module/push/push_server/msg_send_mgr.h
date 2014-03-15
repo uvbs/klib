@@ -17,6 +17,8 @@ using namespace klib::pattern;
 namespace logic
 {
 
+//----------------------------------------------------------------------
+// 客户端信息
 struct client_key
 {
     client_key(ip_v4 addr, USHORT port_) : addr_(addr), port_(port_)  {  }
@@ -38,9 +40,11 @@ public:
         return port_ < other.port_;
     }
 
-    UINT  HashKey() const {   return addr_;  }
+    UINT  hash_key() const {   return addr_;  }
 };
 
+//----------------------------------------------------------------------
+// 消息确认信息
 class msg_confirm_info
 {
 public:
@@ -58,12 +62,15 @@ private:
     DEFINE_ACCESS_FUN_REF2(push_msg_ptr, user_msg, user_msg_);
 };
 
+
+//----------------------------------------------------------------------
+// 消息发送管理
 class msg_send_mgr : 
     public singleton<msg_send_mgr>,
     public sigslot::has_slots<>
 {
-    msg_send_mgr(void);
 public:
+    msg_send_mgr(void);
     ~msg_send_mgr(void);
 
     // 需要外界提供发送的接口
@@ -77,10 +84,11 @@ public:
     UINT32 get_max_retry_time() { return max_retry_times_; }                                ///< 获取最大重试次数
     UINT32 get_retry_send_interval() { return retry_send_interval; }                       ///< 获取重试间隔
 
-    BOOL post_send_msg(DWORD addr_, USHORT port_, push_msg_ptr msg);                 ///< 投递发送消息
-    BOOL post_send_msg(DWORD addr_, USHORT port_, std::vector<push_msg_ptr>& vecMsg);     ///< 一次投递多个消息
-    void on_msg_confirm(DWORD addr_, USHORT port_, UINT64 uMsgID);                         ///< 消息反馈处理
-    BOOL remove_confirm_msg(UINT64 uMsgID);                                                ///< 删除正在发送确认的消息
+    void post_send_msg(ip_v4 addr, USHORT port, const push_msg_ptr msg);                 ///< 投递发送消息
+    void post_send_msg(ip_v4 addr, USHORT port, const std::vector<push_msg_ptr>& vecMsg);     ///< 一次投递多个消息
+
+    void on_client_msg_ack(DWORD addr, USHORT port, UINT64 uMsgID);                         ///< 消息反馈处理
+    BOOL remove_msg_confirm_info(UINT64 uMsgID);                                                ///< 删除正在发送确认的消息
 
 protected:
     bool check_resend_msg();                                                   ///< 检查并重试发送消息

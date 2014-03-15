@@ -2,7 +2,7 @@
 #include "push_logic_server.h"
 
 #include "../common/protocol_st.h"
-
+#include "msg_send_mgr.h"
 
 namespace logic
 {
@@ -20,7 +20,10 @@ push_logic_server_module::~push_logic_server_module(void)
 
 bool push_logic_server_module::start(USHORT uport)
 {
+    auto mgr = msg_send_mgr::instance();
+    mgr->sign_on_send.connect(this, &push_logic_server_module::send_msg);
 
+    client_mgr_.sign_send_push_msg.connect(mgr, &msg_send_mgr::post_send_msg);
     return true;
 }
 

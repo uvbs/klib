@@ -1,13 +1,15 @@
 #pragma once
 
 #include "../../include/push_interface.h"
-
 #include "../common/protocol.h"
+
 #include <net/udp_server.h>
 #include <net/proto/net_archive.h>
 #include <net/proto/local_archive.h>
 
 using namespace std::placeholders;
+
+#include "client_mgr.h"
 
 
 namespace logic
@@ -46,6 +48,9 @@ protected:
     void on_query_curr_ver(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&);
     void on_register_online(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&);
     void on_message_content_ack(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&);
+
+protected:
+    client_mgr client_mgr_;
 };
 
 

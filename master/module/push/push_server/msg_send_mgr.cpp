@@ -33,7 +33,7 @@ void msg_send_mgr::set_retry_send_interval(UINT32 uRetrySendInterval)
     retry_send_interval = uRetrySendInterval;
 }
 
-BOOL msg_send_mgr::post_send_msg(DWORD uAddr, USHORT uPort, push_msg_ptr msg)
+void msg_send_mgr::post_send_msg(ip_v4 uAddr, USHORT uPort, const push_msg_ptr msg)
 {
     auto_lock lock(confirm_msg_mutex_);
 
@@ -43,9 +43,8 @@ BOOL msg_send_mgr::post_send_msg(DWORD uAddr, USHORT uPort, push_msg_ptr msg)
     if (itr == confirm_msg_map_.end()) 
     {
         msg_confirm_info* pConfirmMsgInfo = confirm_msg_pool_.Alloc();
-        if (NULL == pConfirmMsgInfo) 
-        {
-            return FALSE;
+        if (NULL == pConfirmMsgInfo) {
+            return;
         }
         pConfirmMsgInfo->set_user_msg(msg);
 
@@ -63,9 +62,8 @@ BOOL msg_send_mgr::post_send_msg(DWORD uAddr, USHORT uPort, push_msg_ptr msg)
         if (itMsg == mapClientMsgMap.end()) 
         {
             msg_confirm_info* pConfirmMsgInfo = confirm_msg_pool_.Alloc();
-            if (NULL == pConfirmMsgInfo) 
-            {
-                return FALSE;
+            if (NULL == pConfirmMsgInfo) {
+                return ;
             }
             pConfirmMsgInfo->set_user_msg(msg);
 
@@ -86,60 +84,52 @@ BOOL msg_send_mgr::post_send_msg(DWORD uAddr, USHORT uPort, push_msg_ptr msg)
 
     sign_on_send(uAddr, uPort, msg);
 
-    return TRUE;
+    return;
 }
 
-BOOL msg_send_mgr::post_send_msg(DWORD uAddr, USHORT uPort, std::vector<push_msg_ptr>& vecMsg)
+void msg_send_mgr::post_send_msg(ip_v4 uAddr, USHORT uPort, const std::vector<push_msg_ptr>& vecMsg)
 {
     auto itr = vecMsg.begin();
     for (; itr != vecMsg.end(); ++ itr)
     {
         post_send_msg(uAddr, uPort, *itr);
     }
-    return TRUE;
+    return;
 }
 
-void msg_send_mgr::on_msg_confirm(DWORD uAddr, USHORT uPort, UINT64 uMsgID)
+void msg_send_mgr::on_client_msg_ack(DWORD uAddr, USHORT uPort, UINT64 uMsgID)
 {
     client_key key(uAddr, uPort);
 
     auto_lock lock(confirm_msg_mutex_);
     auto itr = confirm_msg_map_.find(uMsgID);
-    if (itr == confirm_msg_map_.end()) 
-    {
-        // 确认的消息必须在列表中，如果不在列表中则断言失败
-        _ASSERT(FALSE);
+    if (itr == confirm_msg_map_.end()) {
         return;
     }
 
-    MapClientConfirmMsgInfoType& mapClientConfirMsg = itr->second;
-    auto itMsg = mapClientConfirMsg.find(key);
-    if (itMsg == mapClientConfirMsg.end()) 
-    {
-        // 确认的消息必须在列表中，如果不在列表中则断言失败
-        _ASSERT(FALSE);
+    MapClientConfirmMsgInfoType& client_confirm_msg_map = itr->second;
+    auto itMsg = client_confirm_msg_map.find(key);
+    if (itMsg == client_confirm_msg_map.end()) {
         return; 
     }
 
     // 在确认列表中清除该消息
     MyPrtLog(_T("收到客户端的确认消息..."));
     confirm_msg_pool_.Free(itMsg->second);
-    mapClientConfirMsg.erase(itMsg);
+    client_confirm_msg_map.erase(itMsg);
 }
 
-BOOL msg_send_mgr::remove_confirm_msg(UINT64 uMsgID)
+BOOL msg_send_mgr::remove_msg_confirm_info(UINT64 uMsgID)
 {
     auto_lock lock(confirm_msg_mutex_);
 
     auto itrMsgList = confirm_msg_map_.find(uMsgID);
-    if (itrMsgList == confirm_msg_map_.end()) 
-    {
+    if (itrMsgList == confirm_msg_map_.end()) {
         return FALSE;
     }
 
     auto itrConfirm = itrMsgList->second.begin();
-    for (; itrConfirm != itrMsgList->second.end(); ++ itrConfirm)
-    {
+    for (; itrConfirm != itrMsgList->second.end(); ++ itrConfirm) {
         confirm_msg_pool_.Free(itrConfirm->second);
     }
     itrMsgList->second.clear();
@@ -153,33 +143,38 @@ bool msg_send_mgr::check_resend_msg()
     auto_lock lock(confirm_msg_mutex_);
 
     UINT64 uTimeNow = _time64(NULL);
-    msg_confirm_info* pConfirmInfo = NULL;
+    msg_confirm_info* pconfirm_info = NULL;
     auto itr = confirm_msg_map_.begin();
     for (; itr != confirm_msg_map_.end(); ++ itr)
     {
         auto itMsg = itr->second.begin();
         for (; itMsg != itr->second.end(); )
         {
-            pConfirmInfo = itMsg->second;
+            pconfirm_info = itMsg->second;
 
             // 删除超过最大发送次数的确认消息
-            if (pConfirmInfo->get_sended_times() >= max_retry_times_) 
+            if (pconfirm_info->get_sended_times() >= max_retry_times_) 
             {
-                confirm_msg_pool_.Free(pConfirmInfo);
+                confirm_msg_pool_.Free(pconfirm_info);
                 itMsg = itr->second.erase(itMsg);
                 continue;
             }
             // 超过时间没有回复消息的，进行重试发送
             else 
             {
-                if (pConfirmInfo->get_last_send_time() + retry_send_interval < uTimeNow)
+                if (pconfirm_info->get_last_send_time() + retry_send_interval < uTimeNow)
                 {
-                    pConfirmInfo->set_last_send_time(uTimeNow);
-                    pConfirmInfo->set_sended_times(1 + pConfirmInfo->get_sended_times());
+                    pconfirm_info->set_last_send_time(uTimeNow);
+                    pconfirm_info->set_sended_times(1 + pconfirm_info->get_sended_times());
                     InterlockedIncrement64(&whole_resend_times_);
 
-                    MyPrtLog(_T("重试发送消息:%I64d, 已发送次数%I64d"), pConfirmInfo->get_msg_id(), pConfirmInfo->get_sended_times());
-                    sign_on_send(itMsg->first.get_addr(), itMsg->first.get_port(), pConfirmInfo->get_user_msg());
+                    MyPrtLog(_T("重试发送消息:%I64d, 已发送次数%I64d"), 
+                        pconfirm_info->get_msg_id(), 
+                        pconfirm_info->get_sended_times());
+
+                    sign_on_send(itMsg->first.get_addr(), 
+                        itMsg->first.get_port(), 
+                        pconfirm_info->get_user_msg());
                 }
 
                 ++ itMsg;

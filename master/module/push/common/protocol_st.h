@@ -155,34 +155,37 @@ struct PT_CMD_ONLINE {
 	friend net_archive& operator << (net_archive& ar, PT_CMD_ONLINE& pt) {
 		//ar << *(COMMAND_HEADER*) &pt;
 	
+		ar << pt.uid; 
+		ar << pt.strAccount; 
 		ar << pt.strMac; 
 		ar << pt.strChannel; 
 		ar << pt.uLastMsgID; 
 		ar << pt.strLoginName; 
 		ar << pt.uVersion; 
-		ar << pt.strAccount; 
 		return ar;
 	}
 	
 	friend net_archive& operator >> (net_archive& ar, PT_CMD_ONLINE& pt) {
 		//ar >> *(COMMAND_HEADER*) &pt;
 		
+		ar >> pt.uid; 
+		ar >> pt.strAccount; 
 		ar >> pt.strMac; 
 		ar >> pt.strChannel; 
 		ar >> pt.uLastMsgID; 
 		ar >> pt.strLoginName; 
 		ar >> pt.uVersion; 
-		ar >> pt.strAccount; 
 		return ar;
 	}
 	
 	
+	UINT64  uid;  
+	std::string  strAccount;   	//  用户的帐号(注册的用户)
 	std::string  strMac;   	//  mac地址
 	std::string  strChannel;   	//  渠道
 	UINT64  uLastMsgID;   	//  最后收到的消息ID
 	std::string  strLoginName;   	//  电脑的登陆名
 	UINT  uVersion;   	//  版本值，用数值比较更好些
-	std::string  strAccount;   	//  用户的帐号(注册的用户)
 };
 
 

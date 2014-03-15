@@ -84,6 +84,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="client_info.h" />
+    <ClInclude Include="client_mgr.h" />
     <ClInclude Include="msg_send_mgr.h" />
     <ClInclude Include="push_balance_server.h" />
     <ClInclude Include="push_logic_server.h" />
@@ -94,6 +95,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="client_info.cpp" />
+    <ClCompile Include="client_mgr.cpp" />
     <ClCompile Include="dllmain.cpp">
       <CompileAsManaged Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</CompileAsManaged>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

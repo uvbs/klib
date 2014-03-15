@@ -24,16 +24,20 @@ class client_info
 {
 public:
     client_info() : 
+        client_port_(0),
+
         uLoginTime(0), 
         uLastActiveTime(0), 
         uHeartCount(0),
-        uLastMsgID(0) 
+        uVersion(0),
+
+        uLastMsgID(0)
      {}
-    ~client_info(void);
+    ~client_info(void) {}
 
 
-    ip_v4   addrClient;              ///< 客户端的IP地址
-    USHORT  uClientPort;             ///< 客户端的端口（网络字节序）
+    ip_v4   client_addr_;              ///< 客户端的IP地址
+    USHORT  client_port_;             ///< 客户端的端口（网络字节序）
 
     UINT64  uLoginTime;              ///< 登陆的时间
     UINT64  uLastActiveTime;         ///< 上次活跃的时间

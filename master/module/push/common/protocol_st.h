@@ -156,12 +156,12 @@ struct PT_CMD_ONLINE {
 		//ar << *(COMMAND_HEADER*) &pt;
 	
 		ar << pt.uid; 
-		ar << pt.strAccount; 
-		ar << pt.strMac; 
-		ar << pt.strChannel; 
-		ar << pt.uLastMsgID; 
-		ar << pt.strLoginName; 
-		ar << pt.uVersion; 
+		ar << pt.account; 
+		ar << pt.mac; 
+		ar << pt.channel; 
+		ar << pt.last_msg_id; 
+		ar << pt.login_name; 
+		ar << pt.version; 
 		return ar;
 	}
 	
@@ -169,23 +169,23 @@ struct PT_CMD_ONLINE {
 		//ar >> *(COMMAND_HEADER*) &pt;
 		
 		ar >> pt.uid; 
-		ar >> pt.strAccount; 
-		ar >> pt.strMac; 
-		ar >> pt.strChannel; 
-		ar >> pt.uLastMsgID; 
-		ar >> pt.strLoginName; 
-		ar >> pt.uVersion; 
+		ar >> pt.account; 
+		ar >> pt.mac; 
+		ar >> pt.channel; 
+		ar >> pt.last_msg_id; 
+		ar >> pt.login_name; 
+		ar >> pt.version; 
 		return ar;
 	}
 	
 	
 	UINT64  uid;  
-	std::string  strAccount;   	//  用户的帐号(注册的用户)
-	std::string  strMac;   	//  mac地址
-	std::string  strChannel;   	//  渠道
-	UINT64  uLastMsgID;   	//  最后收到的消息ID
-	std::string  strLoginName;   	//  电脑的登陆名
-	UINT  uVersion;   	//  版本值，用数值比较更好些
+	std::string  account;   	//  用户的帐号(注册的用户)
+	std::string  mac;   	//  mac地址
+	std::string  channel;   	//  渠道
+	UINT64  last_msg_id;   	//  最后收到的消息ID
+	std::string  login_name;   	//  电脑的登陆名
+	UINT  version;   	//  版本值，用数值比较更好些
 };
 
 

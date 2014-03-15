@@ -257,12 +257,12 @@ void push_client_imp::send_online()
     PT_CMD_ONLINE ptOnline;
 
     header.cmd = CMD_ONLINE;
-    ptOnline.strMac = data->get_mac();
-    ptOnline.strChannel = data->get_channel();
-    ptOnline.uLastMsgID = data->get_last_msg_id();
-    ptOnline.strLoginName = data->get_user();
-    ptOnline.uVersion = CURRENT_CLIENT_VERSION_VALUE;
-    ptOnline.strAccount = data->get_user();
+    ptOnline.mac = data->get_mac();
+    ptOnline.channel = data->get_channel();
+    ptOnline.last_msg_id = data->get_last_msg_id();
+    ptOnline.login_name = data->get_user();
+    ptOnline.version = CURRENT_CLIENT_VERSION_VALUE;
+    ptOnline.account = data->get_user();
 
     // 序列化到缓冲区中
     local_archive<> ar;
@@ -306,8 +306,7 @@ void push_client_imp::on_query_logic_svr_ack(UINT32 uAddr, USHORT uPort, cmd_hea
     PT_CMD_QUERY_LOGIC_SERVER_ACK ack;
     ar >> ack;
 
-    if (ar.get_error()) 
-    {
+    if (ar.get_error()) {
         MyPrtLog(_T("响应查询逻辑服务器地址，协议出错!!!"));
         return;
     }
@@ -340,8 +339,7 @@ void push_client_imp::on_online_msg_ack(UINT32 uAddr, USHORT uPort, cmd_header& 
     {
         PT_CMD_ONLINE_ACK ptOnlineAck;
         ar >> ptOnlineAck;
-        if (ar.get_error()) 
-        {
+        if (ar.get_error()) {
             MyPrtLog(_T("解析消息服务器在线消息出错..."));
             return;
         }
@@ -349,11 +347,10 @@ void push_client_imp::on_online_msg_ack(UINT32 uAddr, USHORT uPort, cmd_header& 
         // 处理在线消息
         message_event ev(event_online_ack_msg);
         push_fsm_.on_event(&ev);
+        return;
     }
-    else
-    {
-        MyPrtLog(_T("不是来自逻辑服务器的消息"));
-    }
+
+    MyPrtLog(_T("不是来自逻辑服务器的消息"));
 }
 
 void push_client_imp::on_msg_notify(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
@@ -428,10 +425,10 @@ void push_client_imp::on_msg_content(UINT32 uAddr, USHORT uPort, cmd_header& hea
         // 提交到上层处理
         auto& callback = data_->get_msg_callback();
         callback(msg_);
+        return;
     }
-    else {
-        MyPrtLog(_T("收到的消息验证不成功，判断不是来自服务器"));
-    }
+
+    MyPrtLog(_T("收到的消息验证不成功，判断不是来自服务器"));
 }
 
 void push_client_imp::on_cur_ver_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)

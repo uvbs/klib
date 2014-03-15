@@ -28,16 +28,14 @@ client_info* client_mgr::update_client_info(client_key& key, PT_CMD_ONLINE& ptCm
         // 未找到，需要添加
         client_info* pInfo = client_info_pool_.Alloc();
         if (NULL == pInfo) 
-        {
             return NULL;
-        }
 
         // 保存客户端的信息数据
-        if (!ptCmdOnline.strChannel.empty()) 
+        if (!ptCmdOnline.channel.empty()) 
         {
-            pInfo->strLoginName = ptCmdOnline.strLoginName.c_str();
-            pInfo->strMac = ptCmdOnline.strMac.c_str();
-            pInfo->strChannel = ptCmdOnline.strChannel.c_str();
+            pInfo->login_name_ = ptCmdOnline.login_name.c_str();
+            pInfo->mac_        = ptCmdOnline.mac.c_str();
+            pInfo->channel_    = ptCmdOnline.channel.c_str();
         }
 
         // 客户端地址+端口
@@ -45,20 +43,20 @@ client_info* client_mgr::update_client_info(client_key& key, PT_CMD_ONLINE& ptCm
         pInfo->client_port_ = key.get_port();
 
         // 保存版本值
-        pInfo->uVersion = ptCmdOnline.uVersion;
+        pInfo->version_     = ptCmdOnline.version;
 
         // 更新时间
-        UINT64 uTimeNow = _time64(NULL);
-        pInfo->uLoginTime = uTimeNow;
-        pInfo->uLastActiveTime = uTimeNow;
+        UINT64 uTimeNow     = _time64(NULL);
+        pInfo->login_time_  = uTimeNow;
+        pInfo->last_active_time_ = uTimeNow;
 
         // 更新心跳次数
-        ++ pInfo->uHeartCount;
+        ++ pInfo->heart_count_;
 
         // 用户的帐号查看
-        if (!ptCmdOnline.strAccount.empty() || ptCmdOnline.uid != 0) 
+        if (!ptCmdOnline.account.empty() || ptCmdOnline.uid != 0) 
         {
-            pInfo->strAccount = ptCmdOnline.strAccount.c_str();
+            pInfo->account_ = ptCmdOnline.account.c_str();
             pInfo->uid = ptCmdOnline.uid;
 
             sign_client_online.emit(pInfo);
@@ -74,28 +72,26 @@ client_info* client_mgr::update_client_info(client_key& key, PT_CMD_ONLINE& ptCm
     else 
     {
         // 更新最后活跃时间
-        itr->second->uLastActiveTime = _time64(NULL);
-
-        // 更新心跳次数
-        ++ itr->second->uHeartCount;
-
+        itr->second->last_active_time_ = _time64(NULL);
+        ++ itr->second->heart_count_;
 
         // 用户的帐号查看
-        if (!ptCmdOnline.strAccount.empty() || ptCmdOnline.uid != 0) 
+        if (!ptCmdOnline.account.empty() || ptCmdOnline.uid != 0) 
         {
             client_info* pInfo = itr->second;
 
             // 比较一下如果信息不一致的话就要把新的信息更新
-            if (ptCmdOnline.uid != pInfo->uid || strcmp(ptCmdOnline.strAccount.c_str(),  pInfo->strAccount.c_str()) != 0) 
+            if (ptCmdOnline.uid != pInfo->uid || 
+                strcmp(ptCmdOnline.account.c_str(),  pInfo->account_.c_str()) != 0) 
             {
                 // 发射退出信号通知
-                sign_client_offline.emit(pInfo);
+                sign_client_offline(pInfo);
 
-                pInfo->strAccount = ptCmdOnline.strAccount.c_str();
+                pInfo->account_ = ptCmdOnline.account.c_str();
                 pInfo->uid = ptCmdOnline.uid;
 
                 // 发射登陆信息号通知
-                sign_client_online.emit(pInfo);
+                sign_client_online(pInfo);
             }
         }
 
@@ -108,30 +104,27 @@ void client_mgr::broadcast_user_msg(push_msg_ptr pUserMsg, const std::string& ch
     // 投递到发送列表中去
     for (int i=0; i<bucket_size; ++i)
     {
-        if (TRUE)
+        auto_lock lock(client_info_mutex_[i]);
+
+        // 根据渠道判断是否需要发送消息
+        auto itr = client_info_map_[i].begin();
+        for (; itr != client_info_map_[i].end(); ++ itr)
         {
-            auto_lock lock(client_info_mutex_[i]);
-
-            // 根据渠道判断是否需要发送消息
-            auto itr = client_info_map_[i].begin();
-            for (; itr != client_info_map_[i].end(); ++ itr)
+            if (channel.empty() ||
+                _strnicmp(channel.c_str(), 
+                itr->second->channel_.c_str(), 
+                channel.size()) == 0) 
             {
-                if (channel.empty() ||
-                    _strnicmp(channel.c_str(), 
-                    itr->second->strChannel.c_str(), 
-                    channel.size()) == 0) 
-                {
-                    // 投递发送消息
-                    sign_send_push_msg(
-                        itr->second->client_addr_, 
-                        itr->second->client_port_,
-                        pUserMsg
-                        );
+                // 投递发送消息
+                sign_send_push_msg(
+                    itr->second->client_addr_, 
+                    itr->second->client_port_,
+                    pUserMsg
+                    );
 
-                    MyPrtLog("投递广播消息:%s:%d", 
-                        inet_ntoa(*(in_addr*)&itr->second->client_addr_), 
-                        ntohs(itr->second->client_port_));
-                }
+                MyPrtLog("投递广播消息:%s:%d", 
+                    inet_ntoa(*(in_addr*)&itr->second->client_addr_), 
+                    ntohs(itr->second->client_port_));
             }
         }
         //Sleep(10);
@@ -164,11 +157,11 @@ void  client_mgr::record_client_confirm_msg(DWORD uAddr, USHORT uPort, UINT64 uM
     client_info* pClientInfo;
     if (get_client_info(key, pClientInfo))
     {
-        if (pClientInfo->objConfirmList.is_full()) 
+        if (pClientInfo->confirm_lst_.is_full()) 
         {
-            pClientInfo->objConfirmList.pop_front();
+            pClientInfo->confirm_lst_.pop_front();
         }
-        pClientInfo->objConfirmList.push_item(confirm_info(uMsgID, _time64(NULL)));
+        pClientInfo->confirm_lst_.push_item(confirm_info(uMsgID, _time64(NULL)));
     }
 }
 
@@ -213,7 +206,7 @@ UINT32 client_mgr::get_channel_count(const char* pszChannel)
             auto itr = client_info_map_[i].begin();
             for (; itr != client_info_map_[i].end(); ++ itr)
             {
-                if (strcmp(itr->second->strChannel.c_str(), pszChannel) == 0)
+                if (strcmp(itr->second->channel_.c_str(), pszChannel) == 0)
                 {
                     ++ uChannelCount;
                 }
@@ -306,7 +299,7 @@ bool client_mgr::check_client_timeout()
             for (; itr != client_info_map_[i].end(); )
             {
                 // 超时了的释放到内存池中
-                if (itr->second->uLastActiveTime + CLIENT_DEFAULT_TIME_OUT < uTimeNow) 
+                if (itr->second->last_active_time_ + CLIENT_DEFAULT_TIME_OUT < uTimeNow) 
                 {
                     // 需先发射离线的信号
                     sign_client_offline.emit(itr->second);

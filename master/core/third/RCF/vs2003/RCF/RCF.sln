@@ -1,0 +1,29 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RCF", "RCF\RCF.vcproj", "{A32251BC-B2D4-4DCA-AB6A-66D5A867CDC7}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RCFTest", "RCFTest\RCFTest.vcproj", "{CC876E59-DDFD-4F56-8C88-9A90AFAF7574}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{A32251BC-B2D4-4DCA-AB6A-66D5A867CDC7}.Debug.ActiveCfg = Debug|Win32
+		{A32251BC-B2D4-4DCA-AB6A-66D5A867CDC7}.Debug.Build.0 = Debug|Win32
+		{A32251BC-B2D4-4DCA-AB6A-66D5A867CDC7}.Release.ActiveCfg = Release|Win32
+		{A32251BC-B2D4-4DCA-AB6A-66D5A867CDC7}.Release.Build.0 = Release|Win32
+		{CC876E59-DDFD-4F56-8C88-9A90AFAF7574}.Debug.ActiveCfg = Debug|Win32
+		{CC876E59-DDFD-4F56-8C88-9A90AFAF7574}.Debug.Build.0 = Debug|Win32
+		{CC876E59-DDFD-4F56-8C88-9A90AFAF7574}.Release.ActiveCfg = Release|Win32
+		{CC876E59-DDFD-4F56-8C88-9A90AFAF7574}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

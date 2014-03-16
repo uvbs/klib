@@ -38,6 +38,8 @@ public:
         REGISTER_DISPATCH(CMD_MESSAGE_CONTENT_ACK, std::bind(&push_logic_server_module::on_message_content_ack, this, _1, _2, _3, _4, _5))
     END_REGISTER_DISPATCH
 
+    virtual void default_msg_handler(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&){}
+
 public:
     // Æô¶¯·þÎñ
     bool start(USHORT uport);

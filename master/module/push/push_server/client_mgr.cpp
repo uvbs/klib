@@ -116,7 +116,7 @@ void client_mgr::broadcast_user_msg(push_msg_ptr pUserMsg, const std::string& ch
                 channel.size()) == 0) 
             {
                 // 投递发送消息
-                sign_send_push_msg(
+                sign_post_push_msg(
                     itr->second->client_addr_, 
                     itr->second->client_port_,
                     pUserMsg
@@ -147,7 +147,7 @@ void client_mgr::for_each(std::function<void(client_info* pInfo)> fun)
     }
 }
 
-void  client_mgr::record_client_confirm_msg(DWORD uAddr, USHORT uPort, UINT64 uMsgID)
+void  client_mgr::record_client_confirm_msg(ip_v4 uAddr, USHORT uPort, UINT64 uMsgID)
 {
     client_key key(uAddr, uPort);
 
@@ -172,7 +172,6 @@ BOOL client_mgr::is_client_exists(client_key& key)
 
     auto itr = client_info_map_[index].find(key);
     if (itr == client_info_map_[index].end()) {
-
         return FALSE;
     }
 
@@ -191,8 +190,7 @@ UINT32 client_mgr::get_online_client_count() const
 
 UINT32 client_mgr::get_channel_count(const char* pszChannel) 
 {
-    if (NULL == pszChannel) 
-    {
+    if (NULL == pszChannel) {
         _ASSERT(FALSE) ;
         return 0;
     }
@@ -200,16 +198,14 @@ UINT32 client_mgr::get_channel_count(const char* pszChannel)
     UINT32 uChannelCount = 0;
     for (int i=0; i<bucket_size; ++i)
     {
-        {
-            auto_lock lock(client_info_mutex_[i]);
+        auto_lock lock(client_info_mutex_[i]);
 
-            auto itr = client_info_map_[i].begin();
-            for (; itr != client_info_map_[i].end(); ++ itr)
+        auto itr = client_info_map_[i].begin();
+        for (; itr != client_info_map_[i].end(); ++ itr)
+        {
+            if (strcmp(itr->second->channel_.c_str(), pszChannel) == 0)
             {
-                if (strcmp(itr->second->channel_.c_str(), pszChannel) == 0)
-                {
-                    ++ uChannelCount;
-                }
+                ++ uChannelCount;
             }
         }
     }
@@ -224,13 +220,11 @@ BOOL client_mgr::get_online_client_info(std::vector<client_info*>& vecClientInfo
 {
     UINT uIndex = 0;
     UINT uSkipCount = 0;
-    BOOL bFinded = FALSE;
     for (; uIndex < bucket_size; ++ uIndex)
     {
         uSkipCount += client_info_map_[uIndex].size();
         if (uStartItem <= uSkipCount) 
         {
-            bFinded = TRUE;
             uSkipCount -= client_info_map_[uIndex].size();
             break;
         }
@@ -245,22 +239,19 @@ BOOL client_mgr::get_online_client_info(std::vector<client_info*>& vecClientInfo
         for (; itr != client_info_map_[i].end(); ++ itr)
         {
             // 需要跳过的个数
-            if (uNeedSkip > 0) 
-            {
+            if (uNeedSkip > 0) {
                 -- uNeedSkip;
                 continue;
             }
 
             // 获取到足够的个数直接返回
-            if (uFetchedNum >= uFetchNum) 
-            {
+            if (uFetchedNum >= uFetchNum) {
                 return TRUE;
             }
 
             // 申客户端信息内存
             pInfo = client_info_pool_.Alloc();
-            if (NULL == pInfo) 
-            {
+            if (NULL == pInfo) {
                 return TRUE;
             }
 
@@ -290,37 +281,32 @@ bool client_mgr::check_client_timeout()
     UINT64 uTimeNow = NULL;
     for (int i=0; i<bucket_size; ++i)
     {
-        if (TRUE)
+        auto_lock lock(client_info_mutex_[i]);
+
+        uTimeNow = _time64(NULL);
+        auto itr = client_info_map_[i].begin();
+        for (; itr != client_info_map_[i].end(); )
         {
-            auto_lock lock(client_info_mutex_[i]);
-
-            uTimeNow = _time64(NULL);
-            auto itr = client_info_map_[i].begin();
-            for (; itr != client_info_map_[i].end(); )
+            // 超时了的释放到内存池中
+            if (itr->second->last_active_time_ + CLIENT_DEFAULT_TIME_OUT < uTimeNow) 
             {
-                // 超时了的释放到内存池中
-                if (itr->second->last_active_time_ + CLIENT_DEFAULT_TIME_OUT < uTimeNow) 
-                {
-                    // 需先发射离线的信号
-                    sign_client_offline.emit(itr->second);
+                // 需先发射离线的信号
+                sign_client_offline.emit(itr->second);
 
-                    // 再删除在线客户端的信息 
-                    client_info_pool_.Free(itr->second);
-                    itr = client_info_map_[i].erase(itr);
-                }
-                else
-                {
-                    ++ itr;
-                }
+                // 再删除在线客户端的信息 
+                client_info_pool_.Free(itr->second);
+                itr = client_info_map_[i].erase(itr);
             }
-
+            else
+            {
+                ++ itr;
+            }
         }
 
         // 避免CPU负载高
         Sleep(50);
     }
-
-
+    
     return TRUE;
 }
 
@@ -330,7 +316,6 @@ BOOL client_mgr::get_client_info(const client_key& key, client_info*& pInfo)
 
     auto itr = client_info_map_[index].find(key);
     if (itr == client_info_map_[index].end()) {
-
         return FALSE;
     }
 

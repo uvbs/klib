@@ -5,6 +5,9 @@ using namespace klib::mem;
 #include <net/ip_v4.h>
 #include <pattern/fix_circle_buff.h>
 
+namespace logic
+{
+
 
 //----------------------------------------------------------------------
 // 客户端确认了的消息ID
@@ -54,3 +57,6 @@ public:
     fix_circle_buff<confirm_info, UINT8, 10> confirm_lst_;
 };
 
+
+
+}

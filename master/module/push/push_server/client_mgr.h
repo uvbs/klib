@@ -22,10 +22,10 @@ public:
 
 public:
     //----------------------------------------------------------------------
-    // 信号
-    sigslot::signal1<client_info*>      sign_client_online;
-    sigslot::signal1<client_info*>      sign_client_offline;
-    sigslot::signal3<ip_v4, USHORT, const push_msg_ptr> sign_send_push_msg;
+    // 往外发出的信号
+    sigslot::signal1<client_info*>      sign_client_online;     // 上线
+    sigslot::signal1<client_info*>      sign_client_offline;    // 下线
+    sigslot::signal3<ip_v4, USHORT, const push_msg_ptr> sign_post_push_msg;
 
 public:
     //----------------------------------------------------------------------
@@ -35,7 +35,7 @@ public:
     void broadcast_user_msg(push_msg_ptr pUserMsg, const std::string& channel);                      ///< 广播消息
     void for_each(std::function<void(client_info* pInfo)> fun);
 
-    void record_client_confirm_msg(DWORD uAddr, USHORT uPort, UINT64 uMsgID);          ///< 记录客户端的回应消息记录
+    void record_client_confirm_msg(ip_v4 uAddr, USHORT uPort, UINT64 uMsgID);          ///< 记录客户端的回应消息记录
     BOOL is_client_exists(client_key& key);                                            ///< 判断客户端是否在线
 
     UINT32 get_online_client_count() const;                                            ///< 获得客户端的个数
@@ -49,7 +49,7 @@ public:
 protected:
     bool check_client_timeout();                                                    ///< 检查客户端是否超时（即一段时间内没有心跳数据）
     BOOL get_client_info(const client_key& key, client_info*& pInfo);
-    inline int get_array_index(UINT uKey) {  return uKey % bucket_size;  }          ///< 通过hash获取数组的索引
+    inline UINT get_array_index(UINT uKey) {  return uKey % bucket_size;  }          ///< 通过hash获取数组的索引
 
 protected:
     // 作一个hash并发访问的数组
@@ -57,7 +57,7 @@ protected:
     mapClientIntoType                           client_info_map_[bucket_size];      ///< 保存客户端信息的数组
     auto_cs                                     client_info_mutex_[bucket_size];    ///< 客户端信息互斥对象
 
-    mutable CObjectPool<client_info,10000, 1000>  client_info_pool_;                ///< 定时器模块
+    mutable CObjectPool<client_info, 10000, 5000>  client_info_pool_;                ///< 定时器模块
     timer_mgr                                     timer_mgr_;
 };
 

@@ -30,11 +30,20 @@ void udp_server::on_udp_msg(udp_socket*, ip_v4 addr, USHORT port, char* buff, in
         {
             f(addr, port, &header, &ar, ret);
         }
+        else
+        {
+            default_msg_handler(addr, port, &header, &ar, ret);
+        }
     }
     else
     {
 
     }
+}
+
+void udp_server::default_msg_handler(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&)
+{
+
 }
 
 void udp_server::register_dispatcher_()	

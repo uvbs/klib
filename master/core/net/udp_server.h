@@ -20,6 +20,7 @@ public:
 
 protected:
     void on_udp_msg(udp_socket*, ip_v4, USHORT, char*, int);
+    virtual void default_msg_handler(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&);
 
 protected:
     virtual void register_dispatcher_()	;

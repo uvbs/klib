@@ -1,7 +1,6 @@
 #ifndef _klib_str_enc_h_
 #define _klib_str_enc_h_
 
-
 namespace klib{
 namespace encrypt{
 

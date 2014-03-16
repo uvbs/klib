@@ -1,0 +1,86 @@
+#/***
+#
+#Copyright 2006 bsmith@qq.com
+#
+#Licensed under the Apache License, Version 2.0 (the "License");
+#you may not use this file except in compliance with the License.
+#You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+#Unless required by applicable law or agreed to in writing, software
+#distributed under the License is distributed on an "AS IS" BASIS,
+#WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#See the License for the specific language governing permissions and
+#limitations under the License.
+#
+#*/
+
+# ============project================
+PROJECT = tcpsrv
+AUTHOR = bsmith
+VERSION = 0.1
+PREFIX = /usr/local
+HOME = .
+# =================================
+
+
+# ==============bin===================
+LINK = $(PROJECT).bin
+TARGET = $(LINK).$(VERSION)
+# ===================================
+
+
+# ===============header====================
+HEADERS = $(PROJECT)*.h
+# ========================================
+
+
+# ===============config====================
+CC = g++
+
+CFLAGS = -Wall -D_DEBUG -DLANCE_LINUX
+LFLAGS = -L. -lpthread
+
+OBJS = \
+	main.o			
+IMPORTS = \
+# ========================================
+
+
+# ==================compile====================
+%.o : %.cpp
+	$(CC) -c $(CFLAGS) $< -o $@
+	
+all : bin
+
+bin : $(TARGET)
+
+$(TARGET) : $(OBJS)
+	$(CC) -o $(TARGET) $(OBJS) $(LFLAGS) $(IMPORTS)
+
+install : $(TARGET)
+		@cp $(TARGET) $(HOME)/bin/
+		@ln -s $(HOME)/bin/$(TARGET) $(HOME)/bin/$(LINK)
+		
+clean:
+	@rm -f $(OBJS)
+	@rm -f $(TARGET)
+	@rm -f $(HOME)/bin/$(TARGET)
+	@rm -f $(HOME)/bin/$(LINK)
+# ==========================================
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+

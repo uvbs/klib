@@ -94,6 +94,8 @@ public:
     void on_client_msg_ack(DWORD addr, USHORT port, UINT64 uMsgID);                         ///< 消息反馈处理
     BOOL remove_msg_confirm_info(UINT64 uMsgID);                                                ///< 删除正在发送确认的消息
 
+    sign_helper& get_sign_helper() { return sign_helper_; }
+
 protected:
     bool timer_check_resend_msg();        ///< 检查并重试发送消息
 

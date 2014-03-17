@@ -11,7 +11,6 @@ using namespace std::placeholders;
 
 #include "client_mgr.h"
 
-
 namespace logic
 {
 
@@ -45,6 +44,7 @@ public:
     bool start(USHORT uport);
 
     void send_msg(ip_v4 ip, USHORT port, push_msg_ptr msg);
+    void send_online_ack(ip_v4 ip, USHORT port);
 
 protected:
     void on_query_curr_ver(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&);

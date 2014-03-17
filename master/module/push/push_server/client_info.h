@@ -4,6 +4,7 @@ using namespace klib::mem;
 
 #include <net/ip_v4.h>
 #include <pattern/fix_circle_buff.h>
+#include <macro.h>
 
 namespace logic
 {
@@ -37,6 +38,16 @@ public:
         last_msg_id_(0)
      {}
     ~client_info(void) {}
+
+    DEFINE_ACCESS_FUN_REF2(ip_v4, client_addr, client_addr_);
+    DEFINE_ACCESS_FUN_REF2(USHORT, client_port, client_port_);
+
+    DEFINE_ACCESS_FUN_REF2(UINT64, login_time,  login_time_);
+    DEFINE_ACCESS_FUN_REF2(UINT64, last_active_time, last_active_time_);
+    DEFINE_ACCESS_FUN_REF2(UINT64, heart_count, heart_count_);
+    DEFINE_ACCESS_FUN_REF2(UINT,   version,     version_);
+    
+    DEFINE_ACCESS_FUN_REF2(UINT64, last_msg_id,  last_msg_id_);
     
     ip_v4   client_addr_;               ///< 客户端的IP地址
     USHORT  client_port_;               ///< 客户端的端口（网络字节序）

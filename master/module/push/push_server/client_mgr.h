@@ -43,7 +43,7 @@ public:
     BOOL   get_online_client_info(std::vector<client_info*>& vecClientInfo,            ///< 获取客户信息列表(获取之后要调用free_online_client_info释放)
         UINT uStartItem, 
         UINT uFetchNum
-        ) const;
+    ) const;
     void   free_online_client_info(std::vector<client_info*>& vecClientInfo);
 
 protected:

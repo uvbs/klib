@@ -27,8 +27,8 @@ client_info* client_mgr::update_client_info(client_key& key, PT_CMD_ONLINE& ptCm
     {
         // 未找到，需要添加
         client_info* pInfo = client_info_pool_.Alloc();
-        if (NULL == pInfo) 
-            return NULL;
+        if (nullptr == pInfo) 
+            return nullptr;
 
         // 保存客户端的信息数据
         if (!ptCmdOnline.channel.empty()) 
@@ -122,7 +122,7 @@ void client_mgr::broadcast_user_msg(push_msg_ptr pUserMsg, const std::string& ch
                     pUserMsg
                     );
 
-                MyPrtLog("投递广播消息:%s:%d", 
+                MyPrtLog("post broadcast message: %s:%d", 
                     inet_ntoa(*(in_addr*)&itr->second->client_addr_), 
                     ntohs(itr->second->client_port_));
             }

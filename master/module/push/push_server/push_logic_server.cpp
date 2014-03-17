@@ -21,9 +21,9 @@ push_logic_server_module::~push_logic_server_module(void)
 bool push_logic_server_module::start(USHORT uport)
 {
     auto mgr = msg_send_mgr::instance();
-    mgr->sign_on_send.connect(this, &push_logic_server_module::send_msg);
+    mgr->s_send_msg.connect(this, &push_logic_server_module::send_msg);
 
-    client_mgr_.sign_post_push_msg.connect(mgr, &msg_send_mgr::post_send_msg);
+    client_mgr_.s_on_post_push_msg.connect(mgr, &msg_send_mgr::post_send_msg);
     return true;
 }
 
@@ -128,7 +128,8 @@ void push_logic_server_module::on_message_content_ack(ip_v4 ip,
     // 客户端处理成功。
     if (ptMsgAck.emOpResult == OP_SUCCESS) 
     {
-        client_mgr_.record_client_confirm_msg(ip, port, ptMsgAck.uMsgID);
+        client_mgr_.add_client_confirm_msg_id(ip, port, ptMsgAck.uMsgID);
+
         auto mgr = msg_send_mgr::instance();
         mgr->remove_msg_confirm_info(ptMsgAck.uMsgID);
     }

@@ -52,13 +52,13 @@ void msg_send_mgr::post_send_msg(ip_v4 uAddr, USHORT uPort, const push_msg_ptr m
         pConfirmMsgInfo->set_sended_times(1 + pConfirmMsgInfo->get_sended_times());
         pConfirmMsgInfo->set_last_send_time(_time64(NULL));
 
-        confirm_msg_map_[msg->get_msg_id()][client_key(uAddr, uPort)] = pConfirmMsgInfo;
+        confirm_msg_map_[msg->get_msg_id()][client_addr_key(uAddr, uPort)] = pConfirmMsgInfo;
     }
     else
     {
         // 找到了该消息ID的，但未找到客户端的
         MapClientConfirmMsgInfoType& mapClientMsgMap = itr->second;
-        auto itMsg = mapClientMsgMap.find(client_key(uAddr, uPort));
+        auto itMsg = mapClientMsgMap.find(client_addr_key(uAddr, uPort));
         if (itMsg == mapClientMsgMap.end()) 
         {
             msg_confirm_info* pConfirmMsgInfo = confirm_msg_pool_.Alloc();
@@ -71,7 +71,7 @@ void msg_send_mgr::post_send_msg(ip_v4 uAddr, USHORT uPort, const push_msg_ptr m
             pConfirmMsgInfo->set_sended_times(1 + pConfirmMsgInfo->get_sended_times());
             pConfirmMsgInfo->set_last_send_time(_time64(NULL));
 
-            mapClientMsgMap.insert(std::make_pair(client_key(uAddr, uPort), pConfirmMsgInfo));
+            mapClientMsgMap.insert(std::make_pair(client_addr_key(uAddr, uPort), pConfirmMsgInfo));
         }
         else
         {
@@ -109,7 +109,7 @@ void msg_send_mgr::post_send_msg(ip_v4 uAddr, USHORT uPort, const std::vector<pu
 
 void msg_send_mgr::on_client_msg_ack(DWORD uAddr, USHORT uPort, UINT64 uMsgID)
 {
-    client_key key(uAddr, uPort);
+    client_addr_key key(uAddr, uPort);
 
     auto_lock lock(confirm_msg_mutex_);
     auto itr = confirm_msg_map_.find(uMsgID);
@@ -123,7 +123,10 @@ void msg_send_mgr::on_client_msg_ack(DWORD uAddr, USHORT uPort, UINT64 uMsgID)
         return; 
     }
 
-    s_on_send_msg_success(itMsg->first, itMsg->second->get_user_msg());
+    handle_on_send_msg_result(
+        itMsg->first, 
+        itMsg->second->get_user_msg(), 
+        true);
 
     // 在确认列表中清除该消息
     MyPrtLog(_T("收到客户端的确认消息..."));
@@ -143,8 +146,10 @@ BOOL msg_send_mgr::remove_msg_confirm_info(UINT64 uMsgID)
     auto itrConfirm = itrMsgList->second.begin();
     for (; itrConfirm != itrMsgList->second.end(); ++ itrConfirm) 
     {
-        s_on_send_msg_failed(itrConfirm->first, 
-            itrConfirm->second->get_user_msg());
+        handle_on_send_msg_result(
+            itrConfirm->first, 
+            itrConfirm->second->get_user_msg(),
+            false);
 
         confirm_msg_pool_.Free(itrConfirm->second);
     }
@@ -171,7 +176,10 @@ bool msg_send_mgr::timer_check_resend_msg()
             // 删除超过最大发送次数的确认消息
             if (pconfirm_info->get_sended_times() >= max_retry_times_) 
             {
-                s_on_send_msg_failed(itMsg->first, itMsg->second->get_user_msg());
+                handle_on_send_msg_result(
+                    itMsg->first, 
+                    itMsg->second->get_user_msg(),
+                    false);
 
                 confirm_msg_pool_.Free(pconfirm_info);
                 itMsg = itr->second.erase(itMsg);

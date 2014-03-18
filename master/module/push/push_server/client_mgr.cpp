@@ -16,12 +16,12 @@ client_mgr::~client_mgr(void)
 {
 }
 
-client_info* client_mgr::update_client_info(client_key& key, PT_CMD_ONLINE& cmd_online, BOOL& bNew)
+client_info_ex* client_mgr::update_client_info(client_addr_key& key, PT_CMD_ONLINE& cmd_online, BOOL& bNew)
 {
     bNew = FALSE;
     int index = get_array_index(key.hash_key());
     auto_lock locker(client_info_mutex_[index]);
-    client_info* pInfo = nullptr;
+    client_info_ex* pInfo = nullptr;
 
     auto itr = client_info_map_[index].find(key);
     if (itr == client_info_map_[index].end()) 
@@ -102,12 +102,12 @@ void client_mgr::broadcast_user_msg(push_msg_ptr pUserMsg, const std::string& ch
 
 void  client_mgr::add_client_confirm_msg_id(ip_v4 uAddr, USHORT uPort, UINT64 uMsgID)
 {
-    client_key key(uAddr, uPort);
+    client_addr_key key(uAddr, uPort);
 
     int index = get_array_index(key.hash_key());
     auto_lock locker(client_info_mutex_[index]);
 
-    client_info* c_info;
+    client_info_ex* c_info;
     if (get_client_info(key, c_info))
     {
         if (c_info->confirm_lst_.is_full()) 
@@ -117,7 +117,7 @@ void  client_mgr::add_client_confirm_msg_id(ip_v4 uAddr, USHORT uPort, UINT64 uM
     }
 }
 
-BOOL client_mgr::is_client_exists(client_key& key)
+BOOL client_mgr::is_client_exists(client_addr_key& key)
 {
     int index = get_array_index(key.hash_key());
     auto_lock locker(client_info_mutex_[index]);
@@ -165,7 +165,7 @@ UINT32 client_mgr::get_channel_count(const char* pszChannel)
     return uChannelCount;
 }
 
-BOOL client_mgr::get_online_client_info(std::vector<client_info*>& vecClientInfo,
+BOOL client_mgr::get_online_client_info(std::vector<client_info_ex*>& vecClientInfo,
     UINT uStartItem, 
     UINT uFetchNum
     ) const
@@ -184,7 +184,7 @@ BOOL client_mgr::get_online_client_info(std::vector<client_info*>& vecClientInfo
 
     UINT need_skip_num = uStartItem - uSkipCount;
     UINT already_feteched_num = 0;           // 获取的个数
-    client_info* pInfo = NULL;
+    client_info_ex* pInfo = NULL;
     for (int i=uIndex; i<bucket_size; ++i)
     {
         auto itr = client_info_map_[i].begin();
@@ -212,7 +212,7 @@ BOOL client_mgr::get_online_client_info(std::vector<client_info*>& vecClientInfo
     return TRUE;
 }
 
-void client_mgr::free_online_client_info(std::vector<client_info*>& vecClientInfo)
+void client_mgr::free_online_client_info(std::vector<client_info_ex*>& vecClientInfo)
 {
     auto itr = vecClientInfo.begin();
     for (; itr != vecClientInfo.end(); ++ itr)
@@ -234,10 +234,10 @@ bool client_mgr::tiner_check_client_timeout()
         for (; itr != client_info_map_[i].end(); )
         {
             // 超时了的释放到内存池中
-            if (itr->second->last_active_time_ + CLIENT_DEFAULT_TIME_OUT < uTimeNow) 
+            if (itr->second->last_active_time_ + client_default_timeout < uTimeNow) 
             {
                 // 需先发射离线的信号
-                s_on_client_offline.emit(itr->second);
+                s_on_client_offline(itr->second);
 
                 // 再删除在线客户端的信息 
                 client_info_pool_.Free(itr->second);
@@ -256,7 +256,7 @@ bool client_mgr::tiner_check_client_timeout()
     return TRUE;
 }
 
-BOOL client_mgr::get_client_info(const client_key& key, client_info*& pInfo)
+BOOL client_mgr::get_client_info(const client_addr_key& key, client_info_ex*& pInfo)
 {
     int index = get_array_index(key.hash_key());
 

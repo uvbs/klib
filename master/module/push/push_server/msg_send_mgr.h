@@ -20,32 +20,6 @@ namespace logic
 {
 
 //----------------------------------------------------------------------
-// 客户端信息
-struct client_key
-{
-    client_key(ip_v4 addr, USHORT port_) : addr_(addr), port_(port_)  {  }
-    client_key(){}
-
-private:
-    ip_v4  addr_;
-    USHORT port_;
-
-public:
-    DEFINE_ACCESS_FUN_REF2(ip_v4, addr, addr_);
-    DEFINE_ACCESS_FUN_REF2(USHORT, port, port_);
-
-    bool operator < (const client_key& other) const 
-    {
-        if (addr_ < other.addr_) { return true; }
-        else if (addr_ > other.addr_) { return false; }
-
-        return port_ < other.port_;
-    }
-
-    UINT  hash_key() const {   return addr_;  }
-};
-
-//----------------------------------------------------------------------
 // 消息确认信息
 class msg_confirm_info
 {
@@ -77,8 +51,7 @@ public:
 
     // 需要外界提供发送的接口
     sigslot::signal3<ip_v4, USHORT, push_msg_ptr> s_send_msg;  // 
-    sigslot::signal2<const client_key&, const push_msg_ptr&> s_on_send_msg_failed;
-    sigslot::signal2<const client_key&, const push_msg_ptr&> s_on_send_msg_success;
+    handle_send_msg_result_callback handle_on_send_msg_result;
 
 public:
     // 参数设置(最大发送次数，重试间隔)
@@ -98,7 +71,7 @@ protected:
     bool timer_check_resend_msg();  ///< 检查并重试发送消息
 
 private:
-    typedef std::map<client_key, msg_confirm_info*>        MapClientConfirmMsgInfoType;
+    typedef std::map<client_addr_key, msg_confirm_info*>        MapClientConfirmMsgInfoType;
     typedef std::map<UINT64,  MapClientConfirmMsgInfoType>  MapMsgIDMsgConfirmType;
     MapMsgIDMsgConfirmType              confirm_msg_map_;                                ///< 保存确认消息列表
     mutex                               confirm_msg_mutex_;                              ///< 

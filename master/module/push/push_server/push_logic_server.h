@@ -42,6 +42,10 @@ public:
 public:
     //----------------------------------------------------------------------
     // push_logic_server_i
+    void set_handle(
+        handle_client_online_callback online_handle,
+        handle_client_offline_callback offline_handle,
+        handle_send_msg_result_callback msg_result_handle);
     bool start(USHORT uport);   ///< 启动服务
     bool post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg); ///< 发送消息
     size_t get_online_client_count(); ///< 在线客户端个数
@@ -52,6 +56,7 @@ public:
     void send_online_ack(ip_v4 ip, USHORT port);
 
 protected:
+    // 处理客户端发来的消息
     void on_query_curr_ver(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&);
     void on_register_online(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&);
     void on_message_content_ack(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&);

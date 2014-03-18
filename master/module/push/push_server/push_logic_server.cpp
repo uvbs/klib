@@ -18,6 +18,17 @@ push_logic_server_module::~push_logic_server_module(void)
 {
 }
 
+void push_logic_server_module::set_handle(
+    handle_client_online_callback online_handle,
+    handle_client_offline_callback offline_handle,
+    handle_send_msg_result_callback msg_result_handle)
+{
+    client_mgr_.s_on_client_online = online_handle;
+    client_mgr_.s_on_client_offline = offline_handle;
+
+    msg_send_mgr::instance()->handle_on_send_msg_result = msg_result_handle;
+}
+
 bool push_logic_server_module::start(USHORT uport)
 {
     auto mgr = msg_send_mgr::instance();
@@ -29,7 +40,7 @@ bool push_logic_server_module::start(USHORT uport)
 
 bool push_logic_server_module::post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg)
 {
-    client_key k(addr, port);
+    client_addr_key k(addr, port);
     if (!client_mgr_.is_client_exists(k))
         return false;
     
@@ -110,7 +121,7 @@ void push_logic_server_module::on_register_online(ip_v4 ip,
     net_archive*, 
     BOOL&)
 {
-    client_key key(ip, port);
+    client_addr_key key(ip, port);
     BOOL is_new = FALSE;
 
     local_archive<> ar;

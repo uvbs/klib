@@ -18,6 +18,9 @@ static const GUID IID_PUSH_LOGIC_SERVER =
 #include <net/udp_client.h>
 #include <functional>
 #include <macro.h>
+#include <core/small_string.h>
+
+using namespace klib::mem;
 
 
 // 推送的消息定义
@@ -79,7 +82,7 @@ class push_client_i
 
 
 //----------------------------------------------------------------------
-// 
+// 逻辑服务器地址信息定义
 struct logic_addr_info 
 {
     logic_addr_info() : addr_(0), uport_(0) {}
@@ -95,8 +98,82 @@ public:
     
 };
 
+///< 客户端地址信息
+struct client_addr_key
+{
+    client_addr_key(ip_v4 addr, USHORT port_) : addr_(addr), port_(port_)  {  }
+    client_addr_key(){}
+
+private:
+    ip_v4  addr_;
+    USHORT port_;
+
+public:
+    DEFINE_ACCESS_FUN_REF2(ip_v4, addr, addr_);
+    DEFINE_ACCESS_FUN_REF2(USHORT, port, port_);
+
+    bool operator < (const client_addr_key& other) const 
+    {
+        if (addr_ < other.addr_) { return true; }
+        else if (addr_ > other.addr_) { return false; }
+
+        return port_ < other.port_;
+    }
+
+    UINT  hash_key() const {   return addr_;  }
+};
+
+// 客户端信息
+class client_info
+{
+public:
+    client_info() : 
+        client_port_(0),
+        login_time_(0), 
+        last_active_time_(0), 
+        heart_count_(0),
+        version_(0),
+        last_msg_id_(0)
+      {}
+      ~client_info(void) {}
+
+      DEFINE_ACCESS_FUN_REF2(ip_v4, client_addr, client_addr_);
+      DEFINE_ACCESS_FUN_REF2(USHORT, client_port, client_port_);
+
+      DEFINE_ACCESS_FUN_REF2(UINT64, login_time,  login_time_);
+      DEFINE_ACCESS_FUN_REF2(UINT64, last_active_time, last_active_time_);
+      DEFINE_ACCESS_FUN_REF2(UINT64, heart_count, heart_count_);
+      DEFINE_ACCESS_FUN_REF2(UINT,   version,     version_);
+
+      DEFINE_ACCESS_FUN_REF2(UINT64, last_msg_id,  last_msg_id_);
+
+      ip_v4   client_addr_;               ///< 客户端的IP地址
+      USHORT  client_port_;               ///< 客户端的端口（网络字节序）
+
+      UINT64  login_time_;                ///< 登陆的时间
+      UINT64  last_active_time_;          ///< 上次活跃的时间
+      UINT64  heart_count_;               ///< 心跳个数
+      UINT    version_;                   ///< 版本值
+
+      UINT64  last_msg_id_;               ///< 消息的编号
+      small_string<13>  mac_;             ///< mac地址，未使用
+      small_string<21>  channel_;         ///< 客户端的渠道
+      small_string<31>  login_name_;      ///< 电脑登陆名
+      small_string<31>  account_;         ///< 用衣的帐号
+
+      UINT64    uid;                      ///< 用户的ID
+};
+
+typedef std::function<void(client_info*)> handle_client_online_callback;
+typedef std::function<void(client_info*)> handle_client_offline_callback;
+typedef std::function<void(client_addr_key, push_msg_ptr, bool)> 
+    handle_send_msg_result_callback;
+
 class push_logic_server_i
 {
+    virtual void set_handle(handle_client_online_callback online_handle,
+        handle_client_offline_callback offline_handle,
+        handle_send_msg_result_callback msg_result_handle ) = 0;
     virtual bool start(USHORT uport) = 0;
     virtual bool post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg) = 0;
     virtual size_t get_online_client_count() = 0;

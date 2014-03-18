@@ -82,20 +82,20 @@ public:
 
 public:
     // 参数设置(最大发送次数，重试间隔)
-    void set_max_retry_times(UINT32 uMaxRetryTimes);                                        ///< 设置最大重试次数
-    void set_retry_send_interval(UINT32 uRetrySendInterval);                                ///< 设置重试间隔
+    void set_max_retry_times(UINT32 uMaxRetryTimes);     ///< 设置最大重试次数
+    void set_retry_send_interval(UINT32 uRetrySendInterval);        ///< 设置重试间隔
 
-    UINT32 get_max_retry_time() { return max_retry_times_; }                                ///< 获取最大重试次数
-    UINT32 get_retry_send_interval() { return retry_send_interval; }                       ///< 获取重试间隔
+    UINT32 get_max_retry_time() { return max_retry_times_; }    ///< 获取最大重试次数
+    UINT32 get_retry_send_interval() { return retry_send_interval; }    ///< 获取重试间隔
 
-    void post_send_msg(ip_v4 addr, USHORT port, const push_msg_ptr msg);                 ///< 投递发送消息
-    void post_send_msg(ip_v4 addr, USHORT port, const std::vector<push_msg_ptr>& vecMsg);     ///< 一次投递多个消息
+    void post_send_msg(ip_v4 addr, USHORT port, const push_msg_ptr msg);   ///< 投递发送消息
+    void post_send_msg(ip_v4 addr, USHORT port, const std::vector<push_msg_ptr>& vecMsg); ///< 一次投递多个消息
 
     void on_client_msg_ack(DWORD addr, USHORT port, UINT64 uMsgID);  ///< 消息反馈处理
     BOOL remove_msg_confirm_info(UINT64 uMsgID);   ///< 删除正在发送确认的消息(针对报有客户端的特定消息)
 
 protected:
-    bool timer_check_resend_msg();        ///< 检查并重试发送消息
+    bool timer_check_resend_msg();  ///< 检查并重试发送消息
 
 private:
     typedef std::map<client_key, msg_confirm_info*>        MapClientConfirmMsgInfoType;

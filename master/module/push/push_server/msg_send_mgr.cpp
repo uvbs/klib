@@ -43,7 +43,7 @@ void msg_send_mgr::post_send_msg(ip_v4 uAddr, USHORT uPort, const push_msg_ptr m
     if (itr == confirm_msg_map_.end()) 
     {
         msg_confirm_info* pConfirmMsgInfo = confirm_msg_pool_.Alloc();
-        if (NULL == pConfirmMsgInfo) {
+        if (nullptr == pConfirmMsgInfo) {
             return;
         }
         pConfirmMsgInfo->set_user_msg(msg);
@@ -62,11 +62,11 @@ void msg_send_mgr::post_send_msg(ip_v4 uAddr, USHORT uPort, const push_msg_ptr m
         if (itMsg == mapClientMsgMap.end()) 
         {
             msg_confirm_info* pConfirmMsgInfo = confirm_msg_pool_.Alloc();
-            if (NULL == pConfirmMsgInfo) {
+            if (nullptr == pConfirmMsgInfo) {
                 return ;
             }
-            pConfirmMsgInfo->set_user_msg(msg);
 
+            pConfirmMsgInfo->set_user_msg(msg);
             pConfirmMsgInfo->set_msg_id(msg->get_msg_id());
             pConfirmMsgInfo->set_sended_times(1 + pConfirmMsgInfo->get_sended_times());
             pConfirmMsgInfo->set_last_send_time(_time64(NULL));
@@ -92,6 +92,7 @@ void msg_send_mgr::post_send_msg(ip_v4 uAddr, USHORT uPort, const push_msg_ptr m
         msg->set_str_sign(str_sign);
     }
 
+    // 真正的发送消息
     s_send_msg(uAddr, uPort, msg);
 
     return;
@@ -164,7 +165,7 @@ bool msg_send_mgr::timer_check_resend_msg()
     auto_lock lock(confirm_msg_mutex_);
 
     UINT64 uTimeNow = _time64(NULL);
-    msg_confirm_info* pconfirm_info = NULL;
+    msg_confirm_info* pconfirm_info = nullptr;
     auto itr = confirm_msg_map_.begin();
     for (; itr != confirm_msg_map_.end(); ++ itr)
     {

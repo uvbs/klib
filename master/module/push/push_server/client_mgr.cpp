@@ -142,7 +142,7 @@ UINT32 client_mgr::get_online_client_count() const
 
 UINT32 client_mgr::get_channel_count(const char* pszChannel) 
 {
-    if (NULL == pszChannel) {
+    if (nullptr == pszChannel) {
         _ASSERT(FALSE) ;
         return 0;
     }
@@ -184,7 +184,7 @@ BOOL client_mgr::get_online_client_info(std::vector<client_info_ex*>& vecClientI
 
     UINT need_skip_num = uStartItem - uSkipCount;
     UINT already_feteched_num = 0;           // 获取的个数
-    client_info_ex* pInfo = NULL;
+    client_info_ex* pInfo = nullptr;
     for (int i=uIndex; i<bucket_size; ++i)
     {
         auto itr = client_info_map_[i].begin();
@@ -199,7 +199,7 @@ BOOL client_mgr::get_online_client_info(std::vector<client_info_ex*>& vecClientI
             
             // 申客户端信息内存
             pInfo = client_info_pool_.Alloc();
-            if (NULL == pInfo) 
+            if (nullptr == pInfo) 
                 return TRUE;
 
             // 返回到vector中
@@ -224,7 +224,7 @@ void client_mgr::free_online_client_info(std::vector<client_info_ex*>& vecClient
 bool client_mgr::tiner_check_client_timeout()
 {
     // 一段一段的检查超时的客户端
-    UINT64 uTimeNow = NULL;
+    UINT64 uTimeNow = 0;
     for (int i=0; i<bucket_size; ++i)
     {
         auto_lock lock(client_info_mutex_[i]);

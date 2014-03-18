@@ -27,6 +27,23 @@ bool push_logic_server_module::start(USHORT uport)
     return true;
 }
 
+bool push_logic_server_module::post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg)
+{
+    client_key k(addr, port);
+    if (!client_mgr_.is_client_exists(k))
+        return false;
+    
+    msg_send_mgr* mgr_ = msg_send_mgr::instance();
+    mgr_->post_send_msg(addr, port, msg);
+
+    return true;
+}
+
+size_t push_logic_server_module::get_online_client_count()
+{
+    return client_mgr_.get_online_client_count();
+}
+
 void push_logic_server_module::send_online_ack(ip_v4 ip, USHORT port)
 {
     local_archive<> ar;

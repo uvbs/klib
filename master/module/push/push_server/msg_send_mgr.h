@@ -103,7 +103,7 @@ private:
     MapMsgIDMsgConfirmType              confirm_msg_map_;                                ///< 保存确认消息列表
     mutex                               confirm_msg_mutex_;                              ///< 
 
-    CObjectPool<msg_confirm_info, 10000, 4000>  confirm_msg_pool_;     ///< 待确认消息内存池
+    CObjectPool<msg_confirm_info, 10000, 5000>  confirm_msg_pool_;     ///< 待确认消息内存池
     timer_mgr                           timer_mgr_;
 
     UINT32                              max_retry_times_;                     ///< 最大重试发送次数

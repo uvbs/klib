@@ -40,9 +40,14 @@ public:
     virtual void default_msg_handler(ip_v4, USHORT, cmd_header*, net_archive*, BOOL&){}
 
 public:
-    // 启动服务
-    bool start(USHORT uport);
+    //----------------------------------------------------------------------
+    // push_logic_server_i
+    bool start(USHORT uport);   ///< 启动服务
+    bool post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg); ///< 发送消息
+    size_t get_online_client_count(); ///< 在线客户端个数
 
+public:
+    // 对其它方法提供的函数
     void send_msg(ip_v4 ip, USHORT port, push_msg_ptr msg);
     void send_online_ack(ip_v4 ip, USHORT port);
 

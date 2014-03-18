@@ -46,6 +46,13 @@ bool push_client_module::set_client_info(const std::string& channel,
 {
     app_data* data_ = app_data::instance();
 
+    data_->set_channel(channel);
+    data_->set_mac(mac);
+    data_->set_user(user);
+    data_->set_pass(pass);
+    data_->set_last_msg_id(std::strtoul(last_msg_id.c_str(), 0, 0));
+    data_->set_appid(appid);
+
     return true;
 }
 

@@ -12,8 +12,6 @@
 
 using namespace std::placeholders;
 
-//----------------------------------------------------------------------
-//
 
 //----------------------------------------------------------------------
 // 状态相关
@@ -32,16 +30,13 @@ void query_logic_state::on_event(FsmEvent* e, UINT& uNewStateID)
 
         if (query_addr_watch_.is_triggerd()) 
         {
-            query_addr_watch_.reset();
-
-            // 判断是可能因为端口被限制，所以需要重新绑定端口
-            pclient->reinit();
+            query_addr_watch_.reset();            
+            pclient->reinit();// 判断是可能因为端口被限制，所以需要重新绑定端口
         }
     }
     else if (e->get_evt_type() == event_query_logic_ack_msg)
     {
-        // 转换状态
-        uNewStateID = status_query_newver;
+        uNewStateID = status_query_newver; // 转换状态
     }
     else
     {
@@ -61,17 +56,15 @@ void query_newver_state::on_event(FsmEvent* e, UINT& uNewStateID)
 
     if (e->get_evt_type() == event_timer) 
     {
-        // 发送查询最新版本消息
-        pclient->send_query_curver();
+        pclient->send_query_curver(); // 发送查询最新版本消息
 
         // 判断是否超时触发了
         if (newver_watch_.is_triggerd()) 
         {
             newver_watch_.reset();
 
-            uNewStateID = status_query_logic_addr;
-
-            // 判断是可能因为端口被限制，所以需要重新绑定端口
+            // 一段时间内没有响应消息，则跳转到最初状态
+            uNewStateID = status_query_logic_addr; 
             pclient->reinit();
         }
     }
@@ -172,12 +165,11 @@ void push_client_imp::reinit()
     client_.reinit();
 }
 
-void push_client_imp::on_msg(udp_client* client_, UINT32 uAddr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
+void push_client_imp::on_msg(udp_client* client_, ip_v4 uAddr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
 {
     MyPrtLog("message comming!!!");
 
     net_archive ar(buff, iLen);
-
     cmd_header header;
     ar >> header;
 
@@ -253,25 +245,24 @@ void push_client_imp::send_online()
     app_data* data = app_data::instance();
 
     // 定义并填充结构
-    cmd_header header;
-    PT_CMD_ONLINE ptOnline;
+    cmd_header header(CMD_ONLINE);
+    PT_CMD_ONLINE cmd_online;
 
-    header.cmd = CMD_ONLINE;
-    ptOnline.mac = data->get_mac();
-    ptOnline.channel = data->get_channel();
-    ptOnline.last_msg_id = data->get_last_msg_id();
-    ptOnline.login_name = data->get_user();
-    ptOnline.version = CURRENT_CLIENT_VERSION_VALUE;
-    ptOnline.account = data->get_user();
+    cmd_online.mac = data->get_mac();
+    cmd_online.channel = data->get_channel();
+    cmd_online.last_msg_id = data->get_last_msg_id();
+    cmd_online.login_name = data->get_user();
+    cmd_online.version = CURRENT_CLIENT_VERSION_VALUE;
+    cmd_online.account = data->get_user();
 
     // 序列化到缓冲区中
     local_archive<> ar;
     ar << header;
-    ar << ptOnline;
+    ar << cmd_online;
 
     // 发送到逻辑服务器
-    client_.send_to(app_data::instance()->get_logic_addr(), 
-        app_data::instance()->get_logic_port(),
+    client_.send_to(data->get_logic_addr(), 
+        data->get_logic_port(),
         ar.get_buff(), 
         ar.get_data_len());
 }
@@ -279,30 +270,31 @@ void push_client_imp::send_online()
 void push_client_imp::send_msg_ack(UINT64 uMsgID)
 {
     MyPrtLog("发送消息确认消息...");
+    app_data* data = app_data::instance();
 
     // 定义并填充结构
     cmd_header header;
-    PT_CMD_MESSAGE_CONTENT_ACK ptMsgAck;
+    PT_CMD_MESSAGE_CONTENT_ACK cmd_msg_ack;
 
     header.cmd = CMD_MESSAGE_CONTENT_ACK;
-    ptMsgAck.uMsgID = uMsgID;
-    ptMsgAck.emOpResult = OP_SUCCESS;
+    cmd_msg_ack.uMsgID = uMsgID;
+    cmd_msg_ack.emOpResult = OP_SUCCESS;
 
     local_archive<> ar;
     ar << header;
-    ar << ptMsgAck;
+    ar << cmd_msg_ack;
 
     // 发送到逻辑服务器
-    client_.send_to(app_data::instance()->get_logic_addr(), 
-        app_data::instance()->get_logic_port(), 
+    client_.send_to(data->get_logic_addr(), 
+        data->get_logic_port(), 
         ar.get_buff(), 
         ar.get_data_len());
 }
 
-void push_client_imp::on_query_logic_svr_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+void push_client_imp::on_query_logic_svr_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
     MyPrtLog("收到逻辑服务器查询回复消息...");
-
+    app_data* data = app_data::instance();
     PT_CMD_QUERY_LOGIC_SERVER_ACK ack;
     ar >> ack;
 
@@ -314,12 +306,12 @@ void push_client_imp::on_query_logic_svr_ack(UINT32 uAddr, USHORT uPort, cmd_hea
     _ASSERT(push_fsm_.get_cur_state_id() == status_query_logic_addr);
     if (push_fsm_.get_cur_state_id() == status_query_logic_addr) 
     {
-        // 获得服务器的地址及端口
-        app_data::instance()->set_logic_addr(ack.uLogicIP);
-        app_data::instance()->set_logic_port(ack.uLogicUdpPort);
-
         _ASSERT(ack.uLogicIP > 0);
         _ASSERT(ack.uLogicUdpPort > 0);
+
+        // 获得服务器的地址及端口
+        data->set_logic_addr(ack.uLogicIP);
+        data->set_logic_port(ack.uLogicUdpPort);
 
         // 状态机事件 
         message_event ev(event_query_logic_ack_msg);
@@ -331,7 +323,7 @@ void push_client_imp::on_query_logic_svr_ack(UINT32 uAddr, USHORT uPort, cmd_hea
     }
 }
 
-void push_client_imp::on_online_msg_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+void push_client_imp::on_online_msg_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
     MyPrtLog(_T("服务器回复在线消息..."));
 
@@ -353,7 +345,7 @@ void push_client_imp::on_online_msg_ack(UINT32 uAddr, USHORT uPort, cmd_header& 
     MyPrtLog(_T("不是来自逻辑服务器的消息"));
 }
 
-void push_client_imp::on_msg_notify(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+void push_client_imp::on_msg_notify(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
     MyPrtLog(_T("服务器消息通知..."));
     _ASSERT(FALSE && _T("暂未实现!!!"));
@@ -372,7 +364,7 @@ void push_client_imp::on_msg_notify(UINT32 uAddr, USHORT uPort, cmd_header& head
     }
 }
 
-void push_client_imp::on_msg_content(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+void push_client_imp::on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
     MyPrtLog(_T("服务器消息内容推送..."));
     PT_CMD_MESSAGE_CONTENT ptMsg;
@@ -431,7 +423,7 @@ void push_client_imp::on_msg_content(UINT32 uAddr, USHORT uPort, cmd_header& hea
     MyPrtLog(_T("收到的消息验证不成功，判断不是来自服务器"));
 }
 
-void push_client_imp::on_cur_ver_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
+void push_client_imp::on_cur_ver_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
     PT_CMD_QUERY_CURRENT_VERSION_ACK ptCurVersionAck;
     app_data* data_ = app_data::instance();

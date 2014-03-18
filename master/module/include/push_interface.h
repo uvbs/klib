@@ -98,7 +98,8 @@ public:
 class push_logic_server_i
 {
     virtual bool start(USHORT uport) = 0;
-
+    virtual bool post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg) = 0;
+    virtual size_t get_online_client_count() = 0;
 };
 
 

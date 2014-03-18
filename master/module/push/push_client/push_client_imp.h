@@ -121,7 +121,7 @@ public:
     DEFINE_ACCESS_FUN_REF2(udp_client, udp_client, client_);
 
 protected:
-    virtual void on_msg(udp_client* client_, UINT32 uAddr, USHORT uPort, char* buff, int iLen) ;		///< UDP消息回调接口
+    virtual void on_msg(udp_client* client_, ip_v4 uAddr, USHORT uPort, char* buff, int iLen) ;		///< UDP消息回调接口
 
 public:
     void send_query_logic_addr();
@@ -132,11 +132,11 @@ public:
 
 protected:
     // 处理网络来的消息 
-    void on_query_logic_svr_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
-    void on_online_msg_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);///< CMD_ONLINE_ACK
-    void on_msg_notify(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
-    void on_msg_content(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
-    void on_cur_ver_ack(UINT32 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_query_logic_svr_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_online_msg_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);///< CMD_ONLINE_ACK
+    void on_msg_notify(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_cur_ver_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
 
 protected:
     bool timer_check_status() ;           ///< 检查应用的状态

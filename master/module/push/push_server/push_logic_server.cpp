@@ -23,18 +23,18 @@ void push_logic_server_module::set_handle(
     handle_client_offline_callback offline_handle,
     handle_send_msg_result_callback msg_result_handle)
 {
+    auto mgr_sender = msg_send_mgr::instance();
+
     client_mgr_.s_on_client_online = online_handle;
     client_mgr_.s_on_client_offline = offline_handle;
+    client_mgr_.s_on_post_push_msg.connect(mgr_sender, &msg_send_mgr::post_send_msg);
 
     msg_send_mgr::instance()->handle_on_send_msg_result = msg_result_handle;
+    mgr_sender->s_send_msg.connect(this, &push_logic_server_module::send_msg);
 }
 
 bool push_logic_server_module::start(USHORT uport)
 {
-    auto mgr = msg_send_mgr::instance();
-    mgr->s_send_msg.connect(this, &push_logic_server_module::send_msg);
-
-    client_mgr_.s_on_post_push_msg.connect(mgr, &msg_send_mgr::post_send_msg);
     return true;
 }
 

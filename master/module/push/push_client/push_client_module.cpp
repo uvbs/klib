@@ -20,20 +20,25 @@ push_client_module::~push_client_module(void)
 
 bool push_client_module::set_logic_server_info(const std::string& domain, USHORT uport)
 {
-    app_data::instance()->set_svr_domain(domain);
-    app_data::instance()->set_svr_port(uport);
+    app_data* data_ = app_data::instance();
+
+    data_->set_svr_domain(domain);
+    data_->set_svr_port(uport);
     return true;
 }
 
 bool push_client_module::set_data_callback(handle_data_callback& callback_)
 {
-    app_data::instance()->set_data_callback(callback_);
+    app_data* data_ = app_data::instance();
+    data_->set_data_callback(callback_);
     return true;
 }
 
 bool push_client_module::set_msg_callback(handle_msg_callback& callback)
 {
-    app_data::instance()->set_msg_callback(callback);
+    app_data* data_ = app_data::instance();
+
+    data_->set_msg_callback(callback);
     return true;
 }
 

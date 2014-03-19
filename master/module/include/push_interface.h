@@ -87,9 +87,9 @@ public:
 // 逻辑服务器地址信息定义
 struct logic_addr_info 
 {
-    logic_addr_info() : addr_(0), uport_(0) {}
+    logic_addr_info() : addr_(0), port_(0) {}
     ip_v4   addr_;
-    USHORT  uport_;
+    USHORT  port_;
 };
 
 class push_balance_server_i

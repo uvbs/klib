@@ -20,7 +20,7 @@ void udp_server::on_udp_msg(udp_socket*, ip_v4 addr, USHORT port, char* buff, in
 {
     net_archive ar(buff, ilen);
     cmd_header header;
-    BOOL ret;
+    BOOL ret = FALSE;
 
     ar >> header;
     if (!ar.get_error()) 

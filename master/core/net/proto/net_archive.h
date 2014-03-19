@@ -45,45 +45,39 @@ namespace klib {
 namespace net {
 
 
-// 定义长度标记的长度
-#define  length_mark_len  (2)
 
 // 网络序列化类
 class net_archive {
 public:
+    net_archive() :  
+        error_flag_(false)
+    {}
+
 	net_archive(char* buff, UINT buffLen) {
 		set_buff(buff);
 		error_flag_ = false;
-		buff_len_ = buffLen;
+		buff_len_   = buffLen;
 	}
 
 	// 设置要序列化的缓冲区
     void set_buff(char* buff) {
         orig_pos_ = buff;
-		op_pos_ = (char*) orig_pos_ + length_mark_len;
-        writed_length_ = false;
+		op_pos_   = (char*) orig_pos_;
 	}
 
 	// 返回设置的缓冲区指针
 	char* get_buff() {
-        if (writed_length_) {
-            return (char*) orig_pos_;
-        }
-		return (char*) orig_pos_ + length_mark_len;
+		return (char*) orig_pos_;
 	}
 
     // 返回写入的长度
 	UINT length() {
-        if (writed_length_) {
-            return buff_len_ + length_mark_len;
-        }
 		return buff_len_;
 	}
 
     // 写入长度，并记录标记
     void write_length_mark() {
-        *(USHORT*)orig_pos_ = KHTON16(buff_len_ + length_mark_len);
-        writed_length_ = true;
+        *(USHORT*)orig_pos_ = KHTON16(buff_len_);
     }
     
 	/*
@@ -378,7 +372,6 @@ private:
 	const char* orig_pos_;	///< 缓冲区的初始位置
 	UINT buff_len_;		    ///< 缓冲区的总长度
 	bool error_flag_;       ///< 是否出错(缓冲区大小不够情况)
-    bool writed_length_;    ///< 是否写入的长度
 };
 
 

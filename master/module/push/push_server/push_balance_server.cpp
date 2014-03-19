@@ -33,6 +33,7 @@ bool push_balance_server_module::start(USHORT work_port, USHORT maintain_port)
     this->maintain_port_ = maintain_port;
 
     setlocale(LC_ALL, "chs");
+    MyPrtLog("balance server starting...");
 
     return __super::start(work_port_);
 }
@@ -50,13 +51,11 @@ void push_balance_server_module::on_query_logic_addr(ip_v4 remote_addr,
     (*ar) >> ptQuery;
 
     ack.uLogicIP       =  logic_addr_info_.addr_;
-    ack.uLogicUdpPort  =  logic_addr_info_.uport_;
+    ack.uLogicUdpPort  =  KHTON16(logic_addr_info_.port_);
     ack.uLogicTcpPort  =  0;
 
-    cmd_header header_;
-    header_.cmd = CMD_QUERY_LOGIC_SERVER_ACK;
-
-    localar << header_;
+    cmd_header header_ack(CMD_QUERY_LOGIC_SERVER_ACK);
+    localar << header_ack;
     localar << ack;
 
     socket_.send_to(remote_addr, remote_port, localar.get_buff(), localar.get_data_len());

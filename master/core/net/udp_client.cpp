@@ -2,7 +2,6 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-//#include "stdafx.h"
 #include "udp_client.h"
 
 #include "../kthread/auto_lock.h"
@@ -19,67 +18,67 @@ using namespace klib::net;
 
 udp_client::udp_client()
 {
-	m_sock					= INVALID_SOCKET;
-	m_bStop					= TRUE;
-	m_bSocketInit			= FALSE;
+	socket_					= INVALID_SOCKET;
+	stop_					= TRUE;
+	sock_inited_			= FALSE;
 }
 
 udp_client::~udp_client()
 {
-	if (m_sock != INVALID_SOCKET)
+	if (socket_ != INVALID_SOCKET)
 	{
-		closesocket(m_sock);
-		m_sock = INVALID_SOCKET;
+		closesocket(socket_);
+		socket_ = INVALID_SOCKET;
 	}
 }
 
-BOOL udp_client::init(USHORT uPort/* = 0*/ ) 
+BOOL udp_client::init(USHORT port/* = 0*/ ) 
 {
-	if (m_bSocketInit && m_sock != INVALID_SOCKET) 
+	if (sock_inited_ && socket_ != INVALID_SOCKET) 
     {
 		return TRUE;
 	}
 	
-	m_sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	if (m_sock == INVALID_SOCKET) {
+	socket_ = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	if (socket_ == INVALID_SOCKET) {
 		return FALSE;
 	}
 
-	if (uPort > 0)
+	if (port > 0)
 	{
-		if (!bind_port(uPort))
+		if (!bind_port(port))
         {
             return FALSE;
         }
 	}
 	
-	m_bSocketInit = TRUE;
+	sock_inited_ = TRUE;
 	return TRUE;
 }
 
 BOOL udp_client::reinit()
 {
-    if (m_bSocketInit) 
+    if (sock_inited_) 
     {
-        _ASSERT(m_sock != INVALID_SOCKET);
-        closesocket(m_sock);
-        m_sock = INVALID_SOCKET;
+        _ASSERT(socket_ != INVALID_SOCKET);
+        closesocket(socket_);
+        socket_ = INVALID_SOCKET;
 
-        m_bSocketInit = FALSE;
+        sock_inited_ = FALSE;
     }
 
     return init();
 }
 
-BOOL udp_client::bind_port(USHORT uPort) 
+BOOL udp_client::bind_port(USHORT port) 
 {
-    _ASSERT(uPort > 0 );
+    _ASSERT(port > 0 );
     sockaddr_in addrLocal;
     memset(&addrLocal, 0, sizeof(addrLocal));
     addrLocal.sin_addr.s_addr	= 0;
     addrLocal.sin_family		= AF_INET;
-    addrLocal.sin_port			= htons(uPort);
-    int ret = bind(m_sock, (struct sockaddr*)&addrLocal, sizeof(addrLocal));
+    addrLocal.sin_port			= htons(port);
+    int ret = bind(socket_, (struct sockaddr*)&addrLocal, sizeof(addrLocal));
     if (SOCKET_ERROR == ret) {
         return FALSE;
     }
@@ -90,7 +89,7 @@ BOOL udp_client::bind_port(USHORT uPort)
 BOOL udp_client::enable_reuse(BOOL bReuse/* = TRUE*/) 
 {
     BOOL bOpt = bReuse;
-    if (SOCKET_ERROR == setsockopt(m_sock, SOL_SOCKET, SO_REUSEADDR, (char*)&bOpt, sizeof(bOpt)))
+    if (SOCKET_ERROR == setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, (char*)&bOpt, sizeof(bOpt)))
     {
         return FALSE;
     }
@@ -101,7 +100,7 @@ BOOL udp_client::enable_reuse(BOOL bReuse/* = TRUE*/)
 BOOL udp_client::enable_broadcast(BOOL bBroadCast/* = TRUE*/) 
 {
     BOOL bOpt = bBroadCast;
-    if (SOCKET_ERROR == setsockopt(m_sock, SOL_SOCKET, SO_BROADCAST, (char*)&bOpt, sizeof(bOpt)))
+    if (SOCKET_ERROR == setsockopt(socket_, SOL_SOCKET, SO_BROADCAST, (char*)&bOpt, sizeof(bOpt)))
     {
         return FALSE;
     }
@@ -118,7 +117,7 @@ BOOL udp_client::enable_udpreset(BOOL bEnable/* = FALSE*/)
 #define SIO_UDP_CONNRESET _WSAIOW(IOC_VENDOR,12)
     // disable  new behavior using
     // IOCTL: SIO_UDP_CONNRESET
-    status = WSAIoctl(m_sock, SIO_UDP_CONNRESET,
+    status = WSAIoctl(socket_, SIO_UDP_CONNRESET,
         &bNewBehavior, sizeof(bNewBehavior),
         NULL, 0, &dwBytesReturned,
         NULL, NULL);
@@ -159,12 +158,12 @@ BOOL udp_client::start(BOOL bBlock)
 
 void udp_client::stop(BOOL bStop/* = TRUE*/)
 {
-	m_bStop = bStop;
+	stop_ = bStop;
 }
 
 BOOL udp_client::is_stop() 
 {
-	return m_bStop;
+	return stop_;
 }
 
 void udp_client::set_callback(udp_client_callback callback)
@@ -172,43 +171,43 @@ void udp_client::set_callback(udp_client_callback callback)
 	udp_callback_ = callback;
 }
 
-BOOL udp_client::send_to(ip_v4 uAddr, USHORT uPort, const char*buff, int iLen)
+BOOL udp_client::send_to(ip_v4 uAddr, USHORT port, const char*buff, int iLen)
 {
 	sockaddr_in addrTo;
 	memset(&addrTo, 0, sizeof(addrTo));
 	addrTo.sin_addr.s_addr = uAddr;
 	addrTo.sin_family = AF_INET;
-	addrTo.sin_port = uPort;
+	addrTo.sin_port = port;
 
-	return SOCKET_ERROR != sendto(m_sock, buff, iLen, 0, (sockaddr*)&addrTo, sizeof(addrTo));
+	return SOCKET_ERROR != sendto(socket_, buff, iLen, 0, (sockaddr*)&addrTo, sizeof(addrTo));
 }
 
 void udp_client::set_svr_info(ip_v4 uAddrServer, USHORT uPortServer) 
 {
-	m_uSvrAddr = uAddrServer;
-	m_uSvrPort = uPortServer;
+	svr_addr_ = uAddrServer;
+	svr_port_ = uPortServer;
 }
 
 BOOL udp_client::send_to_svr(const char* buff, int iLen)
 {
-	if (!(m_uSvrAddr && m_uSvrPort)) 
+	if (!(svr_addr_ && svr_port_)) 
     {
 		return FALSE;
 	}
 
-	return this->send_to(m_uSvrAddr, m_uSvrPort, buff, iLen);
+	return this->send_to(svr_addr_, svr_port_, buff, iLen);
 }
 
-BOOL udp_client::send_to(const char* strAddr, USHORT uPort, const char*buff, int iLen)
+BOOL udp_client::send_to(const char* str_addr, USHORT port, const char*buff, int iLen)
 {
-	addr_resolver resolver(strAddr);
+	addr_resolver resolver(str_addr);
 
 	if (resolver.size() <= 0)
 	{
 		return FALSE;
 	}
 
-	return this->send_to(resolver.at(0), htons(uPort), buff, iLen);
+	return this->send_to(resolver.at(0), htons(port), buff, iLen);
 }
 
 void udp_client::work_thread(void* param)
@@ -228,7 +227,7 @@ BOOL udp_client::do_server()
 	int ret = 0;
 	while (TRUE) 
     {
-		ret = recvfrom(m_sock, buff, sizeof(buff), 0, (struct sockaddr*)&addrFrom, &lenOfAddr);
+		ret = recvfrom(socket_, buff, sizeof(buff), 0, (struct sockaddr*)&addrFrom, &lenOfAddr);
 		if (ret > 0)
 		{
 			if (udp_callback_)

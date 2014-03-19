@@ -226,7 +226,7 @@ void push_client_imp::send_query_logic_addr()
 
 void push_client_imp::send_query_curver()
 {
-    MyPrtLog(_T("发送查询最新版本消息"));
+    MyPrtLog("发送查询最新版本消息");
 
     cmd_header header(CMD_QUERY_CURRENT_VERSION);
     PT_CMD_QUERY_CURRENT_VERSION ptQueryCurVer;

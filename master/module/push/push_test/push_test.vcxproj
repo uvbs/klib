@@ -84,11 +84,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="push_client_test.h" />
+    <ClInclude Include="push_balance_server_test.h" />
+    <ClInclude Include="push_logic_server_test.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="push_client_test.cpp" />
+    <ClCompile Include="push_balance_server_test.cpp" />
+    <ClCompile Include="push_logic_server_test.cpp" />
     <ClCompile Include="push_test.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

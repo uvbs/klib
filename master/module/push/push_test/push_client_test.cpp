@@ -33,7 +33,8 @@ void push_client_test::start()
 
     handle_msg_callback f = std::bind(&push_client_test::handle_msg, this, std::placeholders::_1);
     push_client_i_->set_msg_callback(f);
-    push_client_i_->set_logic_server_info("www.baidu.com", 8000);
+    push_client_i_->set_logic_server_info("127.0.0.1", 8000);
+    push_client_i_->start();
 }
 
 void push_client_test::handle_msg(push_msg_ptr msg)

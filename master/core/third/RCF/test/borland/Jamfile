@@ -1,0 +1,102 @@
+
+## special jamfile for that screwed up c++ compiler from borland
+## the lib target type doesn't work, so we have to compile RCF 
+## and serialization into each and every test executable.
+
+project-root ; #so we can find Jamrules
+
+import testing ;
+
+template RcfTestBaseSt
+:
+  ../../src/RCF/RCF.cpp
+  ../../src/SF/SF.cpp
+  
+  <dll>@boost/libs/thread/build/boost_thread
+:
+  <sysinclude>../../include
+  <sysinclude>$(BOOST_ROOT)
+  <define>WIN32_LEAN_AND_MEAN
+  <define>RCF_NO_BOOST_SERIALIZATION
+  <threading>multi
+  <find-library>$(SOCKET_LIBRARY_1)
+  <find-library>$(SOCKET_LIBRARY_2)
+;   
+
+
+template RcfTestBaseMt
+:
+  ../../src/RCF/RCF.cpp
+  ../../src/SF/SF.cpp
+  
+  <dll>@boost/libs/thread/build/boost_thread
+:
+  <sysinclude>../../include
+  <sysinclude>$(BOOST_ROOT)
+  <define>RCF_USE_BOOST_THREADS
+  <define>RCF_NO_BOOST_SERIALIZATION
+  <define>WIN32_LEAN_AND_MEAN
+  <threading>multi
+  <find-library>$(SOCKET_LIBRARY_1)
+  <find-library>$(SOCKET_LIBRARY_2)
+;   
+
+test-suite "RcfTest"
+:
+  [ run ../Test_Minimal.cpp                 <template>RcfTestBaseMt ]
+  [ run ../Test_General.cpp                 <template>RcfTestBaseMt ]
+  [ run ../Test_Binding.cpp                 <template>RcfTestBaseMt ]
+  [ run ../Test_Performance.cpp             <template>RcfTestBaseMt ]
+  [ run ../Test_Polymorphic.cpp             <template>RcfTestBaseMt ]
+  [ run ../Test_Endpoint.cpp                <template>RcfTestBaseMt ]
+  [ run ../Test_MultipleClient.cpp          <template>RcfTestBaseMt ]
+  [ run ../Test_IpRestriction.cpp           <template>RcfTestBaseMt ]
+  [ run ../Test_Serialization.cpp           <template>RcfTestBaseMt ]
+  [ run ../Test_StubSerialization.cpp       <template>RcfTestBaseMt ]
+  [ run ../Test_ClientTimeout.cpp           <template>RcfTestBaseMt ]
+  [ run ../Test_ClientConnectionDrop.cpp    <template>RcfTestBaseMt ]
+  [ run ../Test_ClientInfo.cpp              <template>RcfTestBaseMt ]
+  [ run ../Test_SingleThreadedServer.cpp    <template>RcfTestBaseSt ]
+;
+
+exe Test_Client_Minimal
+:
+  ../Test_Client_Minimal.cpp
+  <template>RcfTestBaseSt
+;
+
+exe Test_Server_Minimal
+:
+  ../Test_Server_Minimal.cpp
+  <template>RcfTestBaseSt
+;
+
+exe Test_Client_Performance
+:
+  ../Test_Client_Performance.cpp
+  <template>RcfTestBaseSt
+;
+
+exe Test_Server_Performance
+:
+  ../Test_Server_Performance.cpp
+  <template>RcfTestBaseSt
+;
+
+exe Test_Endpoint_Client
+:
+  ../Test_Endpoint_Client.cpp
+  <template>RcfTestBaseSt
+;
+
+exe Test_Endpoint_Server
+:
+  ../Test_Endpoint_Server.cpp
+  <template>RcfTestBaseSt
+;
+
+exe Test_Endpoint_Service
+:
+  ../Test_Endpoint_Service.cpp
+  <template>RcfTestBaseSt
+;

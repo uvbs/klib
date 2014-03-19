@@ -61,30 +61,30 @@ public:
 class CState : public state_i
 {
 public:
-    CState() : m_uParentID(0), m_uStateID(0) { m_szStateName[0] = 0; }
-    CState(UINT uStateID) : m_uParentID(0), m_uStateID(uStateID) { m_szStateName[0] = 0; }
+    CState() : parent_id_(0), state_id_(0) { state_name_[0] = 0; }
+    CState(UINT uStateID) : parent_id_(0), state_id_(uStateID) { state_name_[0] = 0; }
     virtual ~CState() {}
 
-    virtual UINT get_state_id() {return m_uStateID;}
-    virtual void set_state_id(UINT uStateID) { m_uStateID = uStateID; }
+    virtual UINT get_state_id() {return state_id_;}
+    virtual void set_state_id(UINT uStateID) { state_id_ = uStateID; }
 
-    virtual char*  get_state_name() { return m_szStateName; }
+    virtual char*  get_state_name() { return state_name_; }
     virtual void   set_state_name(char* pszStateName) 
     { 
-        strncpy_s(m_szStateName, _countof(m_szStateName) -1, pszStateName, strlen(pszStateName)); 
+        strncpy_s(state_name_, _countof(state_name_) -1, pszStateName, strlen(pszStateName)); 
     }
 
-    virtual void set_parent_id(UINT uParentID) { m_uParentID = uParentID; }
-    virtual UINT get_parent_id() { return m_uStateID; }
+    virtual void set_parent_id(UINT uParentID) { parent_id_ = uParentID; }
+    virtual UINT get_parent_id() { return parent_id_; }
 
     virtual void enter(state_i* s) {}
     virtual void leave() {}
     virtual void on_event(FsmEvent* e, UINT& uNewStateID) {}
 
 private:
-    UINT        m_uParentID;                ///< ¸¸×´Ì¬ID
-    UINT        m_uStateID;                 ///< µ±Ç°×´Ì¬ID
-    char        m_szStateName[40];          ///< µ±Ç°×´Ì¬Ãû³Æ
+    UINT        parent_id_;                ///< ¸¸×´Ì¬ID
+    UINT        state_id_;                 ///< µ±Ç°×´Ì¬ID
+    char        state_name_[40];          ///< µ±Ç°×´Ì¬Ãû³Æ
 };
 
 ///< ×´Ì¬»ú
@@ -94,17 +94,17 @@ public:
     CFsm() : cur_state_(NULL), exit_state_(NULL)  {}
     ~CFsm() 
     {
-        auto itr = m_StateMap.begin();
-        for (; itr  != m_StateMap.end(); ++ itr) 
+        auto itr = state_map_.begin();
+        for (; itr  != state_map_.end(); ++ itr) 
         {
             delete itr->second;
         }
-        m_StateMap.clear();
+        state_map_.clear();
     }
 
 public:
     ///< »ñµÃµ±Ç°µÄ×´Ì¬ID
-    UINT get_cur_statei_d() 
+    UINT get_cur_state_id() 
     {
         if (cur_state_) 
         {
@@ -123,7 +123,7 @@ public:
     state_i* get_exit_state(state_i* s) { return exit_state_; }
 
     ///< Ìí¼Ó×´Ì¬
-    void add_state(state_i* s) { m_StateMap.insert(std::make_pair(s->get_state_id(), s)); }
+    void add_state(state_i* s) { state_map_.insert(std::make_pair(s->get_state_id(), s)); }
 
     ///< É¾³ýÏàÓ¦µÄ×´Ì¬
     void del_state(UINT uStateID) 
@@ -131,7 +131,7 @@ public:
         state_i* s = get_state(uStateID);
         if (s) 
         {
-            m_StateMap.erase(uStateID);
+            state_map_.erase(uStateID);
             delete s;
         }
     }
@@ -139,8 +139,8 @@ public:
     ///< ¸ù¾Ý×´Ì¬ID»ñÈ¡×´Ì¬
     state_i* get_state(UINT uStateID) 
     {
-        auto itr = m_StateMap.find(uStateID);
-        if (itr != m_StateMap.end()) 
+        auto itr = state_map_.find(uStateID);
+        if (itr != state_map_.end()) 
         {
             return itr->second;
         }
@@ -167,7 +167,7 @@ public:
     }
 
     ///< ¸Ä±ä×´Ì¬
-    void ChangeState(UINT uStateID)
+    void change_state(UINT uStateID)
     {
         if (cur_state_) 
         {
@@ -202,7 +202,7 @@ public:
     }
 
 protected:
-    std::map<UINT, state_i*> m_StateMap;   ///< ×´Ì¬±í
+    std::map<UINT, state_i*> state_map_;   ///< ×´Ì¬±í
 
     state_i* cur_state_;                  ///< µ±Ç°×´Ì¬Ö¸Õë
     state_i* exit_state_;
@@ -259,25 +259,25 @@ class FSM_Name : public CFsm                                    \
 public:                                                         \
     FSM_Name()                                                  \
     {                                                           \
-        RegisterAllState();                                     \
+        register_all_state();                                   \
     }
 
 ///< ¿ªÊ¼×¢²á×´Ì¬
 #define  BEGIN_REGISTER_STATE()                                 \
-void RegisterAllState()                                         \
+void register_all_state()                                       \
 {                                                               \
     state_i* s = NULL;
 
 ///< ×¢²á×´Ì¬
 #define  REGISTER_STATE(State_Name)                             \
-    this->add_state(new State_Name);                             \
+    this->add_state(new State_Name);                            \
 
 ///< ×¢²á³õÊ¼×´Ì¬
 #define REGISTER_INIT_STATE(State_Name)                         \
     s = new State_Name;                                         \
     if (s) {                                                    \
-        this->add_state(s);                                      \
-        this->set_init_state(s);                                  \
+        this->add_state(s);                                     \
+        this->set_init_state(s);                                \
     }
 
 ///< ×¢²á½áÊø×´Ì¬

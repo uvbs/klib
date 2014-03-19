@@ -9,26 +9,27 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
+#ifdef _MSC_VER
 #include <WinSock2.h>
 #include <windows.h>
+#endif
 
 #include "../kthread/thread.h"
+#include "ip_v4.h"
+
 #include <list>
+#include <functional>
 
 namespace klib {
 namespace net{
 
-    
 class udp_client;
-class udp_handler {
-public:
-	virtual void on_msg(udp_client* client_, 
-                        UINT32 uAddr, 
-                        USHORT uPort, 
-                        char* buff, 
-                        int iLen) = 0;		// UDP消息回调接口
-};
 
+typedef std::function<void (udp_client* client_, 
+    ip_v4  uAddr, 
+    USHORT uPort, 
+    char* buff, 
+    int iLen)> udp_client_callback;
 
 class udp_client
 {
@@ -47,10 +48,10 @@ public:
 	virtual BOOL start(BOOL bBlock);
 	virtual void stop(BOOL bStop = TRUE);
 	virtual BOOL is_stop() ;
-	virtual void set_handler(udp_handler* handler_);
+	virtual void set_callback(udp_client_callback callback);
 
-	virtual void set_svr_info(UINT32 uAddrServer, USHORT uPortServer) ;//地址和端口为网络序
-	virtual BOOL send_to(UINT32 uAddr, USHORT uPort, const char* buff, int iLen);//地址和端口为网络序
+	virtual void set_svr_info(ip_v4 uAddrServer, USHORT uPortServer) ;//地址和端口为网络序
+	virtual BOOL send_to(ip_v4 uAddr, USHORT uPort, const char* buff, int iLen);//地址和端口为网络序
 	virtual BOOL send_to(const char* strAddr, USHORT uPort, const char*buff, int iLen);//端口为主机序
 	virtual BOOL send_to_svr(const char* buff, int iLen);
 
@@ -67,10 +68,10 @@ protected:
 
 	//----------------------------------------------------------------------
 	//以下变量都是网络字节序
-	UINT32 m_uSvrAddr;						///< 服务器地址
+	ip_v4  m_uSvrAddr;						///< 服务器地址
 	USHORT m_uSvrPort;						///< 服务器端口
 
-	udp_handler* udp_handler_;				///< UDP事件回调接口
+	udp_client_callback    udp_callback_;	///< UDP事件回调接口
     klib::kthread::Thread  thread_;         ///< 线程
 };
 

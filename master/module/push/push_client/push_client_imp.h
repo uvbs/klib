@@ -4,6 +4,7 @@
 
 #include "../../include/push_interface.h"
 #include <core/timer_mgr.h>
+#include <comp/sign_verify/verify_helper.h>
 
 ///< 事件类型
 enum em_event_type
@@ -76,7 +77,7 @@ class online_state : public CState
 public:
     online_state() : CState(status_online) , online_watch_(DEFAULT_WATCH_TIMEOUT)
     {
-        m_bOnlined = FALSE;
+        is_online_ = FALSE;
     }
 
     ///< 判断超时的时间值，如果超过这个值没有服务器的回应消息那么就会，转到查询逻辑服务器状态
@@ -90,9 +91,9 @@ public:
     virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 
 protected:
-    BOOL m_bOnlined;                   ///< 指示是否在线成功
-    UINT64  m_uLastOnlineAckTime;      ///< 上次的在线时间
-    stop_watch online_watch_;      ///< 在线处理
+    BOOL is_online_;                   ///< 指示是否在线成功
+    UINT64  last_online_ack_time_;      ///< 上次的在线时间
+    stop_watch online_watch_;           ///< 在线处理
 };
 
 ///< 状态机的定义
@@ -107,8 +108,7 @@ END
 //----------------------------------------------------------------------
 // 客户端的具体实现类
 class push_client_imp : 
-    public singleton<push_client_imp>,
-    public udp_handler
+    public singleton<push_client_imp>
 {
     DECLARE_SINGLETON_CLASS(push_client_imp);
 
@@ -116,11 +116,12 @@ public:
     void start();
     void stop();
     push_client_status get_status();
+    void reinit();
 
     DEFINE_ACCESS_FUN_REF2(udp_client, udp_client, client_);
 
 protected:
-    virtual void on_msg(udp_client* client_, UINT32 uAddr, USHORT uPort, char* buff, int iLen) ;		///< UDP消息回调接口
+    virtual void on_msg(udp_client* client_, ip_v4 uAddr, USHORT uPort, char* buff, int iLen) ;		///< UDP消息回调接口
 
 public:
     void send_query_logic_addr();
@@ -130,12 +131,21 @@ public:
     void send_msg_ack(UINT64 uMsgID);                   ///< 发送ack消息
 
 protected:
+    // 处理网络来的消息 
+    void on_query_logic_svr_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_online_msg_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);///< CMD_ONLINE_ACK
+    void on_msg_notify(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+    void on_cur_ver_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar);
+
+protected:
     bool timer_check_status() ;           ///< 检查应用的状态
 
 protected:
-    udp_client client_;
+    udp_client      client_;
     push_client_fsm push_fsm_;
     timer_mgr       timer_mgr_;
+    verify_helper   verify_helper_;
 };
 
 

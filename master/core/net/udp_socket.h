@@ -9,7 +9,6 @@
 #include "ip_v4.h"
 
 
-
 namespace klib {
 namespace net {
 
@@ -23,7 +22,7 @@ public:
 
 public:
     ///< 使用前必须先进行初始化
-	BOOL init(USHORT uBindPort);
+	BOOL init(USHORT uBindPort = 0);
 
     ///< 获取绑定的端口
     USHORT  get_bind_port();
@@ -33,6 +32,9 @@ public:
 
     ///< 启用广播
     BOOL enable_broadcast(BOOL bBroadCast = TRUE);
+
+    ///< 
+    BOOL udp_socket::enable_udpreset(BOOL bEnable = FALSE);
 
     ///< 以异步的方式运行,会创建线程，收到消息后会以信息号的方式发送
     BOOL start_async();
@@ -71,10 +73,9 @@ public:
 	int recv_from(sockaddr_in* addrFrom, char* buff, int iBuffLen);
 
     ///< 接收数据信号
-    sigslot::signal4<ip_v4, USHORT, char*, int> SignMsgRecv;
+    sigslot::signal5<udp_socket*, ip_v4, USHORT, char*, int> sign_msg_recv;
 
 protected:
-
     ///< 处理函数
     void work_func(void*);
 

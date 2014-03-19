@@ -1,0 +1,165 @@
+
+## Jamfile for building and testing RCF
+
+## Note: due to some bugs when building lib targets with the borland toolset,
+## there is a borland-specific Jamfile in the borland directory.
+
+## Responds to following environment variables:
+## BOOST_ROOT : install directory of Boost
+## SOCKET_LIBRARY_1 : first socket library to link to (eg "ws2_32" for win32, "nsl" for linux)
+## SOCKET_LIBRARY_2 : second socket library to link to, eg "socket" for Solaris
+## BUILD_CONFIG_TEMP_DIR : directory for writing and reading temporary files, eg /home/xyz/temp, or C:\\temp
+## ALL_LOCATE_TARGET : where to build
+
+## to turn off compilation warnings, try eg
+## <mingw><*><cxxflags>"-w"
+
+project-root ; #so we can find Jamrules
+
+import testing ;
+
+lib RcfSt 
+:
+  ../src/RCF/RCF.cpp
+  ../src/SF/SF.cpp
+: 
+  <sysinclude>$(BOOST_ROOT)
+  <sysinclude>../include
+  <define>WIN32_LEAN_AND_MEAN
+  <define>BOOST_ALL_NO_LIB
+  <find-library>$(SOCKET_LIBRARY_1)
+  <find-library>$(SOCKET_LIBRARY_2)
+;
+
+lib RcfMt 
+:
+  ../src/RCF/RCF.cpp
+  ../src/SF/SF.cpp
+: 
+  <sysinclude>$(BOOST_ROOT)
+  <sysinclude>../include
+  <define>RCF_USE_BOOST_THREADS
+  <define>BOOST_ALL_NO_LIB
+  <define>WIN32_LEAN_AND_MEAN
+  <threading>multi
+  <find-library>$(SOCKET_LIBRARY_1)
+  <find-library>$(SOCKET_LIBRARY_2)
+  
+;
+
+# RCF in singlethreaded mode, and app in singlethreaded mode
+template RcfStTestSettingsSt
+:
+  <lib>RcfSt
+  <dll>@boost/libs/serialization/build/boost_serialization
+:                   
+  <sysinclude>$(BOOST_ROOT)
+  <sysinclude>../include
+  <define>WIN32_LEAN_AND_MEAN
+  <define>BOOST_ALL_NO_LIB
+  <define>TEMP_DIR_UNQUOTED=$(BUILD_CONFIG_TEMP_DIR)
+  <find-library>$(SOCKET_LIBRARY_1)
+  <find-library>$(SOCKET_LIBRARY_2)
+;
+
+# RCF in singlethreaded mode, and app in multithreaded mode and with boost.threads
+template RcfStTestSettingsMt
+:
+  <lib>RcfSt
+  <dll>@boost/libs/serialization/build/boost_serialization
+  <dll>@boost/libs/thread/build/boost_thread    
+:                   
+  <sysinclude>$(BOOST_ROOT)
+  <sysinclude>../include
+  <define>WIN32_LEAN_AND_MEAN
+  <define>BOOST_ALL_NO_LIB
+  <define>TEMP_DIR_UNQUOTED=$(BUILD_CONFIG_TEMP_DIR)
+  <threading>multi
+  <find-library>$(SOCKET_LIBRARY_1)
+  <find-library>$(SOCKET_LIBRARY_2)
+;
+
+# RCF in multithreaded mode
+template RcfMtTestSettings
+:
+  <lib>RcfMt
+  <dll>@boost/libs/serialization/build/boost_serialization
+  <dll>@boost/libs/thread/build/boost_thread
+:                   
+  <sysinclude>$(BOOST_ROOT)
+  <sysinclude>../include
+  <define>RCF_USE_BOOST_THREADS
+  <define>BOOST_ALL_NO_LIB
+  <define>WIN32_LEAN_AND_MEAN
+  <define>TEMP_DIR_UNQUOTED=$(BUILD_CONFIG_TEMP_DIR)
+  <threading>multi
+  <find-library>$(SOCKET_LIBRARY_1)
+  <find-library>$(SOCKET_LIBRARY_2)
+;
+
+test-suite "RcfTest"
+:
+  [ run Test_Minimal.cpp                <template>RcfMtTestSettings ]
+  [ run Test_General.cpp                <template>RcfMtTestSettings ]
+  [ run Test_Binding.cpp                <template>RcfMtTestSettings ]
+  [ run Test_Performance.cpp            <template>RcfMtTestSettings ]
+  [ run Test_Polymorphic.cpp            <template>RcfMtTestSettings ]
+  [ run Test_Endpoint.cpp               <template>RcfMtTestSettings ]
+  [ run Test_MultipleClient.cpp         <template>RcfMtTestSettings ]
+  [ run Test_IpRestriction.cpp          <template>RcfMtTestSettings ]
+  [ run Test_Serialization.cpp          <template>RcfMtTestSettings ]
+  [ run Test_StubSerialization.cpp      <template>RcfMtTestSettings ]
+  [ run Test_ClientTimeout.cpp          <template>RcfMtTestSettings ]
+  [ run Test_ClientConnectionDrop.cpp   <template>RcfMtTestSettings ]
+  [ run Test_ClientInfo.cpp                <template>RcfMtTestSettings ]
+  [ run Test_SingleThreadedServer.cpp   <template>RcfStTestSettingsMt ]
+;
+
+## The following tests unfortunately have to be run manually,
+## don't see how Boost.Build can run them automatically.
+## Need to run tests with client and server executables residing on
+## different machines.
+
+exe Test_Client_Minimal
+:
+  Test_Client_Minimal.cpp
+  <template>RcfStTestSettingsSt
+;
+
+exe Test_Server_Minimal
+:
+  Test_Server_Minimal.cpp
+  <template>RcfStTestSettingsSt
+;
+
+exe Test_Client_Performance
+:
+  Test_Client_Performance.cpp
+  <template>RcfStTestSettingsSt
+;
+
+exe Test_Server_Performance
+:
+  Test_Server_Performance.cpp
+  <template>RcfStTestSettingsSt
+;
+
+exe Test_Endpoint_Client
+:
+  Test_Endpoint_Client.cpp
+  <template>RcfStTestSettingsSt
+;
+
+exe Test_Endpoint_Server
+:
+  Test_Endpoint_Server.cpp
+  <template>RcfStTestSettingsSt
+;
+
+exe Test_Endpoint_Service
+:
+  Test_Endpoint_Service.cpp
+  <template>RcfStTestSettingsSt
+;
+
+

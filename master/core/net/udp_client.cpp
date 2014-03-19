@@ -20,7 +20,6 @@ using namespace klib::net;
 udp_client::udp_client()
 {
 	m_sock					= INVALID_SOCKET;
-	udp_handler_			= NULL;
 	m_bStop					= TRUE;
 	m_bSocketInit			= FALSE;
 }
@@ -168,12 +167,12 @@ BOOL udp_client::is_stop()
 	return m_bStop;
 }
 
-void udp_client::set_handler(udp_handler* handler_)
+void udp_client::set_callback(udp_client_callback callback)
 {
-	udp_handler_ = handler_;
+	udp_callback_ = callback;
 }
 
-BOOL udp_client::send_to(UINT32 uAddr, USHORT uPort, const char*buff, int iLen)
+BOOL udp_client::send_to(ip_v4 uAddr, USHORT uPort, const char*buff, int iLen)
 {
 	sockaddr_in addrTo;
 	memset(&addrTo, 0, sizeof(addrTo));
@@ -184,7 +183,7 @@ BOOL udp_client::send_to(UINT32 uAddr, USHORT uPort, const char*buff, int iLen)
 	return SOCKET_ERROR != sendto(m_sock, buff, iLen, 0, (sockaddr*)&addrTo, sizeof(addrTo));
 }
 
-void udp_client::set_svr_info(UINT32 uAddrServer, USHORT uPortServer) 
+void udp_client::set_svr_info(ip_v4 uAddrServer, USHORT uPortServer) 
 {
 	m_uSvrAddr = uAddrServer;
 	m_uSvrPort = uPortServer;
@@ -219,8 +218,7 @@ void udp_client::work_thread(void* param)
 
 BOOL udp_client::do_server()
 {
-	if (!init()) 
-    {
+	if (!init()) {
 		return FALSE;
 	}
 	
@@ -233,13 +231,13 @@ BOOL udp_client::do_server()
 		ret = recvfrom(m_sock, buff, sizeof(buff), 0, (struct sockaddr*)&addrFrom, &lenOfAddr);
 		if (ret > 0)
 		{
-			if (udp_handler_)
+			if (udp_callback_)
 			{
-				udp_handler_->on_msg(this,
-                                     addrFrom.sin_addr.s_addr, 
-									 addrFrom.sin_port,	
-									 buff, 
-									 ret);
+				udp_callback_(this,
+                            addrFrom.sin_addr.s_addr, 
+							addrFrom.sin_port,	
+							buff, 
+							ret);
 			}
 		}
 		else {

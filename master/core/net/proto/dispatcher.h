@@ -50,7 +50,7 @@ protected:
 
 //////////////////////////////////////////////////////////////////////////
 //开始注册处理函数
-#define BEGIN_REGISTER_DIAPATCH(dispatcher_)		\
+#define BEGIN_REGISTER_DIAPATCH()		\
 	void register_dispatcher_()			\
 	{
 

@@ -43,3 +43,4 @@ Release
 /master/Release/*.lib
 /master/Debug/*.dll
 /master/Debug/*.lib
+/master/Debug

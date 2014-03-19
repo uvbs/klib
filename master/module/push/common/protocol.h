@@ -67,12 +67,13 @@ typedef enum C2S {
     // 客衣端通知服务器在线消息
     CMD_ONLINE,
     /*
-    std::string    :   strMac;              // mac地址
-    std::string    :   strChannel;          // 渠道
-    UINT64         :   uLastMsgID;          // 最后收到的消息ID
-    std::string    :   strLoginName;        // 电脑的登陆名
-    UINT           :   uVersion;            // 版本值，用数值比较更好些
-    std::string    :   strAccount;          // 用户的帐号(注册的用户)
+    UINT64         :   uid;
+    std::string    :   account;          // 用户的帐号(注册的用户)
+    std::string    :   mac;              // mac地址
+    std::string    :   channel;          // 渠道
+    UINT64         :   last_msg_id;          // 最后收到的消息ID
+    std::string    :   login_name;        // 电脑的登陆名
+    UINT           :   version;            // 版本值，用数值比较更好些
     */
 
     // 在线消息的回复消息

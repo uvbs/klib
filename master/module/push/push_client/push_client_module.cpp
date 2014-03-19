@@ -12,7 +12,6 @@ END_REGISTER_MODULES
 
 push_client_module::push_client_module(void)
 {
-    
 }
 
 push_client_module::~push_client_module(void)
@@ -26,9 +25,15 @@ bool push_client_module::set_option(std::string& domain, USHORT uport)
     return true;
 }
 
-bool push_client_module::set_callback(push_client_callback& callback_)
+bool push_client_module::set_data_callback(handle_data_callback& callback_)
 {
-    app_data::instance()->set_client_callback(callback_);
+    app_data::instance()->set_data_callback(callback_);
+    return true;
+}
+
+bool push_client_module::set_msg_callback(handle_msg_callback& callback)
+{
+    app_data::instance()->set_msg_callback(callback);
     return true;
 }
 
@@ -40,6 +45,13 @@ bool push_client_module::set_client_info(const std::string& channel,
     const std::string& appid) 
 {
     app_data* data_ = app_data::instance();
+
+    data_->set_channel(channel);
+    data_->set_mac(mac);
+    data_->set_user(user);
+    data_->set_pass(pass);
+    data_->set_last_msg_id(std::strtoul(last_msg_id.c_str(), 0, 0));
+    data_->set_appid(appid);
 
     return true;
 }

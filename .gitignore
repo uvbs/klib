@@ -40,4 +40,7 @@
 Debug
 Release
 /master/core/lib/*.lib
+/master/Release/*.lib
+/master/Debug/*.dll
+/master/Debug/*.lib
 /master/Debug

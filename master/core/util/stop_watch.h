@@ -27,7 +27,7 @@ public:
         start_time_ = _time64(NULL);
     }
 
-    BOOL is_triggerd()
+    BOOL is_triggerd() const
     {
         UINT64 tm_now = _time64(NULL);
         if (tm_now >= (start_time_ + time_elapse_)) 

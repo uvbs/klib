@@ -20,7 +20,7 @@ public:
 
     //----------------------------------------------------------------------
     // push_client_i
-    virtual bool set_option(std::string& domain, USHORT uport);
+    virtual bool set_logic_server_info(const std::string& domain, USHORT uport);
     virtual bool set_data_callback(handle_data_callback& callback_);
     virtual bool set_msg_callback(handle_msg_callback& callback);
     virtual bool set_client_info(const std::string& channel,

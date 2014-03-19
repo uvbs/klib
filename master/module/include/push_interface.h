@@ -21,6 +21,7 @@ static const GUID IID_PUSH_LOGIC_SERVER =
 #include <core/small_string.h>
 
 using namespace klib::mem;
+using namespace klib::net;
 
 
 // 推送的消息定义
@@ -49,7 +50,7 @@ protected:
 typedef std::shared_ptr<push_msg> push_msg_ptr;
 
 // 处理数据回调
-typedef std::function<void(udp_client*client_, char* buff, size_t len)> 
+typedef std::function<void(udp_client*client_, ip_v4, USHORT, char* buff, size_t len)> 
     handle_data_callback;
 
 // 处理消息回调
@@ -65,7 +66,8 @@ enum push_client_status
 };
 class push_client_i
 {
-    virtual bool set_option(std::string& domain, USHORT uport) = 0;
+public:
+    virtual bool set_logic_server_info(const std::string& domain, USHORT uport) = 0;
     virtual bool set_data_callback(handle_data_callback& callback) = 0;
     virtual bool set_msg_callback(handle_msg_callback& callback) = 0;
     virtual bool set_client_info(const std::string& channel,
@@ -171,6 +173,7 @@ typedef std::function<void(client_addr_key, push_msg_ptr, bool)>
 
 class push_logic_server_i
 {
+public:
     virtual void set_handle(handle_client_online_callback online_handle,
         handle_client_offline_callback offline_handle,
         handle_send_msg_result_callback msg_result_handle ) = 0;

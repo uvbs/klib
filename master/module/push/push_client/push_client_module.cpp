@@ -18,7 +18,7 @@ push_client_module::~push_client_module(void)
 {
 }
 
-bool push_client_module::set_option(std::string& domain, USHORT uport)
+bool push_client_module::set_logic_server_info(const std::string& domain, USHORT uport)
 {
     app_data::instance()->set_svr_domain(domain);
     app_data::instance()->set_svr_port(uport);

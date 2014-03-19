@@ -44,8 +44,8 @@ bool push_logic_server_module::post_send_msg(ip_v4 addr, USHORT port, push_msg_p
     if (!client_mgr_.is_client_exists(k))
         return false;
     
-    msg_send_mgr* mgr_ = msg_send_mgr::instance();
-    mgr_->post_send_msg(addr, port, msg);
+    msg_send_mgr* mgr_sender_ = msg_send_mgr::instance();
+    mgr_sender_->post_send_msg(addr, port, msg);
 
     return true;
 }

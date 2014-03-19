@@ -165,7 +165,7 @@ void push_client_imp::reinit()
     client_.reinit();
 }
 
-void push_client_imp::on_msg(udp_client* client_, ip_v4 uAddr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
+void push_client_imp::on_msg(udp_client* client_, ip_v4 addr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
 {
     MyPrtLog("message comming!!!");
 
@@ -175,24 +175,28 @@ void push_client_imp::on_msg(udp_client* client_, ip_v4 uAddr, USHORT uPort, cha
 
     if (header.cmd == CMD_QUERY_LOGIC_SERVER_ACK) 
     {
-        on_query_logic_svr_ack(uAddr, uPort, header, ar);
+        on_query_logic_svr_ack(addr, uPort, header, ar);
     }
     else if (header.cmd == CMD_QUERY_CURRENT_VERSION_ACK) 
     {
-        on_cur_ver_ack(uAddr, uPort, header, ar);
+        on_cur_ver_ack(addr, uPort, header, ar);
     }
     else if (header.cmd == CMD_MESSAGE_NOTIFY) 
     {
-        on_msg_notify(uAddr, uPort, header, ar);
+        on_msg_notify(addr, uPort, header, ar);
     }
     else if (header.cmd == CMD_MESSAGE_CONTENT) 
     {
-        on_msg_content(uAddr, uPort, header, ar);
+        on_msg_content(addr, uPort, header, ar);
     }
     else if (header.cmd == CMD_ONLINE_ACK) 
     {
-        on_online_msg_ack(uAddr, uPort, header, ar);
+        on_online_msg_ack(addr, uPort, header, ar);
     }
+
+    auto& data_callback = app_data::instance()->get_data_callback();
+    if (data_callback)
+        data_callback(client_, addr, uPort, buff, iLen);
 }
 
 void push_client_imp::send_query_logic_addr()
@@ -416,7 +420,9 @@ void push_client_imp::on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& head
      
         // 提交到上层处理
         auto& callback = data_->get_msg_callback();
-        callback(msg_);
+        if (callback)
+            callback(msg_);
+
         return;
     }
 

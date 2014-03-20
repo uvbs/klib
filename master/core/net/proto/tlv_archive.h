@@ -33,7 +33,13 @@ public:
     }
 
     unsigned int get_data_len() {
+        *(USHORT*) net_buff_ = net_archive::get_data_len();
         return net_archive::get_data_len() + length_seg_length;
+    }
+
+    USHORT get_seg_len()
+    {
+        return *(USHORT*) net_buff_;
     }
 
 protected:

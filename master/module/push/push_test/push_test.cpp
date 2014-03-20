@@ -5,12 +5,11 @@
 
 #include <string>
 #include <net/winsock_init.h>
-
+#include <net/proto/tlv_archive.h>
 
 #include "push_client_test.h"
 #include "push_balance_server_test.h"
 #include "push_logic_server_test.h"
-
 
 klib::net::winsock_init g_sock_initor;
 #pragma comment(lib, "ws2_32")

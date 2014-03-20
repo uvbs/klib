@@ -38,13 +38,14 @@ public:
     m_line = line;
   }
 
-  bool get_app_path(char path[], int pathlen)
+  bool get_app_path_prefix(char path[], int pathlen)
   {
       DWORD dwlen = GetModuleFileNameA(GetModuleHandle(NULL), path, pathlen);
       int index = dwlen - 1;
       while (index > 0 )
       {
-          if (path[index] == '\\') {
+          if (path[index] == '.') {
+              path[index] = '_';
               path[index + 1] = '\0';
               break;
           }
@@ -53,7 +54,7 @@ public:
       return true;
   }
 
-  bool get_app_path(WCHAR path[], int pathlen)
+  bool get_app_path_prefix(WCHAR path[], int pathlen)
   {
       DWORD dwlen = GetModuleFileNameW(GetModuleHandle(NULL), path, pathlen);
       int index = dwlen - 1;
@@ -91,7 +92,7 @@ public:
     char file_name[1024];
     char logfile[1024] = {0};
 
-    get_app_path(file_name, _countof(file_name));
+    get_app_path_prefix(file_name, _countof(file_name));
     sprintf(logfile,
               "%s%d-%d-%d_log.txt",
               file_name,
@@ -152,7 +153,7 @@ public:
       TCHAR file_name[1024];
       TCHAR logfile[1024] = {0};
 
-      get_app_path(file_name, _countof(file_name));
+      get_app_path_prefix(file_name, _countof(file_name));
       _stprintf(logfile,
           _T("%s%d-%d-%d_log.txt"),
           file_name,

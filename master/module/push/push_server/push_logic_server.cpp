@@ -38,6 +38,8 @@ void push_logic_server_module::set_handle(
 
 bool push_logic_server_module::start(USHORT uport)
 {
+    WriteLog("logic server starting...");
+
     return udp_server::start(uport);
 }
 

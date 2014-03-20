@@ -167,8 +167,6 @@ void push_client_imp::reinit()
 
 void push_client_imp::on_msg(udp_client* client_, ip_v4 addr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
 {
-    WriteLog("message comming!!!");
-
     net_archive ar(buff, iLen);
     cmd_header header;
     ar >> header;

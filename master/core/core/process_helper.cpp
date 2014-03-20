@@ -210,25 +210,25 @@ BOOL process_helper::create_user_process(LPCTSTR pszExePath, LPTSTR pszCmd/* = _
     }
     if (WTSQueryUserToken_fun(dwSessionID, &hToken) == FALSE)         
     {
-        MyPrtLog("error WTSQueryUserToken_fun...");
+        WriteLog("error WTSQueryUserToken_fun...");
         goto Cleanup;
     }
     
     if (DuplicateTokenEx(hToken, MAXIMUM_ALLOWED, NULL, SecurityIdentification, TokenPrimary, &hDuplicatedToken) == FALSE)          
     {
-        MyPrtLog("error DuplicateTokenEx...");
+        WriteLog("error DuplicateTokenEx...");
         goto Cleanup;  
     }
     
     static CreateEnvironmentBlock CreateEnvironmentBlock_fun = (CreateEnvironmentBlock) CreateEnvironmentBlock_f;
     if (NULL == CreateEnvironmentBlock_fun) 
     {
-        MyPrtLog("error CreateEnvironmentBlock_fun...");
+        WriteLog("error CreateEnvironmentBlock_fun...");
         goto Cleanup;
     }
     if (CreateEnvironmentBlock_fun(&lpEnvironment, hDuplicatedToken, FALSE) == FALSE)         
     {
-        MyPrtLog("error CreateEnvironmentBlock_fun...");
+        WriteLog("error CreateEnvironmentBlock_fun...");
         goto Cleanup;
     }
     
@@ -246,7 +246,7 @@ BOOL process_helper::create_user_process(LPCTSTR pszExePath, LPTSTR pszCmd/* = _
         &si, 
         &pi) == FALSE)    
     {
-        MyPrtLog("error CreateProcessAsUser Error : %d...", GetLastError());
+        WriteLog("error CreateProcessAsUser Error : %d...", GetLastError());
         goto Cleanup;
     }
 
@@ -302,25 +302,25 @@ BOOL process_helper::create_user_process(LPTSTR pszCmdline)
     }
     if (WTSQueryUserToken_fun(dwSessionID, &hToken) == FALSE)         
     {
-        MyPrtLog("error WTSQueryUserToken_fun...");
+        WriteLog("error WTSQueryUserToken_fun...");
         goto Cleanup;
     }
 
     if (DuplicateTokenEx(hToken, MAXIMUM_ALLOWED, NULL, SecurityIdentification, TokenPrimary, &hDuplicatedToken) == FALSE)          
     {
-        MyPrtLog("error DuplicateTokenEx...");
+        WriteLog("error DuplicateTokenEx...");
         goto Cleanup;  
     }
 
     static CreateEnvironmentBlock CreateEnvironmentBlock_fun = (CreateEnvironmentBlock) CreateEnvironmentBlock_f;
     if (NULL == CreateEnvironmentBlock_fun) 
     {
-        MyPrtLog("error CreateEnvironmentBlock_fun...");
+        WriteLog("error CreateEnvironmentBlock_fun...");
         return FALSE;
     }
     if (CreateEnvironmentBlock_fun(&lpEnvironment, hDuplicatedToken, FALSE) == FALSE)         
     {
-        MyPrtLog("error CreateEnvironmentBlock_fun...");
+        WriteLog("error CreateEnvironmentBlock_fun...");
         goto Cleanup;
     }
 
@@ -338,7 +338,7 @@ BOOL process_helper::create_user_process(LPTSTR pszCmdline)
         &si, 
         &pi) == FALSE)    
     {
-        MyPrtLog("error CreateProcessAsUser Error : %d...", GetLastError());
+        WriteLog("error CreateProcessAsUser Error : %d...", GetLastError());
         goto Cleanup;       
     }         
 

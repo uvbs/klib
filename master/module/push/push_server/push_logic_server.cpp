@@ -3,6 +3,7 @@
 
 #include "../common/protocol_st.h"
 #include "msg_send_mgr.h"
+#include "server_data.h"
 
 namespace logic
 {
@@ -12,6 +13,8 @@ namespace logic
 //
 push_logic_server_module::push_logic_server_module(void)
 {
+    server_data::instance()->init();
+    msg_send_mgr::instance();
 }
 
 push_logic_server_module::~push_logic_server_module(void)
@@ -35,7 +38,7 @@ void push_logic_server_module::set_handle(
 
 bool push_logic_server_module::start(USHORT uport)
 {
-    return true;
+    return udp_server::start(uport);
 }
 
 bool push_logic_server_module::post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg)
@@ -58,10 +61,9 @@ size_t push_logic_server_module::get_online_client_count()
 void push_logic_server_module::send_online_ack(ip_v4 ip, USHORT port)
 {
     local_archive<> ar;
-    cmd_header ackHeader;
+    cmd_header ackHeader(CMD_ONLINE_ACK);
     PT_CMD_ONLINE_ACK ptOnlineAck;
     
-    ackHeader.cmd = CMD_ONLINE_ACK;
     ptOnlineAck.bStartMini = false;
     ptOnlineAck.msgId = 0;
     ptOnlineAck.uuid  = 0;
@@ -118,16 +120,15 @@ void push_logic_server_module::on_query_curr_ver(ip_v4 ip,
 void push_logic_server_module::on_register_online(ip_v4 ip, 
     USHORT port, 
     cmd_header* header, 
-    net_archive*, 
+    net_archive* ar, 
     BOOL&)
 {
     client_addr_key key(ip, port);
     BOOL is_new = FALSE;
 
-    local_archive<> ar;
     PT_CMD_ONLINE ptOnline;
-    ar >> ptOnline;
-    if (ar.get_error()) 
+    (*ar) >> ptOnline;
+    if ((*ar).get_error()) 
         return;
 
     client_info* pInfo = client_mgr_.update_client_info(key, ptOnline, is_new);
@@ -137,7 +138,7 @@ void push_logic_server_module::on_register_online(ip_v4 ip,
     if (is_new) 
         pInfo->set_last_msg_id(ptOnline.last_msg_id);
 
-    MyPrtLog(("%s:%d send online message..."), inet_ntoa(*(in_addr*)&ip), ntohs(port));
+    WriteLog(("%s:%d send online message..."), inet_ntoa(*(in_addr*)&ip), ntohs(port));
     send_online_ack(ip, port);
 }
 
@@ -163,7 +164,7 @@ void push_logic_server_module::on_message_content_ack(ip_v4 ip,
     }
     else 
     {
-        MyPrtLog(_T("client confirm message error!!!"));
+        WriteLog(_T("client confirm message error!!!"));
         _ASSERT(FALSE);
     }
 }

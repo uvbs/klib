@@ -24,15 +24,15 @@ namespace debug {
  * @brief 日志打印类
  * @usage  
  *
-    MyPrtLog("%s", "info");
+    WriteLog("%s", "info");
  */
-class CPrtLogFunc
+class LogDeviceX
 {
 public:
   const char * m_file;
   int m_line;
 
-  CPrtLogFunc(const char * file,int line)
+  LogDeviceX(const char * file,int line)
   {
     m_file = file;
     m_line = line;
@@ -184,14 +184,14 @@ public:
   }
 };
 
-#define MyPrtLog CPrtLogFunc(__FILE__,__LINE__)
+#define WriteLog LogDeviceX(__FILE__,__LINE__)
 
 
 
 
 #else
 
-#define MyPrtLog 
+#define WriteLog 
 
 #endif
 

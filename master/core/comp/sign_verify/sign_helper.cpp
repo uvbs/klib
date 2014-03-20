@@ -11,6 +11,7 @@
 sign_helper::sign_helper(void)
 {
     rsa_ctx_ = nullptr;
+    rsa_ctx_ = new rsa_context;
 }
 
 sign_helper::~sign_helper(void)

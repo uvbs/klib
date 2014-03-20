@@ -118,7 +118,7 @@ void online_state::on_event(FsmEvent* e, UINT& uNewStateID)
         {
             is_online_ = FALSE;
             uNewStateID = status_query_logic_addr;  // 切换到查询逻辑服务器状态
-            MyPrtLog("切换到查询逻辑服务器地址状态!!!");
+            WriteLog("切换到查询逻辑服务器地址状态!!!");
         }
     }
     else if (e->get_evt_type() == event_online_ack_msg)
@@ -167,7 +167,7 @@ void push_client_imp::reinit()
 
 void push_client_imp::on_msg(udp_client* client_, ip_v4 addr, USHORT uPort, char* buff, int iLen) 		///< UDP消息回调接口
 {
-    MyPrtLog("message comming!!!");
+    WriteLog("message comming!!!");
 
     net_archive ar(buff, iLen);
     cmd_header header;
@@ -201,7 +201,7 @@ void push_client_imp::on_msg(udp_client* client_, ip_v4 addr, USHORT uPort, char
 
 void push_client_imp::send_query_logic_addr()
 {
-    MyPrtLog("发送查询逻辑服务器：%d消息...", app_data::instance()->get_svr_port());
+    WriteLog("发送查询逻辑服务器：%d消息...", app_data::instance()->get_svr_port());
 
     cmd_header header;
     PT_CMD_QUERY_LOGIC_SERVER ptQuery;
@@ -226,7 +226,7 @@ void push_client_imp::send_query_logic_addr()
 
 void push_client_imp::send_query_curver()
 {
-    MyPrtLog("发送查询最新版本消息");
+    WriteLog("发送查询最新版本消息");
 
     cmd_header header(CMD_QUERY_CURRENT_VERSION);
     PT_CMD_QUERY_CURRENT_VERSION ptQueryCurVer;
@@ -245,7 +245,7 @@ void push_client_imp::send_query_curver()
 
 void push_client_imp::send_online()
 {
-    MyPrtLog("发送在线消息...");
+    WriteLog("发送在线消息...");
     app_data* data = app_data::instance();
 
     // 定义并填充结构
@@ -273,7 +273,7 @@ void push_client_imp::send_online()
 
 void push_client_imp::send_msg_ack(UINT64 uMsgID)
 {
-    MyPrtLog("发送消息确认消息...");
+    WriteLog("发送消息确认消息...");
     app_data* data = app_data::instance();
 
     // 定义并填充结构
@@ -297,13 +297,13 @@ void push_client_imp::send_msg_ack(UINT64 uMsgID)
 
 void push_client_imp::on_query_logic_svr_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
-    MyPrtLog("收到逻辑服务器查询回复消息...");
+    WriteLog("收到逻辑服务器查询回复消息...");
     app_data* data = app_data::instance();
     PT_CMD_QUERY_LOGIC_SERVER_ACK ack;
     ar >> ack;
 
     if (ar.get_error()) {
-        MyPrtLog(_T("响应查询逻辑服务器地址，协议出错!!!"));
+        WriteLog("响应查询逻辑服务器地址，协议出错!!!");
         return;
     }
 
@@ -321,7 +321,7 @@ void push_client_imp::on_query_logic_svr_ack(ip_v4 uAddr, USHORT uPort, cmd_head
         message_event ev(event_query_logic_ack_msg);
         push_fsm_.on_event(&ev);
 
-        MyPrtLog("逻辑服务器地址获取成功:%s:%d...", 
+        WriteLog("逻辑服务器地址获取成功:%s:%d...", 
             inet_ntoa(*(in_addr*)& ack.uLogicIP), 
             ntohs(ack.uLogicUdpPort));
     }
@@ -329,14 +329,14 @@ void push_client_imp::on_query_logic_svr_ack(ip_v4 uAddr, USHORT uPort, cmd_head
 
 void push_client_imp::on_online_msg_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
-    MyPrtLog(_T("服务器回复在线消息..."));
+    WriteLog(_T("服务器回复在线消息..."));
 
     if (uAddr == app_data::instance()->get_logic_addr()) 
     {
         PT_CMD_ONLINE_ACK ptOnlineAck;
         ar >> ptOnlineAck;
         if (ar.get_error()) {
-            MyPrtLog(_T("解析消息服务器在线消息出错..."));
+            WriteLog(_T("解析消息服务器在线消息出错..."));
             return;
         }
 
@@ -346,19 +346,19 @@ void push_client_imp::on_online_msg_ack(ip_v4 uAddr, USHORT uPort, cmd_header& h
         return;
     }
 
-    MyPrtLog(_T("不是来自逻辑服务器的消息"));
+    WriteLog(_T("不是来自逻辑服务器的消息"));
 }
 
 void push_client_imp::on_msg_notify(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
-    MyPrtLog(_T("服务器消息通知..."));
+    WriteLog(_T("服务器消息通知..."));
     _ASSERT(FALSE && _T("暂未实现!!!"));
 
     PT_CMD_MESSAGE_NOTIFY ptNotify;
 
     ar  >> ptNotify;
     if (ar.get_error()) {
-        MyPrtLog(_T("解析消息通知出错"));
+        WriteLog(_T("解析消息通知出错"));
         return;
     }
 
@@ -370,19 +370,19 @@ void push_client_imp::on_msg_notify(ip_v4 uAddr, USHORT uPort, cmd_header& heade
 
 void push_client_imp::on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
 {
-    MyPrtLog(_T("服务器消息内容推送..."));
+    WriteLog(_T("服务器消息内容推送..."));
     PT_CMD_MESSAGE_CONTENT ptMsg;
     ar >> ptMsg;
 
     app_data* data_ = app_data::instance();
 
     if (ar.get_error()) {
-        MyPrtLog(_T("解析消息内容出错..."));
+        WriteLog(_T("解析消息内容出错..."));
         return;
     }
 
     if (uAddr != data_->get_logic_addr()) {
-        MyPrtLog(_T("不是来自逻辑服务器的消息..."));
+        WriteLog(_T("不是来自逻辑服务器的消息..."));
         return;
     }
 
@@ -390,7 +390,7 @@ void push_client_imp::on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& head
     if (bSignResult) 
     {
         if (data_->get_last_msg_id() == ptMsg.uMsgID) {
-            MyPrtLog(_T("pClientData->m_uLastMsgId == ptMsg.uMsgID 已接收过该消息"));
+            WriteLog(_T("pClientData->m_uLastMsgId == ptMsg.uMsgID 已接收过该消息"));
             send_msg_ack(ptMsg.uMsgID);
             return;
         }
@@ -405,7 +405,7 @@ void push_client_imp::on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& head
         // 申请消息对象
         push_msg_ptr msg_(new push_msg);
         if (nullptr == msg_) {
-            MyPrtLog(_T("申请消息内存空间失败!!!"));
+            WriteLog(_T("申请消息内存空间失败!!!"));
             return;
         }
 
@@ -426,7 +426,7 @@ void push_client_imp::on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& head
         return;
     }
 
-    MyPrtLog(_T("收到的消息验证不成功，判断不是来自服务器"));
+    WriteLog(_T("收到的消息验证不成功，判断不是来自服务器"));
 }
 
 void push_client_imp::on_cur_ver_ack(ip_v4 uAddr, USHORT uPort, cmd_header& header, net_archive& ar)
@@ -447,12 +447,12 @@ void push_client_imp::on_cur_ver_ack(ip_v4 uAddr, USHORT uPort, cmd_header& head
     if (ptCurVersionAck.uVersionValue > CURRENT_CLIENT_VERSION_VALUE) 
     {
         // 开始下载最新的版本，并执行升级操作
-        MyPrtLog(_T("发现更高级的版本,ptCurVersionAck.uVersionValue > CURRENT_CLIENT_VERSION_VALUE..."));
+        WriteLog(_T("发现更高级的版本,ptCurVersionAck.uVersionValue > CURRENT_CLIENT_VERSION_VALUE..."));
 
         // 更新
     }
 
-    MyPrtLog(_T("状态转换，转为: state_query_new_ver_ok"));
+    WriteLog(_T("状态转换，转为: state_query_new_ver_ok"));
 
     // 发送状态事件
     message_event ev(event_query_ver_ack_msg);

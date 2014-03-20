@@ -161,7 +161,7 @@ bool tcp_net_facade_imp::on_read(net_conn_ptr pConn, const char* buff, size_t le
 
 bool tcp_net_facade_imp::on_write(net_conn_ptr pConn, size_t len) 
 {
-    //MyPrtLog("写数据完毕..\r\n");
+    //WriteLog("写数据完毕..\r\n");
     
     INetEventHandlerListType::const_iterator itr;
     itr  = net_event_list_.begin();
@@ -177,11 +177,11 @@ bool tcp_net_facade_imp::on_accept(net_conn_ptr pListen, net_conn_ptr pNewConn, 
 {
     if (bSuccess) 
     {
-        //MyPrtLog("连接来啦...");
+        //WriteLog("连接来啦...");
     }
     else 
     {
-        //MyPrtLog("接收连接失败...");
+        //WriteLog("接收连接失败...");
     }
 
     INetEventHandlerListType::const_iterator itr;

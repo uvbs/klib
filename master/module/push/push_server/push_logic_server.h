@@ -27,7 +27,7 @@ public:
 
 public:
     BEGIN_INTERFACE_ENTRY
-        INTERFACE_ENTRY(IID_PUSH_BALANCE_SERVER, push_logic_server_i)
+        INTERFACE_ENTRY(IID_PUSH_LOGIC_SERVER, push_logic_server_i)
     END_INTERFACE_ENTRY
 
 public:

@@ -14,7 +14,6 @@ msg_send_mgr::msg_send_mgr():
     timer_mgr_.start();
     timer_mgr_.add(5*1000, std::bind(&msg_send_mgr::timer_check_resend_msg, this));
 
-    server_data::instance()->init();
 }
 
 msg_send_mgr::~msg_send_mgr(void)
@@ -124,13 +123,14 @@ void msg_send_mgr::on_client_msg_ack(DWORD uAddr, USHORT uPort, UINT64 uMsgID)
         return; 
     }
 
-    handle_on_send_msg_result(
-        itMsg->first, 
-        itMsg->second->get_user_msg(), 
-        true);
+    if (handle_on_send_msg_result)
+        handle_on_send_msg_result(
+            itMsg->first, 
+            itMsg->second->get_user_msg(), 
+            true);
 
     // 在确认列表中清除该消息
-    MyPrtLog(_T("收到客户端的确认消息..."));
+    WriteLog(_T("收到客户端的确认消息..."));
     confirm_msg_pool_.Free(itMsg->second);
     client_confirm_msg_map.erase(itMsg);
 }
@@ -147,10 +147,11 @@ BOOL msg_send_mgr::remove_msg_confirm_info(UINT64 uMsgID)
     auto itrConfirm = itrMsgList->second.begin();
     for (; itrConfirm != itrMsgList->second.end(); ++ itrConfirm) 
     {
-        handle_on_send_msg_result(
-            itrConfirm->first, 
-            itrConfirm->second->get_user_msg(),
-            false);
+        if (handle_on_send_msg_result)
+            handle_on_send_msg_result(
+                itrConfirm->first, 
+                itrConfirm->second->get_user_msg(),
+                false);
 
         confirm_msg_pool_.Free(itrConfirm->second);
     }
@@ -177,10 +178,11 @@ bool msg_send_mgr::timer_check_resend_msg()
             // 删除超过最大发送次数的确认消息
             if (pconfirm_info->get_sended_times() >= max_retry_times_) 
             {
-                handle_on_send_msg_result(
-                    itMsg->first, 
-                    itMsg->second->get_user_msg(),
-                    false);
+                if (handle_on_send_msg_result)
+                    handle_on_send_msg_result(
+                        itMsg->first, 
+                        itMsg->second->get_user_msg(),
+                        false);
 
                 confirm_msg_pool_.Free(pconfirm_info);
                 itMsg = itr->second.erase(itMsg);
@@ -194,7 +196,7 @@ bool msg_send_mgr::timer_check_resend_msg()
                     pconfirm_info->set_last_send_time(uTimeNow);
                     pconfirm_info->set_sended_times(1 + pconfirm_info->get_sended_times());
 
-                    MyPrtLog(_T("重试发送消息:%I64d, 已发送次数%I64d"), 
+                    WriteLog(_T("重试发送消息:%I64d, 已发送次数%I64d"), 
                         pconfirm_info->get_msg_id(), 
                         pconfirm_info->get_sended_times());
 

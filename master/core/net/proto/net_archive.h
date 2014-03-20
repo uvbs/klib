@@ -54,14 +54,14 @@ public:
     {}
 
 	net_archive(char* buff, UINT buffLen) {
-		set_buff(buff);
+		set_buff(buff, buffLen);
 		error_flag_ = false;
-		buff_len_   = buffLen;
 	}
 
 	// 设置要序列化的缓冲区
-    void set_buff(char* buff) {
+    void set_buff(char* buff, UINT buflen) {
         orig_pos_ = buff;
+        buff_len_ = buflen;
 		op_pos_   = (char*) orig_pos_;
 	}
 
@@ -74,17 +74,10 @@ public:
 	UINT length() {
 		return buff_len_;
 	}
-
-    // 写入长度，并记录标记
-    void write_length_mark() {
-        *(USHORT*)orig_pos_ = KHTON16(buff_len_);
-    }
-    
-	/*
-	  重新回到起点
-	*/
+       
+	// 重新回到起点
 	void reset() {
-		set_buff((char*)orig_pos_);
+		set_buff((char*)orig_pos_, buff_len_);
 	}
 	
 	//返回是否出错标志

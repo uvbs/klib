@@ -33,7 +33,7 @@ bool push_balance_server_module::start(USHORT work_port, USHORT maintain_port)
     this->maintain_port_ = maintain_port;
 
     setlocale(LC_ALL, "chs");
-    MyPrtLog("balance server starting...");
+    WriteLog("balance server starting...");
 
     return __super::start(work_port_);
 }

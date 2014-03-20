@@ -68,7 +68,7 @@ public:
         {
             RegisterObjects = (RegisterObjects_Fn) GetProcAddress(hModule, "RegisterObjects");
             KLIB_ASSERT(RegisterObjects);
-            if (NULL == RegisterObjects)
+            if (nullptr == RegisterObjects)
             {
                 return S_FALSE;
             }

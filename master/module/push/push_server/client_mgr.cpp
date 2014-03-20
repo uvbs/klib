@@ -46,7 +46,8 @@ client_info_ex* client_mgr::update_client_info(client_addr_key& key, PT_CMD_ONLI
         pInfo->account_ = cmd_online.account.c_str();// 用户的帐号查看
         pInfo->uid      = cmd_online.uid;
 
-        s_on_client_online(pInfo);
+        if (s_on_client_online)
+            s_on_client_online(pInfo);
 
         // 保存信息
         client_info_map_[index].insert(std::make_pair(key, pInfo)) ;
@@ -62,14 +63,16 @@ client_info_ex* client_mgr::update_client_info(client_addr_key& key, PT_CMD_ONLI
         if (cmd_online.uid != pInfo->uid || 
             strcmp(pInfo->account_.c_str(), cmd_online.account.c_str()) != 0) 
         {
-            s_on_client_offline(pInfo);     // 发射退出信号通知
+            if (s_on_client_offline)
+                s_on_client_offline(pInfo);     // 发射退出信号通知
 
             pInfo->set_login_time(_time64(NULL));
             pInfo->set_last_active_time(pInfo->get_last_active_time());            
             pInfo->account_ = cmd_online.account.c_str();
             pInfo->uid      = cmd_online.uid;
 
-            s_on_client_online(pInfo);      // 发射登陆信息号通知
+            if (s_on_client_online)
+                s_on_client_online(pInfo);      // 发射登陆信息号通知
         }
 
         return itr->second;
@@ -237,7 +240,8 @@ bool client_mgr::tiner_check_client_timeout()
             if (itr->second->last_active_time_ + client_default_timeout < uTimeNow) 
             {
                 // 需先发射离线的信号
-                s_on_client_offline(itr->second);
+                if (s_on_client_offline)
+                    s_on_client_offline(itr->second);
 
                 // 再删除在线客户端的信息 
                 client_info_pool_.Free(itr->second);

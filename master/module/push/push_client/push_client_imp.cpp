@@ -37,6 +37,8 @@ void query_logic_state::on_event(FsmEvent* e, UINT& uNewStateID)
     else if (e->get_evt_type() == event_query_logic_ack_msg)
     {
         uNewStateID = status_query_newver; // ×ª»»×´Ì¬
+
+        pclient->send_query_curver();
     }
     else
     {
@@ -72,6 +74,8 @@ void query_newver_state::on_event(FsmEvent* e, UINT& uNewStateID)
     {
         // ÇĞ»»µ½ÔÚÏß×´Ì¬
         uNewStateID = status_online ;
+
+        pclient->send_online();
     }
     else
     {

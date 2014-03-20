@@ -3,10 +3,8 @@
 
 #include "../common/protocol_st.h"
 
-
 namespace balance
 {
-
 
 //----------------------------------------------------------------------
 // 
@@ -41,12 +39,10 @@ bool push_balance_server_module::start(USHORT work_port, USHORT maintain_port)
 void push_balance_server_module::on_query_logic_addr(ip_v4 remote_addr, 
     USHORT remote_port, cmd_header* header, net_archive*ar, BOOL&)
 {
+    InterlockedIncrement(&query_logic_count_);
+
     PT_CMD_QUERY_LOGIC_SERVER ptQuery;
     PT_CMD_QUERY_LOGIC_SERVER_ACK ack;
-
-    local_archive<> localar;
-
-    InterlockedIncrement(&query_logic_count_);
 
     (*ar) >> ptQuery;
 
@@ -54,11 +50,15 @@ void push_balance_server_module::on_query_logic_addr(ip_v4 remote_addr,
     ack.uLogicUdpPort  =  KHTON16(logic_addr_info_.port_);
     ack.uLogicTcpPort  =  0;
 
+    local_archive<> localar;
     cmd_header header_ack(CMD_QUERY_LOGIC_SERVER_ACK);
     localar << header_ack;
     localar << ack;
 
-    socket_.send_to(remote_addr, remote_port, localar.get_buff(), localar.get_data_len());
+    socket_.send_to(remote_addr, 
+        remote_port, 
+        localar.get_buff(), 
+        localar.get_data_len());
 }
 
 

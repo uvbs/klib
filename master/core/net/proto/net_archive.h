@@ -188,7 +188,7 @@ public:
 			return *this;
 		}
 		memcpy(&a, op_pos_, sizeof(a));
-		a = ntohl(a);
+		a = KNTOH32(a);
 		op_pos_ += sizeof(a);
 		return *this;
 	}

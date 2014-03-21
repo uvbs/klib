@@ -15,6 +15,11 @@ push_logic_server_module::push_logic_server_module(void)
 {
     server_data::instance()->init();
     msg_send_mgr::instance();
+
+    auto mgr_sender = msg_send_mgr::instance();
+
+    client_mgr_.s_on_post_push_msg.connect(mgr_sender, &msg_send_mgr::post_send_msg);
+    mgr_sender->s_send_msg.connect(this, &push_logic_server_module::send_msg);
 }
 
 push_logic_server_module::~push_logic_server_module(void)
@@ -26,14 +31,10 @@ void push_logic_server_module::set_handle(
     handle_client_offline_callback offline_handle,
     handle_send_msg_result_callback msg_result_handle)
 {
-    auto mgr_sender = msg_send_mgr::instance();
-
     client_mgr_.s_on_client_online = online_handle;
     client_mgr_.s_on_client_offline = offline_handle;
-    client_mgr_.s_on_post_push_msg.connect(mgr_sender, &msg_send_mgr::post_send_msg);
 
     msg_send_mgr::instance()->handle_on_send_msg_result = msg_result_handle;
-    mgr_sender->s_send_msg.connect(this, &push_logic_server_module::send_msg);
 }
 
 bool push_logic_server_module::start(USHORT uport)
@@ -56,6 +57,12 @@ bool push_logic_server_module::post_send_msg(ip_v4 addr, USHORT port, push_msg_p
     msg_send_mgr* mgr_sender_ = msg_send_mgr::instance();
     mgr_sender_->post_send_msg(addr, port, msg);
 
+    return true;
+}
+
+bool push_logic_server_module::broad_cast_msg(push_msg_ptr msg)
+{
+    client_mgr_.broadcast_user_msg(msg, "");
     return true;
 }
 
@@ -144,20 +151,21 @@ void push_logic_server_module::on_register_online(ip_v4 ip,
     if (is_new) 
         pInfo->set_last_msg_id(ptOnline.last_msg_id);
 
-    WriteLog(("%s:%d send online message..."), inet_ntoa(*(in_addr*)&ip), ntohs(port));
+    WriteLog(("%s:%d send online message..."), 
+        inet_ntoa(*(in_addr*)&ip), 
+        ntohs(port));
     send_online_ack(ip, port);
 }
 
 void push_logic_server_module::on_message_content_ack(ip_v4 ip, 
     USHORT port, 
     cmd_header* header, 
-    net_archive*, 
+    net_archive* ar, 
     BOOL&)
 {
     PT_CMD_MESSAGE_CONTENT_ACK ptMsgAck;
-    local_archive<> ar;
-    ar >> ptMsgAck;
-    if (ar.get_error()) 
+    (*ar) >> ptMsgAck;
+    if ((*ar).get_error()) 
         return;
 
     // 客户端处理成功。
@@ -170,7 +178,7 @@ void push_logic_server_module::on_message_content_ack(ip_v4 ip,
     }
     else 
     {
-        WriteLog(_T("client confirm message error!!!"));
+        WriteLog("client confirm message error!!!");
         _ASSERT(FALSE);
     }
 }

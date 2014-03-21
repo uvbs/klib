@@ -279,10 +279,9 @@ void push_client_imp::send_msg_ack(UINT64 uMsgID)
     app_data* data = app_data::instance();
 
     // 定义并填充结构
-    cmd_header header;
+    cmd_header header(CMD_MESSAGE_CONTENT_ACK);
     PT_CMD_MESSAGE_CONTENT_ACK cmd_msg_ack;
 
-    header.cmd = CMD_MESSAGE_CONTENT_ACK;
     cmd_msg_ack.uMsgID = uMsgID;
     cmd_msg_ack.emOpResult = OP_SUCCESS;
 
@@ -392,7 +391,7 @@ void push_client_imp::on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& head
     if (bSignResult) 
     {
         if (data_->get_last_msg_id() == ptMsg.uMsgID) {
-            WriteLog("pClientData->m_uLastMsgId == ptMsg.uMsgID 已接收过该消息");
+            WriteLog("pClientData->get_last_msg_id() == ptMsg.uMsgID 已接收过该消息");
             send_msg_ack(ptMsg.uMsgID);
             return;
         }

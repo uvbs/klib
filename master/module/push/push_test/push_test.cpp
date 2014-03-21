@@ -14,6 +14,8 @@
 klib::net::winsock_init g_sock_initor;
 #pragma comment(lib, "ws2_32")
 
+#include <klib_link.h>
+
 int _tmain(int argc, _TCHAR* argv[])
 {
     if (argc < 2) {

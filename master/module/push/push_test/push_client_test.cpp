@@ -39,5 +39,5 @@ void push_client_test::start()
 
 void push_client_test::handle_msg(push_msg_ptr msg)
 {
-
+    printf("%s\r\n", msg->get_content().c_str());
 }

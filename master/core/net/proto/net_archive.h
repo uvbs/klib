@@ -275,8 +275,18 @@ public:
 			error_flag_ = true;
 			return *this;
 		}
+
+        // extract length
 		USHORT len;
 		(*this). operator >> (len);
+
+        // judge
+        if (this->get_data_len() + len > buff_len_) {
+            error_flag_ = true;
+            return *this;
+        }
+
+        // archive string
 		str = ::std::string(op_pos_, len);
 		op_pos_ += str.size();
 		return *this;

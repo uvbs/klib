@@ -41,7 +41,6 @@ protected:
 // 命令结构
 class cmd_header {
 public:
-	//USHORT   cbSize;	 //结构总长度(所有数据,在结构体中不体现出来)
 	UCHAR		ver;		 //版本
 	USHORT		cmd;		 //控制命令
 	UCHAR		encrypt;	 //使用的加密类型
@@ -59,18 +58,18 @@ public:
 	}
 
 	friend net_archive& operator << (net_archive& ar, cmd_header& pt) {
-		//ar << pt.cbSize;
 		ar << pt.ver;
 		ar << pt.cmd;
 		ar << pt.encrypt;
+		ar << pt.pktNo;
 		return ar;
 	}
 
 	friend net_archive& operator >> (net_archive& ar, cmd_header& pt) {
-		//ar >> pt.cbSize;
 		ar >> pt.ver;
 		ar >> pt.cmd;
 		ar >> pt.encrypt;
+		ar >> pt.pktNo;
 		return ar;
 	}
 } ;

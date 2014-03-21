@@ -40,7 +40,11 @@ bool push_logic_server_module::start(USHORT uport)
 {
     WriteLog("logic server starting...");
 
-    return udp_server::start(uport);
+    bool ret = udp_server::start(uport);
+    if (!ret) {
+        WriteLog("start logic server failed!!!");
+    }
+    return ret;
 }
 
 bool push_logic_server_module::post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg)

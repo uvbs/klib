@@ -33,7 +33,11 @@ bool push_balance_server_module::start(USHORT work_port, USHORT maintain_port)
     setlocale(LC_ALL, "chs");
     WriteLog("balance server starting...");
 
-    return __super::start(work_port_);
+    bool ret = __super::start(work_port_);
+    if (!ret) {
+        WriteLog("start balance server failed!!!");
+    }
+    return ret;
 }
 
 void push_balance_server_module::on_query_logic_addr(ip_v4 remote_addr, 

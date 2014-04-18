@@ -178,6 +178,7 @@ public:
         handle_client_offline_callback offline_handle,
         handle_send_msg_result_callback msg_result_handle ) = 0;
     virtual bool start(USHORT uport) = 0;
+    virtual bool is_client_online(const client_addr_key& k) = 0;
     virtual bool post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg) = 0;
     virtual bool broad_cast_msg(push_msg_ptr msg) = 0;
     virtual size_t get_online_client_count() = 0;

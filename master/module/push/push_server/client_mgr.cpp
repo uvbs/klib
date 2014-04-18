@@ -46,6 +46,7 @@ client_info_ex* client_mgr::update_client_info(client_addr_key& key, PT_CMD_ONLI
         pInfo->account_ = cmd_online.account.c_str();// 用户的帐号查看
         pInfo->uid      = cmd_online.uid;
 
+        // 回调通知上层
         if (s_on_client_online)
             s_on_client_online(pInfo);
 
@@ -83,7 +84,7 @@ void client_mgr::broadcast_user_msg(push_msg_ptr pUserMsg, const std::string& ch
 {
     for (int i=0; i<bucket_size; ++i)
     {
-        auto_lock lock(client_info_mutex_[i]);
+        guard lock(client_info_mutex_[i]);
 
         auto itr = client_info_map_[i].begin();
         for (; itr != client_info_map_[i].end(); ++ itr)
@@ -120,7 +121,7 @@ void  client_mgr::add_client_confirm_msg_id(ip_v4 uAddr, USHORT uPort, UINT64 uM
     }
 }
 
-BOOL client_mgr::is_client_exists(client_addr_key& key)
+BOOL client_mgr::is_client_exists(const client_addr_key& key)
 {
     int index = get_array_index(key.hash_key());
     auto_lock locker(client_info_mutex_[index]);

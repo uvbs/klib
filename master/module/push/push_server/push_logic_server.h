@@ -47,6 +47,7 @@ public:
         handle_client_offline_callback offline_handle,
         handle_send_msg_result_callback msg_result_handle);
     bool start(USHORT uport);   ///< 启动服务
+    bool is_client_online(const client_addr_key& k);
     bool post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg); ///< 发送消息
     bool broad_cast_msg(push_msg_ptr msg);
     size_t get_online_client_count(); ///< 在线客户端个数

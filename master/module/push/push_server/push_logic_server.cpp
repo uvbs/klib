@@ -48,6 +48,11 @@ bool push_logic_server_module::start(USHORT uport)
     return ret;
 }
 
+bool push_logic_server_module::is_client_online(const client_addr_key& k)
+{
+    return client_mgr_.is_client_exists(k);
+}
+
 bool push_logic_server_module::post_send_msg(ip_v4 addr, USHORT port, push_msg_ptr msg)
 {
     client_addr_key k(addr, port);

@@ -35,7 +35,7 @@ public:
     void broadcast_user_msg(push_msg_ptr pUserMsg, const std::string& channel);
 
     void add_client_confirm_msg_id(ip_v4 uAddr, USHORT uPort, UINT64 uMsgID);          ///< 记录客户端的回应消息记录
-    BOOL is_client_exists(client_addr_key& key);                                            ///< 判断客户端是否在线
+    BOOL is_client_exists(const client_addr_key& key);                                            ///< 判断客户端是否在线
 
     UINT32 get_online_client_count() const;                                            ///< 获得客户端的个数
     UINT32 get_channel_count(const char* pszChannel) ;                                 ///< 获取指定渠道的客户端个数
@@ -52,11 +52,11 @@ protected:
 
 protected:
     typedef std::map<client_addr_key, client_info_ex*>  mapClientIntoType;                  ///< 作一个hash并发访问的数组
-    mapClientIntoType                           client_info_map_[bucket_size];      ///< 保存客户端信息的数组
-    auto_cs                                     client_info_mutex_[bucket_size];    ///< 客户端信息互斥对象
+    mapClientIntoType              client_info_map_[bucket_size];      ///< 保存客户端信息的数组
+    auto_cs                        client_info_mutex_[bucket_size];    ///< 客户端信息互斥对象
 
-    mutable CObjectPool<client_info_ex, 10000, 5000>  client_info_pool_;               ///< 定时器模块
-    timer_mgr                                     timer_mgr_;
+    mutable CObjectPool<client_info_ex, 10000, 5000>  client_info_pool_;   ///< 定时器模块
+    timer_mgr                      timer_mgr_;
 };
 
 

@@ -13,7 +13,7 @@ public:
     ~push_logic_server_test(void);
 
 public:
-    void start();
+    bool start();
 
 protected:
     bool timer_send_msg();

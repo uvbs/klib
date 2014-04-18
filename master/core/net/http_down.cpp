@@ -41,6 +41,10 @@ BOOL http_down::parse_url(const char* url, char* hostAddr, int& port, char* getP
 
 BOOL http_down::download(const char* pszHttpUrl, const char* pszSaveFile)
 {
+    if (nullptr == pszHttpUrl || nullptr == pszSaveFile) {
+        return FALSE;
+    }
+
 	char szHostName[MAX_PATH];
 	char szGet[MAX_PATH];
 	int  port;

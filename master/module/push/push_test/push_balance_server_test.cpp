@@ -17,6 +17,9 @@ void push_balance_server_test::start()
 
     HRESULT hr = pframework->load_module(_T("push_server.dll"));
     _ASSERT(S_OK == hr);
+    if (S_OK != hr) {
+        return;
+    }
 
     push_balance_server_i* push_balance_server_i_;
 

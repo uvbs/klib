@@ -16,9 +16,19 @@ klib::net::winsock_init g_sock_initor;
 
 #include <klib_link.h>
 
+void usage_f()
+{
+    char * cmd_usage = 
+        "usage: push_test.exe client\r\n"
+        "\tpush_test.exe alance_server";
+        "push_test.exe logic_server";
+    printf(cmd_usage);
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
     if (argc < 2) {
+        usage_f();
         return -1;
     }
 
@@ -34,6 +44,7 @@ int _tmain(int argc, _TCHAR* argv[])
     {
         push_logic_server_test::instance()->start();
     }
+    //else
 
     Sleep(-1);
 

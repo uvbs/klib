@@ -20,7 +20,9 @@ protected:
     bool set_cur_ver_info(const upgrade_info& info);
     bool get_new_ver_info(version_info& info);
     bool down_new_file(const version_info& new_ver_info, const std::string& new_path);
-    bool upgrade();
+    virtual bool do_upgrade(const tstring& upgrade_pkg,
+        const std::string& main_exe) ;
+    bool auto_upgrade();
 
 protected:
     upgrade_info upgrade_info_;

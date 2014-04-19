@@ -20,8 +20,9 @@ void usage_f()
 {
     char * cmd_usage = 
         "usage: push_test.exe client\r\n"
-        "\tpush_test.exe alance_server";
-        "push_test.exe logic_server";
+        "\tpush_test.exe alance_server"
+        "push_test.exe logic_server"
+        "push_test.exe upgrade";
     printf(cmd_usage);
 }
 
@@ -44,7 +45,10 @@ int _tmain(int argc, _TCHAR* argv[])
     {
         push_logic_server_test::instance()->start();
     }
-    //else
+    else if (_tcsicmp(argv[1], _T("upgrade")) == 0)
+    {
+        //@todo 
+    }
 
     Sleep(-1);
 

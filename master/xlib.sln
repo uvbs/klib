@@ -41,6 +41,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "push_test", "module\push\pu
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "upgrade", "module\upgrade\upgrade.vcxproj", "{22F6A30E-D264-4C73-83E8-95E350913A4A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "updater", "module\updater\updater.vcxproj", "{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -185,6 +187,14 @@ Global
 		{22F6A30E-D264-4C73-83E8-95E350913A4A}.UnicodeDebug|Win32.Build.0 = Debug|Win32
 		{22F6A30E-D264-4C73-83E8-95E350913A4A}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
 		{22F6A30E-D264-4C73-83E8-95E350913A4A}.UnicodeRelease|Win32.Build.0 = Release|Win32
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}.Debug|Win32.ActiveCfg = Debug|Win32
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}.Debug|Win32.Build.0 = Debug|Win32
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}.Release|Win32.ActiveCfg = Release|Win32
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}.Release|Win32.Build.0 = Release|Win32
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}.UnicodeDebug|Win32.ActiveCfg = Debug|Win32
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}.UnicodeDebug|Win32.Build.0 = Debug|Win32
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439}.UnicodeRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -207,5 +217,6 @@ Global
 		{81A6016B-1AC7-401B-BF3A-FE66FF167232} = {2167A515-14DE-437B-9711-FFD44195EEBF}
 		{61CD5294-E9A3-4984-A0C5-DBD9B54CCE1B} = {2167A515-14DE-437B-9711-FFD44195EEBF}
 		{22F6A30E-D264-4C73-83E8-95E350913A4A} = {2167A515-14DE-437B-9711-FFD44195EEBF}
+		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439} = {2167A515-14DE-437B-9711-FFD44195EEBF}
 	EndGlobalSection
 EndGlobal

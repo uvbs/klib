@@ -55,7 +55,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 {
     DWORD proc_id = GetCurrentProcessId();
     DWORD parent_proc_id = 0;
-    tstring proc_name;
+    tstring parent_proc_name;
 
 	process_enumer proc_enumer;
     PROCESSENTRY32 proc_entry;
@@ -64,11 +64,22 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
         if (proc_entry.th32ProcessID == proc_id)
         {
             parent_proc_id = proc_entry.th32ParentProcessID;
-            proc_name = proc_entry.szExeFile;
+            break;
         }
     }
-    proc_name = klib::io::path::extract_file_name(proc_name);
-
+    if (parent_proc_id > 0) 
+    {
+        proc_enumer.reset();
+        while (proc_enumer.get_next_process_info(proc_entry))
+        {
+            if (parent_proc_id == proc_entry.th32ProcessID) 
+            {
+                parent_proc_name = proc_entry.szExeFile;
+                break;
+            }
+        }
+    }
+    parent_proc_name = klib::io::path::extract_file_name(parent_proc_name);
     // 找到父进程，并判断父进程是否退出了
     if (parent_proc_id > 0) 
     {
@@ -91,7 +102,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
         LPWSTR* pArgv = CommandLineToArgvW(lpGetCmdLine, &pNumArgs);
         if (pArgv && pNumArgs > 1) 
         {
-            BakupMainExe(TRUE, proc_name);
+            BakupMainExe(TRUE, parent_proc_name);
             
             process_helper helper;
             HANDLE hProcess = 0;
@@ -110,10 +121,10 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
 
             tstring strAppPath;
             klib::io::path::get_app_path(strAppPath);
-            strAppPath += proc_name;
+            strAppPath += parent_proc_name;
             if (GetFileAttributes(strAppPath.c_str()) == -1) 
             {
-                BakupMainExe(FALSE, proc_name);
+                BakupMainExe(FALSE, parent_proc_name);
             }
         }
     }

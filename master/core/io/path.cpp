@@ -106,18 +106,25 @@ tstring path::del_slash(tstring& lpszPath )
 
 tstring path::extract_file_name(const tstring& szFile)
 {
+    if (szFile.empty()) 
+    {
+        return tstring();
+    }
+
     //@todo ÐèÒª²âÊÔ
-    size_t index = szFile.size() - 1;
-    while (index > 0)
+    int64_t index = szFile.size() - 1;
+    while (index >= 0)
     {
         if (szFile[index] == _T('\\') ||
             szFile[index] == _T('/')) 
         {
             return szFile.substr(index + 1);
         }
+
+        -- index;
     }
 
-    return tstring();
+    return szFile;
 }
 
 tstring path::extract_file_ext(const tstring& szFile)

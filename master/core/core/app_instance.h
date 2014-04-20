@@ -14,13 +14,13 @@ namespace core {
 class app_instance
 {
 public:
-    app_instance(LPCTSTR pszMetuxName) : m_bexist_prev_instances(false)
+    app_instance(LPCTSTR pszMetuxName) : is_exists_prev_instance_(false)
     {
         HANDLE hMetux = CreateMutex(NULL, FALSE, pszMetuxName);
         if (GetLastError() == ERROR_ALREADY_EXISTS) 
         {
             CloseHandle(hMetux);
-            m_bexist_prev_instances = true;
+            is_exists_prev_instance_ = true;
         }
     }
 
@@ -29,7 +29,7 @@ public:
      */
     bool is_exist_prev_instance()
     {
-        return m_bexist_prev_instances;
+        return is_exists_prev_instance_;
     }
 
     /**
@@ -41,7 +41,7 @@ public:
     }
 
 protected:
-    bool  m_bexist_prev_instances;
+    bool  is_exists_prev_instance_;
 };
 
 

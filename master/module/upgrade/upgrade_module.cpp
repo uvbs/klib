@@ -8,6 +8,7 @@
 #include <encrypt/md5_file.h>
 #include <core/process_helper.h>
 
+#include <tinyxml.h>
 
 BEGIN_REGISTER_MODULES
     REGISTER_MODULE(upgrade_module)
@@ -25,7 +26,39 @@ upgrade_module::~upgrade_module(void)
 {
 }
 
-bool upgrade_module::set_cur_ver_info(const upgrade_info& info)
+void upgrade_module::on_pre_run()
+{
+#ifdef _DEBUG
+
+    version_info info;
+    std::string str = ""
+        "<info>"
+        "<ver>3.2.3.2580</ver>"
+        "<hash>9B17F40D0444235DE0FF024F99F9CE5D6C134AAF</hash>"
+        "<sign>....base64编码的字符串</sign>"
+        "<forceupdate>true</forceupdate>"
+        "<closeapp>true</closeapp>"
+        "<desc></desc>"
+        "<time></time>"
+        "<sources>"
+        "<source>"
+        "<url>http://www.ldjflsfd.com/dfsdf.exe</url>"
+    "<refer>if need</refer>"
+        "<cookie>if need</cookie>"
+        "</source>"
+        "</sources>"
+        "</info>"
+        ;
+
+    this->parser_upgrade_info(str.c_str(), info);
+
+#endif
+
+}
+
+//----------------------------------------------------------------------
+//
+bool upgrade_module::set_upgrade_info(const upgrade_info& info)
 {
     if (info.url_.empty() || 
         info.ver_.empty()) {
@@ -64,14 +97,11 @@ bool upgrade_module::get_new_ver_info(version_info& info)
 
     std::string ver_content;
     BOOL get_result = downloader.get_url_content(url.c_str(), ver_content);
-    if (!get_result) {
+    if (!get_result) 
         return false;
-    }
 
     // @todo parser the information
-
-
-    return true;
+    return parser_upgrade_info(ver_content, info);
 }
 
 bool upgrade_module::down_new_file(const version_info& new_ver_info, 
@@ -95,9 +125,8 @@ bool upgrade_module::down_new_file(const version_info& new_ver_info,
             new_path.c_str(),
             info);
 
-        if (down_result) {
+        if (down_result) 
             return true;
-        }
 
         return false;
     }
@@ -108,19 +137,15 @@ bool upgrade_module::down_new_file(const version_info& new_ver_info,
 bool upgrade_module::do_upgrade(const tstring& upgrade_pkg,
     const std::string& main_exe) 
 {
-    /*
-    1、启动更新程序
-    */
-
-    tstring cmd;
-    cmd.append(_T("-p "));
-    cmd.append(upgrade_pkg);
+    // check package if is exists
+    tstring cmd = upgrade_pkg;
+    if (GetFileAttributes(upgrade_pkg.c_str()) == -1) 
+        return false;
 
     // start updater to execute the update package
     klib::core::process_helper proc_helper;
     proc_helper.shell_execute(g_upgrade_help_exe, cmd.c_str());
-
-
+    
     return true;
 }
 
@@ -138,9 +163,7 @@ bool upgrade_module::auto_upgrade()
     local_p += ver_info.version_;
     local_p += ".exe";
     if (!down_new_file(ver_info, local_p)) 
-    {
         return false;
-    }
 
     // verify
     local_path = klib::encode::code_convert::gbk_2_unicode(local_p);
@@ -150,9 +173,7 @@ bool upgrade_module::auto_upgrade()
     md5 = klib::util::toLower(md5);
     ver_info.hash_ = klib::util::toLower(ver_info.hash_);
     if (md5 != ver_info.hash_) 
-    {
         return false;
-    }
 
     // start updater to execute the update package
     klib::core::process_helper proc_helper;
@@ -161,3 +182,96 @@ bool upgrade_module::auto_upgrade()
     return true;
 }
 
+bool upgrade_module::parser_upgrade_info(const std::string& content, version_info& info)
+{
+    TiXmlDocument doc;
+    
+    doc.Parse(content.c_str());
+    TiXmlElement* ele = doc.RootElement();
+    if (nullptr == ele) {
+        return false;
+    }
+
+    std::string name;
+    std::string value;
+    const char* txt = nullptr;
+    TiXmlElement* child = ele->FirstChildElement();
+    while (child)
+    {
+        name.clear();
+        value.clear();
+
+        if (txt = child->Value()) 
+            name = txt;
+
+        if (txt = child->GetText()) 
+            value = txt;
+
+        txt = child->Value();
+        if (stricmp(txt, "ver") == 0) 
+        {
+            info.version_ = value;
+        }
+        else if (stricmp(txt, "hash") == 0) 
+        {
+            info.hash_ = value;
+        }
+        else if (stricmp(txt, "sign") == 0) 
+        {
+            info.sign_ = value;
+        }
+        else if (stricmp(txt, "forceupdate") == 0) 
+        {
+            if (value == "true") 
+            {
+                info.force_upgrade_ = true;
+            }
+            else if (value == "1") {
+                info.force_upgrade_ = true;
+            }
+        }
+        else if (stricmp(txt, "closeap") == 0) 
+        {
+            if (value == "true") 
+            {
+                info.force_upgrade_ = true;
+            }
+            else if (value == "1") {
+                info.force_upgrade_ = true;
+            }
+        }
+        else if (stricmp(txt, "desc") == 0)
+        {
+            info.desc_ = value;
+        }
+        else if (stricmp(txt, "sources") == 0) 
+        {
+            TiXmlElement* sub_child = child->FirstChildElement();
+            while (sub_child)
+            {
+                resource_info res;
+                auto elet = sub_child->FirstChildElement("url");
+                if (elet) {
+                    res.url_ = elet->GetText();
+                }
+
+                elet = sub_child->FirstChildElement("refer");
+                if (elet) {
+                    res.refer_ = elet->GetText();
+                }
+
+                elet = sub_child->FirstChildElement("cookie");
+                if (elet) {
+                    res.cookie_ = elet->GetText();
+                }
+
+                info.resoruces_.push_back(res);
+                sub_child = child->NextSiblingElement();
+            }
+        }
+        
+        child = child->NextSiblingElement();
+    }
+
+    return true;
+}

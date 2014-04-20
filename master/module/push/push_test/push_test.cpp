@@ -10,6 +10,7 @@
 #include "push_client_test.h"
 #include "push_balance_server_test.h"
 #include "push_logic_server_test.h"
+#include "push_upgrade_test.h"
 
 klib::net::winsock_init g_sock_initor;
 #pragma comment(lib, "ws2_32")
@@ -47,7 +48,7 @@ int _tmain(int argc, _TCHAR* argv[])
     }
     else if (_tcsicmp(argv[1], _T("upgrade")) == 0)
     {
-        //@todo 
+        push_upgrade_test::instance()->test_upgrade();
     }
 
     Sleep(-1);

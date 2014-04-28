@@ -33,20 +33,20 @@ void upgrade_module::on_pre_run()
     version_info info;
     std::string str = ""
         "<info>"
-        "<ver>3.2.3.2580</ver>"
-        "<hash>9B17F40D0444235DE0FF024F99F9CE5D6C134AAF</hash>"
-        "<sign>....base64±àÂëµÄ×Ö·û´®</sign>"
-        "<forceupdate>true</forceupdate>"
-        "<closeapp>true</closeapp>"
-        "<desc></desc>"
-        "<time></time>"
-        "<sources>"
-        "<source>"
-        "<url>http://www.ldjflsfd.com/dfsdf.exe</url>"
-    "<refer>if need</refer>"
-        "<cookie>if need</cookie>"
-        "</source>"
-        "</sources>"
+            "<ver>3.2.3.2580</ver>"
+            "<hash>9B17F40D0444235DE0FF024F99F9CE5D6C134AAF</hash>"
+            "<sign>....base64±àÂëµÄ×Ö·û´®</sign>"
+            "<forceupdate>true</forceupdate>"
+            "<closeapp>true</closeapp>"
+            "<desc></desc>"
+            "<time></time>"
+            "<sources>"
+                "<source>"
+                    "<url>http://www.ldjflsfd.com/dfsdf.exe</url>"
+                    "<refer></refer>"
+                    "<cookie></cookie>"
+                "</source>"
+            "</sources>"
         "</info>"
         ;
 
@@ -100,7 +100,7 @@ bool upgrade_module::get_new_ver_info(version_info& info)
     if (!get_result) 
         return false;
 
-    // @todo parser the information
+    // parser the information
     return parser_upgrade_info(ver_content, info);
 }
 
@@ -207,6 +207,8 @@ bool upgrade_module::parser_upgrade_info(const std::string& content, version_inf
         if (txt = child->GetText()) 
             value = txt;
 
+        value = klib::util::trim(value);
+
         txt = child->Value();
         if (stricmp(txt, "ver") == 0) 
         {
@@ -230,14 +232,14 @@ bool upgrade_module::parser_upgrade_info(const std::string& content, version_inf
                 info.force_upgrade_ = true;
             }
         }
-        else if (stricmp(txt, "closeap") == 0) 
+        else if (stricmp(txt, "closeapp") == 0) 
         {
             if (value == "true") 
             {
-                info.force_upgrade_ = true;
+                info.close_app_ = true;
             }
             else if (value == "1") {
-                info.force_upgrade_ = true;
+                info.close_app_ = true;
             }
         }
         else if (stricmp(txt, "desc") == 0)
@@ -258,14 +260,16 @@ bool upgrade_module::parser_upgrade_info(const std::string& content, version_inf
                 elet = sub_child->FirstChildElement("refer");
                 if (elet) {
                     res.refer_ = elet->GetText();
+                    res.refer_ = klib::util::trim(res.refer_);
                 }
 
                 elet = sub_child->FirstChildElement("cookie");
                 if (elet) {
                     res.cookie_ = elet->GetText();
+                    res.cookie_ = klib::util::trim(res.cookie_);
                 }
 
-                info.resoruces_.push_back(res);
+                info.resoruces_.push_back(std::move(res));
                 sub_child = child->NextSiblingElement();
             }
         }

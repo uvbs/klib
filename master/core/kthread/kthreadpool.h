@@ -16,26 +16,26 @@ namespace kthread {
 
 class kthread_pool;
 
-///< 任务接口
-class itask 
-{
-public:
-	virtual bool execute(kthread_pool* pool, void* param) = 0;
-};
 
 ///< 线程池
 class kthread_pool 
 {
+public:
+    typedef std::function<void()> func_type;
+
     ///< 任务信息，内部使用
     struct task_info 
     {
-        task_info(itask* task, void* param) 
+        task_info(const func_type& f) : f_(f)
         {
-            this->task = task;
-            this->param = param;
         }
-        itask* task;
-        void* param;
+        
+        void operator ()()
+        {
+            this->f_();
+        }
+
+        func_type f_;
     };
 
 public:
@@ -94,11 +94,11 @@ public:
     }
 
     ///< 添加一个任务
-    inline bool add_task(itask* task, void* param) 
+    inline bool add_task(const func_type& func)
     {
         event_.signal();
 
-        return tasklist_.push_item(new task_info(task, param));
+        return tasklist_.push_item(new task_info(func));
     }
 
     ///< 获得线程个数
@@ -158,8 +158,7 @@ protected:
                     ++ running_thread_count_;
                 }
 
-                _ASSERT(taskinfo->task);
-                taskinfo->task->execute(this, taskinfo->param);
+                (*taskinfo)();
                 delete taskinfo;
 
                 if (true)

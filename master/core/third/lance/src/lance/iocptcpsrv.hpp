@@ -289,11 +289,11 @@ public: static enum EVENT
 			EV_SEND
 		};
 
-public: void send(const char * buff, int len)
+        void send(const char * buff, int len)
 		{
 			::send(fd, buff, len, 0);
 		}
-public: void recv(char * buff, int len)
+        void recv(char * buff, int len)
 		{
 			this->event = EV_RECV;
 

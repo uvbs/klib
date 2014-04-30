@@ -1,0 +1,528 @@
+2013-04-21 tommi@tntnet.org
+
+ - release version 1.3
+
+2013-04-08 tommi@tntnet.org
+
+ - release candidate 1.3rc3
+
+2013-03-31 tommi@tntnet.org
+
+ - remove removed m4/acx_pthread.m4 from Makefile.am also
+ - fix compiler warnings
+ - remove pthread checks from tntdb since it is not needed
+
+2013-03-17 tommi@tntnet.org
+
+ - fix some compiler warnings
+ - set preprocesor flags in CPPFLAGS instead of CXXFLAGS
+ - update version number to 1.3rc2; update ChangeLog
+
+2013-03-16 tommi@tntnet.org
+
+ - add chapters about business logic, application class and logging to quick start guide
+ - release candidate 1.3rc2
+
+2013-03-11 tommi@tntnet.org
+
+ - do not use implicit conversion of cxxtools::SmartPtr to raw pointer in oracle driver also
+
+2013-03-03 tommi@tntnet.org
+
+ - release candidate 1.3rc1
+
+2013-01-18 tommi@tntnet.org
+
+ - fix table locking in oracle driver
+
+2013-01-17 tommi@tntnet.org
+
+ - extend locktest program with facility to create read locks
+ - implement lockTable method in tntdb::Transaction
+ - compile with -Wall and -pedantic if compiler supports it
+
+2012-08-15 tommi@tntnet.org
+
+ - delay deallocation of statements in postgresql during transactions since failed transactions causes deallocation to fail
+
+2012-08-04 tommi@tntnet.org
+
+ - remove unused variable
+ - pass param format array to PQexecParams correctly when opening cursor in postgresql driver
+
+2012-05-28 tommi@tntnet.org
+
+ - remove deprecated header cxxtools/loginit.h
+ - add test reading with cursor into unit test
+
+2012-05-26 tommi@tntnet.org
+
+ - add support for cxxtools::String (unicode string class)
+
+2012-04-16 tommi@tntnet.org
+
+ - fix fetching blob fields in oracle driver and extend unit test for type for using tntdb::Result
+ - fix fetching datetime and blob fields in oracle driver
+
+2012-04-12 tommi@tntnet.org
+
+ - use OCI number conversion functions where feasible in oracle driver
+ - optimize oracle driver by fetching multiple values at once (reading larger amounts of data is dramatically faster now)
+
+2012-04-02 tommi@tntnet.org
+
+ - update version number to 1.2
+ - remove old debian directory
+
+2012-03-31 tommi@tntnet.org
+
+ - update ChangeLog and version number
+ - fix tntdb::Decimal for freebsd
+ - fix a special case in conjunction with quotes when parsing sql statements
+
+2012-03-26 tommi@tntnet.org
+
+ - some fixes concerning new tntdb::Decimal class and optimization in oralce driver (rebind only when needed)
+
+2012-03-25 tommi@tntnet.org
+
+ - fix mysql driver: mysql_stmt_execute accesses bound data even when it is deleted
+ - add unit tests for basic tntdb functionality
+ - fix setting char, date, time and datetime in mysql
+
+2012-03-15 tommi@tntnet.org
+
+ - improve support for integer type in Decimal class
+
+2012-03-13 tommi@tntnet.org
+
+ - new method getInteger in tntdb::Decimal
+ - update oracle driver to new decimal class
+
+2012-03-12 tommi@tntnet.org
+
+ - fix parsing some decimal numbers and allow leading and trailing white space
+ - avoid possible wrong overflow in decimal class
+ - fixes for decimal parser
+
+2012-03-08 tommi@tntnet.org
+
+ - remove some constructors from Decimal to reduce abiguity
+
+2012-03-05 tommi@tntnet.org
+
+ - simplify tntdb::Decimal and make its use more efficient
+
+2012-02-26 tommi@tntnet.org
+
+ - fix compiler warnings in decimal class and add some unit tests for decimal class
+
+2012-02-25 tommi@tntnet.org
+
+ - set compile flags for ibm xlc and fix some warnings
+
+2012-02-11 tommi@tntnet.org
+
+ - set abi version to 3
+ - add sql scripts for creating test tables into dist package
+
+2012-02-09 tommi@tntnet.org
+
+ - implement method tntdb::Row::getColumnName(size_type)
+
+2012-02-09 tommi@tntnet.org
+
+ - fix resetting rowreader
+ - fix some compiler warnings in Decimal class
+
+2012-02-08 tommi@tntnet.org
+
+ - remove search path from tntdb since people should use LD_LIBRARY_PATH if really needed and prefer that over configured driver directory
+ - better cleanup in tntdb unit test
+ - fix reading floating point number from decimal column in mysql driver
+
+2012-02-05 tommi@tntnet.org
+
+ - initialize tests correctly - null test did not work as it should have
+
+2012-02-01 tommi@tntnet.org
+
+ - sort connections in replicate driver to reduce risk of dead locks but still use first connection as primary connection for selects
+
+2011-11-25 tommi@tntnet.org
+
+ - remove now obsolete method tntdb::Statement::paramlist (replaced by tntdb::SqlBuilder)
+ - add missing return statement into tntdb::SqlBuilder::replaceIf
+ - add else value into tntdb::SqlBuilder::replaceIf
+ - when replication fails in replication driver add the number of the connection, which fails to the exception message
+ - add unit test for tntdb::SqlBuilder
+ - fix replication driver - after last fix statements were executed twice on the first connection
+
+2011-11-24 tommi@tntnet.org
+
+ - add default constructor and setter for sql builder
+
+2011-11-23 tommi@tntnet.org
+
+ - add class tntdb::SqlBuilder as a helper for dynamically built sql statements
+
+2011-11-22 tommi@tntnet.org
+
+ - add support for parameter lists in Statement
+
+2011-11-17 tommi@tntnet.org
+
+ - Datetime must not have a zero year, month or day in oracle
+
+2011-11-11 tommi@tntnet.org
+
+ - fix ping in replicate driver
+ - prevent endless retry to create new connections in connectionpool
+
+2011-11-10 tommi@tntnet.org
+
+ - OCIPing did not work on our oracle server 10.2.0.4.0; replace with OCIServerVersion on oracle before 11
+
+2011-11-04 tommi@tntnet.org
+
+ - fix out of tree build
+
+2011-09-25 tommi@tntnet.org
+
+ - fix wrong data type in tntdb::Decimal::getUnsignedShort()
+ - fix build for autoconf 2.68
+
+2011-09-20 tommi@tntnet.org
+
+ - add missing return statements in replicate driver
+
+2011-09-01 tommi@tntnet.org
+
+ - add get method for tntdb::Value to RowReader
+ - add rowreader.h to Makefile.am
+
+2011-08-27 tommi@tntnet.org
+
+ - add documentation for tntdb::RowReader
+
+2011-08-26 tommi@tntnet.org
+
+ - implement new helper class tntdb::RowReader, which makes it easier to read all values from a row
+
+2011-06-03 tommi@tntnet.org
+
+ - add support for short and unsigned short
+
+2011-05-06 tommi@tntnet.org
+
+ - fix reading time with second fractional part >0.9999, which resulted in a invalid time in postgresql driver
+
+2011-04-25 tommi@tntnet.org
+
+ - add operators for cxxtools::Date, Time and DateTime classes
+
+2011-04-02 tommi@tntnet.org
+
+ - fix compile problem on BSD (timeval.tv_sec is not of type time_t)
+
+2011-03-24 tommi@tntnet.org
+
+ - use transacions to make sure replication works also on error on the second db in replication driver
+
+2011-03-22 tommi@tntnet.org
+
+ - use OCIPing to check if oracle connection is still alive
+
+2011-03-22 tommi@tntnet.org
+
+ - default to empty string of serial name when retrieving last insert id, which means: get the last inserted id regardless of name
+
+2011-02-27 tommi@tntnet.org
+
+ - update tntdb to latest cxxtools (svn release 1203 or cxxtools 2.1)
+
+2011-02-21 tommi@tntnet.org
+
+ - support for nan and inf in postgresql driver
+
+2011-02-21 tommi@tntnet.org
+
+ - deliver last incremented serial if passed empty string to lastInsertId method in postgresql driver
+
+2011-02-21 tommi@tntnet.org
+
+ - add replicating driver to tntdb
+
+2011-01-30 tommi@tntnet.org
+
+ - fix: long was casted to int when set in statement
+
+2011-01-10 tommi@tntnet.org
+
+ - implement getLong and getUnsignedLong in tntdb::row
+
+2011-01-05 tommi@tntnet.org
+ - add tntdb::BlobIStream: a std::istream interface to tntdb::Blob
+
+2010-11-14 tommi@tntnet.org
+ - do not generate doxygen documentation by default
+
+2010-11-13 tommi@tntnet.org
+ - use async calls when testing connection with ping in postgresql driver to monitor timeout
+
+2010-10-29 tommi@tntnet.org
+ - fix warning in postgresql driver about failed deallocation of statement on close connection when lastInserId was used
+
+2010-10-23 tommi@tntnet.org
+ - statement parser fixes: do not convert type of cast expressions like
+   a::integer into host variable and parse 2 consecutive hostvars
+   correctly
+
+2010-10-06 tommi@tntnet.org
+ - make tntdb::Blob thread safe - the empty instance may be shared between connections in different threads
+
+2010-09-29 tommi@tntnet.org
+ - remove obsolete code for statically bind drivers to tntdb
+ - build driver name from abi_current from configure.in
+
+2010-09-28 tommi@tntnet.org
+ - make tntdb::connect thread safe
+
+2010-09-27 tommi@tntnet.org
+ - bugfix: tntdb::Value::getUnsignedLong should return an unsigned long instead of an unsigned
+
+2010-09-16 tommi@tntnet.org
+ - add logging to transaction class and do not inline it
+
+2010-09-08 tommi@tntnet.org
+ - add convenience method tntdb::Statement::setIf to set to a value or null depending on a bool
+
+2010-08-11 tommi@tntnet.org
+ - unify handling of nested transactions (ignore nested transactions like oracle driver did it already)
+
+2010-08-01 tommi@tntnet.org
+ - release 1.1
+
+2010-03-25 adi
+ - error for decimal number < 1 fixed
+
+2010-02-16 tommi@tntnet.org
+ - tntdb::Statement::setLong and setUnsignedLong
+ - add unittest
+ - add relational operators to tntdb::Decimal
+
+2010-02-13 tommi@tntnet.org
+ - add support for auto-incremented values with new method
+   tntdb::Connection::lastInsertId(std::string)
+ - new methods getLong and getUnsignedLong in tntdb::Value
+
+2010-02-11 tommi@tntnet.org
+ - add template method tntdb::Value::get(T&)
+
+2010-02-09 tommi@tntnet.org
+ - remove automatic conversion operators from tntdb::Value
+ - add an extendable system for retrieving and setting values by overriding 2
+   operators
+
+2010-02-06 tommi@tntnet.org
+ - let the user specify a short key for statement cache in prepareCached
+ - add getValue-methods to tntdb::Row, which returns the data to variables,
+   passed by reference
+
+2009-12-31 tommi@tntnet.org
+ - replace obsolete cxxtools::Dynbuffer with std::vector
+
+2009-12-14 tommi@tntnet.org
+ - add method tntdb::Value::getValue
+
+2009-12-12 tommi@tntnet.org
+ - check if int and int32_t and others are distinct types
+
+2009-09-09 tommi@tntnet.org
+ - extend syntax of connection string in mysql driver:
+ - allow values to be enclosed in single or double quotes
+ - escape special characters in values with backslash
+ - allow whitespace as delimiter
+ - check for duplicate keys in connection string
+ - add key "app" with a default "tntdb" and use my.cnf with this section
+
+2009-06-29 tommi@tntnet.org
+ - clean up of oracle connection in proper order
+
+2009-06-29 tommi@tntnet.org
+ - close oracle connection correctly
+
+2009-06-16 tommi@tntnet.org
+ - fix sporadic error in string to number conversion in oracle driver
+
+2009-05-15 tommi@tntnet.org
+ - clear statement cache at transaction end with sqlite since statement handles are invalidated
+
+2008-12-18 tommi@tntnet.org
+ - fix error in oracle driver when shutting down the connection after ping
+
+2008-12-05 tommi@tntnet.org
+ - bump so number
+ - simplify cxxtools configuration
+
+2008-12-05 tommi@tntnet.org
+ - fix crash in sqlite driver in Connection::execute
+
+2008-12-05 tommi@tntnet.org
+ - fix driver loading (was broken after cxxtools update)
+
+2008-11-28 tommi@tntnet.org
+ - wrong exception was caught for not found driver libraries
+
+2008-11-28 tommi@tntnet.org
+ - cache ping statement handle in oracle driver
+
+2008-11-21 tommi@tntnet.org
+ - throw NullValue-excpetion, when a null-column is read in a postgresql result set
+
+2008-11-15 tommi@tntnet.org
+ - use fetchsize hint of statement in mysql driver
+
+2008-11-15 tommi@tntnet.org
+ - fix getWDay of date class
+
+2008-07-04 tommi@tntnet.org
+ - remove aix specific handling
+
+2008-07-01 tommi@tntnet.org
+ - fix linkflags for aix 6
+
+2008-07-01 tommi@tntnet.org
+ - support for aix version > 5
+
+2008-07-01 tommi@tntnet.org
+ - don't use ORACLE_HOME to find oracle includes and libraries, since we cannot know, which library the user needs to link (lib or lib32 or whatever)
+
+2008-06-30 tommi@tntnet.org
+ - slightly improved date and time classes
+
+2008-06-07 tommi@tntnet.org
+ - fix Statement::setBool in postgresql driver
+
+2008-06-03 tommi@tntnet.org
+  - release version 1.0.1
+
+2008-06-02 tommi@tntnet.org
+ - fix crash when creating 2 cursors for one statement and destroying in different order
+
+2008-05-30 tommi@tntnet.org
+ - fix string handling in sqlite-driver
+
+2008-02-16 tommi@tntnet.org
+ - version 1.0.0
+
+2008-02-13 tommi@tntnet.org
+ - Blob class (Marc)
+
+2007-11-14 tommi@tntnet.org
+ - get values by column name
+
+2007-10-07 tommi@tntnet.org
+ - replace tntdb::SmartPtr with cxxtools::SmartPtr
+
+2007-09-27 tommi@tntnet.org
+ - build improvements for AIX
+
+2007-09-21 tommi@tntnet.org
+ - support for decimals and 32/64-bit integers (from Mark Wright)
+
+2007-06-08 tommi@tntnet.org
+ - bugfix: tntdb crashed, when iterating over a statement which returns no rows
+
+2007-05-23 tommi@tntnet.org
+ - driver for oracle
+ - support for MEDIUMINT in mysql-driver
+
+2007-05-11 tommi@tntnet.org
+ - fix connectionpool
+
+2007-03-27 tommi@tntnet.org
+ - tntdb::Connection::ping to check, if the connection is alive
+ - use that ping in connectionpool before returning connection
+ - tntdb::setMaxPoolSize(unsingned) and tntdb::getMaxPoolSize()
+
+2007-02-20 tommi@tntnet.org
+
+ - fix leak: the statement-cursor is not freed, when the first fetch was not
+   successful
+
+2006-10-21 tommi@tntnet.org
+
+ - add fetchsize-parameter (with default 100) to tntdb::Statement::begin to
+   pass a hint to the implementing cursor
+
+2006-10-12 tommi@tntnet.org
+
+ - don't inline constructors of error-classes to help compiler matching the
+   right type in catch-block (a problem with gcc 4.1 at least)
+
+2006-10-07 tommi@tntnet.org
+
+ - add getDate-, getTime- and getDatetime-methods to tntdb::Row
+
+2006-09-20 tommi@tntnet.org
+
+ - fix cached prepared statements in sqlite: reset before reuse
+
+2006-09-11 tommi@tntnet.org
+
+ - fix handling of binary data in sqlite3-driver
+ - move drivers to separate directory specified in configure with "--with-driverdir=..."
+
+2006-08-25 tommi@tntnet.org
+
+ - fix smartpointer to support self-assignment
+
+2006-08-24 tommi@tntnet.org
+
+ - change license to LGPL
+
+2006-07-21 tommi@tntnet.org
+
+ - extend license to allow linking with openssl due to postgresql
+
+2006-04-12 tommi@tntnet.org
+
+ - fix mysql-driver-bug: crashed when fetching some datatypes, because the api
+    seems to return too small length-values (or I misunderstand the api;-) )
+
+2006-03-27 tommi@tntnet.org
+
+ - allow date-, datetime- and time-classes to be null, when passed to statements
+
+2006-03-01 tommi@tntnet.org
+
+ - declare cursor in postgresql with hold to enable cursor outside transactions
+
+2006-02-13 tommi@tntnet.org
+
+ - new method Statement::clear()
+
+2006-01-21 tommi@tntnet.org
+
+ - connectionpool
+
+2006-01-13 tommi@tntnet.org
+
+ - add missing include/tntdb/sqlite/impl/connectionmanager.h
+
+2005-12-26 tommi@tntnet.org
+
+ - new Sqlite-driver
+
+2005-11-12 tommi@tntnet.org
+
+ - use PQexec with PREPARE when PQprepare is not found (postgresql prior 8.0)
+
+2005-11-11 tommi@tntnet.org
+
+ - make drivers for mysql and postgresql optional in configure
+
+2005-10-26 tommi@tntnet.org
+
+ - fixed handling of MYSQL_TYPE_LONGLONG

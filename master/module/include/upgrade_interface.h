@@ -61,10 +61,18 @@ struct resource_info
 // information of upgrade
 struct version_info
 {
-    std::string version_;
+    version_info() : time_(0), 
+        force_upgrade_(false),
+        close_app_(false)
+    {}
+
+    std::string version_;        // ver 1.1.1.0
     std::string hash_;           // md5或者sha1
-    uint64_t    size_;           // file size
     std::string sign_;           // 签名（必须要验证）
+    std::string desc_;
+    uint64_t    time_;
+    bool        force_upgrade_;
+    bool        close_app_;
     std::vector<resource_info> resoruces_;  // 资源
 };
 
@@ -91,7 +99,7 @@ typedef std::function<bool(upgrade_event) > callback;
 class upgrade_i
 {
 public:
-    virtual bool set_cur_ver_info(const upgrade_info& loc) = 0;
+    virtual bool set_upgrade_info(const upgrade_info& loc) = 0;
     virtual bool get_new_ver_info(version_info& info) = 0;
     virtual bool down_new_file(const version_info& new_ver_info, 
         const std::string& new_path) = 0;

@@ -7,7 +7,9 @@ namespace pattern {
 
 
 /*
-T must include T* next member 
+T must include T* next member and T * prev
+双向链表方便删除使用
+这是一个单项链接，基于性能与内存的考虑，与被使用的对象T有成员上的耦合
 */
 
 template<typename T>
@@ -16,7 +18,8 @@ class ptr_list
 public:
     ptr_list() : 
         head_(nullptr),
-        tail_(nullptr)
+        tail_(nullptr),
+        size_(0)
     {
     }
 
@@ -29,11 +32,13 @@ public:
 
         if (nullptr == tail_)
         {
+            t->prev = nullptr;
             t->next = nullptr;
             head_ = tail_ = t;
         }
         else 
         {
+            t->prev = tail_;
             t->next = nullptr;
             tail_->next = t;
         }
@@ -50,12 +55,15 @@ public:
 
         if (nullptr == head_)
         {
+            t->prev = head_;
             t->next = nullptr;
             head_ = tail_ = t;
         }
         else
         {
+            t->prev = nullptr;
             t->next = head_;
+            head_->prev = t;
             head_ = t;
         }
 
@@ -63,6 +71,7 @@ public:
         return true;
     }
 
+    // 可以通过返回的指针进行遍历
     T* front() const
     {
         if (0 == size())
@@ -82,38 +91,54 @@ public:
         }
         else
         {
-            head = head_->next;
+            head_->next->prev = nullptr;
+            head_ = head_->next;
         }
         -- size_;
     }
 
     bool remove(T* t)
     {
-        T* tmp = head_;
-        while (tmp)
-        {
-            if (tmp == t)
-            {
-                if (head_ == tmp)
-                {
-                    head_ = head_->next;
-                }
-                else 
-                {
-                    tmp = tmp->next;
-                }
-                break;
-            }
+        if (nullptr == head_)
+            return false;
 
-            tmp = tmp->next;
+        if (1 == size())
+        {
+            if (head_ == t)
+            {
+                head_ = tail_ = nullptr;
+                -- size_;
+                return true;
+            }
+            return false;
         }
+        else 
+        {
+            if (head_ == t)
+            {
+                head_->next->prev = nullptr;
+                head_ = head_->next;
+            }
+            else if (tail_ == t)
+            {
+                tail_ = t->prev;
+                tail_->next = nullptr;
+            }
+            else
+            {
+                t->next->prev = t->prev;
+                t->prev->next = t->next;
+            }
+        }
+
+        -- size_;
         return true;
     }
 
 protected:
-    size_t size_;
     T* head_;
     T* tail_;
+    size_t size_;
 };
 
 }}

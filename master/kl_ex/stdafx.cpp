@@ -7,8 +7,5 @@
 // TODO: 在 STDAFX.H 中
 // 引用任何所需的附加头文件，而不是在此文件中引用
 
-#ifdef _DEBUG
-#pragma comment(lib, "xlib_d.lib")
-#else
-#pragma comment(lib, "xlib.lib")
-#endif
+
+#include <klib_link.h>

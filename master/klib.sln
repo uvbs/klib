@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ut", "ut\ut.vcxproj", "{47D029D5-DD10-4BAD-84EE-C0C74B587B67}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "xlib", "xlib\xlib.vcxproj", "{3B89532F-2E02-44F7-B250-42746B077A4E}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mynet", "core\comp\MyNet\mynet.vcxproj", "{094D121B-28D9-4CFB-B18B-FA0BCA71409A}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mynet_test", "example\mynet_test\mynet_test.vcxproj", "{97571C7D-E080-4EAD-987A-BC9FB0C67F20}"
@@ -49,6 +47,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fiber_test", "example\fiber
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "network", "module\network\network.vcxproj", "{C05F0B64-B09C-4350-8946-9CA8FF404087}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "klib", "klib\klib.vcxproj", "{3B89532F-2E02-44F7-B250-42746B077A4E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -65,14 +65,6 @@ Global
 		{47D029D5-DD10-4BAD-84EE-C0C74B587B67}.UnicodeDebug|Win32.Build.0 = Debug|Win32
 		{47D029D5-DD10-4BAD-84EE-C0C74B587B67}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
 		{47D029D5-DD10-4BAD-84EE-C0C74B587B67}.UnicodeRelease|Win32.Build.0 = Release|Win32
-		{3B89532F-2E02-44F7-B250-42746B077A4E}.Debug|Win32.ActiveCfg = Debug|Win32
-		{3B89532F-2E02-44F7-B250-42746B077A4E}.Debug|Win32.Build.0 = Debug|Win32
-		{3B89532F-2E02-44F7-B250-42746B077A4E}.Release|Win32.ActiveCfg = Release|Win32
-		{3B89532F-2E02-44F7-B250-42746B077A4E}.Release|Win32.Build.0 = Release|Win32
-		{3B89532F-2E02-44F7-B250-42746B077A4E}.UnicodeDebug|Win32.ActiveCfg = Debug|Win32
-		{3B89532F-2E02-44F7-B250-42746B077A4E}.UnicodeDebug|Win32.Build.0 = Debug|Win32
-		{3B89532F-2E02-44F7-B250-42746B077A4E}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
-		{3B89532F-2E02-44F7-B250-42746B077A4E}.UnicodeRelease|Win32.Build.0 = Release|Win32
 		{094D121B-28D9-4CFB-B18B-FA0BCA71409A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{094D121B-28D9-4CFB-B18B-FA0BCA71409A}.Debug|Win32.Build.0 = Debug|Win32
 		{094D121B-28D9-4CFB-B18B-FA0BCA71409A}.Release|Win32.ActiveCfg = Release|Win32
@@ -225,6 +217,14 @@ Global
 		{C05F0B64-B09C-4350-8946-9CA8FF404087}.UnicodeDebug|Win32.Build.0 = Debug|Win32
 		{C05F0B64-B09C-4350-8946-9CA8FF404087}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
 		{C05F0B64-B09C-4350-8946-9CA8FF404087}.UnicodeRelease|Win32.Build.0 = Release|Win32
+		{3B89532F-2E02-44F7-B250-42746B077A4E}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3B89532F-2E02-44F7-B250-42746B077A4E}.Debug|Win32.Build.0 = Debug|Win32
+		{3B89532F-2E02-44F7-B250-42746B077A4E}.Release|Win32.ActiveCfg = Release|Win32
+		{3B89532F-2E02-44F7-B250-42746B077A4E}.Release|Win32.Build.0 = Release|Win32
+		{3B89532F-2E02-44F7-B250-42746B077A4E}.UnicodeDebug|Win32.ActiveCfg = Debug|Win32
+		{3B89532F-2E02-44F7-B250-42746B077A4E}.UnicodeDebug|Win32.Build.0 = Debug|Win32
+		{3B89532F-2E02-44F7-B250-42746B077A4E}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
+		{3B89532F-2E02-44F7-B250-42746B077A4E}.UnicodeRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

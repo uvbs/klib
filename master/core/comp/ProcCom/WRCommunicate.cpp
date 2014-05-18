@@ -5,7 +5,7 @@
 CWRCommunicate::CWRCommunicate(tstring name,int buffersize):
 m_semaphore(name), m_name(name), m_bEnd(false)
 {
-	m_memroy.Create(name + _T("_sharebuffer"), buffersize);
+	m_memroy.create(name + _T("_sharebuffer"), buffersize);
 }
 
 CWRCommunicate::~CWRCommunicate(void)
@@ -21,7 +21,7 @@ void CWRCommunicate::write(string& str)
     else
 	{
 		m_semaphore.write_wait();
-		m_memroy.WriteString(str);
+		m_memroy.write_string(str);
 		m_semaphore.read_set();
 	}
 }
@@ -35,7 +35,7 @@ void CWRCommunicate::read(string& str)
 	}
     else
     {
-		str = m_memroy.ReadString();
+		str = m_memroy.read_string();
 	}
 	m_semaphore.write_set();
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../../kthread/RWSemaphore.h"
-#include "../../core/ShareMemory.h"
+#include "../../core/share_memory.h"
 #include "../../istddef.h"
 
 using namespace klib;
@@ -27,6 +27,6 @@ public:
 private:
 	tstring             m_name;
 	CWRSemaphore        m_semaphore;
-	CShareMemory        m_memroy;
+	share_memory        m_memroy;
 	bool                m_bEnd;
 };

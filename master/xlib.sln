@@ -47,6 +47,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fiber", "core\comp\fiber\fi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fiber_test", "example\fiber_test\fiber_test.vcxproj", "{A2126F5B-5F76-4B77-8C2B-0E0AC87194FE}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "network", "module\network\network.vcxproj", "{C05F0B64-B09C-4350-8946-9CA8FF404087}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -215,6 +217,14 @@ Global
 		{A2126F5B-5F76-4B77-8C2B-0E0AC87194FE}.UnicodeDebug|Win32.Build.0 = Debug|Win32
 		{A2126F5B-5F76-4B77-8C2B-0E0AC87194FE}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
 		{A2126F5B-5F76-4B77-8C2B-0E0AC87194FE}.UnicodeRelease|Win32.Build.0 = Release|Win32
+		{C05F0B64-B09C-4350-8946-9CA8FF404087}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C05F0B64-B09C-4350-8946-9CA8FF404087}.Debug|Win32.Build.0 = Debug|Win32
+		{C05F0B64-B09C-4350-8946-9CA8FF404087}.Release|Win32.ActiveCfg = Release|Win32
+		{C05F0B64-B09C-4350-8946-9CA8FF404087}.Release|Win32.Build.0 = Release|Win32
+		{C05F0B64-B09C-4350-8946-9CA8FF404087}.UnicodeDebug|Win32.ActiveCfg = Debug|Win32
+		{C05F0B64-B09C-4350-8946-9CA8FF404087}.UnicodeDebug|Win32.Build.0 = Debug|Win32
+		{C05F0B64-B09C-4350-8946-9CA8FF404087}.UnicodeRelease|Win32.ActiveCfg = Release|Win32
+		{C05F0B64-B09C-4350-8946-9CA8FF404087}.UnicodeRelease|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -240,5 +250,6 @@ Global
 		{61CD5294-E9A3-4984-A0C5-DBD9B54CCE1B} = {2167A515-14DE-437B-9711-FFD44195EEBF}
 		{22F6A30E-D264-4C73-83E8-95E350913A4A} = {2167A515-14DE-437B-9711-FFD44195EEBF}
 		{EE3283BF-59FA-45A6-B5E2-9CF9E6E35439} = {2167A515-14DE-437B-9711-FFD44195EEBF}
+		{C05F0B64-B09C-4350-8946-9CA8FF404087} = {2167A515-14DE-437B-9711-FFD44195EEBF}
 	EndGlobalSection
 EndGlobal

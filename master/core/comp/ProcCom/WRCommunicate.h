@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../kthread/RWSemaphore.h"
+#include "../../kthread/rw_semaphore.h"
 #include "../../core/share_memory.h"
 #include "../../istddef.h"
 
@@ -26,7 +26,7 @@ public:
 
 private:
 	tstring             m_name;
-	CWRSemaphore        m_semaphore;
+	wr_semaphore        m_semaphore;
 	share_memory        m_memroy;
 	bool                m_bEnd;
 };

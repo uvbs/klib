@@ -153,7 +153,8 @@
     <ClInclude Include="..\core\kthread\event.h" />
     <ClInclude Include="..\core\kthread\ReadWriteSection.h" />
     <ClInclude Include="..\core\kthread\RWLock.h" />
-    <ClInclude Include="..\core\kthread\RWSemaphore.h" />
+    <ClInclude Include="..\core\kthread\rw_semaphore.h" />
+    <ClInclude Include="..\core\kthread\semaphore.h" />
     <ClInclude Include="..\core\kthread\thread.h" />
     <ClInclude Include="..\core\kthread\threadpool.h" />
     <ClInclude Include="..\core\kthread\win_mutex.h" />
@@ -219,8 +220,8 @@
     <ClCompile Include="..\core\io\file.cpp" />
     <ClCompile Include="..\core\io\path.cpp" />
     <ClCompile Include="..\core\io\stream.cpp" />
-    <ClCompile Include="..\core\kthread\RWSemaphore.cpp" />
-    <ClCompile Include="..\core\kthread\Semaphore.cpp" />
+    <ClCompile Include="..\core\kthread\rw_emaphore.cpp" />
+    <ClCompile Include="..\core\kthread\semaphore.cpp" />
     <ClCompile Include="..\core\kthread\win_mutex.cpp" />
     <ClCompile Include="..\core\net\addr_resolver.cpp" />
     <ClCompile Include="..\core\net\CheckNat.cpp" />

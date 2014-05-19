@@ -207,9 +207,6 @@
     <ClInclude Include="..\core\kthread\RWLock.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\kthread\RWSemaphore.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\kthread\thread.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -351,6 +348,12 @@
     <ClInclude Include="..\core\net\udp_server.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\kthread\rw_semaphore.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\kthread\semaphore.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\core\logger.cpp">
@@ -419,12 +422,6 @@
     <ClCompile Include="..\core\net\wininet_httpclient.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\kthread\RWSemaphore.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\kthread\Semaphore.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\util\strutil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -486,6 +483,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\net\udp_server.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\kthread\rw_emaphore.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\kthread\semaphore.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

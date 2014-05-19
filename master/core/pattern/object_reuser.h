@@ -20,6 +20,40 @@ public:
     typedef object_reuser<T, max_object_size>       self_type;
     typedef unsigned long long *    pointer_type;
     
+protected:    
+    /**
+     * @brief 将内存添加到链接表中去
+     * @param p   要重用的指针，如果为空则需要申请内存
+     */
+    bool add_to_pool(void *p = NULL)
+    {
+        if (p == NULL)
+        {
+            // 如果总的大小大于设定的最大长度的话就不能再申请对象了
+            if (max_object_size > 0 && max_object_size < m_ntotal_size) 
+            {
+                return false;
+            }
+
+            // 申请要构造对象的内存空间
+            p = new char[sizeof(pointer_type) + sizeof(T)];
+            if (NULL == p) 
+            {
+                return false;
+            }
+
+            // 增加总的对象计数
+            ++ m_ntotal_size;
+        }
+
+        *(unsigned long long *)p = NULL;
+        *(unsigned long long *)m_pTail = (unsigned long long)p;
+        m_pTail = p;
+        ++ m_nfree_size;
+
+        return true;
+    }
+
 public:
     object_reuser()
     {
@@ -248,40 +282,6 @@ public:
         auto_lock lock(m_obj_cs);
 
         return parent_type::recyle_object(p);
-    }
-    
-protected:    
-    /**
-     * @brief 将内存添加到链接表中去
-     * @param p   要重用的指针，如果为空则需要申请内存
-     */
-    bool add_to_pool(void *p = NULL)
-    {
-        if (p == NULL)
-        {
-            // 如果总的大小大于设定的最大长度的话就不能再申请对象了
-            if (max_object_size > 0 && max_object_size < m_ntotal_size) 
-            {
-                return false;
-            }
-
-            // 申请要构造对象的内存空间
-            p = new char[sizeof(pointer_type) + sizeof(T)];
-            if (NULL == p) 
-            {
-                return false;
-            }
-
-            // 增加总的对象计数
-            ++ m_ntotal_size;
-        }
-
-        *(unsigned long long *)p = NULL;
-        *(unsigned long long *)m_pTail = (unsigned long long)p;
-        m_pTail = p;
-        ++ m_nfree_size;
-
-        return true;
     }
 
 public:    

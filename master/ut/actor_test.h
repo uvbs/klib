@@ -6,7 +6,7 @@ using namespace klib::pattern::actor;
 class myactor : public actor_imp<myactor, int>
 {
 public:
-    myactor (engine& fr) : actor_imp( fr) {}
+    myactor () {}
 
     void execute(int& t) 
     {
@@ -22,7 +22,8 @@ TEST(actor, 1)
     engine ngn;
     ngn.init();
 
-    myactor act(ngn);
+    myactor act;
+    ngn.regist(&act);
 
     for (int i=0; i< 1001; ++i) 
     {

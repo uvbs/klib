@@ -234,7 +234,7 @@ void http_proxy_server_t::on_accept(net_conn_ptr listen_conn, net_conn_ptr accep
 
     ctx = proxy_ctx_pool_.Alloc();
     ctx->local_conn_ = accept_conn;
-    ctx->fsm_.Start();
+    ctx->fsm_.start();
 
     conn_session_map_.add_item(accept_conn, ctx);
 }
@@ -253,7 +253,7 @@ void http_proxy_server_t::on_connect(net_conn_ptr pconn, bool bConnected)
 
     evt.ctx_  = ctx;
     evt.svr_  = this;
-    ctx->fsm_.OnEvent(&evt);
+    ctx->fsm_.on_event(&evt);
 
     return;
 }
@@ -274,7 +274,7 @@ void http_proxy_server_t::on_read(net_conn_ptr pconn, const char* buff, size_t l
 
     evt.ctx_  = ctx;
     evt.svr_  = this;
-    ctx->fsm_.OnEvent(&evt);
+    ctx->fsm_.on_event(&evt);
 }
 
 void http_proxy_server_t::on_disconnect(net_conn_ptr pconn)
@@ -287,7 +287,7 @@ void http_proxy_server_t::on_disconnect(net_conn_ptr pconn)
         evt.pconn = pconn;
         evt.ctx_  = ctx;
         evt.svr_  = this;
-        ctx->fsm_.OnEvent(&evt);
+        ctx->fsm_.on_event(&evt);
 
         //----------------------------------------------------------------------
         if (ctx->local_conn_ == pconn) 

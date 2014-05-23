@@ -18,7 +18,6 @@
 #include "core/private_heap.h"
 #include "core/ensure.h"
 #include "core/scope_guard.h"
-#include "core/fix_circle_buff.h"
 #include "core/ip_seg_table.h"
 #include "core/ini_file.h"
 #include "core/console_screen.h"
@@ -37,7 +36,7 @@
 #include "kthread/thread.h"
 #include "kthread/auto_lock.h"
 
-#include "net/WinSockInit.h"
+#include "net/winsock_init.h"
 #include "net/addr_resolver.h"
 #include "net/tcp_socket.h"
 #include "net/udp_client.h"
@@ -72,6 +71,7 @@
 #include "pattern/object_pool.h"
 #include "pattern/actor.h"
 #include "pattern/active_object.h"
+#include "pattern/fix_circle_buff.h"
 
 #include "aom/iframework_imp.h"
 

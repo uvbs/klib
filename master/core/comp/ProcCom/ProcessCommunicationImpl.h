@@ -163,7 +163,7 @@ private:
 
 private:
 	map<tstring,CWRCommunicate*>        m_pCommunicateSet;	//进程通信集合
-	CShareMemory                        m_ShareMemory;
+	share_memory                        m_ShareMemory;
 	CWorkItemHandlePool                 m_workhandle;
 	T*                                  m_pHandler;
 	deque<tstring>                       m_wait_deal;		//等待处理的读对象

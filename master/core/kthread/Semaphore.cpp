@@ -5,7 +5,7 @@ namespace klib {
 namespace kthread{
 
 
-CSemaphore::CSemaphore(int usercount, int maxcount, tstring name)
+semaphore::semaphore(int usercount, int maxcount, tstring name)
 {
 	m_hSemaphore = CreateSemaphore(NULL, usercount, maxcount, name.c_str());
 	if(NULL == m_hSemaphore)
@@ -14,22 +14,22 @@ CSemaphore::CSemaphore(int usercount, int maxcount, tstring name)
 	}
 }
 
-CSemaphore::~CSemaphore(void)
+semaphore::~semaphore(void)
 {
-	Close();
+	close();
 }
 
-void CSemaphore::ReleaseSemaphore(int n /*= 1*/)
+void semaphore::release(int n /*= 1*/)
 {
 	::ReleaseSemaphore(m_hSemaphore, n, NULL);
 }
 
-void CSemaphore::WaitSemaphore(DWORD dwMilliseconds /*= INFINITE*/ )
+void semaphore::wait(DWORD dwMilliseconds /*= INFINITE*/ )
 {
 	WaitForSingleObject(m_hSemaphore, dwMilliseconds);
 }
 
-void CSemaphore::Close()
+void semaphore::close()
 {
 	CloseHandle(m_hSemaphore);
 }

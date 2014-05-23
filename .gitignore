@@ -44,3 +44,7 @@ Release
 /master/Debug/*.dll
 /master/Debug/*.lib
 /master/Debug
+/master/xlib/Debug
+/master/xlib/Release
+/master/imd
+/master/pdb

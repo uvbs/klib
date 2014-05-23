@@ -89,7 +89,12 @@ public:
 
     bool init() ;
     bool regist(actor_base* actor) ;
-    void exec();
+
+protected:
+    void engine_loop();
+    void add_task(actor_base* act, size_t num);
+    void loop_task();
+    void actor_task(actor_base* act, size_t exec_num);
 
 protected:
     klib::stl::lock_list<actor_base*> act_list_;
@@ -124,9 +129,8 @@ protected:
     virtual void execute(msg_type& t) = 0;
 
 public:
-    actor_imp (engine& fr) : queued_(false)
+    actor_imp () : queued_(false)
     {
-        fr.regist(this);
     }
     
     void send(const msg_type& t) { mq_.push(t); }

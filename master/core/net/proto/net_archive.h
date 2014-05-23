@@ -44,7 +44,7 @@ typedef  unsigned long  DWORD;
 namespace klib {
 namespace net {
 
-
+typedef unsigned int length_type;
 
 // Õ¯¬Á–Ú¡–ªØ¿‡
 class net_archive {
@@ -249,35 +249,35 @@ public:
 	}
 
 	net_archive& operator << (::std::string& str) {
-		if (this->get_data_len() + sizeof(USHORT) + str.size() > buff_len_) {
+		if (this->get_data_len() + sizeof(length_type) + str.size() > buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
-		(*this). operator << ((USHORT) str.size());
+		(*this). operator << ((length_type) str.size());
 		memcpy(op_pos_, str.c_str(), str.size());
 		op_pos_ += str.size();
 		return *this;
 	}
 
 	net_archive& operator << (const ::std::string& str) {
-		if (this->get_data_len() + sizeof(USHORT) + str.size() > buff_len_) {
+		if (this->get_data_len() + sizeof(length_type) + str.size() > buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
-		(*this). operator << ((USHORT) str.size());
+		(*this). operator << ((length_type) str.size());
 		memcpy(op_pos_, str.c_str(), str.size());
 		op_pos_ += str.size();
 		return *this;
 	}
 
 	net_archive& operator >> (::std::string& str) {
-		if (this->get_data_len() + sizeof(USHORT) + str.size() > buff_len_) {
+		if (this->get_data_len() + sizeof(length_type) + str.size() > buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
 
         // extract length
-		USHORT len;
+		length_type len;
 		(*this). operator >> (len);
 
         // judge
@@ -294,15 +294,15 @@ public:
 
 	template <class T>
 	net_archive& operator << (::std::list<T>& theList) {
-		if (this->get_data_len() + sizeof(USHORT) >= buff_len_) {
+		if (this->get_data_len() + sizeof(length_type) > buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
 
-		this->operator << ((USHORT)theList.size());
+		this->operator << ((length_type)theList.size());
 		typename std::list<T>::const_iterator itr = theList.begin();
 		for (; itr != theList.end(); ++itr) {
-			if (this->get_data_len() + sizeof(USHORT) > buff_len_) {
+			if (this->get_data_len() + sizeof(length_type) > buff_len_) {
 				error_flag_ = true;
 				return *this;
 			}
@@ -314,10 +314,10 @@ public:
 
 	template <typename T>
 	net_archive& operator >> (::std::list<T>& theList) {
-		USHORT len;
+		length_type len;
 		T target;
 
-		if (this->get_data_len() + sizeof(USHORT) >= buff_len_) {
+		if (this->get_data_len() + sizeof(length_type) > buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
@@ -332,12 +332,12 @@ public:
 
 	template <typename TKey, typename TVal>
 	net_archive& operator << (::std::map<TKey, TVal>& theMap) {
-		if (this->get_data_len() + sizeof(USHORT) >= buff_len_) {
+		if (this->get_data_len() + sizeof(length_type) > buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
 
-		this->operator << ((USHORT)theMap.size());
+		this->operator << ((length_type)theMap.size());
 		typename ::std::map<TKey, TVal>::iterator itr = theMap.begin();
 		for (; itr != theMap.end(); ++itr) {
 			this->operator << (itr->first);
@@ -348,12 +348,12 @@ public:
 
 	template <typename TKey, typename TVal>
 	net_archive& operator >> (::std::map<TKey, TVal>& theMap) {
-		if (this->get_data_len() + sizeof(USHORT) >= buff_len_) {
+		if (this->get_data_len() + sizeof(length_type) > buff_len_) {
 			error_flag_ = true;
 			return *this;
 		}
 
-		USHORT len;
+		length_type len;
 		this->operator >> (len);
 		TKey theKey;
 		TVal theVal;

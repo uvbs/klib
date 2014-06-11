@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_lock_stl_h
+#define _klib_lock_stl_h
 
 
 #include "../kthread/auto_lock.h"
@@ -500,3 +501,6 @@ protected:
 
 
 }}
+
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_object_pool_h
+#define _klib_object_pool_h
 
 #include <vector>
 #include "..\kthread\auto_lock.h"
@@ -232,3 +233,6 @@ void CObjectPool<T, INIT_SIZE, INC_SIZE>::ReleaseSome()
 }}
 
 
+
+
+#endif

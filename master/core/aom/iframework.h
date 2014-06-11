@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_iframework_h
+#define _klib_iframework_h
 
 
 namespace klib {
@@ -173,3 +174,6 @@ public:
 
 
 }}
+
+
+#endif

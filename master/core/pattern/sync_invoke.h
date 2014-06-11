@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_sync_invoke_h
+#define _klib_sync_invoke_h
 
 #include "../core/scope_guard.h"
 #include <functional>
@@ -88,3 +89,6 @@ protected:
 
 }}
 
+
+
+#endif

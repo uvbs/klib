@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_udp_socket_h
+#define _klib_udp_socket_h
 
 #include <WinSock2.h>
 #include <windows.h>
@@ -91,3 +92,6 @@ private:
 
 
 }}
+
+
+#endif

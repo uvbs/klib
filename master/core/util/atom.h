@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_atom_h
+#define _klib_atom_h
 
 #include "../core/noncopyable.h"
 
@@ -84,3 +85,5 @@ private:
 
 
 }}
+
+#endif

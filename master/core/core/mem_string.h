@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_mem_string_h
+#define _klib_mem_string_h
 
 
 #include "mem_buffer.h"
@@ -383,3 +384,5 @@ typedef basic_mem_string_base<56*1024*1024, 32*1024, wchar_t, char_traits<wchar_
 
 
 }} 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_ProcessCommunicationImpl_h
+#define _klib_ProcessCommunicationImpl_h
 
 //进程间通信实现类
 //该类实现两个进程间相互通信
@@ -170,3 +171,6 @@ private:
     auto_cs                             m_objAutoCS;
 };
 
+
+
+#endif

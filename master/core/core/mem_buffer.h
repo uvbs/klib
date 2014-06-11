@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_mem_buffer_h
+#define _klib_mem_buffer_h
 
 #include "..\algo\bm_wrapper.h"
 #include <vector>
@@ -1030,3 +1031,6 @@ protected:
 
 
 }}
+
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_ini_file_h
+#define _klib_ini_file_h
 
 #include <tchar.h>
 #include <string>
@@ -41,3 +42,6 @@ protected:
 
 }}
 
+
+
+#endif

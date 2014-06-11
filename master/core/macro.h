@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_macro_h
+#define _klib_macro_h
 
 #include "inttype.h"
 
@@ -181,3 +182,5 @@ public:                                         \
 
 
 }
+
+#endif

@@ -1,6 +1,7 @@
 
 
-#pragma once
+#ifndef _klib_timer_test_h
+#define _klib_timer_test_h
 
 #include <core/timer_mgr.h>
 
@@ -38,3 +39,5 @@ TEST(timer, 1)
     t.stop();
 
 }
+
+#endif

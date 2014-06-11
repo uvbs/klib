@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_udp_server_h
+#define _klib_udp_server_h
 
 #include "udp_socket.h"
 #include "proto/dispatcher.h"
@@ -32,3 +33,5 @@ protected:
 
 
 }}
+
+#endif

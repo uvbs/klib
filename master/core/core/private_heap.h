@@ -63,7 +63,8 @@ Examples:
 
 ******************************************************************************/
 
-#pragma once
+#ifndef _klib_private_heap_h
+#define _klib_private_heap_h
 
 
 namespace klib {
@@ -292,3 +293,6 @@ typedef private_heap_buffer<TCHAR>	CPrivateHeapStrBuffer;
 
 }}
 
+
+
+#endif

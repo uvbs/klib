@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_object_reuser_h
+#define _klib_object_reuser_h
 
 #include "../kthread/auto_lock.h"
 
@@ -292,3 +293,6 @@ public:
 
 }}
 
+
+
+#endif

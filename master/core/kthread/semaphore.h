@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_semaphore_h
+#define _klib_semaphore_h
 #include <Windows.h>
 #include <string>
 using namespace std;
@@ -45,3 +46,6 @@ private:
 
 
 }}
+
+
+#endif

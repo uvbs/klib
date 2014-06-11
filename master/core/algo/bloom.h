@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_bloom_h
+#define _klib_bloom_h
 
 #pragma  warning(disable: 4200)
 
@@ -55,3 +56,5 @@ protected:
 };
 
 }}
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_WorkItemHandlePool_h
+#define _klib_WorkItemHandlePool_h
 #include<Windows.h>
 #include <string>
 #include <functional>
@@ -45,3 +46,6 @@ private:
 
 
 };
+
+
+#endif

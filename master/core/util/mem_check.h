@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_mem_check_h
+#define _klib_mem_check_h
 
 #include <map>
 #include <set>
@@ -293,3 +294,5 @@ static std::string summary();   // 汇总，包括总内存，及各类的使用内存
         ::mem::mem_imp::enable_stats(false);                    \
     }                                                           \
 }
+
+#endif

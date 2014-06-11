@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_thread_h
+#define _klib_thread_h
 
 #include <functional>
 #include <process.h>
@@ -114,3 +115,6 @@ protected:
 
 
 }}
+
+
+#endif

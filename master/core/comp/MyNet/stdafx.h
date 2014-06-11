@@ -3,7 +3,8 @@
 // 特定于项目的包含文件
 //
 
-#pragma once
+#ifndef _klib_stdafx_h
+#define _klib_stdafx_h
 
 #include "targetver.h"
 
@@ -23,3 +24,5 @@
 
 #include <kthread/auto_lock.h>
 using namespace klib::kthread;
+
+#endif

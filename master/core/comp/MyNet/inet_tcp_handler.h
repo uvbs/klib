@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_inet_tcp_handler_h
+#define _klib_inet_tcp_handler_h
 
 #include "net_conn.h"
 
@@ -16,3 +17,5 @@ public:
   virtual bool on_write(net_conn_ptr pConn, size_t len) = 0;
   virtual bool on_accept(net_conn_ptr pListen, net_conn_ptr pNewConn, bool bSuccess = true) = 0;
 };
+
+#endif

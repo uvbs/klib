@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_sign_helper_h
+#define _klib_sign_helper_h
 
 #include <string>
 
@@ -36,3 +37,6 @@ protected:
 
 };
 
+
+
+#endif

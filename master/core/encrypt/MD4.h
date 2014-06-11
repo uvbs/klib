@@ -18,7 +18,8 @@
 // along with Shareaza; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-#pragma once
+#ifndef _klib_MD4_h
+#define _klib_MD4_h
 
 #include <windows.h>
 
@@ -72,3 +73,6 @@ inline bool operator!=(const MD4& md4a, const MD4& md4b)
 
 
 }}
+
+
+#endif

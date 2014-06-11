@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_noncopyable_h
+#define _klib_noncopyable_h
 
 namespace klib {
 namespace core {
@@ -19,3 +20,5 @@ private:  // emphasize the following members are private
 
 
 }}
+
+#endif

@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_array_template_test_h
+#define _klib_array_template_test_h
 
 #include <core/array.h>
 #include <stdlib.h>
@@ -49,3 +50,5 @@ TEST(array_test, 1)
 
     printf("\n");
 }
+
+#endif

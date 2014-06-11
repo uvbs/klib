@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_bm_wrapper_h
+#define _klib_bm_wrapper_h
 
 #include <stdlib.h>
 #include <string>
@@ -290,3 +291,6 @@ NoMatchNC:
 
 
 }}
+
+
+#endif

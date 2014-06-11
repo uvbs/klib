@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_seqnumber_h
+#define _klib_seqnumber_h
 
 
 #include "../kthread/auto_lock.h"
@@ -29,3 +30,5 @@ protected:
 };
 
 }}
+
+#endif

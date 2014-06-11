@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_WRCommunicate_h
+#define _klib_WRCommunicate_h
 
 #include "../../kthread/rw_semaphore.h"
 #include "../../core/share_memory.h"
@@ -30,3 +31,6 @@ private:
 	share_memory        m_memroy;
 	bool                m_bEnd;
 };
+
+
+#endif

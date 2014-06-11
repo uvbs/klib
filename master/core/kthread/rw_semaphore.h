@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_rw_semaphore_h
+#define _klib_rw_semaphore_h
 #include "semaphore.h"
 #include "../istddef.h"
 
@@ -33,3 +34,6 @@ private:
 
 
 }}
+
+
+#endif

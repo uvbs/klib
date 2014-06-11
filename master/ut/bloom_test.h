@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_bloom_test_h
+#define _klib_bloom_test_h
 
 #include <algo/bloom.h>
 
@@ -27,3 +28,5 @@ TEST(bloom, 1)
 
     Sleep(1000);
 }
+
+#endif

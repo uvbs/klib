@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_text_search_h
+#define _klib_text_search_h
 
 namespace klib{
 namespace algo{
@@ -149,3 +150,6 @@ public:
 
 }}
 
+
+
+#endif

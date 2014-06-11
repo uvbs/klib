@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_mem_string_test_h
+#define _klib_mem_string_test_h
 
 
 //#include "core/mem_string.h"
@@ -32,3 +33,5 @@ TEST(mem_buffer, create)
     buff_file.seekg(0, buff_file.self_type::way_cur);
     buff_file.seekg(0, buff_file.self_type::way_end);
 }
+
+#endif

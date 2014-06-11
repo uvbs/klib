@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_fix_circle_buff_h
+#define _klib_fix_circle_buff_h
 
 
 
@@ -179,3 +180,6 @@ protected:
 
 }}
 
+
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_scope_guard_h
+#define _klib_scope_guard_h
 
 #include <functional>
 #include <windows.h>
@@ -69,3 +70,6 @@ private:
 
 
 }}
+
+
+#endif

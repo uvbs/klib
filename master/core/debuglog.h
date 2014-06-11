@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_debuglog_h
+#define _klib_debuglog_h
 
 #pragma warning(disable: 4996)
 
@@ -230,3 +231,6 @@ private:
 
 
 }}
+
+
+#endif

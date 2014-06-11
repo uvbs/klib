@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_sys_h
+#define _klib_sys_h
 
 
 #include "../istddef.h"
@@ -54,3 +55,5 @@ public:
 
 
 }}
+
+#endif

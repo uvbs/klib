@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_process_helper_h
+#define _klib_process_helper_h
 
 #include "../istddef.h"
 #include "../inttype.h"
@@ -72,3 +73,5 @@ protected:
 };
 
 }}
+
+#endif

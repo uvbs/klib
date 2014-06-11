@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_bytebuyffer_h
+#define _klib_bytebuyffer_h
 
 #if defined(_MSC_VER)
 //
@@ -469,3 +470,6 @@ ByteBuffer &operator>>(ByteBuffer& b, std::map<K, V>& m)
 
 
 }}
+
+
+#endif

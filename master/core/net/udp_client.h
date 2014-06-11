@@ -6,7 +6,8 @@
 #define AFX_UDPCLIENT_H__E02768E0_20F8_4E86_B807_FDEFD7BF7D67__INCLUDED_
 
 #if _MSC_VER > 1000
-#pragma once
+#ifndef _klib_udp_client_h
+#define _klib_udp_client_h
 #endif // _MSC_VER > 1000
 
 #ifdef _MSC_VER
@@ -81,3 +82,6 @@ protected:
 
 
 #endif // !defined(AFX_UDPCLIENT_H__E02768E0_20F8_4E86_B807_FDEFD7BF7D67__INCLUDED_)
+
+
+#endif

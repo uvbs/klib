@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_object_resuer_test_h
+#define _klib_object_resuer_test_h
 
 
 #include "pattern/object_reuser.h"
@@ -33,3 +34,5 @@ TEST(object_reuser, create)
     ASSERT_TRUE(pObj2 != NULL);
     object_sync.recyle_object(pObj2);
 }
+
+#endif

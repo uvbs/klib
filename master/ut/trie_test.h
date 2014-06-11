@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_trie_test_h
+#define _klib_trie_test_h
 
 #include <algo/trie.h>
 
@@ -16,3 +17,5 @@ TEST(Trie, 1)
     t.output(location,"ac");
 
 }
+
+#endif

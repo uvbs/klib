@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_iframework_imp_h
+#define _klib_iframework_imp_h
 
 
 #pragma warning(disable: 4996)
@@ -220,3 +221,6 @@ protected:
 
 
 }}
+
+
+#endif

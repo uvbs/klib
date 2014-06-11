@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_ld_h
+#define _klib_ld_h
 
 #include <windows.h>
 #include <math.h>
@@ -125,3 +126,5 @@ protected:
 
 }
 }
+
+#endif

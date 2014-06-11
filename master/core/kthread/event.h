@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_event_h
+#define _klib_event_h
 
 #include "../macro.h"
 
@@ -62,3 +63,6 @@ typedef win_event Event;
 
 
 }}
+
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_aspect_test_h
+#define _klib_aspect_test_h
 
 #include <iostream>
 using namespace klib::pattern;
@@ -68,3 +69,5 @@ TEST(aspect, 1)
     LoggingAspect<X> object(&x);
     MakeAspect<LoggingAspect>(&object)->g();
 }
+
+#endif

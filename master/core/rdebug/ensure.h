@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_ensure_h
+#define _klib_ensure_h
 
 #include <exception>
 #include <sstream>
@@ -120,3 +121,6 @@ static int A = 0, B = 0;
 
 }} // namespace 
 
+
+
+#endif

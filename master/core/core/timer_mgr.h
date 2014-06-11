@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_timer_mgr_h
+#define _klib_timer_mgr_h
 
 #include <windows.h>
 #include <set>
@@ -97,3 +98,6 @@ protected:
 };
 
 }}
+
+
+#endif

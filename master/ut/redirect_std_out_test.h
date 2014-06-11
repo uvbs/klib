@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_redirect_std_out_test_h
+#define _klib_redirect_std_out_test_h
 
 #include <rdebug/redirect_std_out.h>
 
@@ -25,3 +26,5 @@ TEST(debug, redirect_std_out)
 
     cout << "hello" << endl;
 }
+
+#endif

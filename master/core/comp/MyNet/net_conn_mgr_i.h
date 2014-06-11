@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_net_conn_mgr_i_h
+#define _klib_net_conn_mgr_i_h
 
 class net_conn;
 class network_imp;
@@ -25,3 +26,6 @@ protected:
     virtual bool add_conn(net_conn_ptr pConn) = 0;
     virtual bool del_conn(net_conn_ptr pConn) = 0;
 };
+
+
+#endif

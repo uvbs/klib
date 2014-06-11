@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_mem_list_h
+#define _klib_mem_list_h
 
 namespace klib {
 namespace mem {
@@ -203,3 +204,6 @@ protected:
 
 }}
 
+
+
+#endif

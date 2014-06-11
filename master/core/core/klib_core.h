@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_klib_core_h
+#define _klib_klib_core_h
 
 
 #include <functional>
@@ -83,3 +84,6 @@ protected:
 
 
 }}
+
+
+#endif

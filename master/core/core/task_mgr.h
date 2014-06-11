@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_task_mgr_h
+#define _klib_task_mgr_h
 
 #include <functional>
 
@@ -42,3 +43,6 @@ protected:
 
 
 }}
+
+
+#endif

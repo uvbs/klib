@@ -5,7 +5,8 @@
 // by James Fancy
 ////////////////////////////////////////////////////////////////////////////////
 
-#pragma once
+#ifndef _klib_strutil_h
+#define _klib_strutil_h
 
 #include <string>
 #include <vector>
@@ -378,3 +379,5 @@ namespace util
     }
 
 }}
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_mem_list_test_h
+#define _klib_mem_list_test_h
 
 
 
@@ -54,3 +55,5 @@ TEST(mem_list_test, 1)
         EXPECT_TRUE(d_list.buffser_size() == d_list.self_type::BLOCK_SIZE);
     }
 }
+
+#endif

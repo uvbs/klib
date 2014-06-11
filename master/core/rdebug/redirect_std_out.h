@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_redirect_std_out_h
+#define _klib_redirect_std_out_h
 
 #include <iostream>
 #include <algorithm>
@@ -46,3 +47,6 @@ protected:
 
 
 }}
+
+
+#endif

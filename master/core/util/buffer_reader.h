@@ -1,6 +1,4 @@
 
-#pragma once
-
 #ifndef _klib_buffer_reader_h
 #define _klib_buffer_reader_h
 
@@ -69,3 +67,4 @@ bool buffer_reader::read(T&t)
 }}
 
 #endif      // _klib_buffer_reader_h
+

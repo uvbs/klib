@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_kmp_test_h
+#define _klib_kmp_test_h
 
 
 #include <algo/kmp.h>
@@ -17,3 +18,5 @@ TEST(kmp, 1)
     EXPECT_TRUE(pos == 9);
 
 }
+
+#endif

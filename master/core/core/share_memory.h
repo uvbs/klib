@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_share_memory_h
+#define _klib_share_memory_h
 #include <string>
 #include <wtypes.h>
 #include <winbase.h>
@@ -83,3 +84,5 @@ private:
 
 
 }}
+
+#endif

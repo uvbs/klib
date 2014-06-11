@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_string_hash_h
+#define _klib_string_hash_h
 #include "../istddef.h"
 #include <string>
 
@@ -40,3 +41,5 @@ public:
 
 
 }}
+
+#endif

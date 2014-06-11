@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_kdetect_leakk_h
+#define _klib_kdetect_leakk_h
 
 namespace klib {
 namespace debug {
@@ -30,3 +31,5 @@ namespace debug {
 
 
 }} // namespace 
+
+#endif

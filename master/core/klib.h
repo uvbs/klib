@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_klib_h
+#define _klib_klib_h
 
 #include <WinSock2.h>
 #include <Windows.h>
@@ -92,3 +93,5 @@ using namespace klib::util;
 using namespace klib::encode;
 
 }
+
+#endif

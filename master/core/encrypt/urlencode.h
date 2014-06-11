@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_urlencode_h
+#define _klib_urlencode_h
 
 
 namespace klib{
@@ -82,3 +83,5 @@ protected:
 
 
 }} // namespace 
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_str_algo_h
+#define _klib_str_algo_h
 
 #include <string>
 
@@ -162,3 +163,6 @@ typedef quick_search<std::wstring> wstring_searcher;
 
 }}
 
+
+
+#endif

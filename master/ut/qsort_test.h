@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_qsort_test_h
+#define _klib_qsort_test_h
 
 
 
@@ -26,3 +27,5 @@ TEST(qsort, 1)
     quick_sort((char*)a, a + strlen(a));
 
 }
+
+#endif

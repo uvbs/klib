@@ -1,7 +1,8 @@
 #if !defined(_Klib_CConsoleScreen_H)
 #define _Klib_CConsoleScreen_H
 
-#pragma once
+#ifndef _klib_console_screen_h
+#define _klib_console_screen_h
 
 #ifndef _ASSERTE
    #define _ASSERTE(x)
@@ -304,3 +305,6 @@ public:
 
 #endif // 
 
+
+
+#endif

@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_must_have_base_test_h
+#define _klib_must_have_base_test_h
 
 
 
@@ -19,3 +20,5 @@ TEST(debug, must_have_base_)
     typedef must_have_base<test_child, test_base> static_verify_exp;
     static_verify_exp a;
 }
+
+#endif

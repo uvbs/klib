@@ -48,7 +48,11 @@ public:
     }
 
     /* stop object */
-    void stop()  {   thread_.exit(true);   }
+    void stop()  
+    {
+        thread_.exit(true);   
+        thread_.wait();
+    }
 
     /* send message */
     bool send(msg_type t) 

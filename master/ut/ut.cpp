@@ -39,6 +39,9 @@
 #include "stream_test.h"
 #include "actor_test.h"
 #include "active_object_test.h"
+#include "cat_str_macro_test.h"
+#include "must_have_base_test.h"
+#include "redirect_std_out_test.h"
 
 
 #include "third/letter.h"
@@ -48,7 +51,6 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-
     printf("Running main() from gtest_main.cc\n");
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

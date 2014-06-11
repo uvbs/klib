@@ -2,14 +2,17 @@
 #include "syntax.h"
 
 syntax_parser::syntax_parser() :
-    symbols_mgr_(NULL)
+    inter_env_(nullptr)
 {
 
 }
 
-bool syntax_parser::init(symbols_mgr* mgr)
+bool syntax_parser::init(inter_env* env)
 {
-    symbols_mgr_ = mgr;
+    if (nullptr == inter_env_) {
+        return false;
+    }
+    inter_env_ = env;
     return true;
 }
 
@@ -17,28 +20,41 @@ sytax_node* syntax_parser::parser_tokens(const token_list_type& thelist)
 {
     init_pos(thelist);
     sytax_node* root = alloc_node();
-    if (NULL == root) {
-        return NULL;
+    if (nullptr == root) {
+        return nullptr;
     }
 
-    sytax_node* parsed_node = NULL;
-    const token* tk = NULL;
+    sytax_node* parsed_node = nullptr;
+    const token* tk = nullptr;
     while (tk = get_next_token())
     {
         if (tk->get_type() == token_name) 
         {
-            parsed_node = parser_name_decl(tk);
+            parsed_node = parser_name_def(tk);
+        }
+        else if (tk->get_type() == token_var) 
+        {
+            parsed_node = parser_var_def(tk);
         }
         else if (tk->get_type() == token_function) 
         {
-
+            parsed_node = parser_function_def(tk);
+        }
+        else if (tk->get_type() == token_array) {
+            parsed_node = parser_array_def(tk);
         }
 
-
-        root->siblings_.push_back(parsed_node);
+        if (parsed_node)
+        {
+            root->siblings_.push_back(parsed_node);
+        }
+        else {
+            // printf error
+            break;
+        }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 void syntax_parser::init_pos(const token_list_type& thelist)
@@ -60,30 +76,59 @@ const token* syntax_parser::get_next_token()
         return tk;
     }
 
-    return NULL;
+    return nullptr;
 }
 
-sytax_node* syntax_parser::parser_name_decl(const token* tk)
+const token* syntax_parser::get_cur_token()
+{
+    if (itr_ != token_list_->end()) {
+        return (&*itr_);
+    }
+    return nullptr;
+}
+
+sytax_node* syntax_parser::parser_name_def(const token* tk)
 {
     std::string name = tk->str();
     symbol_info info;
     bool ret;
-    ret = symbols_mgr_->get_symbol(name, info);
+    ret = inter_env_->get_global_symb()->get_symbol(name, info);
     if (!ret) {
         info.token_ = *tk;
-        symbols_mgr_->add_symbol(name, info);
+        inter_env_->get_global_symb()->add_symbol(name, info);
     }
-
+    else {
+        info.token_ = *tk;
+        inter_env_->get_global_symb()->set_symbol(name, info);
+    }
     return alloc_node();
 }
 
-sytax_node* syntax_parser::parser_function_decl(const token* tk)
+sytax_node* syntax_parser::parser_var_def(const token* tk)
+{
+    const token* next_tk = get_next_token();
+    if (nullptr == next_tk) {
+        return nullptr;
+    }
+
+    if (next_tk->get_type() == token_name) {
+        return parser_name_def(next_tk);
+    }
+
+    return nullptr;
+}
+
+sytax_node* syntax_parser::parser_function_def(const token* tk)
+{
+    return alloc_node();
+}
+
+sytax_node* syntax_parser::parser_array_def(const token* tk)
 {
     return alloc_node();
 }
 
 bool syntax_parser::is_match(const token* tk, token_type type)
 {
-
-    return false;
+    return (tk->get_type() == type);
 }

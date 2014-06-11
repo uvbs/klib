@@ -33,6 +33,7 @@ bool engine::regist(actor_base* actor)
 bool engine::stop()
 {
     pool_.stop();
+    
     return true;
 }
 

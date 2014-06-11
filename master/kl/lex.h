@@ -39,6 +39,7 @@ protected:
 /* parser error info */
 struct parsser_error_info
 {
+    parsser_error_info() : err_msg_(nullptr), err_pos_(nullptr), line_no_(0) {}
     const char_type* err_msg_;
     const char_type* err_pos_;
     size_t           line_no_;

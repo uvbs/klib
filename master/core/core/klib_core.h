@@ -10,8 +10,6 @@
 namespace klib {
 namespace core {
 
-#define  KLIB_ASSERT(expr)        \
-    _ASSERT(expr)
 
 //----------------------------------------------------------------------
 template<class T> inline void checked_delete(T * x)

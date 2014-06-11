@@ -35,9 +35,6 @@ TEST(timer, 1)
 
     t.remove(tmr);
 
-    Sleep(-1);
-    //t.stop();
-
-
+    t.stop();
 
 }

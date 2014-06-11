@@ -6,9 +6,10 @@
 #endif
 
 #include <list>
+#include "event.h"
 #include "auto_lock.h"
 #include "../core/lock_stl.h"
-#include "event.h"
+#include "../macro.h"
 
 
 namespace klib{
@@ -26,16 +27,19 @@ public:
     ///< 任务信息，内部使用
     struct task_info 
     {
-        task_info(const func_type& f) : f_(f)
-        {
-        }
+        task_info(const func_type& f) : f_(f)  { }
         
-        void operator ()()
-        {
-            this->f_();
-        }
+        void operator ()()  {  this->f_();  }
 
         func_type f_;
+    };
+
+    struct thead_contex 
+    {
+        thead_contex() : pool_(nullptr), handle_(0) {}
+
+        kthread_pool* pool_;
+        HANDLE        handle_;
     };
 
 public:
@@ -76,9 +80,19 @@ public:
             HANDLE hThread = NULL;
             for (int i=0; i<iNumChange; ++i) 
             {
-                hThread = (HANDLE)_beginthreadex(NULL, 0, work_thread, this, 0, NULL);
-                CloseHandle(hThread);
+                thead_contex* ctx = new thead_contex;
+                ctx->pool_ = this;
 
+                hThread = (HANDLE)_beginthreadex(NULL, 
+                    0, 
+                    work_thread, 
+                    ctx, 
+                    CREATE_SUSPENDED, 
+                    NULL);
+                ctx->handle_ = hThread;
+                thread_handles_.push_back(hThread);
+
+                ResumeThread(hThread);
             }
             thread_count_ += iNumChange;
         }
@@ -90,6 +104,12 @@ public:
     bool stop() 
     {
         stop_ = TRUE;
+        event_.signal();
+
+        while (!thread_handles_.empty())
+        {
+            Sleep(100);
+        }
         return TRUE;
     }
 
@@ -124,10 +144,11 @@ protected:
     ///< 工作线程
     static unsigned int WINAPI work_thread(void*param) 
     {
-        kthread_pool* theadpool = (kthread_pool*) param;
-        _ASSERT(theadpool);
+        thead_contex* ctx = (thead_contex*) param;
+        _ASSERT(ctx);
 
-        theadpool->worker();
+        ctx->pool_->worker();
+        ctx->pool_->remove_thread_handle(ctx->handle_);
 
         return 0;
     }
@@ -168,7 +189,23 @@ protected:
                 }
             }
         }
+    }
 
+    void remove_thread_handle(HANDLE hthread)
+    {
+        auto_lock locker(thread_num_cs_);
+
+        KLIB_ASSERT(hthread != 0);
+        for (auto itr = thread_handles_.begin(); 
+            itr != thread_handles_.end();
+            ++ itr)
+        {
+            if (*itr == hthread) {
+                thread_handles_.erase(itr);
+                return;
+            }
+        }
+        KLIB_ASSERT(false);
     }
 
 protected:
@@ -179,6 +216,7 @@ protected:
     
     Event event_;
     klib::stl::lock_list<task_info*> tasklist_;
+    std::vector<HANDLE> thread_handles_;
 };
 
 

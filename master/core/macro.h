@@ -5,6 +5,9 @@
 namespace klib
 {
 
+#define  KLIB_ASSERT(expr)        \
+    _ASSERT(expr)
+
 #define SAFE_DELETE(x)	if (x)	{ delete x; x=NULL; }
 #define SAFE_DELETE_ARRAY(x) if (x)	{ delete []x; x=NULL; }
 #define SAFE_CLOSE_SOCKET(x) if(INVALID_SOCKET!=x)	{ closesocket(x); x=INVALID_SOCKET; }

@@ -28,6 +28,7 @@ enum token_type
     token_keyword,                  // keyword
     token_class,                    // class 
     token_function,                 // function
+    token_array,                    // array
     token_var,                      // var
     token_return,                   // return
     token_if,                       // if

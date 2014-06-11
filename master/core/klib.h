@@ -16,7 +16,6 @@
 #include "core/mini_dumper.h"
 #include "core/logger.h"
 #include "core/private_heap.h"
-#include "core/ensure.h"
 #include "core/scope_guard.h"
 #include "core/ip_seg_table.h"
 #include "core/ini_file.h"
@@ -76,6 +75,9 @@
 #include "aom/iframework_imp.h"
 
 #include "debuglog.h"
+
+#include "rdebug/ensure.h"
+#include "rdebug/must_have_base.h"
 
 namespace klib
 {

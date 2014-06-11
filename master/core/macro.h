@@ -21,10 +21,15 @@ namespace klib
 
 
 ///< 将类名转换为字符串
-#define  CLASS_2_STRING_T(_class_name)    _T(#_class_name)
-#define  CLASS_2_STRING_A(_class_name)    (#_class_name)
+#define  CLASS_2_STRING_T(_class_name)     _T(#_class_name)
+#define  CLASS_2_STRING_A(_class_name)     (#_class_name)
 #define  CLASS_2_STRING_W(_class_name)     L(#_class_name)
 
+#define  TYPE_2_STR_A(_type_name)          (#_type_name)
+#define  TYPE_2_STR_W(_type_name)          L(#_type_name)
+
+#define  CAT_2_STR(first, second)          (#first # second)
+#define  CAT_3_STR(first, second, third)   (#first # second # third)
 
 /**
  * @brief   位操作宏.

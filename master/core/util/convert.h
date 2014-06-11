@@ -1,4 +1,6 @@
-#pragma once
+#ifndef _klib_convert_h_
+#define _klib_convert_h_
+
 #include <string>
 #include <codecvt>
 #include <sstream>
@@ -31,13 +33,8 @@ out_type convert(const in_type & t)
 
 
 
-
-
-
-
-
-
-
 }
 
 }}
+
+#endif // _klib_convert_h_

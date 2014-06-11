@@ -89,6 +89,7 @@ public:
 
     bool init() ;
     bool regist(actor_base* actor) ;
+    bool stop();
 
 protected:
     void engine_loop();

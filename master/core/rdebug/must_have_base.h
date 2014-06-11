@@ -10,6 +10,10 @@
 
 动态断言及静态断言的使用
 */
+
+namespace klib{
+namespace debug{
+
 template<typename D, typename B>
 struct must_have_base
 {
@@ -25,6 +29,8 @@ private:
 };
 
 
+
+}}
 
 
 #endif

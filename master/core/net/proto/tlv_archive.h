@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_tlv_archive_h
+#define _klib_tlv_archive_h
 #ifndef _klib_tlv_archive_h_
 #define _klib_tlv_archive_h_
 
@@ -55,3 +56,5 @@ protected:
 
 
 #endif // _klib_tlv_archive_h_
+
+#endif

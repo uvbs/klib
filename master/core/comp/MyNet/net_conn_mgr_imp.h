@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_net_conn_mgr_imp_h
+#define _klib_net_conn_mgr_imp_h
 
 #include "net_conn_mgr_i.h"
 #include <list>
@@ -46,3 +47,6 @@ protected:
         conn_list_x_;
 
 };
+
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_istddef_h
+#define _klib_istddef_h
 
 #include <string>
 #include <map>
@@ -25,3 +26,5 @@ typedef     std::string     tstring ;
 
 
 }
+
+#endif

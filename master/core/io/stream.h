@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_stream_h
+#define _klib_stream_h
 
 #include "../inttype.h"
 #include <string>
@@ -178,3 +179,6 @@ private:
 
 }}
 
+
+
+#endif

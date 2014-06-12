@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_memfile_h
+#define _klib_memfile_h
 
 #ifndef _klib_memfile_h_
 #define _klib_memfile_h_
@@ -50,5 +51,7 @@ public:
 	
 	bool reserve(size_t r, void **buf, size_t *len);
 };
+
+#endif
 
 #endif

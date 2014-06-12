@@ -29,3 +29,8 @@ bool symbols_mgr::get_symbol(const std::string& name, symbol_info& info)
 
     return false;
 }
+
+void symbols_mgr::clear()
+{
+    symbol_table_.clear();
+}

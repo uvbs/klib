@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_nocopyable_test_h
+#define _klib_nocopyable_test_h
 
 #include <klib.h>
 #include <core/singleton.h>
@@ -40,3 +41,5 @@ TEST(nocopyable_test, 1)
     std::cout << std::get<0>(myauto) << std::endl;
     std::cout << std::get<1>(myauto) << std::endl;
 }
+
+#endif

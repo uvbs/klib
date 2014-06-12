@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_factory_test_h
+#define _klib_factory_test_h
 
 #include <pattern/factory.h>
 
@@ -21,3 +22,5 @@ TEST(factory_, 1)
 
 
 }
+
+#endif

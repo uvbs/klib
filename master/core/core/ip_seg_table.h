@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_ip_seg_table_h
+#define _klib_ip_seg_table_h
 
 #include "../Net/ip_v4.h"
 #include <set>
@@ -102,3 +103,5 @@ protected:
 
 
 }}
+
+#endif

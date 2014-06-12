@@ -26,7 +26,7 @@ bool vmachine::compile(const std::string& script)
         return false;
     }
     
-    sytax_p.init(&symbol_mgr_);
+    sytax_p.init(&inter_env_);
     sytax_node* root_node = sytax_p.parser_tokens(thelist);
     if (NULL == root_node)
     {
@@ -39,7 +39,7 @@ bool vmachine::compile(const std::string& script)
 bool vmachine::run()
 {
     symbol_info info;
-    bool ret = symbol_mgr_.get_symbol("main", info);
+    bool ret = inter_env_.get_global_symb()->get_symbol("main", info);
     if (ret) {
         info.node_;
     }

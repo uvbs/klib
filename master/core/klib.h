@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_klib_h
+#define _klib_klib_h
 
 #include <WinSock2.h>
 #include <Windows.h>
@@ -16,7 +17,6 @@
 #include "core/mini_dumper.h"
 #include "core/logger.h"
 #include "core/private_heap.h"
-#include "core/ensure.h"
 #include "core/scope_guard.h"
 #include "core/ip_seg_table.h"
 #include "core/ini_file.h"
@@ -77,6 +77,9 @@
 
 #include "debuglog.h"
 
+#include "rdebug/ensure.h"
+#include "rdebug/must_have_base.h"
+
 namespace klib
 {
 
@@ -90,3 +93,5 @@ using namespace klib::util;
 using namespace klib::encode;
 
 }
+
+#endif

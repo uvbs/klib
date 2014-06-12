@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_wm_wrapper_h
+#define _klib_wm_wrapper_h
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -81,3 +82,6 @@ protected:
 
 }}
 
+
+
+#endif

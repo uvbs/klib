@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_app_instance_h
+#define _klib_app_instance_h
 
 #include <windows.h>
 
@@ -46,3 +47,6 @@ protected:
 
 
 }}
+
+
+#endif

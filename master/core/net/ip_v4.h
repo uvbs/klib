@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_ip_v4_h
+#define _klib_ip_v4_h
 
 namespace klib {
 namespace net {
@@ -50,3 +51,5 @@ public:
 
 
 }} // namespace 
+
+#endif

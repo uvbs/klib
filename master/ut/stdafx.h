@@ -3,7 +3,8 @@
 // 特定于项目的包含文件
 //
 
-#pragma once
+#ifndef _klib_stdafx_h
+#define _klib_stdafx_h
 
 #include "targetver.h"
 
@@ -19,3 +20,5 @@
 #include <list>
 
 #include <klib.h>
+
+#endif

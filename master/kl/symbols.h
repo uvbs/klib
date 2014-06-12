@@ -41,6 +41,7 @@ public:
     bool set_symbol(const std::string& name, symbol_info& info);
     bool get_symbol(const std::string& name, symbol_info& info);
 
+    void clear();
 protected:
     symbols_info_table symbol_table_;
 };
@@ -57,5 +58,18 @@ private:
 };
 
 
+// internel env
+class inter_env
+{
+public:
+    symbols_mgr* get_global_symb() { return & global_symbole_mgr_; }
+    symbols_mgr* get_local_symb() { return & local_symbole_mgr_;  }
+    plugin_mgr*  get_plugin_mgr() { return & plugin_mgr_;  }
+
+protected:
+    symbols_mgr global_symbole_mgr_;
+    symbols_mgr local_symbole_mgr_;
+    plugin_mgr  plugin_mgr_;
+};
 
 #endif //   _kl_symbols_h_

@@ -30,6 +30,13 @@ bool engine::regist(actor_base* actor)
     return act_list_.push_item(actor);
 }
 
+bool engine::stop()
+{
+    pool_.stop();
+    
+    return true;
+}
+
 void engine::add_task(actor_base* act, size_t num)
 {
     kthread_pool::func_type func = std::bind(&engine::actor_task, this, act, num);

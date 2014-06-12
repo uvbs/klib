@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_logger_h
+#define _klib_logger_h
 
 //#ifdef _DEBUG
 
@@ -81,3 +82,6 @@ protected:
 
 
 }}
+
+
+#endif

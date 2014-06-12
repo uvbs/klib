@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_fast_string_h
+#define _klib_fast_string_h
 
 
 #include <string>
@@ -104,3 +105,6 @@ fast_string<T> MakeFastString(const T & s)
 
 }}
 
+
+
+#endif

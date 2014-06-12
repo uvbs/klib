@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_api_fetcher_h
+#define _klib_api_fetcher_h
 
 
 #include <Windows.h>
@@ -44,3 +45,6 @@ protected:
 
 }}
 
+
+
+#endif

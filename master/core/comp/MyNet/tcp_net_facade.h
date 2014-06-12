@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_tcp_net_facade_h
+#define _klib_tcp_net_facade_h
 
 #include "inet_tcp_handler.h"
 #include "net_packet.h"
@@ -30,3 +31,5 @@ public:
 
 protected:
 };
+
+#endif

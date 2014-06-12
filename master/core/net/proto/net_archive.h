@@ -44,7 +44,7 @@ typedef  unsigned long  DWORD;
 namespace klib {
 namespace net {
 
-typedef UINT32 length_type;
+typedef unsigned int length_type;
 
 // ÍøÂçĞòÁĞ»¯Àà
 class net_archive {

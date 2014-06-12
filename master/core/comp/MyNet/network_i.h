@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_network_i_h
+#define _klib_network_i_h
 
 #include "net_conn.h"
 #include "net_socket.h"
@@ -30,3 +31,5 @@ public:
     ///< 投递连接到服务器
     virtual net_conn_ptr try_connect(const char* addr, USHORT uport, void* bind_key = NULL) = 0;
 };
+
+#endif

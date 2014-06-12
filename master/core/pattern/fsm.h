@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_fsm_h
+#define _klib_fsm_h
 
 #ifdef _MSC_VER
 #include <windows.h>
@@ -338,3 +339,5 @@ m_fsm.start();
 }
 
 }}
+
+#endif

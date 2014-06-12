@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_factory_h
+#define _klib_factory_h
 
 #include "../istddef.h"
 #include "../core/singleton.h"
@@ -66,3 +67,6 @@ protected:
 
 }}
 
+
+
+#endif

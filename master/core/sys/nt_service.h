@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_nt_service_h
+#define _klib_nt_service_h
 
 /* winows ·şÎñÀà */
 class nt_service
@@ -32,3 +33,6 @@ protected:
     static TCHAR service_param_[50];
 };
 
+
+
+#endif

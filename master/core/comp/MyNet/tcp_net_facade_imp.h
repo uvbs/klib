@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_tcp_net_facade_imp_h
+#define _klib_tcp_net_facade_imp_h
 
 #include "tcp_net_facade.h"
 #include "network_i.h"
@@ -50,3 +51,5 @@ protected:
     typedef std::vector<inet_tcp_handler*> INetEventHandlerListType;
     INetEventHandlerListType    net_event_list_;                    //事件处理器列表
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_mem_buffer_test_h
+#define _klib_mem_buffer_test_h
 
 #include <core/mem_buffer.h>
 
@@ -9,3 +10,5 @@ TEST(mem_buffer_test, 1)
 
     sss.append("sdf");
 }
+
+#endif

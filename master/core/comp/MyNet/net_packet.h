@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_net_packet_h
+#define _klib_net_packet_h
 
 #include "net_conn.h"
 class tcp_net_facade_imp;
@@ -51,3 +52,5 @@ protected:
 };
 
 typedef net_packet_t<1024> net_packet;
+
+#endif

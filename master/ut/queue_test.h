@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_queue_test_h
+#define _klib_queue_test_h
 
 #include <algo/one_many_queue.h>
 
@@ -32,3 +33,5 @@ TEST(test_queue, 1)
     q.clear();
 
 }
+
+#endif

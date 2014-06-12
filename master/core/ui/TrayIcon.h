@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_TrayIcon_h
+#define _klib_TrayIcon_h
 
 #include <shellapi.h>
 #include <string>
@@ -40,3 +41,6 @@ private:
 
 
 }}
+
+
+#endif

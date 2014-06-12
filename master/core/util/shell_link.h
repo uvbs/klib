@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_shell_link_h
+#define _klib_shell_link_h
 
 
 #include "../istddef.h"
@@ -24,3 +25,6 @@ public:
 
 }}
 
+
+
+#endif

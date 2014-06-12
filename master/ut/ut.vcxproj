@@ -58,7 +58,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../core/third/gtest/lib;..\core\lib\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../core/third/gtest/lib;$(SolutionDir)core\lib\$(Configuration)\</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>$(SolutionDir)pdb\$(Configuration)\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
   </ItemDefinitionGroup>
@@ -91,6 +91,7 @@
     <ClInclude Include="aspect_test.h" />
     <ClInclude Include="bitmap_test.h" />
     <ClInclude Include="bloom_test.h" />
+    <ClInclude Include="cat_str_macro_test.h" />
     <ClInclude Include="factory_test.h" />
     <ClInclude Include="faststring_test.h" />
     <ClInclude Include="find_tool_test.h" />
@@ -98,11 +99,13 @@
     <ClInclude Include="mem_buffer_test.h" />
     <ClInclude Include="mem_list_test.h" />
     <ClInclude Include="mem_string_test.h" />
+    <ClInclude Include="must_have_base_test.h" />
     <ClInclude Include="nocopyable_test.h" />
     <ClInclude Include="object_resuer_test.h" />
     <ClInclude Include="private_heap_test.h" />
     <ClInclude Include="qsort_test.h" />
     <ClInclude Include="queue_test.h" />
+    <ClInclude Include="redirect_std_out_test.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stream_test.h" />
     <ClInclude Include="strutil_test.h" />

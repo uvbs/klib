@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_net_conn_h
+#define _klib_net_conn_h
 #pragma warning(disable: 4996)
 
 #include "net_socket.h"
@@ -130,3 +131,5 @@ protected:
 };
 
 typedef std::shared_ptr<net_conn> net_conn_ptr;
+
+#endif

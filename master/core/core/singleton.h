@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_singleton_h
+#define _klib_singleton_h
 
 #include "klib_core.h"
 
@@ -33,3 +34,6 @@ public:
 
 }}
 
+
+
+#endif

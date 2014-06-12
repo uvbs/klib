@@ -1,7 +1,8 @@
 //////////////////////////////// 
 //array类和其的实现 
 
-#pragma once
+#ifndef _klib_array_h
+#define _klib_array_h
 /**
  * @brief 模板数组
  */
@@ -374,3 +375,5 @@ namespace core {
     }; 
 
 }}
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_path_h
+#define _klib_path_h
 
 #include "../inttype.h"
 #include "../istddef.h"
@@ -45,3 +46,6 @@ protected:
 };
 
 }}
+
+
+#endif

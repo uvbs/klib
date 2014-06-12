@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_find_tool_h
+#define _klib_find_tool_h
 
 #include <crtdbg.h>
 
@@ -295,3 +296,6 @@ bool find_tool<T>::endwith(const T* pszBuff, size_t nBuffLen, const T* pszStr, s
 
 
 }}
+
+
+#endif

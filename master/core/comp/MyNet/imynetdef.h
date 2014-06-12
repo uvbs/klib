@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_imynetdef_h
+#define _klib_imynetdef_h
 
 #include "tcp_net_facade.h"
 #include "network_i.h"
@@ -19,3 +20,5 @@ struct imy_net
     /// 创建一个TCP客户操作接口
     virtual tcp_net_facade* create_tcp_facade() = 0;
 };
+
+#endif

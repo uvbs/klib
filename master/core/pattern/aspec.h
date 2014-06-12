@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_aspec_h
+#define _klib_aspec_h
 
 
 #include <memory>
@@ -214,3 +215,5 @@ MakeAspect<LoggingAspect>(p.get())->g();
 
 
 */
+
+#endif

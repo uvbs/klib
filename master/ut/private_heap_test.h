@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_private_heap_test_h
+#define _klib_private_heap_test_h
 
 
 #include <klib.h>
@@ -36,3 +37,5 @@ TEST(util,1 )
 
     extractFileExt(std::string("dongkun.exe"));
 }
+
+#endif

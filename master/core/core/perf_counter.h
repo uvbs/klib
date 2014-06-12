@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_perf_counter_h
+#define _klib_perf_counter_h
 
 #include <windows.h>
 
@@ -47,3 +48,6 @@ protected:
 
 
 }}
+
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_strutil_test_h
+#define _klib_strutil_test_h
 
 
 #include <random>
@@ -31,3 +32,5 @@ TEST(util, ×Ö·û´®²âÊÔ)
         std::cout << rd() << std::endl;
     */
 }
+
+#endif

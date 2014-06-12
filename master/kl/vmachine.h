@@ -27,7 +27,7 @@ public:
     bool invoke(const std::string& func, std::vector<variable>& var);
 
 protected:
-    symbols_mgr         symbol_mgr_;
+    inter_env           inter_env_;
     lex_error_handler   lex_err_handler_;
 };
 

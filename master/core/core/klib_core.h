@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_klib_core_h
+#define _klib_klib_core_h
 
 
 #include <functional>
@@ -10,8 +11,6 @@
 namespace klib {
 namespace core {
 
-#define  KLIB_ASSERT(expr)        \
-    _ASSERT(expr)
 
 //----------------------------------------------------------------------
 template<class T> inline void checked_delete(T * x)
@@ -85,3 +84,6 @@ protected:
 
 
 }}
+
+
+#endif

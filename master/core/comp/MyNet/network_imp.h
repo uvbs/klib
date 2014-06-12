@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_network_imp_h
+#define _klib_network_imp_h
 
 #include "network_i.h"
 #include "net_socket.h"
@@ -179,3 +180,5 @@ private:
     
     std::shared_ptr<net_conn_mgr_i> net_conn_mgr_i_;
 };
+
+#endif

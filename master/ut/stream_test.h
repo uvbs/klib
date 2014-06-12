@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_stream_test_h
+#define _klib_stream_test_h
 
 #include <io/stream.h>
 
@@ -18,3 +19,5 @@ TEST(stream,1 )
 
 
 }
+
+#endif

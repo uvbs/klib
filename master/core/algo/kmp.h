@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_kmp_h
+#define _klib_kmp_h
 
 #include <string>
 #include <vector>
@@ -162,3 +163,6 @@ protected:
 
 
 }}
+
+
+#endif

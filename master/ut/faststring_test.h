@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_faststring_test_h
+#define _klib_faststring_test_h
 
 
 #include <core/fast_string.h>
@@ -15,3 +16,6 @@ TEST(FastString, combine)
     std::string str = MakeFastString("test-string") + "-another";
     ASSERT_TRUE(str == "test-string-another");
 }
+
+
+#endif

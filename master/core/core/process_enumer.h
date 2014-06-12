@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_process_enumer_h
+#define _klib_process_enumer_h
 
 #include <wtypes.h>
 #include <windows.h>
@@ -29,3 +30,6 @@ protected:
 
 
 }}
+
+
+#endif

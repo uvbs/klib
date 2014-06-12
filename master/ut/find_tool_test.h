@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_find_tool_test_h
+#define _klib_find_tool_test_h
 
 #include <algo/find_tool.h>
 
@@ -48,3 +49,5 @@ TEST(FindToolTest, t1)
     ASSERT_TRUE(false == x->endwith("a_endx"));
     ASSERT_TRUE(false == x->endwith("a_endx", 6));
 }
+
+#endif

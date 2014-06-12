@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_PidAndPort_h
+#define _klib_PidAndPort_h
 
 
 #include <Windows.h> 
@@ -601,3 +602,6 @@ public:
 
 }}
 
+
+
+#endif

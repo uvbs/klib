@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_sync_invoke_test_h
+#define _klib_sync_invoke_test_h
 
 
 #include "pattern/sync_invoke.h"
@@ -26,3 +27,5 @@ TEST(sync_invoke_, 1)
 
     bgWorker.stop();
 }
+
+#endif

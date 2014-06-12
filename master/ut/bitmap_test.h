@@ -1,5 +1,6 @@
 
-#pragma once
+#ifndef _klib_bitmap_test_h
+#define _klib_bitmap_test_h
 
 #include <algo/bitmap.h>
 
@@ -22,3 +23,5 @@ TEST(bitmap, 1)
     }  
     cout << endl; 
 }
+
+#endif

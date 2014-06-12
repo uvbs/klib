@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_net_socket_h
+#define _klib_net_socket_h
 
 
 //----------------------------------------------------------------------
@@ -19,3 +20,5 @@ public:
 protected:
     SOCKET m_socket;
 };
+
+#endif

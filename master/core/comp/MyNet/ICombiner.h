@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_ICombiner_h
+#define _klib_ICombiner_h
 
 /*  协议分包合并器(用在tcp中)  */
 
@@ -14,3 +15,5 @@ public:
   */
   virtual bool is_intact_packet(const net_stream_type& stream, int& packetlen) = 0;
 };
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_verify_helper_h
+#define _klib_verify_helper_h
 
 /**
 // Ê¾ÀýµÄ nºÍe 
@@ -22,3 +23,6 @@ protected:
     void* rsa_ctx_;
 };
 
+
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_mini_dumper_h
+#define _klib_mini_dumper_h
 //========================================================================
 // Minidump.h : This is a crash trapper - similar to a UNIX style core dump
 //========================================================================
@@ -63,3 +64,6 @@ protected:
 
 }}
 
+
+
+#endif

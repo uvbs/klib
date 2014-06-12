@@ -43,10 +43,10 @@ class sytax_node
 {
 public:
     sytax_node() {}
-    sytax_node(node_type type) : type_(type) {}
+    sytax_node(node_type type) : type_(type), subtype_(other) {}
 
 public:
-    node_type type_;                        // node type
+    node_type    type_;                     // node type
     node_subtype subtype_;                  // node subtype
 
     std::vector<sytax_node*> childs_[MAX_CHILDREN];

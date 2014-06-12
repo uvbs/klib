@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_datetime_h
+#define _klib_datetime_h
 
 /*
 ÀàÃû£ºtdatetime
@@ -164,3 +165,5 @@ private:
 
 
 #endif  //#ifndef _TDATETIME_H_20081121_
+
+#endif

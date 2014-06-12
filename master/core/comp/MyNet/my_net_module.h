@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_my_net_module_h
+#define _klib_my_net_module_h
 
 #include <aom/iframework_imp.h>
 #include "imynetdef.h"
@@ -22,3 +23,6 @@ public:
 
 };
 
+
+
+#endif

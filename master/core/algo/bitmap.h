@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _klib_bitmap_h
+#define _klib_bitmap_h
 
 
 
@@ -52,3 +53,6 @@ protected:
 
 }}
 
+
+
+#endif

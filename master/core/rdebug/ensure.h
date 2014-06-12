@@ -1,16 +1,27 @@
-#ifndef _klib_ensure_h
-#define _klib_ensure_h
 
-#include <exception>
+//
+// ensure.hpp
+//
+// Copyright (c) Nous Xiong.
+//
+// Macro ENSURE impl.
+//
+
+#ifndef _klib_ensure_nous_h
+#define _klib_ensure_nous_h
+
+
+#include <stdexcept>
 #include <sstream>
-#include <crtdbg.h>
-#include <vector>
+#include <iostream>
 
+namespace klib{
+namespace debug{
 
-namespace klib {
-namespace debug {
+#define ENSURE_DEBUG_ALERT      (0x01)
+#define ENSURE_DEBUG_EXCEPTION  (0x02)
 
-
+typedef unsigned int ensure_op_type;
 
 #ifdef _DEBUG
 
@@ -23,104 +34,98 @@ namespace debug {
 #define _ASSERT_EXPR_ENSURE(expr, msg) 
 #endif
 
-
-/**
- * @brief 断言时显示变量的值 
- */
-class EnsureAlert
+class ensure
 {
 public:
-    EnsureAlert(const char *exp, const char *file, int line)
-    {
-        std::ostringstream so;
-        so << "ensure failed : " << exp << '\n';
-        so << file << '(' << line << ')' << '\n';
-        so << "context variables:\n";
-        m_what = so.str();
-    }
-    ~EnsureAlert() throw ()
-    {
-        _ASSERT_EXPR_ENSURE(FALSE, this->what());
-    }
+    ensure()
+        : ENSURE_A(*this)
+        , ENSURE_B(*this)
+        , file_(0)
+        , line_(-1)
+        , op_type_(0)
+    {  }
 
-    ///< 处理其它模板类型
-    template<typename T>
-    EnsureAlert& operator << (const std::pair<const char *, T>& p)
-    {
-        std::ostringstream so;
-        so << '\t' << p.first << " : " << p.second << '\n';
-        m_what += so.str();
-        return *this;
-    }
+    ~ensure()  ;
 
-    ///< 处理wstring的序列化
-    EnsureAlert& operator << (const std::pair<const char *, std::wstring>& p)
-    {
-        std::ostringstream so;
-        so << '\t' << p.first << " : " << WideByte2Acsi(p.second) << '\n';
-        m_what += so.str();
-        return *this;
-    }
+    ensure& ENSURE_A;
+    ensure& ENSURE_B;
 
-    ///< 处理wchar_t的序列化
-    EnsureAlert& operator << (const std::pair<const char *, wchar_t*>& p)
+public:
+    ensure& set_context(ensure_op_type t, char const* expr, char const* file, int line);
+    
+    ensure& set_current_val(char src, char const* name);
+    ensure& set_current_val(bool src, char const* name);
+    ensure& set_current_val(short src, char const* name);
+    ensure& set_current_val(int src, char const* name);
+    ensure& set_current_val(std::string const& src, char const* name);
+    ensure& set_current_val(char const* src, char const* name);
+    ensure& set_current_val(char * src, char const* name);
+
+#ifdef _WIN32
+    ensure& set_current_val(const wchar_t * src, char const* name);
+    ensure& set_current_val( wchar_t * src, char const* name);
+#endif
+    
+    template<typename _type>
+    ensure& set_current_val(_type const src, char const* name)
     {
-        if (p.second) 
+        if (std::is_pointer<_type>::value)
         {
-            std::ostringstream so;
-            so << '\t' << p.first << " : " << WideByte2Acsi(p.second) << '\n';
-            m_what += so.str();
-        }        
+            err_ << "\t" << name << " = " << src << "; val is a pointer" << std::endl;
+        }
+        else
+        {
+            err_ << "\t" << name << " = " << src << "; " << std::endl;
+        }
+        return *this;
+    }
+    
+    /// 抛出异常
+    ensure& set_current_val(std::exception const& ex, char const*);
+
+    std::string what();
+
+    static ensure get_ensure()
+    {
+        return ensure();
+    }
+    
+private:
+    template <typename T>
+    ensure& set_val(T const t, char const* name)
+    {
+        err_ << "\t" << name << " = " << t << "; " << std::endl;
         return *this;
     }
 
-    ///< 处理其它int类型的序列化
-    EnsureAlert& operator << (int){ return *this; }
-
-    const char *what() const throw ()
-    { 
-        return m_what.c_str();
-    }
-
-protected:
+#ifdef _WIN32
     ///< 转换为ascii编码
-    std::string WideByte2Acsi(const std::wstring& wstrcode)  
-    {  
-        int nAsciiSize = ::WideCharToMultiByte(CP_OEMCP, 0, wstrcode.c_str(), -1, NULL, 0, NULL, NULL);  
-        if (nAsciiSize == ERROR_NO_UNICODE_TRANSLATION) 
-        {
-            return std::string();
-        }
-        if (nAsciiSize == 0)
-        {
-            return std::string();
-        }
-        std::vector<char> resultstring(nAsciiSize);
-        int nConvResult = ::WideCharToMultiByte(CP_OEMCP, 0, wstrcode.c_str(), -1, &resultstring[0], nAsciiSize, NULL, NULL);  
-
-        if (nConvResult != nAsciiSize) 
-        {
-            return std::string();
-        }  
-
-        return std::string(&resultstring[0]);  
-    }  
+    std::string wide_2_gbk(const std::wstring& wstr_code)  ;
+#endif
 
 private:
-    mutable std::string m_what;
+    std::stringstream err_;
+    char const*       file_;
+    int               line_;
+    ensure_op_type    op_type_;
 };
 
-
-static int A = 0, B = 0;
-#define AB(a, N) std::make_pair(#a, a) << N
-#define A(a) AB(a, B)
-#define B(a) AB(a, A)
-#define ENSURE_ASSERT(b)  if (b); \
-    else  EnsureAlert(#b, __FILE__, __LINE__) << A 
+}}
 
 
-}} // namespace 
+#define ENSURE_A(x) ENSURE_OP(x, B)
+#define ENSURE_B(x) ENSURE_OP(x, A)
+
+#define ENSURE_OP(x, next) \
+    ENSURE_A.set_current_val((x), #x).ENSURE_##next
+
+#define ENSURE_ASSERT(expr) \
+    if( (expr) ) ; \
+  else klib::debug::ensure().set_context(ENSURE_DEBUG_ALERT, #expr,__FILE__,__LINE__).ENSURE_A
+
+#define ENSURE_VERIFY(expr) \
+    if( (expr) ) ; \
+  else klib::debug::ensure().set_context(ENSURE_DEBUG_ALERT|ENSURE_DEBUG_EXCEPTION, #expr,__FILE__,__LINE__).ENSURE_A
 
 
-
-#endif
+#endif /* _klib_ensure_nous_h */

@@ -107,7 +107,6 @@
     <ClInclude Include="..\core\core\array.h" />
     <ClInclude Include="..\core\core\code_convert.h" />
     <ClInclude Include="..\core\core\datetime.h" />
-    <ClInclude Include="..\core\core\ensure.h" />
     <ClInclude Include="..\core\core\fast_string.h" />
     <ClInclude Include="..\core\core\ini_file.h" />
     <ClInclude Include="..\core\core\kdetect_leakk.h" />
@@ -220,6 +219,7 @@
     <ClCompile Include="..\core\io\file.cpp" />
     <ClCompile Include="..\core\io\path.cpp" />
     <ClCompile Include="..\core\io\stream.cpp" />
+    <ClCompile Include="..\core\kthread\kthreadpool.cpp" />
     <ClCompile Include="..\core\kthread\rw_emaphore.cpp" />
     <ClCompile Include="..\core\kthread\semaphore.cpp" />
     <ClCompile Include="..\core\kthread\win_mutex.cpp" />

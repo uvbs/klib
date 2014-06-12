@@ -42,6 +42,7 @@
 #include "cat_str_macro_test.h"
 #include "must_have_base_test.h"
 #include "redirect_std_out_test.h"
+#include "ensure_test.h"
 
 
 #include "third/letter.h"

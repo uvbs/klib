@@ -2,6 +2,7 @@
 #define _actor_h_
 
 
+#include "../kthread/thread.h"
 #include "../kthread/thread_local.h"
 #include "../kthread/kthreadpool.h"
 #include "../core/lock_stl.h"
@@ -85,6 +86,7 @@ class engine
     struct actor_task;
 
 public:
+    engine();
     ~engine() ;
 
     bool init() ;
@@ -92,14 +94,15 @@ public:
     bool stop();
 
 protected:
-    void engine_loop();
+    void engine_loop(void*);
     void add_task(actor_base* act, size_t num);
-    void loop_task();
     void actor_task(actor_base* act, size_t exec_num);
 
 protected:
     klib::stl::lock_list<actor_base*> act_list_;
-    klib::kthread::kthread_pool pool_;
+    klib::kthread::kthread_pool thread_pool_;
+    klib::kthread::Thread       work_thread_;
+    bool                        is_stop_;
 };
 
 /* actor imp class */

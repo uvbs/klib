@@ -491,5 +491,8 @@
     <ClCompile Include="..\core\kthread\kthreadpool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="..\core\rdebug\ensure.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

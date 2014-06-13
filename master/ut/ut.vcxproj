@@ -113,6 +113,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="timer_test.h" />
     <ClInclude Include="trie_test.h" />
+    <ClInclude Include="ulti_int_test.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

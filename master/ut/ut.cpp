@@ -43,7 +43,7 @@
 #include "must_have_base_test.h"
 #include "redirect_std_out_test.h"
 #include "ensure_test.h"
-
+#include "multi_int_test.h"
 
 #include "third/letter.h"
 #include "timer_test.h"

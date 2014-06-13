@@ -64,7 +64,7 @@
 #include "util/convert.h"
 #include "util/atom.h"
 
-#include "pattern/aspec.h"
+#include "pattern/aspect.h"
 #include "pattern/factory.h"
 #include "pattern/fsm.h"
 #include "pattern/object_reuser.h"

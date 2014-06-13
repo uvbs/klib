@@ -9,31 +9,46 @@ namespace pattern{
 namespace actor{
 
 
+engine::engine() : is_stop_(false)
+{
+
+}
+
 engine::~engine() 
 {
-    pool_.stop();
+    this->stop();
 }
 
 bool engine::init()
 {
-    auto lp_tsk = std::bind(&engine::loop_task, this);
-    pool_.add_task(lp_tsk);
+    Thread::thread_func_type f = std::bind(&engine::engine_loop, this, std::placeholders::_1);
+    work_thread_.start(f);
 
     return true;
 }
 
-bool engine::regist(actor_base* actor) 
+bool engine::regist(actor_base* actr) 
 {
-    if (act_list_.find_item(actor))
+    if (act_list_.find_item(actr))
         return false;
 
-    return act_list_.push_item(actor);
+    return act_list_.push_item(actr);
 }
 
 bool engine::stop()
 {
-    pool_.stop();
-    
+    if (is_stop_) 
+    {
+        return true;
+    }
+
+    is_stop_ = true;
+
+    thread_pool_.stop();
+
+    work_thread_.exit(true);
+    work_thread_.wait();
+
     return true;
 }
 
@@ -41,23 +56,25 @@ void engine::add_task(actor_base* act, size_t num)
 {
     kthread_pool::func_type func = std::bind(&engine::actor_task, this, act, num);
 
-    pool_.add_task(func);
+    thread_pool_.add_task(func);
 };
 
-void engine::engine_loop()
+void engine::engine_loop(void*)
 {
     size_t exec_count = 0;
     bool need_sleep = true;
 
-    while (true)
+    while (!this->is_stop_)
     {
         need_sleep = true;
         auto f = [&](actor_base* act) -> bool
         {
-            if (act->is_queued() || act->msg_count() == 0) 
+            size_t queued_msg_cout = act->msg_count();
+            if (act->is_queued() || queued_msg_cout == 0) 
                 return true;
 
-            exec_count = act->msg_count() > 10 ? 10 : act->msg_count();
+            act->set_queued(true);
+            exec_count = queued_msg_cout > 10 ? 10 : queued_msg_cout;
             add_task(act, exec_count);
 
             need_sleep = false;
@@ -73,24 +90,20 @@ void engine::engine_loop()
     }
 }
 
-void engine::loop_task()
-{
-    this->engine_loop();
-};
-
 void engine::actor_task(actor_base* act, size_t exec_num)
 {
-    act->set_queued(true);
     ON_SCOPE_EXIT( act->set_queued(false); );
 
     size_t counter = 0;
-    while (counter < exec_num)
+    bool ret = false;
+    while (counter < exec_num && (ret = act->handle()))
     {
-        act->handle();
         ++ counter;
     }
 
-    while (pool_.get_idle_thread_count() > 0 && act->handle()) ;
+    while (thread_pool_.get_idle_thread_count() > 0 && 
+        ret &&
+        act->handle()) ;
 }
 
 }}}

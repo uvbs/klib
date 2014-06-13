@@ -3,7 +3,6 @@
 
 #include "../Net/ip_v4.h"
 #include <set>
-using std::set;
 
 namespace klib {
 namespace algo {
@@ -34,7 +33,7 @@ public:
 
 public:
     // 清空Ip表
-    void clear() { m_IpTable.clear(); }
+    void clear() { iptable_.clear(); }
 
     // 插入一个Ip段, 返回是否成功
     bool insert(const ip_seg &stElem)
@@ -44,7 +43,7 @@ public:
         {
             return false;
         }
-        return m_IpTable.insert(stElem).second;           // 往表中插入一个Ip段，出现Ip段重叠时会失败
+        return iptable_.insert(stElem).second;           // 往表中插入一个Ip段，出现Ip段重叠时会失败
     }
         
     // 同上
@@ -65,7 +64,6 @@ public:
         return insert(stTempElem);
     }
 
-    
     //    
     bool insert(const char* pszStartIp, UINT uIpCount)
     {
@@ -81,7 +79,7 @@ public:
         ip_seg   stTempElem;
         stTempElem.ulStartIp = stTempElem.ulEndIp = ulIp;
 
-        return 1 == m_IpTable.erase(stTempElem);
+        return 1 == iptable_.erase(stTempElem);
     }
 
     //  查找包含该Ip的Ip段
@@ -91,14 +89,14 @@ public:
     {
         ip_seg   stTempElem;
         stTempElem.ulStartIp = stTempElem.ulEndIp = ulIp;
-        set <ip_seg>::iterator itr = m_IpTable.find(stTempElem);
+        std::set <ip_seg>::iterator itr = iptable_.find(stTempElem);
 
-        return itr == m_IpTable.end() ? NULL : &*itr;
+        return itr == iptable_.end() ? NULL : &*itr;
     }
 
 protected:
     // 存储Ip的Set表
-    std::set <ip_seg>         m_IpTable;            
+    std::set <ip_seg>         iptable_;            
 };
 
 

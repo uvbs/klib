@@ -99,6 +99,9 @@
     <ClInclude Include="redirect_std_out_test.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ensure_test.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

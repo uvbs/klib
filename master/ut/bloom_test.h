@@ -11,7 +11,7 @@ TEST(bloom, 1)
 
     bloom_.init(NORMAL_BLOOM_SIZE);
 
-    for(int i=0; i!=1000000; i++) 
+    for(int i=0; i!=10000; i++) 
     {
         char buf[16] = {0};
         sprintf(buf, "%d", i); 
@@ -19,7 +19,7 @@ TEST(bloom, 1)
     }
     printf("BloomFilter Build Ok\n"); 
 
-    for(int i=999995;i!=1000010;i++) { 
+    for(int i=9995;i!=10010;i++) { 
         char buf[16] = {0}; 
         sprintf(buf, "%d", i); 
         if (bloom_.check_mark(buf))

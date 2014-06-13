@@ -27,7 +27,7 @@ TEST(actor, 1)
     myactor act;
     ngn.regist(&act);
     
-    for (int i=0; i< 1; ++i) 
+    for (int i=0; i< 999; ++i) 
     {
         act.send(i);
     }

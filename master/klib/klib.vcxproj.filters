@@ -27,9 +27,6 @@
     <ClInclude Include="..\core\core\array.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\core\ensure.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\core\fast_string.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -489,6 +486,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\kthread\semaphore.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\kthread\kthreadpool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\rdebug\ensure.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

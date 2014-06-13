@@ -16,6 +16,11 @@ namespace klib{
 namespace kthread{
 
 
+/*
+Thread::thread_func_type f = 
+    std::bind(&engine::engine_loop, this, std::placeholders::_1);
+*/
+
 class Thread
 {
 public:

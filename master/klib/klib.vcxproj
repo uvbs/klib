@@ -203,7 +203,6 @@
     <ClCompile Include="..\core\core\code_convert.cpp" />
     <ClCompile Include="..\core\core\datetime.cpp" />
     <ClCompile Include="..\core\core\ini_file.cpp" />
-    <ClCompile Include="..\core\core\logger.cpp" />
     <ClCompile Include="..\core\core\mini_dumper.cpp" />
     <ClCompile Include="..\core\core\process_enumer.cpp" />
     <ClCompile Include="..\core\core\process_helper.cpp" />
@@ -234,6 +233,8 @@
     <ClCompile Include="..\core\pattern\actor.cpp" />
     <ClCompile Include="..\core\pattern\sync_invoke.cpp" />
     <ClCompile Include="..\core\rdebug\ensure.cpp" />
+    <ClCompile Include="..\core\rdebug\logger.cpp" />
+    <ClCompile Include="..\core\rdebug\log_helper.cpp" />
     <ClCompile Include="..\core\sys\cpu.cpp" />
     <ClCompile Include="..\core\sys\sys.cpp" />
     <ClCompile Include="..\core\ui\window.cpp" />

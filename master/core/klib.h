@@ -15,7 +15,6 @@
 #include "core/share_memory.h"
 #include "core/DateTime.h"
 #include "core/mini_dumper.h"
-#include "core/logger.h"
 #include "core/private_heap.h"
 #include "core/scope_guard.h"
 #include "core/ip_seg_table.h"
@@ -79,6 +78,7 @@
 
 #include "rdebug/ensure.h"
 #include "rdebug/must_have_base.h"
+#include "rdebug/logger.h"
 
 namespace klib
 {

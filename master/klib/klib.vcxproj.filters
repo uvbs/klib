@@ -353,9 +353,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\core\core\logger.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -492,6 +489,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\rdebug\ensure.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\rdebug\logger.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\rdebug\log_helper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

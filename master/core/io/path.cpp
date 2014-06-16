@@ -219,6 +219,34 @@ BOOL path::get_app_path(tstring& strAppPath)
     return TRUE;
 }
 
+BOOL path::get_app_patha(std::string& strAppPath)
+{
+    static char pszAppPath[MAX_PATH] = {0}; 
+
+    if (pszAppPath[0] == '\0')
+    {
+        const char chPathSlashes = '\\';
+        GetModuleFileNameA(0, pszAppPath, MAX_PATH); 
+
+        int iLen = strlen(pszAppPath);
+        char* endPos = pszAppPath + iLen;
+        while (*endPos != chPathSlashes) 
+        {
+            -- endPos;
+        }
+
+        if (*endPos != chPathSlashes) 
+        {
+            return FALSE;
+        }
+
+        *(endPos + 1)= '\0';
+    }
+
+    strAppPath = pszAppPath;
+    return TRUE;
+}
+
 BOOL path::get_app_file(tstring& strAppFile)
 {
     static TCHAR pszAppPath[MAX_PATH*2] = {0}; 

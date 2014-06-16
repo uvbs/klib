@@ -45,6 +45,7 @@
 #include "ensure_test.h"
 #include "multi_int_test.h"
 #include "thread_safe_wrapper_test.h"
+#include "log_helper_test.h"
 
 #include "third/letter.h"
 #include "timer_test.h"

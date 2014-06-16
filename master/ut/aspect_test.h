@@ -14,19 +14,19 @@ class LoggingAspect : public InterceptAspect<WrappedType, LoggingAspect<WrappedT
 public:
     LoggingAspect(WrappedType* p): InterceptAspect(p) {}
 
-    void Before(WrappedType* p)
+    void _before(WrappedType* p)
     {
         std::cout << typeid(*p).name() <<  "---->> entering" << std::endl;
     }
 
-    void After(WrappedType* p)
+    void _after(WrappedType* p)
     {
         std::cout << typeid(*p).name() << "---->> exiting" << std::endl << std::endl;
     }
 
     void g()
     {
-        m_wrappedPtr->g();
+        _wrapped()->g();
         cout << "g()" << endl;
     }
 };

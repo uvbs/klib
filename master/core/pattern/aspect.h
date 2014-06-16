@@ -18,41 +18,35 @@ template <typename WrappedType, typename DerivedAspect>
 class BaseAspect
 {
 protected:
-    WrappedType* m_wrappedPtr; //被织入的对象
+    WrappedType* wrapped_ptr_; //被织入的对象
 
     //获取派生的切面对象
-    DerivedAspect* GetDerived() 
+    DerivedAspect* _derived() 
     {
         return static_cast<DerivedAspect*>(this);
     }
 
-    //被织入对象的删除器，用来自动触发切面中的After方法
+    //被织入对象的删除器，用来自动触发切面中的_after方法
     struct AfterWrapper
     {
         DerivedAspect* m_derived;
         AfterWrapper(DerivedAspect* derived): m_derived(derived) {};
         void operator()(WrappedType* p)
         {
-            m_derived->After(p);
+            m_derived->_after(p);
         }
     };
 public:
-    explicit BaseAspect(WrappedType* p) :  m_wrappedPtr(p) {};
+    explicit BaseAspect(WrappedType* p) :  wrapped_ptr_(p) {};
 
+    void _before(WrappedType* p) { };
+    void _after(WrappedType* p) { }
 
-    void Before(WrappedType* p) {
-        // Default does nothing
-    };
-
-    void After(WrappedType* p) {
-        // Default does nothing
-    }
-
-    //重载指针运算符用来织入切面（Before和After）
+    //重载指针运算符用来织入切面（_before和_after）
     std::shared_ptr<WrappedType> operator->() 
     {
-        GetDerived()->Before(m_wrappedPtr);
-        return std::shared_ptr<WrappedType>(m_wrappedPtr, AfterWrapper(GetDerived()));
+        _derived()->_before(wrapped_ptr_);
+        return std::shared_ptr<WrappedType>(wrapped_ptr_, AfterWrapper(_derived()));
     }
 };
 
@@ -60,41 +54,33 @@ template <typename WrappedType, typename DerivedAspect>
 class InterceptAspect
 {
 protected:
-    WrappedType* m_wrappedPtr; //被织入的对象
+    WrappedType* wrapped_ptr_; //被织入的对象
 
-    //获取派生的切面对象
-    DerivedAspect* GetDerived() 
-    {
-        return static_cast<DerivedAspect*>(this);
-    }
-
-    //被织入对象的删除器，用来自动触发切面中的After方法
+    //被织入对象的删除器，用来自动触发切面中的_after方法
     struct AfterWrapper
     {
-        WrappedType* m_wrappered;
-        AfterWrapper(WrappedType* wrapperd): m_wrappered(wrapperd) {};
+        WrappedType* wrapped_;
+        AfterWrapper(WrappedType* wrapperd): wrapped_(wrapperd) {};
         void operator()(DerivedAspect* p)
         {
-            p->After(m_wrappered);
+            p->_after(wrapped_);
         }
     };
 public:
-    explicit InterceptAspect(WrappedType* p) :  m_wrappedPtr(p) {};
+    explicit InterceptAspect(WrappedType* p) :  wrapped_ptr_(p) {};
 
+    //获取派生的切面对象
+    DerivedAspect* _derived() {  return static_cast<DerivedAspect*>(this);  }
+    WrappedType* _wrapped()   {  return static_cast<WrappedType*>(wrapped_ptr_);  }
 
-    void Before(WrappedType* p) {
-        // Default does nothing
-    };
+    void _before(WrappedType* p) {};
+    void _after(WrappedType* p) {}
 
-    void After(WrappedType* p) {
-        // Default does nothing
-    }
-
-    //重载指针运算符用来织入切面（Before和After）
+    //重载指针运算符用来织入切面（_before和_after）
     std::shared_ptr<DerivedAspect> operator->() 
     {
-        GetDerived()->Before(m_wrappedPtr);
-        return std::shared_ptr<DerivedAspect>(GetDerived(), AfterWrapper(m_wrappedPtr));
+        _derived()->_before(wrapped_ptr_);
+        return std::shared_ptr<DerivedAspect>(_derived(), AfterWrapper(wrapped_ptr_));
     }
 };
 
@@ -124,19 +110,19 @@ typedef  InterceptAspect<WrappedType, LoggingAspect<WrappedType> > InterceptAspe
 public:
 LoggingAspect(WrappedType* p): InterceptAspect(p) {}
 
-void Before(WrappedType* p)
+void _before(WrappedType* p)
 {
 std::cout << typeid(*p).name() <<  "---->> entering" << std::endl;
 }
 
-void After(WrappedType* p)
+void _after(WrappedType* p)
 {
 std::cout << typeid(*p).name() << "---->> exiting" << std::endl << std::endl;
 }
 
 void g()
 {
-m_wrappedPtr->g();
+wrapped_ptr_->g();
 cout << "g()" << endl;
 }
 };
@@ -148,12 +134,12 @@ typedef  BaseAspect<WrappedType, LoggingAspectRaw<WrappedType> > BaseAspect;
 public:
 LoggingAspectRaw(WrappedType* p): BaseAspect(p) {}
 
-void Before(WrappedType* p) 
+void _before(WrappedType* p) 
 {
 std::cout << typeid(*p).name() <<  "---->> entering" << std::endl;
 }
 
-void After(WrappedType* p) 
+void _after(WrappedType* p) 
 {
 std::cout << typeid(*p).name() << "---->> exiting" << std::endl << std::endl;
 }

@@ -9,13 +9,21 @@ class ThreadSafeWrapper : public InterceptAspect<WrappedType, ThreadSafeWrapper<
 {
 public:
     ThreadSafeWrapper(WrappedType* p): BaseAspect(p) {}
-    ThreadSafeWrapper() :BaseAspect(&val_) {}
+    ThreadSafeWrapper() : InterceptAspect(&val_) {}
 
-    void Before(WrappedType* p)  {   mutex_.lock();  }
-    void After(WrappedType* p)   {  mutex_.unlock(); }
+    void _before(WrappedType* p)  {  mutex_.lock();  }
+    void _after(WrappedType* p)   {  mutex_.unlock(); }
 
-    WrappedType& GetDerived()    { return *m_wrappedPtr; }
-    Mutex& GetMutex()            { return mutex_;        }
+    WrappedType* _wrapped()   { return wrapped_ptr_; }
+    Mutex& _mutex()            { return mutex_;        }
+
+    //重载指针运算符用来织入切面（Before和After）
+    std::shared_ptr<WrappedType> operator->() 
+    {
+        _derived()->_before(wrapped_ptr_);
+        return std::shared_ptr<WrappedType>(_wrapped(), 
+            [&](WrappedType* p) { this->_after(p); });
+    }
 
 protected:
     Mutex mutex_;

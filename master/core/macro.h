@@ -32,8 +32,27 @@ namespace klib
 #define  TYPE_2_STR_A(_type_name)          (#_type_name)
 #define  TYPE_2_STR_W(_type_name)          L(#_type_name)
 
+#define  TO_CHAR(x) (#@x)
+#define  TO_STRING(x) #x
+
+// 将宏转为字符串
+#define  TO_MACRO_STRING( x ) TO_STRING1( x )
+#define  TO_MACRO_STRING1( x ) #x
+
+// 字符串连接
 #define  CAT_2_STR(first, second)          (#first # second)
 #define  CAT_3_STR(first, second, third)   (#first # second # third)
+#define  CAT_4_STR(first, second, third, fourth)   (#first # second # third # fourth)
+
+// 判断是否是16进制
+#define HEX_CHK( c ) ( ((c) >= '0' && (c) <= '9') ||((c) >= 'A' && (c) <= 'F') ||((c) >= 'a' && (c) <= 'f') )
+#define DEC_CHK( c ) ((c) >= '0' && (c) <= '9')
+
+#define OFFSETOF( type, field ) ( (size_t) &(( type *) 0)-> field )
+#define FSIZ( type, field ) sizeof( ((type *) 0)->field )
+
+#define ARR_SIZE( a ) ( sizeof( (a) ) / sizeof( (a[0]) ) )
+#define INC_SAT( val ) (val = ((val)+1 > (val)) ? (val)+1 : (val))
 
 /**
  * @brief   位操作宏.
@@ -148,9 +167,6 @@ public:                                         \
        m_##Target = theVal;                        \
     }                                           \
     Type  m_##Target;
-
-
-
 
 
 

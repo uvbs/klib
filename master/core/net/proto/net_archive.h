@@ -366,9 +366,14 @@ public:
 	}
 
 	//返回写入数据的长度
-	unsigned int get_data_len() {
+	unsigned int get_data_len() const {
 		return op_pos_ - orig_pos_;
 	}
+
+    operator std::string() const
+    {
+        return std::string(orig_pos_, (size_t) get_data_len());
+    }
 
 private:
 	char*   op_pos_;		///< 当前在缓冲区的位置

@@ -377,7 +377,19 @@ private:
 	bool error_flag_;       ///< 是否出错(缓冲区大小不够情况)
 };
 
+inline std::string archive(const std::string& str)
+{
+    size_t bf_size = str.size() + sizeof(length_type);
+    char* buff = new char[bf_size];
+    if (nullptr == buff)
+    {
+        return std::string();
+    }
+    std::shared_ptr<char> p(buff);
 
+    net_archive ar(buff, bf_size);
+    return ar << str;
+}
 
 }}
 

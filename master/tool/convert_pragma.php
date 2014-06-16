@@ -1,8 +1,9 @@
 <?php
 
 
+define('_key_str',   "#pragma once");
 
-function traverse($path = '.') 
+function traverse($path = '.', $project_name, $project_module) 
 {
     $current_dir = opendir($path);    
     while(($file = readdir($current_dir)) !== false) {  
@@ -13,23 +14,18 @@ function traverse($path = '.')
         } 
         else if(is_dir($sub_dir)) 
         {
-             echo 'Directory ' . $file . ':<br>';
-             traverse($sub_dir);
+             echo 'enter sub directory: ' . $file . " \r\n";
+             traverse($sub_dir, $project_name, $project_module);
         } 
         else 
         {
-            echo 'File in Directory ' . $path . ': ' . $file . "\r\n";
-            
             $file_path = $path . '/'. $file;
-            convert_file($file_path);
+            convert_file($file_path, $project_name, $project_module);
         }
     }
 }
 
-define('key_str',   "#pragma once");
-define("lib_namespace", "_klib");
-
-function convert_file($file)
+function convert_file($file, $project_name, $project_module)
 {
     $base_name = basename($file);
     
@@ -47,31 +43,48 @@ function convert_file($file)
     
     $head_define_str = $base_name;
     $head_define_str = str_replace(".", "_", $head_define_str);
-    $head_define_str = lib_namespace . '_' . $head_define_str ; //. "_h";
+    
+    if (!empty($project_module))
+    {
+        $head_define_str = '_' . $project_name . '_' . $project_module. '_' . $head_define_str ; //. "_h";
+    }
+    else
+    {
+        $head_define_str = '_' . $project_name . '_' . $head_define_str ; //. "_h";
+    }
     
     $target_str =<<<EOF
 #ifndef $head_define_str
 #define $head_define_str
 EOF;
 
-    $final_str = str_replace(key_str, $target_str, $content);
+    $final_str = str_replace(_key_str, $target_str, $content);
     if (strlen($final_str) != strlen($content))
     {
         $final_str .= "\r\n\r\n#endif\r\n";
+        
+        file_put_contents($file, $final_str);
+        
+        echo "converted file: $file \r\n";
     }
-    
-    file_put_contents($file, $final_str);
 }
 
 $argc = $_SERVER['argc'];
 $argv = $_SERVER['argv'];
+
 //traverse();
-if ($argc <= 1)
+if ($argc < 2)
 {
     die("php convert_pragma.php file_path");
 }
+$dir_to_convert = $argv[1];
 
-$file_to_convert = $argv[1];
-traverse($file_to_convert);
+
+$project_name = "klib";
+$project_module = "";
+
+echo "project: $project_name, module: $project_module \r\n";
+traverse($dir_to_convert, $project_name, $project_module);
+
 
 ?>

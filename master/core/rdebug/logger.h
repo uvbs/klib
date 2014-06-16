@@ -7,6 +7,7 @@
 #include <time.h>
 #include <tchar.h>
 #include <windows.h>
+#include <string>
 
 
 namespace klib{
@@ -17,53 +18,55 @@ namespace debug{
 //日志等级
 enum LOG_LEVEL 
 {
-	LOG_LEVEL_NONE,
-	LOG_LEVEL_INFO,
-	LOG_LEVEL_WARNING,
-	LOG_LEVEL_ERROR,
-	LOG_LEVEL_FETAL,
+    LOG_LEVEL_NONE,
+    LOG_LEVEL_INFO,
+    LOG_LEVEL_WARNING,
+    LOG_LEVEL_ERROR,
+    LOG_LEVEL_FETAL,
 };
 
 
 class Logger 
 {
 public:
-	static Logger* instance();
-	void InitLog();
-	void UnInitLog();
+    Logger() ;
+    ~Logger() ;
 
-	void SetLogLevel(LOG_LEVEL level);
-	void WriteLog(LOG_LEVEL level, TCHAR* format, ...);
-	void WriteLogA(LOG_LEVEL level, const char* format, ...);
+public:
+    static Logger* instance();
+    void init(const char* log_path);
+    void uninit();
+    bool is_inited();
+
+    void set_log_path(const char* log_path);
+    void set_log_level(LOG_LEVEL level);
+    void set_max_log_size(size_t sz);
+
+    void write_log(LOG_LEVEL level, TCHAR* format, ...);
+    void write_log_a(LOG_LEVEL level, const char* format, ...);
 
 protected:
-	Logger() ;
+    bool            is_inited_;
+    LOG_LEVEL       log_level_;     //日志的级别
 
-protected:
-	LOG_LEVEL m_emloglevel;		//日志的级别
-
-	HANDLE m_hConsole;
-	FILE*  m_hFile;
+    HANDLE          console_;
+    FILE*           hfile_;
+    std::string     log_path_;
+    size_t          max_log_size_;
 };
 
 
 #define  GetLogger()        \
     Logger::instance()
 
-#define LOG_INIT			\
-    Logger::instance()->InitLog();
+#define LOG_SET_LEVEL(Level)        \
+    Logger::instance()->set_log_level(Level);
 
-#define LOG_UNINIT			\
-    Logger::instance()->UnInitLog();
-
-#define LOG_SET_LEVEL(Level)		\
-    Logger::instance()->SetLogLevel(Level);
-
-#define LOG(LEVEL, FORMAT, ...)	\
-    Logger::instance()->WriteLog(LEVEL, FORMAT, __VA_ARGS__);
+#define LOG(LEVEL, FORMAT, ...)     \
+    Logger::instance()->write_log(LEVEL, FORMAT, __VA_ARGS__);
 
 #define LOGA(LEVEL, FORMAT, ...)	\
-    Logger::instance()->WriteLogA(LEVEL, FORMAT, __VA_ARGS__);
+    Logger::instance()->write_log_a(LEVEL, FORMAT, __VA_ARGS__);
 
 #define LOG_INFO(FORMAT, ...)			\
     LOG(LOG_LEVEL_INFO, FORMAT, __VA_ARGS__);

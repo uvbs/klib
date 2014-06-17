@@ -105,6 +105,8 @@ void Logger::write_log(LOG_LEVEL level, TCHAR* format, ...)
 
     DWORD dwWrited;
     WriteConsole(console_, buffer, _tcslen(buffer), &dwWrited, NULL);
+
+
 }
 
 void Logger::write_log_a(LOG_LEVEL level, const char* format, ...)

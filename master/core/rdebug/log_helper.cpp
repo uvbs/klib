@@ -46,19 +46,23 @@ log_helper& log_helper::serilize(char src, char const* name)
 log_helper& log_helper::serilize(const bin_buf& buf, const char* name)
 {
     if (nullptr == buf .ptr_) {
+        err_ << name << ":" ;
         err_ << default_null_ptr_str;
     }
     else {
+        err_ << name << ":" << std::endl;
         err_ << format_hex_ascii(buf);
     }
     return *this;
 }
 log_helper& log_helper::serilize(const str_buf& buf, const char* name)
 {
-    if (nullptr == buf .ptr_) {
+    if (nullptr == buf.ptr_) {
+        err_ << name << ":" ;
         err_ << default_null_ptr_str;
     }
     else {
+        err_ << name << ":" << std::endl;
         err_ << std::string(buf.ptr_, buf.size_);
     }
     return *this;
@@ -198,6 +202,7 @@ log_helper& log_helper::operator << (const bin_buf& buf)
         err_ << default_null_ptr_str;
     }
     else {
+        err_ << std::endl;
         err_ << format_hex_ascii(buf);
     }
     return *this;
@@ -343,6 +348,7 @@ std::string log_helper::format_hex_ascii(const bin_buf& buf)
     }
     str_buf.append(" ", 1);
     str_buf.append(format_ascii(bin_buf((char*)ptr, left_count)));
+    str_buf.append("\r\n", 2);
 
     return std::move(str_buf);
 }

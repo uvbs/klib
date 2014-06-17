@@ -32,7 +32,7 @@ log_helper& log_helper::set_ctx(ensure_op_type t, char const* expr, char const* 
     file_    = file;
     line_    = line;
 
-    // 这里你可以将std::cerr替换为你自己项目的日志系统
+    // 输出出错点 
     err_ <<
         "Evaluate failed point: [" << file_ << ":" << line_ << "]" << std::endl;
     return *this;
@@ -49,7 +49,7 @@ log_helper& log_helper::serilize(const bin_buf& buf, const char* name)
         err_ << default_null_ptr_str;
     }
     else {
-        err_ << std::string(buf.ptr_, buf.size_);
+        err_ << format_hex_ascii(buf);
     }
     return *this;
 }
@@ -198,7 +198,7 @@ log_helper& log_helper::operator << (const bin_buf& buf)
         err_ << default_null_ptr_str;
     }
     else {
-        err_ << std::string(buf.ptr_, buf.size_);
+        err_ << format_hex_ascii(buf);
     }
     return *this;
 }
@@ -281,5 +281,72 @@ std::string log_helper::wide_2_gbk(const std::wstring& wstr_code)
 
     return std::string(&resultstring[0]);  
 } 
+
+std::string log_helper::format_ascii(const bin_buf& buf)
+{
+    std::string str_buf;
+    char szbuf[20];
+    const unsigned char* ptr = (const unsigned char*)(buf.ptr_);
+    for (size_t index=0; index<buf.size_; ++index)
+    {
+        //ascii字符表中可显示字符代码>32
+        if (0x20 <= *ptr)
+        {
+            sprintf(szbuf, "%c", *ptr);
+            str_buf.append(szbuf);
+        }
+        else
+        {
+            str_buf.append(".", 1);
+        }
+        ++ ptr;
+    }
+    return std::move(str_buf);
+}
+
+std::string log_helper::format_hex(const bin_buf& buf)
+{
+    std::string str_buf;
+    char szbuf[20];
+    const unsigned char* ptr = (const unsigned char*)(buf.ptr_);
+    for (size_t index=0; index<buf.size_; ++index)
+    {
+        //ascii字符表中可显示字符代码>32
+        sprintf(szbuf, "%02X ", *ptr);
+        str_buf.append(szbuf);
+        ++ ptr;
+    }
+    return std::move(str_buf);
+}
+
+std::string log_helper::format_hex_ascii(const bin_buf& buf)
+{
+    const size_t line_charactor = 16;
+    size_t line_count = buf.size_ / line_charactor;
+    size_t left_count = buf.size_ % line_charactor;
+
+    std::string str_buf;
+    const unsigned char* ptr = (const unsigned char*) buf.ptr_;
+    for (size_t index=0; index < line_count; ++index)
+    {
+        str_buf.append(format_hex(bin_buf((char*)ptr, line_charactor)));
+        str_buf.append(" ", 1);
+        str_buf.append(format_ascii(bin_buf((char*)ptr, line_charactor)));
+        str_buf.append("\r\n");
+        ptr += line_charactor;
+    }
+
+    auto str_hex = format_hex(bin_buf((char*)ptr, left_count));
+    str_buf.append(str_hex);
+    if (str_hex.size() < 3*line_charactor) {
+        str_buf.append(3*line_charactor - str_hex.size(), ' ');
+    }
+    str_buf.append(" ", 1);
+    str_buf.append(format_ascii(bin_buf((char*)ptr, left_count)));
+
+    return std::move(str_buf);
+}
+
+
 
 #endif

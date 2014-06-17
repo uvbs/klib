@@ -15,16 +15,17 @@ class Logger;
 
 typedef unsigned int ensure_op_type;
 
+// 二进制缓冲区
 struct bin_buf
 {
     bin_buf(const char* buf, size_t len) : ptr_(buf), size_(len)
     {
     }
-
     const char* ptr_;
     size_t      size_;
 };
 
+// 定义的字符串缓冲区
 struct str_buf
 {
     str_buf(const char* buf, size_t len) : ptr_(buf), size_(len)
@@ -34,6 +35,7 @@ struct str_buf
     size_t      size_;
 };
 
+// 日志帮助类
 class log_helper
 {
 public:
@@ -68,15 +70,14 @@ public:
     log_helper& serilize(char * src, char const* name);
     log_helper& serilize(const bin_buf& buf, const char* name);
     log_helper& serilize(const str_buf& buf, const char* name);
-    
+    template<typename _type>
+    log_helper& serilize(_type const src, char const* name);
+
 #ifdef _WIN32
     log_helper& serilize(const wchar_t * src, char const* name);
     log_helper& serilize( wchar_t * src, char const* name);
 #endif
-
-    template<typename _type>
-    log_helper& serilize(_type const src, char const* name);
-
+    
     //----------------------------------------------------------------------
     // stream api
     log_helper& operator << (char src);
@@ -88,14 +89,13 @@ public:
     log_helper& operator << (char * src);
     log_helper& operator << (const bin_buf& buf);
     log_helper& operator << (const str_buf& buf);
+    template<typename _type>
+    log_helper& operator << (_type const src);
 
 #ifdef _WIN32
     log_helper& operator << (const wchar_t * src);
     log_helper& operator << ( wchar_t * src);
 #endif
-
-    template<typename _type>
-    log_helper& operator << (_type const src);
 
     //----------------------------------------------------------------------
     //
@@ -111,8 +111,12 @@ private:
     log_helper& serilize_tpl(T const t);
 
 #ifdef _WIN32
-    std::string wide_2_gbk(const std::wstring& wstr_code)  ;
+    std::string wide_2_gbk(const std::wstring& wstr_code);
 #endif
+
+    std::string format_hex(const bin_buf& buf);
+    std::string format_ascii(const bin_buf& buf);
+    std::string format_hex_ascii(const bin_buf& buf);
 
 private:
     std::stringstream       err_;

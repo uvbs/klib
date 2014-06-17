@@ -26,6 +26,19 @@ enum LOG_LEVEL
 };
 
 
+class log_writer
+{
+public:
+    void init(const std::string& path);
+    std::string get_file_name();
+    size_t write(const char* buf, size_t buf_len);
+    void write_time_header();
+
+protected:
+    std::string file_path_;
+};
+
+// ÈÕÖ¾¼ÇÂ¼Æ÷
 class Logger 
 {
 public:
@@ -42,6 +55,7 @@ public:
     void set_log_level(LOG_LEVEL level);
     void set_max_log_size(size_t sz);
 
+    void write_log_raw(LOG_LEVEL level, const char* buf, size_t buf_len);
     void write_log(LOG_LEVEL level, TCHAR* format, ...);
     void write_log_a(LOG_LEVEL level, const char* format, ...);
 
@@ -53,6 +67,7 @@ protected:
     FILE*           hfile_;
     std::string     log_path_;
     size_t          max_log_size_;
+    log_writer      log_writer_;
 };
 
 

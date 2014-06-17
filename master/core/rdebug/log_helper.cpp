@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "logger.h"
+#include "../macro.h"
 
 using namespace klib::debug;
 
@@ -20,21 +21,22 @@ log_helper::~log_helper()
     if (logger_) 
     {
         std::string str = err_.str();
-        logger_->write_log_a(LOG_LEVEL_ERROR, str.c_str());
+        logger_->write_log_raw(LOG_LEVEL_ERROR, str.c_str(), str.size());
     }
 }
 
 log_helper& log_helper::set_ctx(ensure_op_type t, char const* expr, char const* file, int line)
 {
-    err_.str("");
-    err_ << "Evaluate failed, expression: \"" << expr << "\", values: " << std::endl;
+    KLIB_ASSERT(err_.str().empty());
+
     op_type_ = t;
     file_    = file;
     line_    = line;
 
     // Êä³ö³ö´íµã 
-    err_ <<
-        "Evaluate failed point: [" << file_ << ":" << line_ << "]" << std::endl;
+    err_ << "Pt: [" << file_ << ":" << line_ << "]" << std::endl;
+    err_ << "Exp: \"" << expr << "\", values: " << std::endl;
+
     return *this;
 }
     
@@ -46,11 +48,11 @@ log_helper& log_helper::serilize(char src, char const* name)
 log_helper& log_helper::serilize(const bin_buf& buf, const char* name)
 {
     if (nullptr == buf .ptr_) {
-        err_ << name << ":" ;
+        err_ << name << " = " ;
         err_ << default_null_ptr_str;
     }
     else {
-        err_ << name << ":" << std::endl;
+        err_ << name << " = " << std::endl;
         err_ << format_hex_ascii(buf);
     }
     return *this;
@@ -58,12 +60,12 @@ log_helper& log_helper::serilize(const bin_buf& buf, const char* name)
 log_helper& log_helper::serilize(const str_buf& buf, const char* name)
 {
     if (nullptr == buf.ptr_) {
-        err_ << name << ":" ;
+        err_ << name << " = " ;
         err_ << default_null_ptr_str;
     }
     else {
-        err_ << name << ":" << std::endl;
-        err_ << std::string(buf.ptr_, buf.size_);
+        err_ << name << " = " 
+             << std::string(buf.ptr_, buf.size_) << std::endl;;
     }
     return *this;
 }
@@ -213,7 +215,7 @@ log_helper& log_helper::operator << (const str_buf& buf)
         err_ << default_null_ptr_str;
     }
     else {
-        err_ << std::string(buf.ptr_, buf.size_);
+        err_ << std::string(buf.ptr_, buf.size_) << std::endl;;
     }
     return *this;
 }
@@ -326,7 +328,7 @@ std::string log_helper::format_hex(const bin_buf& buf)
 
 std::string log_helper::format_hex_ascii(const bin_buf& buf)
 {
-    const size_t line_charactor = 16;
+    const size_t line_charactor = 24;
     size_t line_count = buf.size_ / line_charactor;
     size_t left_count = buf.size_ % line_charactor;
 
@@ -337,7 +339,7 @@ std::string log_helper::format_hex_ascii(const bin_buf& buf)
         str_buf.append(format_hex(bin_buf((char*)ptr, line_charactor)));
         str_buf.append(" ", 1);
         str_buf.append(format_ascii(bin_buf((char*)ptr, line_charactor)));
-        str_buf.append("\r\n");
+        str_buf.append("\n");
         ptr += line_charactor;
     }
 
@@ -348,7 +350,7 @@ std::string log_helper::format_hex_ascii(const bin_buf& buf)
     }
     str_buf.append(" ", 1);
     str_buf.append(format_ascii(bin_buf((char*)ptr, left_count)));
-    str_buf.append("\r\n", 2);
+    str_buf.append("\n", 1);
 
     return std::move(str_buf);
 }

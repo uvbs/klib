@@ -225,5 +225,29 @@ void Logger::write_log_a(LOG_LEVEL level, const char* format, ...)
 }
 
 
+//----------------------------------------------------------------------
+//
+logger_mgr::logger_mgr() : default_logger_(nullptr)
+{
+    default_logger_ = Logger::instance();
+}
+
+logger_mgr* logger_mgr::instance()
+{
+    static  logger_mgr _instance;
+    return & _instance;
+}
+
+Logger* logger_mgr::default_logger()
+{
+    return default_logger_;
+}
+
+bool logger_mgr::set_default_logger(Logger* loger)
+{
+    default_logger_ = loger;
+    return true;
+}
+
 
 }}

@@ -17,5 +17,6 @@ TEST(log_helper, 1)
     logger.init("d:\\");
     LOG_IF_D(&logger, 1)(std::string("hello "))(buf_b)(buf_st);
 
+    LOGA(LOG_LEVEL_FETAL, ">>>>>>>>>>>>>>>>");
 
 }

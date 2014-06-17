@@ -9,6 +9,8 @@
 #include <windows.h>
 #include <string>
 
+#include "log_helper.h"
+
 
 namespace klib{
 namespace debug{
@@ -70,18 +72,31 @@ protected:
     log_writer      log_writer_;
 };
 
+// 简单的日志记录管理
+class logger_mgr
+{
+public:
+    logger_mgr();
+    static logger_mgr* instance();
+
+    Logger* default_logger();
+    bool set_default_logger(Logger* loger);
+
+protected:
+    Logger* default_logger_;
+};
 
 #define  GetLogger()        \
-    Logger::instance()
+    logger_mgr::instance()->default_logger()
 
 #define LOG_SET_LEVEL(Level)        \
-    Logger::instance()->set_log_level(Level);
+    GetLogger()->set_log_level(Level);
 
 #define LOG(LEVEL, FORMAT, ...)     \
-    Logger::instance()->write_log(LEVEL, FORMAT, __VA_ARGS__);
+    GetLogger()->write_log(LEVEL, FORMAT, __VA_ARGS__);
 
 #define LOGA(LEVEL, FORMAT, ...)	\
-    Logger::instance()->write_log_a(LEVEL, FORMAT, __VA_ARGS__);
+    GetLogger()->write_log_a(LEVEL, FORMAT, __VA_ARGS__);
 
 #define LOG_INFO(FORMAT, ...)			\
     LOG(LOG_LEVEL_INFO, FORMAT, __VA_ARGS__);

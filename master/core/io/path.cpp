@@ -324,7 +324,49 @@ BOOL path::create_directorys(const tstring& szPath)
     return TRUE;
 }
 
+BOOL path::delete_directorys(const tstring& szPath)
+{
+    WIN32_FIND_DATA   finddata;
+    HANDLE   hfind;
 
+    tstring str_search = szPath;
+    add_slash(str_search);
+
+    str_search.append(_T("*.*"));
+
+    hfind = FindFirstFile(str_search.c_str(), &finddata);
+    if(INVALID_HANDLE_VALUE == hfind)
+        return FALSE;
+
+    do
+    {
+        if(_tcscmp(finddata.cFileName, _T("."))==0 ||
+           _tcscmp(finddata.cFileName, _T(".."))==0)
+        {
+            continue;
+        }
+
+        tstring s_dir = str_search;
+        add_slash(s_dir);
+        s_dir.append(finddata.cFileName);
+
+        if(finddata.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
+            delete_directorys(s_dir.c_str());
+        else
+            DeleteFile(s_dir.c_str());
+
+    } while(FindNextFile(hfind, &finddata));
+
+    FindClose(hfind);
+    if(RemoveDirectory(szPath.c_str()))
+    {
+        return   TRUE;
+    }
+    else
+    {
+        return   FALSE;
+    }
+}
 
 
 

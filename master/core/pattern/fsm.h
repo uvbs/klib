@@ -26,7 +26,7 @@ namespace fsm
 class FsmEvent
 {
 public:
-    FsmEvent() {}
+    FsmEvent():event_type_(0), event_data_(0) {}
     FsmEvent(UINT uEventType) { event_type_ = uEventType; }
 
     void set_evt_type(UINT utype) { event_type_ = utype; }

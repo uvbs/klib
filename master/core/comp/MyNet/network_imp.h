@@ -81,7 +81,7 @@ public:
         struct recv_info
         {
             net_overLapped*     lpOverlapped;
-            DWORD		        dwByteTransfered;
+            DWORD               dwByteTransfered;
             BOOL                bResult;
         } recv_info;
 

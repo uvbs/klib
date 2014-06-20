@@ -186,7 +186,7 @@ using klib::debug::get_formator;
 // 条件成功的时候记录日志
 #define LOG_IF(expr) \
     if( !(expr) ) ; \
-  else get_formator(Logger::instance()).set_ctx(ENSURE_DEBUG_ALERT, \
+  else get_formator(klib::debug::Logger::instance()).set_ctx(ENSURE_DEBUG_ALERT, \
                 #expr,\
                 __FILE__,\
                 __LINE__).LOG_FORMATOR_A

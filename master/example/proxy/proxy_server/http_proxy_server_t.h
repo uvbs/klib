@@ -16,14 +16,14 @@ typedef mem_buffer<1024*1024, 1024, FALSE> buffer_list_type;
 
 enum http_proxy_status
 {
-    status_local_read,
+    status_local_read = 1,
     status_connect_remote,
     status_interact,
 };
 
 enum http_proxy_event
 {
-    event_connect,
+    event_connect = 1,
     event_disconnect,
     event_read,
     event_send,
@@ -64,17 +64,17 @@ public:
 
 BEGIN_STATE_DECLARE(local_read_state, status_local_read)
 
-virtual void OnEvent(FsmEvent* e, UINT& uNewStateID);
+virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 END
 
 BEGIN_STATE_DECLARE(connect_remote_state, status_connect_remote)
 
-virtual void OnEvent(FsmEvent* e, UINT& uNewStateID);
+virtual void on_event(FsmEvent* e, UINT& uNewStateID);
 END
 
 BEGIN_STATE_DECLARE(interactive_state, status_interact)
 
-virtual void OnEvent(FsmEvent* e, UINT& uNewStateID) ;
+virtual void on_event(FsmEvent* e, UINT& uNewStateID) ;
 END
 
 
@@ -113,8 +113,7 @@ protected:
     virtual void on_disconnect(net_conn_ptr pconn);
 
 public:
-    lock_map<net_conn_ptr, http_prxy_context*>              conn_session_map_;
-    CObjectPool<http_prxy_context, 10000, 10000>            proxy_ctx_pool_;
-    buffer_list_type                                        recv_buff_;
+    CObjectPool<http_prxy_context, 20000, 10000>            proxy_ctx_pool_;
+    uint64_t                                                connected_num_;
 };
 

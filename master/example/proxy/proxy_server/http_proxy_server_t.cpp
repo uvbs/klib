@@ -96,15 +96,17 @@ bool extract_content(const std::string& str, std::string& content)
         content = str;
     }
 
-
     // 去除Proxy参数
     content = klib::util::replaceMid(content, "Proxy-", "\r\n", "");
 
     return true;
 }
 
-void local_read_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void local_read_state::on_event(FsmEvent* e, UINT& uNewStateID)
 {
+    KLIB_ASSERT(e->get_evt_type() == event_read ||
+                e->get_evt_type() == event_disconnect);
+
     if (e->get_evt_type() == event_disconnect) 
     {
         //do nothing
@@ -117,25 +119,31 @@ void local_read_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
         // 解析,如果成功的话，则发送数据
         int index = evt->ctx_->recv_buff_.find("\r\n\r\n", 4, 0, false);
         if (-1 == index) {
-            printf("recv not ok: %.*s", evt->len, evt->buff);
+            // 继续收头部数据
             return;
         }
-
-        uNewStateID = status_connect_remote;
 
         std::string str_host;
         USHORT uport;
         std::string str_req;
         str_req.resize(evt->ctx_->recv_buff_.size());
-        evt->ctx_->recv_buff_.copy((char*)str_req.c_str(), 0, evt->ctx_->recv_buff_.size());
+        evt->ctx_->recv_buff_.copy(
+            (char*)str_req.c_str(), 
+            0, 
+            evt->ctx_->recv_buff_.size());
 
         if (extract_info(str_req, str_host, uport)) 
         {
-            net_conn_ptr new_conn = evt->svr_->get_network()->try_connect(str_host.c_str(), uport, evt->ctx_);
+            net_conn_ptr new_conn = evt->svr_->get_network()->try_connect(
+                str_host.c_str(), 
+                uport, 
+                evt->ctx_);
             if (nullptr != new_conn) 
             {
-                printf("try connect: %s:%d success !!!\r\n", str_host.c_str(), uport);
-                evt->svr_->conn_session_map_.add_item(new_conn, evt->ctx_);
+                http_prxy_context* ctx = (http_prxy_context*)evt->pconn->get_bind_key();
+                ctx->remote_conn_ = new_conn;
+
+                uNewStateID = status_connect_remote;
             }
             else
             {
@@ -145,43 +153,49 @@ void local_read_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
         }
         else
         {
-            printf("failed :%.*s ~~~~~~ \r\n", evt->len, evt->buff);
+            printf("extract info failed :%.*s ~~~~~~ \r\n", evt->len, evt->buff);
             evt->ctx_->local_conn_->dis_connect();
         }
     }
 }
 
-void connect_remote_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void connect_remote_state::on_event(FsmEvent* e, UINT& uNewStateID)
 {
-    //KLIB_ASSERT(e->get_evt_type() == event_connect);
+    KLIB_ASSERT(e->get_evt_type() == event_connect||
+                e->get_evt_type() == event_disconnect);
+
     if (e->get_evt_type() == event_connect) 
     {
         proxy_event_connect* evt = (proxy_event_connect*)e;
         if (!evt->bConnected) 
         {
             evt->ctx_->local_conn_->dis_connect();
-            printf("connect %s:%d failed ~~~~~~ \r\n", evt->pconn->get_peer_addr_str(), evt->pconn->get_peer_port());
+            printf("connect %s:%d failed ~~~~~~ \r\n", 
+                evt->pconn->get_peer_addr_str(), 
+                evt->pconn->get_peer_port());
             return;
         }
         evt->ctx_->remote_conn_ = evt->pconn;
 
         std::string str_req;
         str_req.resize(evt->ctx_->recv_buff_.size());
-        evt->ctx_->recv_buff_.copy((char*)str_req.c_str(), 0, evt->ctx_->recv_buff_.size());
+        evt->ctx_->recv_buff_.copy((char*)str_req.c_str(), 
+            0, 
+            evt->ctx_->recv_buff_.size());
 
         std::string content;
         if (extract_content(str_req, content)) 
         {
-            evt->svr_->get_network()->try_write(evt->pconn, content.c_str(), content.size());
+            evt->svr_->get_network()->try_write(evt->pconn, 
+                content.c_str(), 
+                content.size());
         }
-
-        printf("connect %s:%d success !!! \r\n", evt->pconn->get_peer_addr_str(), evt->pconn->get_peer_port());
 
         uNewStateID = status_interact;
     }
 }
 
-void interactive_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
+void interactive_state::on_event(FsmEvent* e, UINT& uNewStateID)
 {
     KLIB_ASSERT(e->get_evt_type() == event_read ||
         e->get_evt_type() == event_disconnect);
@@ -192,27 +206,23 @@ void interactive_state::OnEvent(FsmEvent* e, UINT& uNewStateID)
         
         if (evt->pconn == evt->ctx_->local_conn_) 
         {
-            evt->svr_->get_network()->try_write(evt->ctx_->remote_conn_, evt->buff, evt->len);
-
-            printf("interactive %s -> %s  \r\n", 
-                evt->ctx_->remote_conn_->get_peer_addr_str(),
-                evt->ctx_->local_conn_->get_peer_addr_str());
+            evt->svr_->get_network()->try_write(evt->ctx_->remote_conn_, 
+                evt->buff, 
+                evt->len);
         }
         else
         {
-            evt->svr_->get_network()->try_write(evt->ctx_->local_conn_, evt->buff, evt->len);
-
-            printf("interactive %s -> %s \r\n", 
-                evt->ctx_->local_conn_->get_peer_addr_str(),
-                evt->ctx_->remote_conn_->get_peer_addr_str());
+            evt->svr_->get_network()->try_write(evt->ctx_->local_conn_, 
+                evt->buff, 
+                evt->len);
         }
-
     }
 }
 
 //----------------------------------------------------------------------
 //
-http_proxy_server_t::http_proxy_server_t(void)
+http_proxy_server_t::http_proxy_server_t(void):
+    connected_num_(0)
 {
 }
 
@@ -223,10 +233,6 @@ http_proxy_server_t::~http_proxy_server_t(void)
 void http_proxy_server_t::on_accept(net_conn_ptr listen_conn, net_conn_ptr accept_conn, bool bsuccess /*= true*/)
 {
     http_prxy_context* ctx = NULL;
-    if (conn_session_map_.get_item(listen_conn, ctx)) 
-    {
-        return;
-    }
 
     if (!bsuccess) {
         return;
@@ -235,16 +241,13 @@ void http_proxy_server_t::on_accept(net_conn_ptr listen_conn, net_conn_ptr accep
     ctx = proxy_ctx_pool_.Alloc();
     ctx->local_conn_ = accept_conn;
     ctx->fsm_.start();
-
-    conn_session_map_.add_item(accept_conn, ctx);
+    ctx->local_conn_->set_bind_key(ctx);
+    KLIB_ASSERT(ctx->fsm_.get_cur_state_id() == status_local_read);
 }
 
 void http_proxy_server_t::on_connect(net_conn_ptr pconn, bool bConnected)
 {
-    http_prxy_context* ctx;
-    bool bret = conn_session_map_.get_item(pconn, ctx);
-    if (!bret) 
-        return;
+    http_prxy_context* ctx = (http_prxy_context*) pconn->get_bind_key();
 
     proxy_event_connect evt;
     evt.set_evt_type(event_connect) ;
@@ -255,16 +258,13 @@ void http_proxy_server_t::on_connect(net_conn_ptr pconn, bool bConnected)
     evt.svr_  = this;
     ctx->fsm_.on_event(&evt);
 
+    ++ connected_num_;
     return;
 }
 
 void http_proxy_server_t::on_read(net_conn_ptr pconn, const char* buff, size_t len)
 {
-    http_prxy_context* ctx;
-    if (!conn_session_map_.get_item(pconn, ctx)) 
-    {
-        return;
-    }
+    http_prxy_context* ctx = (http_prxy_context*) pconn->get_bind_key();
 
     proxy_event_read evt;
     evt.set_evt_type(event_read);
@@ -279,43 +279,37 @@ void http_proxy_server_t::on_read(net_conn_ptr pconn, const char* buff, size_t l
 
 void http_proxy_server_t::on_disconnect(net_conn_ptr pconn)
 {
-    http_prxy_context* ctx;
-    if (conn_session_map_.get_item(pconn, ctx)) 
+    http_prxy_context* ctx = (http_prxy_context*) pconn->get_bind_key();
+
+    proxy_event_disconnect evt;
+    evt.set_evt_type(event_disconnect);
+    evt.pconn = pconn;
+    evt.ctx_  = ctx;
+    evt.svr_  = this;
+    ctx->fsm_.on_event(&evt);
+
+    //----------------------------------------------------------------------
+    if (ctx->local_conn_ == pconn) 
     {
-        proxy_event_disconnect evt;
-        evt.set_evt_type(event_disconnect);
-        evt.pconn = pconn;
-        evt.ctx_  = ctx;
-        evt.svr_  = this;
-        ctx->fsm_.on_event(&evt);
-
-        //----------------------------------------------------------------------
-        if (ctx->local_conn_ == pconn) 
+        printf("local connection disconnect ~~~~~~ \r\n");
+        if (ctx->remote_conn_) 
         {
-            printf("local connection disconnect ~~~~~~ \r\n");
-            if (ctx->remote_conn_) 
-            {
-                ctx->remote_conn_->dis_connect();
-            }
+            ctx->remote_conn_->dis_connect();
         }
-        else
-        {
-            printf("remote connection disconnect ~~~~~~ \r\n");
-            ctx->local_conn_->dis_connect();
-        }
-
-        conn_session_map_.remove_item(pconn);
-
-        //@todo 释放ctx的时间问题
-        if ((nullptr == ctx->local_conn_ || ctx->local_conn_.use_count() == 1) &&
-            nullptr == ctx->remote_conn_ || ctx->remote_conn_.use_count() == 1) 
-        {
-            proxy_ctx_pool_.Free(ctx);
-        }
-
     }
     else
     {
-        printf("conn_session_map_.get_item(pconn, ctx) failed \r\n");
+        printf("remote connection disconnect ~~~~~~ \r\n");
+        ctx->local_conn_->dis_connect();
+    }
+
+    //@todo 释放ctx的时间问题
+    if ((nullptr == ctx->local_conn_ || ctx->local_conn_.use_count() == 1) &&
+        nullptr == ctx->remote_conn_ || ctx->remote_conn_.use_count() == 1) 
+    {
+        proxy_ctx_pool_.Free(ctx);
+
+        printf("ctx freed connected num: %llu \r\n", connected_num_);
+        -- connected_num_;
     }
 }

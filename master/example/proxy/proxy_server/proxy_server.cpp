@@ -26,6 +26,8 @@ int _tmain(int argc, _TCHAR* argv[])
     std::string str_content;
     extract_content(test_str, str_content);
 
+     system("color 03");
+
     proxy_server_t* p = proxy_server_t::instance();
     p->start();
 

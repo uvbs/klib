@@ -18,7 +18,7 @@ using namespace klib::util;
 class net_conn_mgr_i_imp : public net_conn_mgr_i
 {
 public:
-    net_conn_mgr_i_imp(void);
+    net_conn_mgr_i_imp();
     ~net_conn_mgr_i_imp(void);
 
 public:

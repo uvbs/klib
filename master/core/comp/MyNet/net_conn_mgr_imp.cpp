@@ -2,9 +2,10 @@
 
 #include "net_conn.h"
 #include "net_conn_mgr_imp.h"
+#include "network_imp.h"
 
 
-net_conn_mgr_i_imp::net_conn_mgr_i_imp(void)
+net_conn_mgr_i_imp::net_conn_mgr_i_imp()
 {
     conn_timeout_ = 2*60 * 1000;
 

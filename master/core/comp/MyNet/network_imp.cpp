@@ -50,7 +50,7 @@ bool network_worker::on_recv_ctx(worker_context*& ctx)
     auto dwByteTransfered = ctx->recv_info.dwByteTransfered;
     auto lpOverlapped = ctx->recv_info.lpOverlapped;
     auto bResult = ctx->recv_info.bResult;
-    auto pConn = ctx->pConn;
+    auto pConn = ctx->pConn.lock();
     network_imp* pimp = ctx->network_;
 
     ON_SCOPE_EXIT(
@@ -136,7 +136,7 @@ bool network_worker::on_send_ctx(worker_context*& ctx)
     );
 
     auto pimp  = ctx->network_;
-    auto pConn = ctx->pConn;
+    auto pConn = ctx->pConn.lock();
     auto buff  = ctx->send_info.buff_ptr_;
     auto len   = ctx->send_info.buff_len_;
     if (0 == len || NULL == pConn) {
@@ -192,7 +192,7 @@ bool network_imp::init_network(inet_tcp_handler* handler,
 
     init_threads(thread_num);
     init_workers(worker_num);
-    net_conn_mgr_i_.reset(new net_conn_mgr_i_imp);
+    net_conn_mgr_i_.reset(new net_conn_mgr_i_imp());
 
     return true;
 }
@@ -206,9 +206,18 @@ bool network_imp::try_write(net_conn_ptr pconn, const char* buff, size_t len)
     char* pbuff = new char[len];
     if (NULL == pbuff) 
         return false;
+    scope_guard buff_guard([&]()
+    { 
+        if(nullptr != pbuff){ delete[]pbuff;} 
+    });
 
     memcpy(pbuff, buff, len);
     worker_context* ctx = g_worker_contex_pool_.Alloc();
+    if (nullptr == ctx) {
+        return false;
+    }
+    buff_guard.dismiss();
+
     ctx->network_  = this;
     ctx->pConn     = pconn;
     ctx->ctx_type_ = context_send_ctx;
@@ -666,17 +675,16 @@ void network_imp::on_connect(net_conn_ptr pConn, bool bsuccess)
     if (bsuccess)
     {
 #ifdef _DEBUG
-    if (net_conn_mgr_i_) 
-    {
-        if (net_conn_mgr_i_->is_exist_conn(pConn)) 
+        if (net_conn_mgr_i_) 
         {
-            _ASSERT(FALSE && "连接添加错误，设计错误");
+            if (net_conn_mgr_i_->is_exist_conn(pConn)) 
+            {
+                _ASSERT(FALSE && "连接添加错误，设计错误");
+            }
         }
-    }
-
 #endif
 
-    net_conn_mgr_i_->add_conn(pConn);
+        net_conn_mgr_i_->add_conn(pConn);
     }
 
 
@@ -779,6 +787,10 @@ void network_imp::worker_thread_(void* param)
         KLIB_ASSERT(lpOverlapped->op_conn_.get());
 
         worker_context* ctx = g_worker_contex_pool_.Alloc();
+        scope_guard ctx_guard([&]()
+        { 
+            if(nullptr != ctx){g_worker_contex_pool_.Free(ctx);} 
+        });
         if (nullptr == ctx || nullptr == lpOverlapped->op_conn_.get()) 
         {
             return;
@@ -791,7 +803,8 @@ void network_imp::worker_thread_(void* param)
         ctx->recv_info.bResult            = bResult;
         ctx->recv_info.dwByteTransfered   = dwByteTransfered;
         ctx->recv_info.lpOverlapped       = lpOverlapped;
-        get_worker(ctx->pConn.get())->send(ctx);
+        get_worker(ctx->pConn.lock().get())->send(ctx);
+        ctx_guard.dismiss();
     }
 
     return;

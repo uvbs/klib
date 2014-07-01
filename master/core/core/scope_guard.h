@@ -12,7 +12,7 @@ scope_guard onExit([&] {
     CloseHandle(h);
     MessageBox(NULL, _T("sss"), _T("sss"), 0);
 });
-onExit.Dismiss();
+onExit.dismiss();
 
 ON_SCOPE_EXIT
 (
@@ -48,7 +48,7 @@ public:
         }
     }
 
-    void Dismiss()
+    void dismiss()
     {
         dismissed_ = true;
     }

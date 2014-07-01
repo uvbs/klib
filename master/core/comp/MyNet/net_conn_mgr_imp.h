@@ -22,10 +22,10 @@ public:
     ~net_conn_mgr_i_imp(void);
 
 public:
-    virtual bool add_conn(net_conn_ptr pConn) ;
-    virtual bool del_conn(net_conn_ptr pConn) ;
+    virtual bool add_conn(net_conn_weak_ptr pConn) ;
+    virtual bool del_conn(net_conn_weak_ptr pConn) ;
 
-    virtual bool is_exist_conn(const net_conn_ptr& pConn) ;
+    virtual bool is_exist_conn(const net_conn_weak_ptr& pConn) ;
     virtual bool set_conn_timeout(size_t tm_seconds); ///< 设置连接超时时间
     virtual size_t get_conn_count() ;
 
@@ -34,15 +34,15 @@ protected:
 
 protected:
     // time out
-    size_t                          conn_timeout_;
-    timeout_checker<net_conn_ptr>   conn_tmout_checker_;
+    size_t                               conn_timeout_;
+    timeout_checker<net_conn_weak_ptr>   conn_tmout_checker_;
 
     timer_mgr                       tmr_mgr_;
     klib::kthread::mutex            mutex_;
 
 protected:
     klib::stl::lock_bucket_map<net_conn*, 
-        net_conn_ptr, 
+        net_conn_weak_ptr, 
         NETCONNECTION_ARRAY_LENGTH>  
         conn_list_x_;
 

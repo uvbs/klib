@@ -131,5 +131,6 @@ protected:
 };
 
 typedef std::shared_ptr<net_conn> net_conn_ptr;
+typedef std::weak_ptr<net_conn>   net_conn_weak_ptr;
 
 #endif

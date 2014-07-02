@@ -37,9 +37,10 @@ public:
 
 
 protected:
-    char* bitmap_ ;  
-    int size_ ;  
-    int start_; 
+    char* bitmap_ ;
+    int contain_size_;
+    int bucket_size_ ;
+    int start_;
 
 };
 

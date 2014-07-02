@@ -62,40 +62,13 @@ public:
     net_conn_ptr pconn;
 };
 
-BEGIN_STATE_DECLARE(local_read_state, status_local_read)
-
-virtual void on_event(FsmEvent* e, UINT& uNewStateID);
-END
-
-BEGIN_STATE_DECLARE(connect_remote_state, status_connect_remote)
-
-virtual void on_event(FsmEvent* e, UINT& uNewStateID);
-END
-
-BEGIN_STATE_DECLARE(interactive_state, status_interact)
-
-virtual void on_event(FsmEvent* e, UINT& uNewStateID) ;
-END
-
-
-///< 状态机的定义
-BEGIN_FSM(http_proxy_fsm)
-    BEGIN_REGISTER_STATE()
-        REGISTER_INIT_STATE(local_read_state)
-        REGISTER_STATE(connect_remote_state)
-        REGISTER_STATE(interactive_state)
-    END_REGISTER_STATE
-
-public:
-
-END
-
-
 class http_prxy_context : public proxy_context
 {
 public:
+    http_prxy_context() :status_(status_local_read) {}
+
     buffer_list_type recv_buff_;
-    http_proxy_fsm   fsm_;
+    http_proxy_status status_;
 };
 
 typedef http_prxy_context http_prxy_context_ptr;
@@ -107,13 +80,18 @@ public:
     ~http_proxy_server_t(void);
 
 protected:
-    virtual void on_accept(net_conn_ptr listen_conn, net_conn_ptr accept_conn, bool bsuccess);
-    virtual void on_connect(net_conn_ptr pconn, bool bConnected);
-    virtual void on_read(net_conn_ptr pconn, const char* buff, size_t len);
+    virtual void on_accept(net_conn_ptr listen_conn, 
+        net_conn_ptr accept_conn, 
+        bool bsuccess);
+    virtual void on_connect(net_conn_ptr pconn, 
+        bool bConnected);
+    virtual void on_read(net_conn_ptr pconn, 
+        const char* buff, 
+        size_t len);
     virtual void on_disconnect(net_conn_ptr pconn);
 
 public:
-    CObjectPool<http_prxy_context, 20000, 10000>            proxy_ctx_pool_;
-    uint64_t                                                connected_num_;
+    CObjectPool<http_prxy_context, 20000, 10000>       proxy_ctx_pool_;
+    uint64_t                                           connected_num_;
 };
 

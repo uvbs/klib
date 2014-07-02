@@ -29,7 +29,7 @@ size_type std_find(const char_type* str,
 
     const char_type* cur_pos = str;
     const char_type* end_pos = str + str_len - src_len;
-    for (; cur_pos < end_pos; ++cur_pos)
+    for (; cur_pos <= end_pos; ++cur_pos)
     {
         if (0 == std::char_traits<char_type>::compare(cur_pos, src, src_len))
         {
@@ -85,7 +85,7 @@ size_type find(const T& t, const T& str)
 
 
 // 快速查找帮助类
-template<typename TString>
+template<typename TString, int t_stack_size=1024>
 class quick_search
 {
     typedef typename TString::traits_type::char_type char_type;
@@ -147,7 +147,7 @@ public:
     }
     
 protected:
-    kmp<TString, 1024> m_kmp;
+    kmp<TString, t_stack_size> m_kmp;
 
     const char_type* m_str;
     size_type  m_len;

@@ -199,16 +199,16 @@ public:
 
 //----------------------------------------------------------------------
 // µ÷ÊÔ´°¿Ú
-class CDebugConsole
+class debug_console
 {
 public:
-    static CDebugConsole* GetInstance()
+    static debug_console* GetInstance()
     {
-        static CDebugConsole* _instance = new CDebugConsole;
+        static debug_console* _instance = new debug_console;
         return _instance;
     }
 
-    ~CDebugConsole(void)
+    ~debug_console(void)
     {
         fclose(stderr);
         fclose(stdout);
@@ -217,7 +217,7 @@ public:
     }
 
 private:
-    CDebugConsole(void)
+    debug_console(void)
     {
         AllocConsole();   
         SetConsoleTitle(_T("Debug Console"));
@@ -225,8 +225,8 @@ private:
         freopen("conout$", "w+t", stdout);   
         freopen("conout$", "w+t", stderr);   
     }
-    CDebugConsole(const CDebugConsole&);
-    CDebugConsole& operator=(const CDebugConsole&);
+    debug_console(const debug_console&);
+    debug_console& operator=(const debug_console&);
 };
 
 

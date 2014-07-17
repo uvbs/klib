@@ -30,21 +30,33 @@ bool file::is_file_exists(LPCTSTR pszFilePath)
     return GetFileAttributes(pszFilePath) != -1;
 }
 
-bool file::write_file_content(const tstring& src_file, const LPCTSTR lpszContent, size_t nlen)
+bool file::write_file(const tstring& src_file, const LPCTSTR lpszContent, size_t nlen)
 {
-    FILE* fFile;
-    _tfopen_s(&fFile, src_file.c_str(), _T("wb"));
+    FILE* hfile;
+    _tfopen_s(&hfile, src_file.c_str(), _T("wb"));
 
-    size_t szTextLen = nlen;
-    size_t lWrite    = fwrite(lpszContent, sizeof(TCHAR), szTextLen,  fFile);
-    fclose(fFile);
+    size_t lWrite    = fwrite(lpszContent, sizeof(TCHAR), nlen, hfile);
+    fclose(hfile);
 
-    if (lWrite != lWrite)
+    if (nlen != lWrite)
         return false ;
     return true;
 }
 
+bool file::write_file_append(const tstring& src_file, 
+    const LPCTSTR lpszContent, 
+    size_t nlen)
+{
+    FILE* hfile;
+    _tfopen_s(&hfile, src_file.c_str(), _T("ab"));
 
+    size_t lWrite    = fwrite(lpszContent, sizeof(TCHAR), nlen,  hfile);
+    fclose(hfile);
+
+    if (nlen != lWrite)
+        return false ;
+    return true;
+}
 
 
 }}

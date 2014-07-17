@@ -41,6 +41,7 @@ public:
 
 public:
     static BOOL create_directorys(const tstring& szPath);   ///< µÝ¹é´´½¨Ä¿Â¼
+    static BOOL delete_directorys(const tstring& szPath);
 
 protected:
     tstring path_;

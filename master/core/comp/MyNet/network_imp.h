@@ -73,15 +73,15 @@ class network_imp;
 class worker_context
 {
 public:
-    contex_type         ctx_type_;
-    network_imp*       network_;
-    net_conn_ptr           pConn;
+    contex_type                 ctx_type_;
+    network_imp*                network_;
+    std::weak_ptr<net_conn>     pConn;
     union
     {
         struct recv_info
         {
             net_overLapped*     lpOverlapped;
-            DWORD		        dwByteTransfered;
+            DWORD               dwByteTransfered;
             BOOL                bResult;
         } recv_info;
 

@@ -2,7 +2,7 @@
 
 #include "../istddef.h"
 
-tstring GetFirstLetter(LPCTSTR strName)
+tstring get_first_letter(LPCTSTR strName)
 {
     static int li_SecPosValue[] = {
         1601, 1637, 1833, 2078, 2274, 2302, 2433, 2594, 2787, 3106, 3212,

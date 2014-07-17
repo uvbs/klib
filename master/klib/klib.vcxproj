@@ -111,7 +111,6 @@
     <ClInclude Include="..\core\core\ini_file.h" />
     <ClInclude Include="..\core\core\kdetect_leakk.h" />
     <ClInclude Include="..\core\core\lock_stl.h" />
-    <ClInclude Include="..\core\core\logger.h" />
     <ClInclude Include="..\core\core\mem_buffer.h" />
     <ClInclude Include="..\core\core\mem_list.h" />
     <ClInclude Include="..\core\core\mem_string.h" />
@@ -174,13 +173,14 @@
     <ClInclude Include="..\core\net\wininet_httpclient.h" />
     <ClInclude Include="..\core\net\winsock_init.h" />
     <ClInclude Include="..\core\pattern\actor.h" />
-    <ClInclude Include="..\core\pattern\aspec.h" />
+    <ClInclude Include="..\core\pattern\aspect.h" />
     <ClInclude Include="..\core\pattern\factory.h" />
     <ClInclude Include="..\core\pattern\fsm.h" />
     <ClInclude Include="..\core\pattern\object_pool.h" />
     <ClInclude Include="..\core\pattern\object_reuser.h" />
     <ClInclude Include="..\core\pattern\qmem_pool.h" />
     <ClInclude Include="..\core\pattern\sync_invoke.h" />
+    <ClInclude Include="..\core\rdebug\logger.h" />
     <ClInclude Include="..\core\sys\cpu.h" />
     <ClInclude Include="..\core\sys\sys.h" />
     <ClInclude Include="..\core\ui\window.h" />

@@ -6,6 +6,7 @@
 #include <windows.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "../inttype.h"
 
 
 //@todo 添加使用说明
@@ -13,12 +14,13 @@
 namespace klib {
 namespace encode{
 
-
+/* // 因为类型冲突 
 #ifdef __alpha
 typedef unsigned int uint32;
 #else
 typedef unsigned long uint32;
 #endif
+*/
 
 #include <TCHAR.H>
 

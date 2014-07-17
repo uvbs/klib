@@ -23,3 +23,4 @@
 using namespace klib::core;
 
 #include <klib_link.h>
+#include <rdebug/logger.h>

@@ -387,6 +387,79 @@ int main(void){
 
 */
 
+
+/*
+// 内建设置做转发
+// ZeroMQ提供了三种内建的设备：
+// QUEUE 用作请求-应答代理，要求ROUTER/DEALER套接字对 
+// FORWARDER 用作发布-订阅代理，要求PUB/SUB套接字对 
+// STREAMER 与FORWARDER相似，只是用于管线流程，要求PULL/PUSH套接字对 
+
+
+#include <zmq.h>
+#include <zmq_helpers.h>
+#include <stdio.h>
+#pragma comment(lib,"libzmq-v100-mt.lib")
+int main(void)
+{
+    void* ctx = zmq_ctx_new();
+    void* frontend = zmq_socket(ctx,ZMQ_ROUTER);
+    zmq_bind(frontend,"tcp://*:5559");
+    void* backend = zmq_socket(ctx,ZMQ_DEALER);
+    zmq_bind(backend,"tcp://*:5560");
+    zmq_device(ZMQ_QUEUE,frontend,backend);
+    zmq_close(frontend);
+    zmq_close(backend);
+    zmq_ctx_destroy(ctx);
+    return 0;
+}
+*/
+
+
+/*
+
+// 多线程版本
+
+#include <zmq.h>
+#include <zmq_helpers.h>
+#include <boost/thread.hpp>
+#include <stdio.h>
+#pragma comment(lib,"libzmq-v100-mt.lib")
+static void worker_proc(void* ctx){
+    void* responder = zmq_socket(ctx,ZMQ_REP);
+    zmq_connect(responder,"inproc://workers");
+    while(1){
+        zmq_msg_t request;
+        zmq_msg_init(&request);
+        zmq_recvmsg(responder,&request,0);
+        printf("收到%s\n",(char*)zmq_msg_data(&request));
+        zmq_msg_close(&request);
+        s_sleep(1000);
+        zmq_msg_t reply;
+        zmq_msg_init_size(&reply,6);
+        memcpy(zmq_msg_data(&reply),"World",6);
+        printf("发送World\n");
+        zmq_sendmsg(responder,&reply,0);
+        zmq_msg_close(&reply);
+    }
+}
+int main(void){
+    void* ctx = zmq_ctx_new();
+    void* frontend = zmq_socket(ctx,ZMQ_ROUTER);
+    zmq_bind(frontend,"tcp://*:5559");
+    void* backend = zmq_socket(ctx,ZMQ_DEALER);
+    zmq_bind(backend,"inproc://workers");
+    for(int idx = 0; idx < 5; ++idx){
+        boost::thread worker(worker_proc,ctx);
+    }
+    zmq_device(ZMQ_QUEUE,frontend,backend);
+    zmq_close(frontend);
+    zmq_close(backend);
+    zmq_ctx_destroy(ctx);
+    return 0;
+}
+*/
+
 static int64_t s_clock()
 {
     return time(nullptr);

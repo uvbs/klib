@@ -114,6 +114,7 @@
     <ClInclude Include="thread_safe_wrapper_test.h" />
     <ClInclude Include="timer_test.h" />
     <ClInclude Include="trie_test.h" />
+    <ClInclude Include="unzip_test.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

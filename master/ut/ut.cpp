@@ -50,6 +50,8 @@
 #include "third/letter.h"
 #include "timer_test.h"
 
+#include "unzip_test.h"
+
 #include <net/proto/net_archive.h>
 
 #define AS_MEMBER()
@@ -128,6 +130,7 @@ make_stats_mgr(test_mgr, aaadsd);
 int _tmain(int argc, _TCHAR* argv[])
 {
     std::cout << test_mgr::info() << std::endl;
+
 
     printf("\r\n");
 

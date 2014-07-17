@@ -294,7 +294,7 @@ int ziphelper::read_current_file(voidp buf, unsigned int len)
 
 bool ziphelper::extract_current_file(FILE* file)   
 {
-    char buf[1024];
+    char buf[2048];
     size_t size_buf = sizeof(buf);
 
     bool bOK = true;

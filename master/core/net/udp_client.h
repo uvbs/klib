@@ -57,7 +57,7 @@ public:
 	virtual BOOL send_to_svr(const char* buff, int iLen);
 
 private:
-	void work_thread(void* param);
+	void work_thread();
 
 	BOOL do_server();
 

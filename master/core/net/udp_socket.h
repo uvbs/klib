@@ -78,7 +78,7 @@ public:
 
 protected:
     ///< 处理函数
-    void work_func(void*);
+    void work_func();
 
 private:
 	BOOL		m_bInitSocket;		///< 初始套接字

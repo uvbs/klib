@@ -1,8 +1,11 @@
 #ifndef _active_object_h_
 #define _active_object_h_
 
+#include "../kthread/event.h"
 #include "../kthread/thread.h"
 #include "multi_buffer_queue.h"
+
+using namespace ::klib::kthread;
 
 namespace klib {
 namespace pattern {
@@ -14,7 +17,7 @@ class active_object
 {
 protected:
     /* worker function */
-    void work_fun(void*)  
+    void work_fun()  
     {
         msg_type t;
 
@@ -44,20 +47,20 @@ public:
     /* start object */
     void start()
     {
-        thread_.start(std::bind(&self_type::work_fun, this, std::placeholders::_1), NULL);
+        thread_.start(std::bind(&self_type::work_fun, this));
     }
 
     /* stop object */
     void stop()  
     {
-        thread_.exit(true);   
+        thread_.exit(true);
         thread_.wait();
     }
 
     /* send message */
     bool send(msg_type t) 
     { 
-        auto ret = queue_.push(t); 
+        auto ret = queue_.push(t);
         if (queue_.size() <= 1) {
             evt_.signal();
         }

@@ -160,7 +160,7 @@ protected:
     network_worker* get_worker(void*);                                     ///< 获取worker
 
 protected:
-    void worker_thread_(void* param);                                       ///< 工作线程
+    void worker_thread_();                                       ///< 工作线程
     void check_and_disconnect(net_conn_ptr pConn);                             ///< 判断在套接字上还有没有未处理的投递请求，如果没有了则断开连接
 
 private:

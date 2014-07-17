@@ -351,6 +351,9 @@
     <ClInclude Include="..\core\rdebug\logger.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\util\perf_tool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -495,6 +498,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\rdebug\log_helper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\perf_tool.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

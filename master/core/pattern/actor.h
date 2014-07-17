@@ -94,7 +94,7 @@ public:
     bool stop();
 
 protected:
-    void engine_loop(void*);
+    void engine_loop();
     void add_task(actor_base* act, size_t num);
     void actor_task(actor_base* act, size_t exec_num);
 

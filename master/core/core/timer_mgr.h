@@ -70,7 +70,7 @@ public:
     size_t size() const;
 
 protected:
-    void worker(void* p);
+    void worker();
 
 protected:
     struct lessfun

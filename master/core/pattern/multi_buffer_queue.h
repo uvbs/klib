@@ -5,7 +5,7 @@
 #include <queue>
 #include <list>
 
-#include "..\kthread\auto_lock.h"
+#include "../kthread/auto_lock.h"
 
 
 typedef klib::kthread::mutex MutexType;

@@ -188,6 +188,7 @@
     <ClInclude Include="..\core\util\buffer_reader.h" />
     <ClInclude Include="..\core\util\convert.h" />
     <ClInclude Include="..\core\util\mem_check.h" />
+    <ClInclude Include="..\core\util\perf_tool.h" />
     <ClInclude Include="..\core\util\shell_link.h" />
     <ClInclude Include="..\core\util\strutil.h" />
     <ClInclude Include="..\core\util\timeout_checker.h" />
@@ -239,6 +240,7 @@
     <ClCompile Include="..\core\sys\sys.cpp" />
     <ClCompile Include="..\core\ui\window.cpp" />
     <ClCompile Include="..\core\util\buffer_reader.cpp" />
+    <ClCompile Include="..\core\util\perf_tool.cpp" />
     <ClCompile Include="..\core\util\shell_link.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />
   </ItemGroup>

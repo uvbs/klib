@@ -21,7 +21,7 @@ engine::~engine()
 
 bool engine::init()
 {
-    Thread::thread_func_type f = std::bind(&engine::engine_loop, this, std::placeholders::_1);
+    Thread::thread_func_type f = std::bind(&engine::engine_loop, this);
     work_thread_.start(f);
 
     return true;
@@ -59,7 +59,7 @@ void engine::add_task(actor_base* act, size_t num)
     thread_pool_.add_task(func);
 };
 
-void engine::engine_loop(void*)
+void engine::engine_loop()
 {
     size_t exec_count = 0;
     bool need_sleep = true;

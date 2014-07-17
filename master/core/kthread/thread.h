@@ -24,7 +24,7 @@ Thread::thread_func_type f =
 class Thread
 {
 public:
-    typedef std::function<void(void*)> thread_func_type;
+    typedef std::function<void(void)> thread_func_type;
 
     enum TState
     {
@@ -37,13 +37,11 @@ public:
     struct param
     {
         Thread *    this_;
-        void *      other_;
     };
 
 public:
     Thread() : handle_(0), state_(TS_INVALID)
     {
-        param_.other_ = 0;
         param_.this_  = 0;
     }
     ~Thread()
@@ -51,11 +49,10 @@ public:
         state_ = TS_EXIT;
     }
 
-    bool start(const thread_func_type &thread_func, void *p = NULL )
+    bool start(const thread_func_type &thread_func)
     {
         assert( state_ == TS_INVALID && "thread::start : invalid call!" );
         param_.this_ = this;
-        param_.other_ = p;
         func_ = thread_func;
         auto handle = (HANDLE) ::_beginthreadex( NULL, 0, ThreadFunc, &param_, 0, (unsigned int*)&id_ );
         handle_.Attach(handle);
@@ -94,15 +91,15 @@ private:
     static unsigned int __stdcall ThreadFunc( void *p )
     {
         param *_param = (param*) p;
-        assert( _param != NULL && "ThreadFunc : invalid thread parameter!" );
         Thread *_thread = _param->this_ ;
+        
+        assert( _param != NULL && "ThreadFunc : invalid thread parameter!" );
         assert( _thread != NULL && "ThreadFunc : invalid thread parameter!" );
-
         assert( _thread->func_ && "thread : no thread function has been set!" );
 
-        _thread->func_( p );
-
+        _thread->func_();
         _thread->state_ = TS_INVALID;
+
         _endthreadex( 0 );
         return 0;
     }

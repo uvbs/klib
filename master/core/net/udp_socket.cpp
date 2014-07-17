@@ -118,8 +118,8 @@ BOOL udp_socket::enable_udpreset(BOOL bEnable/* = FALSE*/)
 
 BOOL udp_socket::start_async()
 {
-    klib::kthread::Thread::thread_func_type f = std::bind(&udp_socket::work_func, this, std::tr1::placeholders::_1);
-    thread_.start(f, NULL);
+    klib::kthread::Thread::thread_func_type f = std::bind(&udp_socket::work_func, this);
+    thread_.start(f);
 
     return TRUE;
 }
@@ -251,7 +251,7 @@ int udp_socket::recv_from(sockaddr_in* addrFrom, char* buff, int iBuffLen)
 	return ret;
 }
 
-void udp_socket::work_func(void*)
+void udp_socket::work_func()
 {
     DWORD dwWaitRet = 0;
     int   iRecvRet = 0;

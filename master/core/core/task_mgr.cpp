@@ -21,8 +21,8 @@ bool task_mgr::add_task(const task_func_type& fun)
 
 void task_mgr::start()
 {
-    Thread::thread_func_type fun = std::bind(&task_mgr::worker, this, std::tr1::placeholders::_1);
-    thread_.start(fun, NULL);
+    Thread::thread_func_type fun = std::bind(&task_mgr::worker, this);
+    thread_.start(fun);
 }
 
 void task_mgr::stop()
@@ -31,7 +31,7 @@ void task_mgr::stop()
     thread_.wait();
 }
 
-void task_mgr::worker(void* param)
+void task_mgr::worker()
 {
     while ( thread_.state() != Thread::TS_EXIT)
     {

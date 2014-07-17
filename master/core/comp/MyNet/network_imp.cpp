@@ -745,7 +745,7 @@ bool network_imp::init_threads(size_t thread_num)                 ///< Æô¶¯ÍøÂç²
     work_threads_.resize(thread_num_);
     for (auto itr = work_threads_.begin(); itr != work_threads_.end(); ++ itr)
     {
-        itr->start(std::bind(&network_imp::worker_thread_, this, std::placeholders::_1), 0);
+        itr->start(std::bind(&network_imp::worker_thread_, this));
     }
     return true;
 }
@@ -760,7 +760,7 @@ network_worker* network_imp::get_worker(void* p)
     return worker_mgr_.choose_worker(p);
 }
 
-void network_imp::worker_thread_(void* param)
+void network_imp::worker_thread_()
 {
     //Ê¹ÓÃÍê³É¶Ë¿ÚÄ£ĞÍ
     net_overLapped *lpOverlapped = nullptr;

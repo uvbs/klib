@@ -59,8 +59,8 @@ bool timer_mgr::start()
 {
     lastTick_ = 0;
 
-    Thread::thread_func_type f = std::bind(&timer_mgr::worker, this, std::tr1::placeholders::_1);
-    return thread_.start(f, NULL);
+    Thread::thread_func_type f = std::bind(&timer_mgr::worker, this);
+    return thread_.start(f);
 }
 
 void timer_mgr::stop()
@@ -69,7 +69,7 @@ void timer_mgr::stop()
     thread_.wait();
 }
 
-void timer_mgr::worker(void* p)
+void timer_mgr::worker()
 {
     AutoFinalizerHandle<HANDLE> handle_;
     HANDLE hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);

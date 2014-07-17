@@ -149,8 +149,8 @@ BOOL udp_client::start(BOOL bBlock)
 	}
 	else 
     {
-        klib::kthread::Thread::thread_func_type fun = std::bind(&udp_client::work_thread, this, std::tr1::placeholders::_1);
-        thread_.start(fun, NULL);
+        klib::kthread::Thread::thread_func_type fun = std::bind(&udp_client::work_thread, this);
+        thread_.start(fun);
 	}
 
 	return TRUE;
@@ -210,7 +210,7 @@ BOOL udp_client::send_to(const char* str_addr, USHORT port, const char*buff, int
 	return this->send_to(resolver.at(0), htons(port), buff, iLen);
 }
 
-void udp_client::work_thread(void* param)
+void udp_client::work_thread()
 {
     this->do_server();
 }

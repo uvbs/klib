@@ -32,7 +32,7 @@ public:
     size_t size() const;
 
 protected:
-    void worker(void* param);
+    void worker();
 
 protected:
     klib::kthread::Thread                   thread_;

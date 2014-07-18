@@ -1,6 +1,7 @@
 #ifndef _RW_LOCK_h_
 #define _RW_LOCK_h_
 
+#include "mutex.h"
 
 namespace klib {
 namespace kthread {
@@ -12,27 +13,26 @@ namespace kthread {
 
 
 ///< 读写锁
-class CReadWriteLock
+class read_write_lock
 {
 protected:
     int    m_currentLevel;
     int    m_readCount;  
     HANDLE m_unlockEvent;
     HANDLE m_accessMutex;
-    CRITICAL_SECTION m_csStateChange;
+
+    mutex state_change_mutex_;
     
 public:
-    CReadWriteLock()
+    read_write_lock()
     {
         m_currentLevel = LOCK_LEVEL_NONE;
         m_readCount    = 0;
         m_unlockEvent  = ::CreateEvent( NULL, TRUE, FALSE, NULL );
         m_accessMutex  = ::CreateMutex( NULL, FALSE, NULL );
-        ::InitializeCriticalSection( &m_csStateChange );
     }
-    ~CReadWriteLock()
+    ~read_write_lock()
     {
-        ::DeleteCriticalSection( &m_csStateChange );
         if ( m_accessMutex ) ::CloseHandle( m_accessMutex );
         if ( m_unlockEvent ) ::CloseHandle( m_unlockEvent );
     }
@@ -47,41 +47,41 @@ public:
         
         if ( level == LOCK_LEVEL_READ && m_currentLevel != LOCK_LEVEL_WRITE )
         {
-            ::EnterCriticalSection( &m_csStateChange );
+            guard gd(&state_change_mutex_);
+
             m_currentLevel = level;
             m_readCount += 1;
             ::ResetEvent( m_unlockEvent );
-            ::LeaveCriticalSection( &m_csStateChange );
         }
         else if ( level == LOCK_LEVEL_READ && m_currentLevel == LOCK_LEVEL_WRITE )
         {
             waitResult = ::WaitForSingleObject( m_unlockEvent, timeout );
             if ( waitResult == WAIT_OBJECT_0 )
             {
-                ::EnterCriticalSection( &m_csStateChange );
+                guard gd(&state_change_mutex_);
+
                 m_currentLevel = level;
                 m_readCount += 1;
                 ::ResetEvent( m_unlockEvent );
-                ::LeaveCriticalSection( &m_csStateChange );
             }
             else bresult = false;
         }
         else if ( level == LOCK_LEVEL_WRITE && m_currentLevel == LOCK_LEVEL_NONE )
         {
-            ::EnterCriticalSection( &m_csStateChange );
+            guard gd(&state_change_mutex_);
+
             m_currentLevel = level;
             ::ResetEvent( m_unlockEvent );
-            ::LeaveCriticalSection( &m_csStateChange );
         }
         else if ( level == LOCK_LEVEL_WRITE && m_currentLevel != LOCK_LEVEL_NONE )
         {
             waitResult = ::WaitForSingleObject( m_unlockEvent, timeout );
             if ( waitResult == WAIT_OBJECT_0 )
             {
-                ::EnterCriticalSection( &m_csStateChange );
+                guard gd(&state_change_mutex_);
+
                 m_currentLevel = level;
                 ::ResetEvent( m_unlockEvent );
-                ::LeaveCriticalSection( &m_csStateChange );
             }
             else bresult = false;
         }
@@ -93,7 +93,8 @@ public:
 	
 	bool unlock()
     {
-        ::EnterCriticalSection( &m_csStateChange );
+        guard gd(&state_change_mutex_);
+
         if ( m_currentLevel == LOCK_LEVEL_READ )
         {
             m_readCount --;
@@ -108,29 +109,28 @@ public:
             m_currentLevel = LOCK_LEVEL_NONE;
             ::SetEvent ( m_unlockEvent );
         }
-        ::LeaveCriticalSection( &m_csStateChange );
         
         return true;
     }
 
 public:
     ///< 自动加锁，解锁类
-    class CAutoLockRead
+    class auto_lock_read
     {
     public:
-        CAutoLockRead(CReadWriteLock& rwlock) : m_wrlock(rwlock) { m_wrlock.lock(LOCK_LEVEL_READ); }
-        ~CAutoLockRead() { m_wrlock.unlock(); }
+        auto_lock_read(read_write_lock& rwlock) : wrlock_(rwlock) { wrlock_.lock(LOCK_LEVEL_READ); }
+        ~auto_lock_read() { wrlock_.unlock(); }
     protected:
-        CReadWriteLock& m_wrlock;
+        read_write_lock& wrlock_;
     };
 
-    class CAutoLockWrite
+    class auto_lock_write
     {
     public:
-        CAutoLockWrite(CReadWriteLock& rwlock) : m_wrlock(rwlock) { m_wrlock.lock(LOCK_LEVEL_WRITE); }
-        ~CAutoLockWrite() { m_wrlock.unlock(); }
+        auto_lock_write(read_write_lock& rwlock) : wrlock_(rwlock) { wrlock_.lock(LOCK_LEVEL_WRITE); }
+        ~auto_lock_write() { wrlock_.unlock(); }
     protected:
-        CReadWriteLock& m_wrlock;
+        read_write_lock& wrlock_;
     };
 };
 

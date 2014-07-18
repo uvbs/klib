@@ -1,0 +1,28 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: spgnutls - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP286D.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\..\gnutls\include" /I "..\..\spserver" /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FR"Debug/" /Fp"Debug/spgnutls.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"E:\source\spserver\gnutls\spgnutls.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP286D.tmp" 
+Creating command line "link.exe -lib /nologo /out:"Debug\spgnutls.lib"  .\Debug\spgnutls.obj "
+<h3>Output Window</h3>
+Compiling...
+spgnutls.cpp
+E:\source\spserver\gnutls\spgnutls.cpp(30) : fatal error C1083: Cannot open include file: 'gnutls/gnutls.h': No such file or directory
+Error executing cl.exe.
+
+
+
+<h3>Results</h3>
+spgnutls.lib - 1 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

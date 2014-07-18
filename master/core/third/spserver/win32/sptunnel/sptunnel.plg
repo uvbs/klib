@@ -1,0 +1,127 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: spserver - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP5C59.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /FR"Debug/" /Fp"Debug/spserver.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"E:\source\spserver\spserver\spbuffer.cpp"
+"E:\source\spserver\spserver\spexecutor.cpp"
+"E:\source\spserver\spserver\sphandler.cpp"
+"E:\source\spserver\spserver\sphttp.cpp"
+"E:\source\spserver\spserver\sphttpmsg.cpp"
+"E:\source\spserver\spserver\spiochannel.cpp"
+"E:\source\spserver\spserver\spiocpdispatcher.cpp"
+"E:\source\spserver\spserver\spiocpevent.cpp"
+"E:\source\spserver\spserver\spiocplfserver.cpp"
+"E:\source\spserver\spserver\spiocpserver.cpp"
+"E:\source\spserver\spserver\spioutils.cpp"
+"E:\source\spserver\spserver\spmsgblock.cpp"
+"E:\source\spserver\spserver\spmsgdecoder.cpp"
+"E:\source\spserver\spserver\sprequest.cpp"
+"E:\source\spserver\spserver\spresponse.cpp"
+"E:\source\spserver\spserver\spsession.cpp"
+"E:\source\spserver\spserver\spsmtp.cpp"
+"E:\source\spserver\spserver\spthread.cpp"
+"E:\source\spserver\spserver\spthreadpool.cpp"
+"E:\source\spserver\spserver\sputils.cpp"
+"E:\source\spserver\spserver\spwin32buffer.cpp"
+"E:\source\spserver\spserver\spwin32iocp.cpp"
+"E:\source\spserver\spserver\spwin32port.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP5C59.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP5C5A.tmp" with contents
+[
+/nologo /out:"Debug\spserver.lib" 
+.\Debug\spbuffer.obj
+.\Debug\spexecutor.obj
+.\Debug\sphandler.obj
+.\Debug\sphttp.obj
+.\Debug\sphttpmsg.obj
+.\Debug\spiochannel.obj
+.\Debug\spiocpdispatcher.obj
+.\Debug\spiocpevent.obj
+.\Debug\spiocplfserver.obj
+.\Debug\spiocpserver.obj
+.\Debug\spioutils.obj
+.\Debug\spmsgblock.obj
+.\Debug\spmsgdecoder.obj
+.\Debug\sprequest.obj
+.\Debug\spresponse.obj
+.\Debug\spsession.obj
+.\Debug\spsmtp.obj
+.\Debug\spthread.obj
+.\Debug\spthreadpool.obj
+.\Debug\sputils.obj
+.\Debug\spwin32buffer.obj
+.\Debug\spwin32iocp.obj
+.\Debug\spwin32port.obj
+]
+Creating command line "link.exe -lib @C:\Users\ADMINI~1\AppData\Local\Temp\RSP5C5A.tmp"
+<h3>Output Window</h3>
+Compiling...
+spbuffer.cpp
+spexecutor.cpp
+sphandler.cpp
+sphttp.cpp
+sphttpmsg.cpp
+spiochannel.cpp
+spiocpdispatcher.cpp
+spiocpevent.cpp
+spiocplfserver.cpp
+spiocpserver.cpp
+spioutils.cpp
+spmsgblock.cpp
+spmsgdecoder.cpp
+sprequest.cpp
+spresponse.cpp
+spsession.cpp
+spsmtp.cpp
+spthread.cpp
+spthreadpool.cpp
+sputils.cpp
+spwin32buffer.cpp
+spwin32iocp.cpp
+spwin32port.cpp
+Creating library...
+<h3>
+--------------------Configuration: sptunnel - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP7B70.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "..\..\spserver" /I "..\..\openssl" /D "WIN32" /D "_DEBUG" /D "_CONSOLE" /D "_MBCS" /D "OPENSSL" /FR"Debug/" /Fp"Debug/sptunnel.pch" /YX /Fo"Debug/" /Fd"Debug/" /FD /GZ /c 
+"E:\source\spserver\spserver\spgetopt.c"
+"E:\source\spserver\sptunnel\sptunnel.cpp"
+"E:\source\spserver\sptunnel\sptunnelimpl.cpp"
+]
+Creating command line "cl.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP7B70.tmp" 
+Creating temporary file "C:\Users\ADMINI~1\AppData\Local\Temp\RSP7B71.tmp" with contents
+[
+libeay32MTd.lib ssleay32MTd.lib spopenssl.lib advapi32.lib mswsock.lib spserver.lib ws2_32.lib MSVCRTD.LIB /nologo /subsystem:console /incremental:yes /pdb:"Debug/sptunnel.pdb" /debug /machine:I386 /out:"Debug/sptunnel.exe" /pdbtype:sept /libpath:"..\Debug" /libpath:"..\spopenssl\Debug" /libpath:"..\..\..\OpenSSL\lib\VC" 
+.\Debug\spgetopt.obj
+.\Debug\sptunnel.obj
+.\Debug\sptunnelimpl.obj
+\source\spserver\win32\Debug\spserver.lib
+]
+Creating command line "link.exe @C:\Users\ADMINI~1\AppData\Local\Temp\RSP7B71.tmp"
+<h3>Output Window</h3>
+Compiling...
+spgetopt.c
+sptunnel.cpp
+sptunnelimpl.cpp
+Linking...
+LINK : fatal error LNK1104: cannot open file "libeay32MTd.lib"
+Error executing link.exe.
+
+
+
+<h3>Results</h3>
+sptunnel.exe - 1 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

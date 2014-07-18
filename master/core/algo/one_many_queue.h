@@ -11,7 +11,7 @@
 
 #include <stdint.h>
 #include <windows.h>
-#include "../core/atom.h"
+#include <kthread/atomic.h>
 
 
 #define  AtomDec  InterlockedDecrement

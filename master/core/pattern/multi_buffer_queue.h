@@ -92,7 +92,7 @@ public:
         }
 
         // ¶ÁÈ¡Êı¾İ
-        e = container_[read_index_].front();
+        e = std::move(container_[read_index_].front());
         container_[read_index_].pop();
         
         return true;

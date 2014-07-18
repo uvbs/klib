@@ -242,7 +242,7 @@ bool ziphelper::extract(const char* dir)
                 if (nullptr == hfile)
                 {
                     makedir(str_target.c_str());
-                    FILE* hfile = fopen(str_target.c_str(), "wb");
+                    hfile = fopen(str_target.c_str(), "wb");
                     if (nullptr == hfile)
                     {
                         this->close_current_file();

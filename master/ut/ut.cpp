@@ -17,6 +17,7 @@
 #include <kthread/atomic.h>
 #include <klib_link.h>
 #include <core/uuid.h>
+#include <core/timestamp.h>
 
 #include "find_tool_test.h"
 #include "faststring_test.h"

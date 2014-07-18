@@ -242,7 +242,7 @@ bool ziphelper::extract(const char* dir)
                 if (nullptr == hfile)
                 {
                     makedir(str_target.c_str());
-                    FILE* hfile = fopen(str_target.c_str(), "wb");
+                    hfile = fopen(str_target.c_str(), "wb");
                     if (nullptr == hfile)
                     {
                         this->close_current_file();
@@ -294,7 +294,7 @@ int ziphelper::read_current_file(voidp buf, unsigned int len)
 
 bool ziphelper::extract_current_file(FILE* file)   
 {
-    char buf[1024];
+    char buf[2048];
     size_t size_buf = sizeof(buf);
 
     bool bOK = true;

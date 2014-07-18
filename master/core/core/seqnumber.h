@@ -25,7 +25,7 @@ public:
     }
 
 protected:
-    auto_cs mutex_;
+    mutex mutex_;
     int64_t seq_;
 };
 

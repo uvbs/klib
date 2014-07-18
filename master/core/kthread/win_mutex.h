@@ -1,7 +1,7 @@
 
 
-#ifndef _Klib_Mutex_H
-#define _Klib_Mutex_H
+#ifndef _Klib_win_mutex_H
+#define _Klib_win_mutex_H
 
 #ifdef _MSC_VER
 #include <windows.h>

@@ -9,7 +9,6 @@
 #include <windows.h>
 #include <string>
 
-#include "log_helper.h"
 
 
 namespace klib{
@@ -27,17 +26,23 @@ enum LOG_LEVEL
     LOG_LEVEL_FETAL,
 };
 
-
-class log_writer
+class log_device_i
 {
 public:
-    void init(const std::string& path);
-    std::string get_file_name();
+    virtual ~log_device_i() {}
+    virtual size_t write(const char* buf, size_t buf_len) = 0;
+};
+
+class file_writer : public log_device_i
+{
+public:
+    file_writer(const char* file_name);
+    virtual ~file_writer();
+
     size_t write(const char* buf, size_t buf_len);
-    void write_time_header();
 
 protected:
-    std::string file_path_;
+    FILE* hfile_;
 };
 
 // 日志记录器
@@ -51,7 +56,7 @@ public:
     static Logger* instance();
     void init(const char* log_path);
     void uninit();
-    bool is_inited();
+    bool is_inited() const;
 
     void set_log_path(const char* log_path);
     void set_log_level(LOG_LEVEL level);
@@ -62,14 +67,16 @@ public:
     void write_log_a(LOG_LEVEL level, const char* format, ...);
 
 protected:
-    bool            is_inited_;
-    LOG_LEVEL       log_level_;     //日志的级别
+    std::string get_file_name();
+    void write_time_header(log_device_i*);
 
-    HANDLE          console_;
-    FILE*           hfile_;
+protected:
+    bool            is_inited_;     // 是否初始化
+    LOG_LEVEL       log_level_;     // 日志的级别
+
+    HANDLE          console_;       // 控制台
     std::string     log_path_;
     size_t          max_log_size_;
-    log_writer      log_writer_;
 };
 
 // 简单的日志记录管理

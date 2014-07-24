@@ -5,10 +5,12 @@
 
 
 
+#include "logger.h"
+
+
 namespace klib{
 namespace debug{
 
-class Logger;
 
 #define ENSURE_DEBUG_ALERT      (0x01)
 #define ENSURE_DEBUG_EXCEPTION  (0x02)
@@ -168,6 +170,11 @@ log_helper& log_helper::operator << (_type const src)
 
 inline log_helper get_formator(Logger* loger = nullptr) 
 {
+    if (nullptr == loger)
+    {
+        loger = logger_mgr::instance()->default_logger();
+    }
+
     return log_helper(loger); 
 }
 
@@ -191,7 +198,7 @@ using klib::debug::get_formator;
                 __FILE__,\
                 __LINE__).LOG_FORMATOR_A
 
-// 同上（但些宏有日志参数）
+// 同上（可以指定输出到哪个日志）
 #define LOG_IF_D(loger, expr) \
     if( !(expr) ) ; \
   else get_formator(loger).set_ctx(ENSURE_DEBUG_ALERT, \

@@ -19,69 +19,30 @@ namespace debug{
 
 //----------------------------------------------------------------------
 //
-void log_writer::init(const std::string& path)
+
+file_writer::file_writer(const char* file_name)
+    : hfile_(nullptr)
 {
-    file_path_ = path;
-}
-
-std::string log_writer::get_file_name()
-{
-    time_t now_time;
-    char timebuf[26];
-
-    time( &now_time );
-    tm* newtime = localtime(&now_time );
-
-    //得到日期的字符串
-    char log_file_name[1024] = {0};
-
-    sprintf(log_file_name,
-        "%s%d-%d-%d_log.txt",
-        file_path_.c_str(),
-        newtime->tm_year + 1900,
-        newtime->tm_mon + 1,
-        newtime->tm_mday);
-
-    return  log_file_name;
-}
-
-size_t log_writer::write(const char* buf, size_t buf_len)
-{
-    std::string file_name = get_file_name();
-
     //写入到文件中
-    FILE* fp = NULL;
-    fp = fopen(file_name.c_str(), "a+");
-    if (NULL == fp) {
+    hfile_ = fopen(file_name, "a+");
+}
+
+file_writer::~file_writer()
+{
+    if (nullptr != hfile_)
+    {
+        fclose(hfile_);
+    }
+}
+
+size_t file_writer::write(const char* buf, size_t buf_len)
+{
+    //写入到文件中
+    if (NULL == hfile_) {
         return 0;
     }
-    ON_SCOPE_EXIT(
-        if (nullptr != fp) fclose(fp);
-    );
 
-    return fwrite(buf, 1, buf_len, fp);
-}
-
-void log_writer::write_time_header()
-{
-    time_t long_time;
-    char timebuf[26];
-
-    time( &long_time );
-    tm* newtime = localtime(&long_time );
-
-    int ret = sprintf(timebuf, 
-        "+++%d-%d-%d %d:%d:%d ",
-        newtime->tm_year + 1900,
-        newtime->tm_mon + 1,
-        newtime->tm_mday,
-        newtime->tm_hour,
-        newtime->tm_min,
-        newtime->tm_sec);
-
-    if (ret > 0) {
-        this->write(timebuf, ret);
-    }
+    return fwrite(buf, 1, buf_len, hfile_);
 }
 
 //----------------------------------------------------------------------
@@ -91,16 +52,11 @@ Logger::Logger()
     is_inited_ = false;
     log_level_ = LOG_LEVEL_INFO;
     console_ = NULL;
-    hfile_ = NULL;
     max_log_size_ = DEFAULT_MAX_LOG_SIZE;
 }
 
 Logger::~Logger() 
 {
-    if (nullptr != hfile_)
-    {
-        fclose(hfile_);
-    }
     SAFE_CLOSE_HANDLE(console_);
 
     uninit();
@@ -137,7 +93,7 @@ void Logger::uninit()
 {
 }
 
-bool Logger::is_inited()
+bool Logger::is_inited() const
 {
     return is_inited_;
 }
@@ -150,8 +106,6 @@ void Logger::set_log_level(LOG_LEVEL level)
 void Logger::set_log_path(const char* log_path)
 {
     log_path_ = log_path;
-
-    log_writer_.init(log_path_);
 }
 
 void Logger::set_max_log_size(size_t sz)
@@ -169,8 +123,11 @@ void Logger::write_log_raw(LOG_LEVEL level, const char* buf, size_t buf_len)
         return;
     }
 
-    log_writer_.write_time_header();
-    log_writer_.write(buf, buf_len);
+    std::string file_name = this->get_file_name();
+    file_writer log_writer(file_name.c_str());
+
+    write_time_header(&log_writer);
+    log_writer.write(buf, buf_len);
 }
 
 void Logger::write_log(LOG_LEVEL level, TCHAR* format, ...)
@@ -195,8 +152,11 @@ void Logger::write_log(LOG_LEVEL level, TCHAR* format, ...)
 
     // 写文件中
     auto gbk_str = klib::encode::code_convert::unicode_2_gbk(buffer);
-    log_writer_.write_time_header();
-    log_writer_.write(gbk_str.c_str(), gbk_str.size());
+    std::string file_name = this->get_file_name();
+    
+    file_writer log_writer(file_name.c_str());
+    write_time_header(&log_writer);
+    log_writer.write(gbk_str.c_str(), gbk_str.size());
 }
 
 void Logger::write_log_a(LOG_LEVEL level, const char* format, ...)
@@ -220,10 +180,55 @@ void Logger::write_log_a(LOG_LEVEL level, const char* format, ...)
     WriteConsoleA(console_, buffer, buf_len, &dwWrited, NULL);
 
     // 写入文件中
-    log_writer_.write_time_header();
-    log_writer_.write(buffer, buf_len);
+    std::string file_name = this->get_file_name();
+    file_writer log_writer(file_name.c_str());
+
+    write_time_header(&log_writer);
+    log_writer.write(buffer, buf_len);
 }
 
+std::string Logger::get_file_name()
+{
+    time_t now_time;
+    char timebuf[26];
+
+    time( &now_time );
+    tm* newtime = localtime(&now_time );
+
+    //得到日期的字符串
+    char log_file_name[1024] = {0};
+
+    sprintf(log_file_name,
+        "%s%d-%d-%d_log.txt",
+        log_path_.c_str(),
+        newtime->tm_year + 1900,
+        newtime->tm_mon + 1,
+        newtime->tm_mday);
+
+    return  log_file_name;
+}
+
+void Logger::write_time_header(log_device_i* device)
+{
+    time_t long_time;
+    char timebuf[26];
+
+    time( &long_time );
+    tm* newtime = localtime(&long_time );
+
+    int ret = sprintf(timebuf, 
+        "+++%d-%d-%d %d:%d:%d ",
+        newtime->tm_year + 1900,
+        newtime->tm_mon + 1,
+        newtime->tm_mday,
+        newtime->tm_hour,
+        newtime->tm_min,
+        newtime->tm_sec);
+
+    if (ret > 0) {
+        device->write(timebuf, ret);
+    }
+}
 
 //----------------------------------------------------------------------
 //

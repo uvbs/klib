@@ -3,7 +3,6 @@
 #include <windows.h>
 #include <vector>
 
-#include "logger.h"
 #include "../macro.h"
 
 using namespace klib::debug;

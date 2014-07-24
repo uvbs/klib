@@ -8,7 +8,7 @@
 #include <tchar.h>
 #include <windows.h>
 #include <string>
-
+#include <functional>
 
 
 namespace klib{
@@ -26,57 +26,73 @@ enum LOG_LEVEL
     LOG_LEVEL_FETAL,
 };
 
+typedef std::function<std::string(const std::string&, tm*)> log_device_callback;
+
 class log_device_i
 {
 public:
+
+public:
     virtual ~log_device_i() {}
+
     virtual size_t write(const char* buf, size_t buf_len) = 0;
+    virtual size_t write(const log_device_callback& callback, const char* buf, size_t buf_len)
+    {
+        return write(buf, buf_len);
+    }
 };
 
-class file_writer : public log_device_i
+
+class file_device : public log_device_i
 {
 public:
-    file_writer(const char* file_name);
-    virtual ~file_writer();
+    file_device(const char* log_path);
+    file_device() {}
+    virtual ~file_device();
 
-    size_t write(const char* buf, size_t buf_len);
+    virtual size_t write(const char* buf, size_t buf_len);
+    virtual size_t write(const log_device_callback& callback, const char* buf, size_t buf_len);
+
+public:
+    void set_log_path(const std::string& log_path);
 
 protected:
-    FILE* hfile_;
+    std::string get_file_name(const log_device_callback& callback);
+
+protected:
+    std::string             log_path_;
+
 };
 
 // 日志记录器
-class Logger 
+class Logger
 {
 public:
     Logger() ;
     ~Logger() ;
 
 public:
-    static Logger* instance();
-    void init(const char* log_path);
-    void uninit();
-    bool is_inited() const;
-
     void set_log_path(const char* log_path);
     void set_log_level(LOG_LEVEL level);
     void set_max_log_size(size_t sz);
+    void set_log_device(log_device_i*);
 
-    void write_log_raw(LOG_LEVEL level, const char* buf, size_t buf_len);
-    void write_log(LOG_LEVEL level, TCHAR* format, ...);
-    void write_log_a(LOG_LEVEL level, const char* format, ...);
+    void write_log_raw(log_device_i*, const log_device_callback&, LOG_LEVEL level, const char* buf, size_t buf_len);
+    void write_log_raw(log_device_i*, LOG_LEVEL level, const char* buf, size_t buf_len);
+    void write_log(log_device_i*, LOG_LEVEL level, TCHAR* format, ...);
+    void write_log_a(log_device_i*, LOG_LEVEL level, const char* format, ...);
 
 protected:
-    std::string get_file_name();
     void write_time_header(log_device_i*);
+    log_device_i* get_device(log_device_i*);
 
 protected:
-    bool            is_inited_;     // 是否初始化
-    LOG_LEVEL       log_level_;     // 日志的级别
-
-    HANDLE          console_;       // 控制台
-    std::string     log_path_;
+    LOG_LEVEL       log_level_;         // 日志的级别
     size_t          max_log_size_;
+
+    HANDLE          console_;           // 控制台
+    file_device     default_device_;    // 默认写到文件中
+    log_device_i*   log_device_;        // 外部设置的
 };
 
 // 简单的日志记录管理
@@ -103,7 +119,7 @@ protected:
     GetLogger()->write_log(LEVEL, FORMAT, __VA_ARGS__);
 
 #define LOGA(LEVEL, FORMAT, ...)	\
-    GetLogger()->write_log_a(LEVEL, FORMAT, __VA_ARGS__);
+    GetLogger()->write_log_a(nullptr, LEVEL, FORMAT, __VA_ARGS__);
 
 #define LOG_INFO(FORMAT, ...)			\
     LOG(LOG_LEVEL_INFO, FORMAT, __VA_ARGS__);

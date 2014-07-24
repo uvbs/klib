@@ -16,16 +16,16 @@ log_helper::~log_helper()
     {
         throw std::exception(this->output().c_str());
     }
-
-    if (nullptr == logger_)
+    if (op_type_ & ENSURE_DEBUG_ALERT)
     {
-        logger_ = Logger::instance();
+        std::string str = err_.str();
+        KLIB_ASSERT(FALSE && str.c_str());
     }
 
     if (logger_) 
     {
         std::string str = err_.str();
-        logger_->write_log_raw(LOG_LEVEL_ERROR, str.c_str(), str.size());
+        logger_->write_log_raw(log_device_, log_callback_, log_level_, str.c_str(), str.size());
     }
 }
 
@@ -145,6 +145,13 @@ log_helper& log_helper::serilize( wchar_t * src, char const* name)
 
 //----------------------------------------------------------------------
 //
+
+
+log_helper& log_helper::operator << (LOG_LEVEL level)
+{
+    log_level_ = level;
+    return *this;
+}
 
 log_helper& log_helper::operator << (char src)
 {
@@ -266,6 +273,18 @@ std::string log_helper::output() const
 log_helper:: operator std::string() const
 {
     return output();
+}
+
+log_helper& log_helper::set_log_device(log_device_i* dev)
+{
+    log_device_ = dev;
+    return *this;
+}
+
+log_helper& log_helper::set_log_callback(log_device_callback callback)
+{
+    log_callback_ = callback;
+    return *this;
 }
 
 #ifdef _WIN32

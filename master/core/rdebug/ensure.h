@@ -18,8 +18,10 @@
 namespace klib{
 namespace debug{
 
-#define ENSURE_DEBUG_ALERT      (0x01)
-#define ENSURE_DEBUG_EXCEPTION  (0x02)
+
+#define ENSURE_DEBUG_LOG        (0x01)
+#define ENSURE_DEBUG_ALERT      (0x02)
+#define ENSURE_DEBUG_EXCEPTION  (0x04)
 
 typedef unsigned int ensure_op_type;
 

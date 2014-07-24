@@ -68,6 +68,7 @@ private:
 #define ON_SCOPE_EXIT(FUNCTION) scope_guard SCOPEGUARD_LINENAME(EXIT, __LINE__)          \
     ([&]{  FUNCTION; });
 
+#define defer ON_SCOPE_EXIT
 
 }}
 

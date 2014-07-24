@@ -181,6 +181,8 @@
     <ClInclude Include="..\core\pattern\qmem_pool.h" />
     <ClInclude Include="..\core\pattern\sync_invoke.h" />
     <ClInclude Include="..\core\rdebug\logger.h" />
+    <ClInclude Include="..\core\rdebug\log_helper.h" />
+    <ClInclude Include="..\core\rdebug\tracer.h" />
     <ClInclude Include="..\core\sys\cpu.h" />
     <ClInclude Include="..\core\sys\sys.h" />
     <ClInclude Include="..\core\ui\window.h" />
@@ -236,6 +238,7 @@
     <ClCompile Include="..\core\rdebug\ensure.cpp" />
     <ClCompile Include="..\core\rdebug\logger.cpp" />
     <ClCompile Include="..\core\rdebug\log_helper.cpp" />
+    <ClCompile Include="..\core\rdebug\tracer.cpp" />
     <ClCompile Include="..\core\sys\cpu.cpp" />
     <ClCompile Include="..\core\sys\sys.cpp" />
     <ClCompile Include="..\core\ui\window.cpp" />

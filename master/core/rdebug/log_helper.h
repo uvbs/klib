@@ -5,13 +5,16 @@
 
 
 
+#include "logger.h"
+
+
 namespace klib{
 namespace debug{
 
-class Logger;
-
-#define ENSURE_DEBUG_ALERT      (0x01)
-#define ENSURE_DEBUG_EXCEPTION  (0x02)
+    
+#define ENSURE_DEBUG_LOG        (0x01)
+#define ENSURE_DEBUG_ALERT      (0x02)
+#define ENSURE_DEBUG_EXCEPTION  (0x04)
 
 typedef unsigned int ensure_op_type;
 
@@ -46,12 +49,31 @@ public:
     , line_(-1)
     , op_type_(0)
     , logger_(loger)
+    , log_level_(LOG_LEVEL_ERROR)
+    , log_device_(nullptr)
     {  }
 
     ~log_helper();
 
     log_helper& LOG_FORMATOR_A;
     log_helper& LOG_FORMATOR_B;
+
+    log_helper(log_helper&& other)
+        : LOG_FORMATOR_A(*this)
+        , LOG_FORMATOR_B(*this)
+    {
+        this->err_              = std::move(other.err_);
+        this->file_             = std::move(other.file_);
+        this->line_             = std::move(other.line_);
+        this->op_type_          = std::move(other.op_type_);
+        this->logger_           = std::move(other.logger_);
+        this->log_level_        = std::move(other.log_level_);
+        this->log_device_       = std::move(other.log_device_);
+        this->log_callback_     = std::move(other.log_callback_);
+
+        other.logger_     = nullptr;
+        other.log_device_ = nullptr;
+    }
 
 public:
     log_helper& set_ctx(ensure_op_type t, 
@@ -80,6 +102,7 @@ public:
     
     //----------------------------------------------------------------------
     // stream api
+    log_helper& operator << (LOG_LEVEL level);
     log_helper& operator << (char src);
     log_helper& operator << (bool src);
     log_helper& operator << (short src);
@@ -101,6 +124,8 @@ public:
     //
     std::string output() const;
     operator std::string() const;
+    log_helper& set_log_device(log_device_i*);
+    log_helper& set_log_callback(log_device_callback);
     static log_helper get_formator() {  return log_helper(); }
 
 private:
@@ -119,11 +144,14 @@ private:
     std::string format_hex_ascii(const bin_buf& buf);
 
 private:
-    std::stringstream       err_;
-    char const*             file_;
-    int                     line_;
-    ensure_op_type          op_type_;
-    Logger*                 logger_;
+    std::stringstream                   err_;
+    char const*                         file_;
+    int                                 line_;
+    ensure_op_type                      op_type_;
+    Logger*                             logger_;
+    LOG_LEVEL                           log_level_;
+    log_device_i*                       log_device_;
+    log_device_callback                 log_callback_;
 };
 
 
@@ -168,6 +196,11 @@ log_helper& log_helper::operator << (_type const src)
 
 inline log_helper get_formator(Logger* loger = nullptr) 
 {
+    if (nullptr == loger)
+    {
+        loger = logger_mgr::instance()->default_logger();
+    }
+
     return log_helper(loger); 
 }
 
@@ -186,15 +219,15 @@ using klib::debug::get_formator;
 // 条件成功的时候记录日志
 #define LOG_IF(expr) \
     if( !(expr) ) ; \
-  else get_formator(klib::debug::Logger::instance()).set_ctx(ENSURE_DEBUG_ALERT, \
+  else get_formator(klib::debug::logger_mgr::instance()->default_logger()).set_ctx(ENSURE_DEBUG_LOG, \
                 #expr,\
                 __FILE__,\
                 __LINE__).LOG_FORMATOR_A
 
-// 同上（但些宏有日志参数）
+// 同上（可以指定输出到哪个日志）
 #define LOG_IF_D(loger, expr) \
     if( !(expr) ) ; \
-  else get_formator(loger).set_ctx(ENSURE_DEBUG_ALERT, \
+  else get_formator(loger).set_ctx(ENSURE_DEBUG_LOG, \
                 #expr,\
                 __FILE__,\
                 __LINE__).LOG_FORMATOR_A

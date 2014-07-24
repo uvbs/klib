@@ -18,6 +18,11 @@ log_helper::~log_helper()
         throw std::exception(this->output().c_str());
     }
 
+    if (nullptr == logger_)
+    {
+        logger_ = Logger::instance();
+    }
+
     if (logger_) 
     {
         std::string str = err_.str();

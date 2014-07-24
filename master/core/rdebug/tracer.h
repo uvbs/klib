@@ -33,7 +33,7 @@ public:
     static tracer* instance();
     Logger* get_logger();
 
-    std::string call_backsss(const std::string& id, const std::string& root_path, tm*)
+    std::string gen_name_callback(const std::string& id, const std::string& root_path, tm*)
     { 
         return root_path + id;
     }
@@ -59,12 +59,13 @@ inline klib::debug::Logger* def_tracer_loger()
 inline klib::debug::log_helper get_tracer_loger(const std::string& identify)
 {
     klib::debug::tracer* tracre_ = klib::debug::tracer::instance();
-    klib::debug::log_device_callback callback = std::bind(&klib::debug::tracer::call_backsss, 
+    klib::debug::log_device_callback callback = std::bind(&klib::debug::tracer::gen_name_callback, 
                                             tracre_, 
                                             identify, 
                                             std::placeholders::_1, 
                                             std::placeholders::_2);
 
+    // 要右值转移语句，stringstream不支持拷贝构造
     return std::move(klib::debug::log_helper(def_tracer_loger())
                     .set_log_callback(callback)
                     .set_log_device(&tracre_->device_));
@@ -77,9 +78,23 @@ inline klib::debug::log_helper get_tracer_loger(const std::string& identify)
 // 条件成功的时候记录日志
 #define TRACE_ID(identify) \
     if( ! klib::debug::tracer::instance()->switch_ ) ; \
-  else get_tracer_loger(identify).set_ctx(ENSURE_DEBUG_LOG, \
+  else get_tracer_loger(#identify).set_ctx(ENSURE_DEBUG_LOG, \
                 #identify,\
                 __FILE__,\
                 __LINE__).LOG_FORMATOR_A
 
+// 条件成功的时候记录日志
+#define TRACE_STR(identify) \
+    if( ! klib::debug::tracer::instance()->switch_ ) ; \
+  else get_tracer_loger(identify).set_ctx(ENSURE_DEBUG_LOG, \
+                identify.c_str(),\
+                __FILE__,\
+                __LINE__).LOG_FORMATOR_A
 
+// 条件成功的时候记录日志
+#define TRACE_THREAD() \
+    if( ! klib::debug::tracer::instance()->switch_ ) ; \
+  else get_tracer_loger(std::to_string((long long)GetCurrentThreadId())).set_ctx(ENSURE_DEBUG_LOG, \
+                "thread_id",\
+                __FILE__,\
+                __LINE__).LOG_FORMATOR_A

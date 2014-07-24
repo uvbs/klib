@@ -42,6 +42,7 @@ size_t file_device::write(const char* buf, size_t buf_len)
         fclose(hfile);
     );
 
+    write_time_header(hfile);
     return fwrite(buf, 1, buf_len, hfile);
 }
 
@@ -58,6 +59,7 @@ size_t file_device::write(const log_device_callback& callback, const char* buf, 
         fclose(hfile);
     );
 
+    write_time_header(hfile);
     return fwrite(buf, 1, buf_len, hfile);
 }
 
@@ -66,10 +68,31 @@ void file_device::set_log_path(const std::string& log_path)
     log_path_ = log_path;
 }
 
+void file_device::write_time_header(FILE* hfile)
+{
+    time_t long_time;
+    char timebuf[26];
+
+    time( &long_time );
+    tm* newtime = localtime(&long_time );
+
+    int ret = sprintf(timebuf, 
+        "+++%d-%d-%d %d:%d:%d ",
+        newtime->tm_year + 1900,
+        newtime->tm_mon + 1,
+        newtime->tm_mday,
+        newtime->tm_hour,
+        newtime->tm_min,
+        newtime->tm_sec);
+
+    if (ret > 0) {
+        fwrite(timebuf, 1, ret, hfile);
+    }
+}
+
 std::string file_device::get_file_name(const log_device_callback& callback)
 {
     time_t now_time;
-    char timebuf[26];
 
     time( &now_time );
     tm* newtime = localtime(&now_time );
@@ -143,7 +166,6 @@ void Logger::write_log_raw(log_device_i* device, const log_device_callback& call
 
     // 写入设备中
     log_device_i* writer_device = get_device(device);
-    write_time_header(writer_device);
     writer_device->write(callback, buf, buf_len);
 }
 
@@ -155,7 +177,6 @@ void Logger::write_log_raw(log_device_i* device, LOG_LEVEL level, const char* bu
 
     // 写入设备中
     log_device_i* writer_device = get_device(device);
-    write_time_header(writer_device);
     writer_device->write(buf, buf_len);
 }
 
@@ -183,7 +204,6 @@ void Logger::write_log(log_device_i* device, LOG_LEVEL level, TCHAR* format, ...
     
     // 写入设备中
     log_device_i* writer_device = get_device(device);
-    write_time_header(writer_device);
     writer_device->write(gbk_str.c_str(), gbk_str.size());
 }
 
@@ -209,30 +229,7 @@ void Logger::write_log_a(log_device_i* device, LOG_LEVEL level, const char* form
 
     // 写入设备中
     log_device_i* writer_device = get_device(device);
-    write_time_header(writer_device);
     writer_device->write(buffer, buf_len);
-}
-
-void Logger::write_time_header(log_device_i* device)
-{
-    time_t long_time;
-    char timebuf[26];
-
-    time( &long_time );
-    tm* newtime = localtime(&long_time );
-
-    int ret = sprintf(timebuf, 
-        "+++%d-%d-%d %d:%d:%d ",
-        newtime->tm_year + 1900,
-        newtime->tm_mon + 1,
-        newtime->tm_mday,
-        newtime->tm_hour,
-        newtime->tm_min,
-        newtime->tm_sec);
-
-    if (ret > 0) {
-        device->write(timebuf, ret);
-    }
 }
 
 log_device_i* Logger::get_device(log_device_i* dev)

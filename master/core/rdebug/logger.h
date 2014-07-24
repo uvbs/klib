@@ -54,7 +54,8 @@ public:
     virtual size_t write(const log_device_callback& callback, const char* buf, size_t buf_len);
 
 public:
-    void set_log_path(const std::string& log_path);
+    void set_log_path(const std::string& log_path);    
+    void write_time_header(FILE* hfile);
 
 protected:
     std::string get_file_name(const log_device_callback& callback);
@@ -83,7 +84,6 @@ public:
     void write_log_a(log_device_i*, LOG_LEVEL level, const char* format, ...);
 
 protected:
-    void write_time_header(log_device_i*);
     log_device_i* get_device(log_device_i*);
 
 protected:

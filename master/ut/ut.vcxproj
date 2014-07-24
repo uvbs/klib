@@ -113,6 +113,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="thread_safe_wrapper_test.h" />
     <ClInclude Include="timer_test.h" />
+    <ClInclude Include="tracer_test_h.h" />
     <ClInclude Include="trie_test.h" />
     <ClInclude Include="unzip_test.h" />
   </ItemGroup>

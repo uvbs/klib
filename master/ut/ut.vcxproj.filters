@@ -108,6 +108,9 @@
     <ClInclude Include="unzip_test.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="tracer_test_h.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

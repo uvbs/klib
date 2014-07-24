@@ -65,6 +65,13 @@ size_t file_device::write(const log_device_callback& callback, const char* buf, 
 
 void file_device::set_log_path(const std::string& log_path)
 {
+#ifdef _UNICODE
+    std::wstring wstr = encode::code_convert::gbk_2_unicode(log_path);
+    io::path::create_directorys(wstr);
+#else
+    io::path::create_directorys(log_path);
+#endif
+
     log_path_ = log_path;
 }
 

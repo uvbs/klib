@@ -87,7 +87,7 @@ inline klib::debug::log_helper get_tracer_loger(const std::string& identify)
 #define TRACE_STR(identify) \
     if( ! klib::debug::tracer::instance()->switch_ ) ; \
   else get_tracer_loger(identify).set_ctx(ENSURE_DEBUG_LOG, \
-                identify.c_str(),\
+                identify,\
                 __FILE__,\
                 __LINE__).LOG_FORMATOR_A
 

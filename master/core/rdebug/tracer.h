@@ -71,9 +71,12 @@ inline klib::debug::log_helper get_tracer_loger(const std::string& identify)
                     .set_log_device(&tracre_->device_));
 }
 
-#define TRACE_PATH(path)        \
-    klib::debug::tracer* tracre_ = klib::debug::tracer::instance();\
-    tracre_->device_.set_log_path(path);
+
+#define TRACE_SWITCH(open)        \
+    klib::debug::tracer::instance()->switch_ = open;
+
+#define TRACE_PATH(path)          \
+    klib::debug::tracer::instance()->device_.set_log_path(path);
 
 // 条件成功的时候记录日志
 #define TRACE_ID(identify) \

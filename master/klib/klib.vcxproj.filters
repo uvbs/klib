@@ -360,6 +360,9 @@
     <ClInclude Include="..\core\rdebug\tracer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\rdebug\thread_moniter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -510,6 +513,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\rdebug\tracer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\rdebug\thread_moniter.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -8,6 +8,7 @@ TEST(tracert_test, 1)
 
     const std::string str("tracer 1");
 
+    TRACE_SWITCH(true);
     TRACE_PATH("E:\\TEST\\");
     TRACE_STR(str)("");
     TRACE_ID("tracer 2")("dsfdsfdsf");

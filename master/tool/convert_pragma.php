@@ -1,12 +1,14 @@
 <?php
 
 
-define('_key_str',   "#pragma once");
+define('_key_str',          "#pragma once");
+define('_upper_define',     true);
 
 function traverse($path = '.', $project_name, $project_module) 
 {
     $current_dir = opendir($path);    
-    while(($file = readdir($current_dir)) !== false) {  
+    while(($file = readdir($current_dir)) !== false) 
+    {  
         $sub_dir = $path . DIRECTORY_SEPARATOR . $file;  
         if($file == '.' || $file == '..') 
         {
@@ -20,12 +22,13 @@ function traverse($path = '.', $project_name, $project_module)
         else 
         {
             $file_path = $path . '/'. $file;
-            convert_file($file_path, $project_name, $project_module);
+            convert_pragma_2_define($file_path, $project_name, $project_module);
         }
     }
 }
 
-function convert_file($file, $project_name, $project_module)
+// 转换头文件中的pragma为define
+function convert_pragma_2_define($file, $project_name, $project_module)
 {
     $base_name = basename($file);
     
@@ -52,6 +55,10 @@ function convert_file($file, $project_name, $project_module)
     {
         $head_define_str = '_' . $project_name . '_' . $head_define_str ; //. "_h";
     }
+    if (_upper_define)
+    {
+        $head_define_str = strtoupper($head_define_str);
+    }
     
     $target_str =<<<EOF
 #ifndef $head_define_str
@@ -61,7 +68,11 @@ EOF;
     $final_str = str_replace(_key_str, $target_str, $content);
     if (strlen($final_str) != strlen($content))
     {
-        $final_str .= "\r\n\r\n#endif\r\n";
+        $final_str .=<<<EOF
+
+#endif  // $head_define_str
+
+EOF;
         
         file_put_contents($file, $final_str);
         

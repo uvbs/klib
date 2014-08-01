@@ -7,7 +7,7 @@ namespace klib{
 namespace debug{
 
 tracer::tracer()
-    : switch_(true)
+    : switch_(false)
 {
     device_.set_log_path("E:\\");
 }

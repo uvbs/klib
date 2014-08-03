@@ -43,10 +43,15 @@ size_t file_device::write(const char* buf, size_t buf_len)
     );
 
     write_time_header(hfile);
+
+    write_console(buf, buf_len);
+
     return fwrite(buf, 1, buf_len, hfile);
 }
 
-size_t file_device::write(const log_device_callback& callback, const char* buf, size_t buf_len)
+size_t file_device::write(const log_device_callback& callback, 
+    const char* buf, 
+    size_t buf_len)
 {
     std::string str_file_name = this->get_file_name(callback);
 
@@ -60,6 +65,8 @@ size_t file_device::write(const log_device_callback& callback, const char* buf, 
     );
 
     write_time_header(hfile);
+
+    write_console(buf, buf_len);
     return fwrite(buf, 1, buf_len, hfile);
 }
 
@@ -84,7 +91,7 @@ void file_device::write_time_header(FILE* hfile)
     tm* newtime = localtime(&long_time );
 
     int ret = sprintf(timebuf, 
-        "+++%d-%d-%d %d:%d:%d ",
+        "%d-%d-%d %d:%d:%d ",
         newtime->tm_year + 1900,
         newtime->tm_mon + 1,
         newtime->tm_mday,
@@ -92,7 +99,9 @@ void file_device::write_time_header(FILE* hfile)
         newtime->tm_min,
         newtime->tm_sec);
 
-    if (ret > 0) {
+    if (ret > 0) 
+    {
+        write_console(timebuf, ret);
         fwrite(timebuf, 1, ret, hfile);
     }
 }
@@ -120,6 +129,16 @@ std::string file_device::get_file_name(const log_device_callback& callback)
         newtime->tm_mday);
 
     return  log_file_name;
+}
+
+void file_device::write_console(const char* buff, size_t buf_len)
+{
+    DWORD dwWritten;
+    ::WriteFile(::GetStdHandle(STD_OUTPUT_HANDLE), 
+        buff, 
+        buf_len, 
+        &dwWritten, 
+        NULL); 
 }
 
 
@@ -207,7 +226,11 @@ void Logger::write_log(log_device_i* device, LOG_LEVEL level, TCHAR* format, ...
     size_t buf_len = _tcslen(buffer);
     WriteConsole(console_, buffer, buf_len, &dwWrited, NULL);
 
-    auto gbk_str = klib::encode::code_convert::unicode_2_gbk(buffer);
+#ifdef _UNICODE
+    std::string gbk_str = klib::encode::code_convert::unicode_2_gbk(buffer);
+#else
+    std::string gbk_str = buffer;
+#endif
     
     // 写入设备中
     log_device_i* writer_device = get_device(device);

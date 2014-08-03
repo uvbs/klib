@@ -232,6 +232,12 @@ using klib::debug::get_formator;
                 __FILE__,\
                 __LINE__).LOG_FORMATOR_A
 
+// 条件成功的时候记录日志
+#define LOGGER() \
+    get_formator(klib::debug::logger_mgr::instance()->default_logger()).set_ctx(ENSURE_DEBUG_LOG, \
+    "",\
+    __FILE__,\
+    __LINE__).LOG_FORMATOR_A
 
 
 

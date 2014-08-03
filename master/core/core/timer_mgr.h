@@ -14,6 +14,8 @@ using namespace klib::kthread;
 namespace klib {
 namespace core {
 
+// 返回false表示需要被删除
+// 返回true表示需要继续
 typedef std::function<bool(void)> timer_func_type;
 
 // 定时器信息

@@ -25,7 +25,7 @@ namespace debug {
  * @brief 日志打印类
  * @usage  
  *
-    WriteLog("%s", "info");
+    LOGGER()("%s", "info");
  */
 class LogDeviceX
 {
@@ -186,14 +186,14 @@ public:
   }
 };
 
-#define WriteLog LogDeviceX(__FILE__,__LINE__)
+#define LOGGER() LogDeviceX(__FILE__,__LINE__)
 
 
 
 
 #else
 
-#define WriteLog 
+#define LOGGER() 
 
 #endif
 

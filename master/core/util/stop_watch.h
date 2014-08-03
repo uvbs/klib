@@ -1,12 +1,11 @@
 #ifndef _klib_stop_watch_h_
 #define _klib_stop_watch_h_
 
-
+#include <windows.h>
 #include <time.h>
 
 namespace klib{
-namespace util
-{
+namespace util{
 
 class stop_watch
 {

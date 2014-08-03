@@ -59,6 +59,7 @@ public:
 
 protected:
     std::string get_file_name(const log_device_callback& callback);
+    void write_console(const char* buff, size_t buf_len);
 
 protected:
     std::string             log_path_;

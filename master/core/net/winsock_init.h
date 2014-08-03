@@ -5,6 +5,10 @@
 #if !defined(_Klib_WinSockInit_H)
 #define _Klib_WinSockInit_H
 
+#include <WinSock2.h>
+#include <windows.h>
+
+
 /*
 * @brief	初始化winsock的类，只需要包含该头文件即可
 */

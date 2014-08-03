@@ -10,8 +10,10 @@ using namespace klib::debug;
 
 #define  default_null_ptr_str ("[:nullptr]")
 
-log_helper::~log_helper()  
+log_helper::~log_helper()
 {
+    err_ << std::endl;
+
     if (op_type_ & ENSURE_DEBUG_EXCEPTION) 
     {
         throw std::exception(this->output().c_str());
@@ -37,9 +39,12 @@ log_helper& log_helper::set_ctx(ensure_op_type t, char const* expr, char const* 
     file_    = file;
     line_    = line;
 
-    // 输出出错点 
-    err_ << "Pt: [" << file_ << ":" << line_ << "]" << std::endl;
-    err_ << "Exp: \"" << expr << "\", values: " << std::endl;
+    // 输出出错点 @todo 需要通过参数判断
+    if (false) 
+    {
+        err_ << "Pt: [" << file_ << ":" << line_ << "]" << std::endl;
+        err_ << "Exp: \"" << expr << "\", values: " << std::endl;
+    }
 
     return *this;
 }

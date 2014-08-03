@@ -1,7 +1,6 @@
 
 #include <stdlib.h>
 #include <string>
-#include <windows.h>
 
 #include "datetime.h"
 

@@ -3,11 +3,9 @@
 #include <windows.h>
 #include <tchar.h>
 #include <SHELLAPI.H>
-//#include <Wtsapi32.h>
-//#include <Userenv.h>
-//#include <Shlwapi.h>
 
-#include "../debuglog.h"
+#include <rdebug/log_helper.h>
+
 
 using namespace klib::core;
 using namespace klib::debug;
@@ -210,25 +208,25 @@ BOOL process_helper::create_user_process(LPCTSTR pszExePath, LPTSTR pszCmd/* = _
     }
     if (WTSQueryUserToken_fun(dwSessionID, &hToken) == FALSE)         
     {
-        WriteLog("error WTSQueryUserToken_fun...");
+        LOGGER()("error WTSQueryUserToken_fun...");
         goto Cleanup;
     }
     
     if (DuplicateTokenEx(hToken, MAXIMUM_ALLOWED, NULL, SecurityIdentification, TokenPrimary, &hDuplicatedToken) == FALSE)          
     {
-        WriteLog("error DuplicateTokenEx...");
+        LOGGER()("error DuplicateTokenEx...");
         goto Cleanup;  
     }
     
     static CreateEnvironmentBlock CreateEnvironmentBlock_fun = (CreateEnvironmentBlock) CreateEnvironmentBlock_f;
     if (NULL == CreateEnvironmentBlock_fun) 
     {
-        WriteLog("error CreateEnvironmentBlock_fun...");
+        LOGGER()("error CreateEnvironmentBlock_fun...");
         goto Cleanup;
     }
     if (CreateEnvironmentBlock_fun(&lpEnvironment, hDuplicatedToken, FALSE) == FALSE)         
     {
-        WriteLog("error CreateEnvironmentBlock_fun...");
+        LOGGER()("error CreateEnvironmentBlock_fun...");
         goto Cleanup;
     }
     
@@ -246,7 +244,7 @@ BOOL process_helper::create_user_process(LPCTSTR pszExePath, LPTSTR pszCmd/* = _
         &si, 
         &pi) == FALSE)    
     {
-        WriteLog("error CreateProcessAsUser Error : %d...", GetLastError());
+        LOGGER()("error CreateProcessAsUser Error : %d...", GetLastError());
         goto Cleanup;
     }
 
@@ -302,25 +300,25 @@ BOOL process_helper::create_user_process(LPTSTR pszCmdline)
     }
     if (WTSQueryUserToken_fun(dwSessionID, &hToken) == FALSE)         
     {
-        WriteLog("error WTSQueryUserToken_fun...");
+        LOGGER()("error WTSQueryUserToken_fun...");
         goto Cleanup;
     }
 
     if (DuplicateTokenEx(hToken, MAXIMUM_ALLOWED, NULL, SecurityIdentification, TokenPrimary, &hDuplicatedToken) == FALSE)          
     {
-        WriteLog("error DuplicateTokenEx...");
+        LOGGER()("error DuplicateTokenEx...");
         goto Cleanup;  
     }
 
     static CreateEnvironmentBlock CreateEnvironmentBlock_fun = (CreateEnvironmentBlock) CreateEnvironmentBlock_f;
     if (NULL == CreateEnvironmentBlock_fun) 
     {
-        WriteLog("error CreateEnvironmentBlock_fun...");
+        LOGGER()("error CreateEnvironmentBlock_fun...");
         return FALSE;
     }
     if (CreateEnvironmentBlock_fun(&lpEnvironment, hDuplicatedToken, FALSE) == FALSE)         
     {
-        WriteLog("error CreateEnvironmentBlock_fun...");
+        LOGGER()("error CreateEnvironmentBlock_fun...");
         goto Cleanup;
     }
 
@@ -338,7 +336,7 @@ BOOL process_helper::create_user_process(LPTSTR pszCmdline)
         &si, 
         &pi) == FALSE)    
     {
-        WriteLog("error CreateProcessAsUser Error : %d...", GetLastError());
+        LOGGER()("error CreateProcessAsUser Error : %d...", GetLastError());
         goto Cleanup;       
     }         
 

@@ -21,6 +21,7 @@ namespace fsm
 
 */
 
+typedef void* event_data_type;
 
 ///< 事件
 class FsmEvent
@@ -32,12 +33,12 @@ public:
     void set_evt_type(UINT utype) { event_type_ = utype; }
     UINT get_evt_type() { return event_type_; }
 
-    void set_evt_data(UINT64 udata) {  event_data_ = udata; } 
-    UINT64 get_evt_data() { return event_data_; }
+    void set_evt_data(event_data_type udata) {  event_data_ = udata; } 
+    event_data_type get_evt_data() { return event_data_; }
 
 protected:
-    UINT    event_type_;         ///< 表示事件类型
-    UINT64  event_data_;         ///< 携带事件数据
+    UINT                event_type_;         ///< 表示事件类型
+    event_data_type     event_data_;         ///< 携带事件数据
 };
 
 ///< 状态接口
@@ -303,7 +304,7 @@ enum status_test
 LogicState,
 NewVerState,
 OnlineState
-}
+};
 
 BEGIN_STATE_DECLARE(CQueryLogicState, LogicState)
 

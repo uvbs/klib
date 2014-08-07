@@ -23,6 +23,8 @@ public:
         const LPCTSTR lpszContent, 
         size_t nlen);
 
+    static bool get_file_content(const tstring& src_file,
+        std::string& content);
 };
 
 

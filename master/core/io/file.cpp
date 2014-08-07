@@ -58,5 +58,27 @@ bool file::write_file_append(const tstring& src_file,
     return true;
 }
 
+bool file::get_file_content(const tstring& src_file,
+    std::string& content)
+{
+    char buff[2048];
+    content.clear();
+
+    FILE *fp = _tfopen(src_file.c_str(), _T("rb"));
+    if(NULL != fp)
+    {
+        while (!feof(fp))
+        {
+            size_t readed = fread(buff, sizeof(char), sizeof(buff), fp);
+            if (readed > 0) {
+                content.append(buff, readed);
+            }
+        }
+        fclose(fp);
+        return true;
+    }
+
+    return false;
+}
 
 }}

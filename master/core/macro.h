@@ -108,8 +108,17 @@ public:                                         \
         Target = t;                             \
     }
 
+
+#define  DEFINE_ACCESS_FUN_STR(Type, Target)    \
+  void set_##Target(Type v) {                   \
+    strncpy(Target, v, _countof(Target));       \
+  }                                             \
+  Type get_##Target()      {                    \
+    return Target;                              \
+  }
+
 ///< 定义访问成员的函数
-#define DEFINE_ACCESS_FUN2(Type, Name, Target)  \
+#define DEFINE_ACCESS_FUN_CONST(Type, Name, Target)  \
 public:                                         \
     inline const Type get_##Name() const {      \
         return Target;                          \
@@ -129,7 +138,7 @@ public:                                         \
     }
 
 ///< 定义引用访问成员的函数
-#define DEFINE_ACCESS_FUN_REF2(Type, Name, Target)     \
+#define DEFINE_ACCESS_FUN_REF_CONST(Type, Name, Target)     \
 public:                                         \
     inline const Type& get_##Name() const  {    \
         return Target;                          \

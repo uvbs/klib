@@ -3,7 +3,9 @@
 #include <string>
 #include <sstream>
 
-
+#ifdef _WIN32
+#pragma warning(disable: 4355)
+#endif
 
 #include "logger.h"
 

@@ -244,7 +244,8 @@ BOOL process_helper::create_user_process(LPCTSTR pszExePath, LPTSTR pszCmd/* = _
         &si, 
         &pi) == FALSE)    
     {
-        LOGGER()("error CreateProcessAsUser Error : %d...", GetLastError());
+        LOGGER() << "error CreateProcessAsUser Error : " 
+            << GetLastError();
         goto Cleanup;
     }
 
@@ -336,7 +337,8 @@ BOOL process_helper::create_user_process(LPTSTR pszCmdline)
         &si, 
         &pi) == FALSE)    
     {
-        LOGGER()("error CreateProcessAsUser Error : %d...", GetLastError());
+        LOGGER() << "error CreateProcessAsUser Error :..."
+            << GetLastError();
         goto Cleanup;       
     }         
 

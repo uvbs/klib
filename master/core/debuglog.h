@@ -187,13 +187,14 @@ public:
 };
 
 #define LOGGER() LogDeviceX(__FILE__,__LINE__)
-
+#define WriteLog LogDeviceX(__FILE__,__LINE__)
 
 
 
 #else
 
 #define LOGGER() 
+#define WriteLog
 
 #endif
 

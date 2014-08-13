@@ -39,21 +39,21 @@ public:
 
 public:
     ///< 解析URL地址
-	BOOL parse_url(const char* url, char* hostAddr, int& port, char* getPath) ;
+	bool parse_url(const char* url, char* hostAddr, int& port, char* getPath) ;
 
     ///< 下载url文件到指定的路径
-	BOOL download(const char* http_url, 
+	bool download(const char* http_url, 
         const char* pszSaveFile, 
         const request_header_info& info = request_header_info());
 
     ///< 直接获取url路径的内容
-	BOOL get_url_content(const char* http_url, 
+	bool get_url_content(const char* http_url, 
         std::string& str_content,
         const request_header_info& info = request_header_info());
 
 protected:
     typedef std::function<void(const char* data, size_t len)> data_callback;
-    BOOL handle_url_content(const char* http_url,
+    bool handle_url_content(const char* http_url,
         const request_header_info& info,
         const data_callback& handler);
 

@@ -14,17 +14,17 @@ using namespace klib::net;
 
 const char* g_default_user_agent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17";
 
-BOOL http_down::parse_url(const char* url, char* hostAddr, int& port, char* getPath) 
+bool http_down::parse_url(const char* url, char* hostAddr, int& port, char* getPath) 
 {
 	if (url == NULL || hostAddr == NULL || getPath == NULL) 
     {
-		return FALSE;
+		return false;
 	}
 	
 	const char* temp = strstr(url, "http://");
 	if (temp == NULL) 
     {
-		return FALSE;
+		return false;
 	}
 	port = 80;
 	const char* hostStart = temp + strlen("http://");
@@ -38,16 +38,16 @@ BOOL http_down::parse_url(const char* url, char* hostAddr, int& port, char* getP
 		sscanf(hostStart, "%[^/]%s", hostAddr, getPath);
     }
 	
-	return TRUE;
+	return true;
 }
 
-BOOL http_down::download(const char* http_url, 
+bool http_down::download(const char* http_url, 
     const char* pszSaveFile,
     const request_header_info & info)
 {
     FILE* hFile = fopen(pszSaveFile, "wb");    //创建文件
     if (nullptr == hFile) {
-        return FALSE;
+        return false;
     }
 
     data_callback callback = [&](const char* data, size_t len)
@@ -55,14 +55,14 @@ BOOL http_down::download(const char* http_url,
         fwrite(data, len, 1, hFile);
     };
 
-    BOOL result = handle_url_content(http_url, info, callback);
+    bool result = handle_url_content(http_url, info, callback);
     
     fclose(hFile);
 
     return result;
 }
 
-BOOL http_down::get_url_content(const char* http_url, 
+bool http_down::get_url_content(const char* http_url, 
     std::string& str_content,
     const request_header_info& info)
 {
@@ -71,7 +71,7 @@ BOOL http_down::get_url_content(const char* http_url,
         str_content.append(data, len);
     };
     
-    BOOL result = handle_url_content(http_url, info, callback);
+    bool result = handle_url_content(http_url, info, callback);
     if (!result) {
         str_content.clear();
     }
@@ -79,12 +79,12 @@ BOOL http_down::get_url_content(const char* http_url,
     return result;
 }
 
-BOOL http_down::handle_url_content(const char* http_url,
+bool http_down::handle_url_content(const char* http_url,
     const request_header_info& info,
     const data_callback& handler)
 {
     if (nullptr == http_url ) {
-        return FALSE;
+        return false;
     }
 
     char szHostName[MAX_PATH] = {0};
@@ -92,7 +92,7 @@ BOOL http_down::handle_url_content(const char* http_url,
     int  port = 0;
     if (!parse_url(http_url, szHostName, port, szGet))
     {
-        return FALSE;
+        return false;
     }
 
     DWORD dwRetryTime = 0;
@@ -102,7 +102,7 @@ BOOL http_down::handle_url_content(const char* http_url,
         ++ dwRetryTime;
         if (dwRetryTime >= 4) 
         {
-            return FALSE;
+            return false;
         }
 
         Sleep((DWORD)(1000 * 2.5));
@@ -150,24 +150,24 @@ BOOL http_down::handle_url_content(const char* http_url,
 
     if (!m_socket.send(request_header.c_str(), request_header.size())) 
     {
-        return FALSE;
+        return false;
     }
 
     char recv_buff[HTTPDOWN_RECV_BUFF];
     DWORD dwRecvedBytes = 0;
     int iRecvRet;
-    while (TRUE) 
+    while (true) 
     {		
         iRecvRet = m_socket.recv(recv_buff + dwRecvedBytes, 1, 0, 0);
         if (iRecvRet <= 0) 
         {
-            return FALSE;
+            return false;
         }
 
         ++ dwRecvedBytes;
         if (dwRecvedBytes > HTTPDOWN_RECV_BUFF) 
         {
-            return FALSE;
+            return false;
         }
 
         if (dwRecvedBytes > 4) 
@@ -183,7 +183,7 @@ BOOL http_down::handle_url_content(const char* http_url,
     // 解析收到的数据
     if (strnicmp(recv_buff, "HTTP/", 5)) 
     {
-        return FALSE;
+        return false;
     }
 
     int status = 0; 
@@ -192,12 +192,12 @@ BOOL http_down::handle_url_content(const char* http_url,
     startPos = endPos = totalLength = 0;
     if (sscanf(recv_buff, "HTTP/%f %d ", &version, &status) != 2) 
     {
-        return FALSE;
+        return false;
     }
 
     if (status != 200 && status != 206 ) 
     {
-        return FALSE;
+        return false;
     }
 
     DWORD dwFileLength = 0;
@@ -214,7 +214,7 @@ BOOL http_down::handle_url_content(const char* http_url,
         iRecvRet = m_socket.recv(recv_buff, 4, 0, 0);
         if (iRecvRet != 4) 
         {
-            return FALSE;
+            return false;
         }
 
         recv_buff[4] = '\0';
@@ -223,11 +223,11 @@ BOOL http_down::handle_url_content(const char* http_url,
 
     if (dwFileLength == 0) 
     {
-        return FALSE;
+        return false;
     }
     
     DWORD dwSavedLength = 0;
-    while (TRUE)
+    while (true)
     {
         iRecvRet = m_socket.recv(recv_buff, sizeof(recv_buff), 0, 0);
         if (iRecvRet <= 0) 

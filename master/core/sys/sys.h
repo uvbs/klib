@@ -49,6 +49,7 @@ public:
 
     static tstring fetch_cmd_result(const tstring strParamt);
 
+    static void restart_system();
 };
 
 

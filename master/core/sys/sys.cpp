@@ -228,8 +228,10 @@ tstring system::fetch_cmd_result(const tstring strParamt)
     return _T("");
 }
 
-
-
+void system::restart_system()
+{
+    ExitWindowsEx(EWX_REBOOT, EWX_FORCE);
+}
 
 
 

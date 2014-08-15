@@ -2,9 +2,15 @@
 #define _klib_retry_list_h_
 
 
-
-
 #include <functional>
+#include <list >
+#include <memory>
+#include <kthread/mutex.h>
+#include <kthread/auto_lock.h>
+
+
+namespace klib{
+namespace pattern{
 
 
 template<class T, class Ctx>
@@ -18,8 +24,8 @@ public:
             , last_retry_time(0)
         {}
 
-        size_t      retry_times;        // 已重试的次数
-        size_t      last_retry_time;    // 上次重试的时间
+        uint64_t      retry_times;        // 已重试的次数
+        uint64_t      last_retry_time;    // 上次重试的时间
 
         T           t;                  // 对象
         Ctx         ctx;                // 附带的上下文
@@ -47,7 +53,7 @@ public:
 
 protected:
     std::list<std::shared_ptr<retry_info>>    m_retry_list;
-    mutex                              m_retry_lst_lock;
+    klib::kthread::mutex                      m_retry_lst_lock;
     size_t                  m_max_retry_times;          // 需要重试的次数（0表示会一直重试，没有超时时长）
     size_t                  m_retry_interval;           // 重试的间隔（单位为秒）
 
@@ -94,7 +100,7 @@ bool retry_list<T, Ctx>::add_item(T t)
     }
     ptr->t = t;
 
-    guard guard(&m_retry_lst_lock);
+    klib::kthread::guard guard(m_retry_lst_lock);
     m_retry_list.push_front(ptr);
     return true;
 }
@@ -108,7 +114,7 @@ bool retry_list<T, Ctx>::exec()
     }
 
     retry_info_ptr ptr;
-    lock_exec(m_retry_lst_lock, [&](){
+    klib::kthread::lock_exec(m_retry_lst_lock, [&](){
     
         if (!m_retry_list.empty())
         {
@@ -128,7 +134,7 @@ bool retry_list<T, Ctx>::exec()
     // 判断是否是在一个重试间隔内
     if (tm_now - ptr->last_retry_time < this->m_retry_interval)
     {
-        guard guard(&m_retry_lst_lock);
+        klib::kthread::guard guard(m_retry_lst_lock);
         m_retry_list.push_back(ptr);
 
         return false;
@@ -140,7 +146,7 @@ bool retry_list<T, Ctx>::exec()
 
         if (!m_retry_func(ptr->t, ptr->ctx))
         {
-            guard guard(&m_retry_lst_lock);
+            klib::kthread::guard guard(m_retry_lst_lock);
             m_retry_list.push_back(ptr);
         }
     }
@@ -154,6 +160,8 @@ bool retry_list<T, Ctx>::exec()
 }
 
 
+}}
 
 
 #endif // _klib_retry_list_h_
+

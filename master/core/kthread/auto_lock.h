@@ -11,7 +11,7 @@ typedef guard  auto_lock ;
 typedef mutex  auto_cs   ;
 
 // scope lock
-template<typename T, typename F> void lock( T& t, F f ) { guard hold(t); f(); }
+template<typename T, typename F> void lock_exec( T& t, F f ) { guard hold(t); f(); }
 
 
 

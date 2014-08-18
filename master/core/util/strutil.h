@@ -162,7 +162,7 @@ namespace util
 
         TString::iterator i;
         for (i = t.begin(); i != t.end(); i++) {
-            if (!isspace(*i)) {
+            if (!isspace((unsigned char)*i)) {
                 break;
             }
         }
@@ -174,7 +174,7 @@ namespace util
         }
 
         for (i = t.end() - 1; ;i--) {
-            if (!isspace(*i)) {
+            if (!isspace((unsigned char)*i)) {
                 t.erase(i + 1, t.end());
                 break;
             }

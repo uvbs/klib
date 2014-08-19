@@ -425,7 +425,7 @@ public:
         for (int i=0; i<len; ++i) {
             detail::operator >> (*this, theKey);
             detail::operator >> (*this, theVal);
-            theMap[theKey] = theVal;
+            theMap[theKey] = std::move(theVal);
         }
         return *this;
     }

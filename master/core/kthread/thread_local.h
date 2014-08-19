@@ -25,7 +25,7 @@ public:
     {
         t_host_type* v = (t_host_type*)TlsGetValue(tls_index_);
         if (NULL == v) {
-            v = new t_host_type;
+            v = new t_host_type();
             TlsSetValue(tls_index_, v);
         }
 

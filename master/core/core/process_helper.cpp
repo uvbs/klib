@@ -4,7 +4,7 @@
 #include <tchar.h>
 #include <SHELLAPI.H>
 
-#include <rdebug/log_helper.h>
+#include "../rdebug/log_helper.h"
 
 
 using namespace klib::core;

@@ -18,6 +18,7 @@
 #include <klib_link.h>
 #include <core/uuid.h>
 #include <core/timestamp.h>
+#include <pattern/ringbuffer.h>
 
 #include "find_tool_test.h"
 #include "faststring_test.h"
@@ -133,7 +134,8 @@ make_stats_mgr(test_mgr, aaadsd);
 int _tmain(int argc, _TCHAR* argv[])
 {
     std::cout << test_mgr::info() << std::endl;
-
+    klib::pattern::ring_buffer<int> rbuff;
+    rbuff.push_back(1);
 
     printf("\r\n");
 

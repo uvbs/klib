@@ -179,6 +179,7 @@
     <ClInclude Include="..\core\pattern\object_pool.h" />
     <ClInclude Include="..\core\pattern\object_reuser.h" />
     <ClInclude Include="..\core\pattern\qmem_pool.h" />
+    <ClInclude Include="..\core\pattern\ringbuffer.h" />
     <ClInclude Include="..\core\pattern\sync_invoke.h" />
     <ClInclude Include="..\core\rdebug\logger.h" />
     <ClInclude Include="..\core\rdebug\log_helper.h" />

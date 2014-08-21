@@ -45,26 +45,10 @@ namespace net {
 
 typedef unsigned int length_type;
 
-class net_archive;
-namespace detail
-{
-    template<typename T>
-    net_archive& operator << (net_archive& ar, const T& t)
-    {
-        ar << t;
-        return ar;
-    }
-
-    template<typename T>
-    net_archive& operator >> (net_archive& ar, T& t)
-    {
-        ar >> t;
-        return ar;
-    }
-}
 
 // Õ¯¬Á–Ú¡–ªØ¿‡
-class net_archive {
+class net_archive 
+{
 public:
     net_archive() :  
         error_flag_(false)
@@ -281,7 +265,7 @@ public:
             error_flag_ = true;
             return *this;
         }
-        detail::operator << (*this, (length_type) str.size());
+        this-> operator << ((length_type) str.size());
         memcpy(op_pos_, str.c_str(), str.size());
         op_pos_ += str.size();
         return *this;
@@ -292,7 +276,7 @@ public:
             error_flag_ = true;
             return *this;
         }
-        detail:: operator << (*this, (length_type) str.size());
+        this-> operator << ((length_type) str.size());
         memcpy(op_pos_, str.c_str(), str.size());
         op_pos_ += str.size();
         return *this;
@@ -306,7 +290,7 @@ public:
 
         // extract length
         length_type len;
-        detail::operator >> (*this, len);
+        this-> operator >> (len);
 
         // judge
         if (this->get_data_len() + len > buff_len_) {
@@ -321,13 +305,20 @@ public:
     }
 
     template <class T>
+    net_archive& operator << (const T& t)
+    {
+        ::operator << (*this, t);
+        return *this;
+    }
+
+    template <class T>
     net_archive& operator << (::std::list<T>& theList) {
         if (this->get_data_len() + sizeof(length_type) > buff_len_) {
             error_flag_ = true;
             return *this;
         }
 
-        detail::operator << (*this, (length_type)theList.size());
+        this-> operator << ((length_type)theList.size());
         auto itr = theList.begin();
         for (; itr != theList.end(); ++itr) {
             if (this->get_data_len() + sizeof(length_type) > buff_len_) {
@@ -335,7 +326,7 @@ public:
                 return *this;
             }
 
-            detail::operator << (*this, *itr);
+            this-> operator << (*itr);
         }
         return *this;
     }
@@ -365,7 +356,7 @@ public:
             return *this;
         }
 
-        detail::operator << (*this, (length_type)theList.size());
+        this-> operator << ((length_type)theList.size());
         auto itr = theList.begin();
         for (; itr != theList.end(); ++itr) {
             if (this->get_data_len() + sizeof(length_type) > buff_len_) {
@@ -373,7 +364,7 @@ public:
                 return *this;
             }
 
-            detail:: operator << (*this, *itr);
+            this-> operator << (*itr);
         }
         return *this;
     }
@@ -388,7 +379,7 @@ public:
             return *this;
         }
 
-        detail::operator >> (*this, len);
+        this-> operator >> (len);
         for (int i=0; i<len; ++i) {
             detail::operator >> (*this, target);
             theList.push_back(std::move(target));
@@ -403,7 +394,7 @@ public:
             return *this;
         }
 
-        detail::operator << (*this, (length_type)theMap.size());
+        this-> operator << ((length_type)theMap.size());
         typename ::std::map<TKey, TVal>::iterator itr = theMap.begin();
         for (; itr != theMap.end(); ++itr) {
             detail::operator << (*this, itr->first);
@@ -420,12 +411,12 @@ public:
         }
 
         length_type len;
-        detail::operator >> (*this, len);
+        this-> operator >> (len);
         TKey theKey;
         TVal theVal;
         for (int i=0; i<len; ++i) {
-            detail::operator >> (*this, theKey);
-            detail::operator >> (*this, theVal);
+            this-> operator >> (theKey);
+            this-> operator >> (theVal);
             theMap[theKey] = std::move(theVal);
         }
         return *this;

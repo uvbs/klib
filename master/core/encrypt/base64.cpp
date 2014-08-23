@@ -1,238 +1,144 @@
 //#include "stdafx.h"
 #include "base64.h"
-
-
 using namespace klib::encode;
 
+#include "../core/scope_guard.h"
+using namespace klib::core;
 
-const char *base64::bstr =
-	"ABCDEFGHIJKLMNOPQ"
-	"RSTUVWXYZabcdefgh"
-	"ijklmnopqrstuvwxy"
-	"z0123456789+/";
 
-const char base64::rstr[] = {
-	  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 
-	  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0, 
-	  0,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,  62,   0,   0,   0,  63, 
-	 52,  53,  54,  55,  56,  57,  58,  59,  60,  61,   0,   0,   0,   0,   0,   0, 
-	  0,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12,  13,  14, 
-	 15,  16,  17,  18,  19,  20,  21,  22,  23,  24,  25,   0,   0,   0,   0,   0, 
-	  0,  26,  27,  28,  29,  30,  31,  32,  33,  34,  35,  36,  37,  38,  39,  40, 
-	 41,  42,  43,  44,  45,  46,  47,  48,  49,  50,  51,   0,   0,   0,   0,   0};
+#define BASE64_CODE_LENGTH  65
+#define BASE64_NULLCHAR     0x40
+
+char g_Base64Table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 
 base64::base64()
 {
 }
 
-
-void base64::encode(FILE *fil, std::string& output, bool add_crlf)
-{
-	size_t remain;
-	size_t i = 0;
-	size_t o = 0;
-	char input[4];
-
-	output = "";
-	remain = fread(input,1,3,fil);
-	while (remain > 0)
-	{
-		if (add_crlf && o && o % 76 == 0)
-			output += "\n";
-		switch (remain)
-		{
-		case 1:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) ];
-			output += "==";
-			break;
-		case 2:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) + ((input[i + 1] >> 4) & 0x0f) ];
-			output += bstr[ ((input[i + 1] << 2) & 0x3c) ];
-			output += "=";
-			break;
-		default:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) + ((input[i + 1] >> 4) & 0x0f) ];
-			output += bstr[ ((input[i + 1] << 2) & 0x3c) + ((input[i + 2] >> 6) & 0x03) ];
-			output += bstr[ (input[i + 2] & 0x3f) ];
-		}
-		o += 4;
-		//
-		remain = fread(input,1,3,fil);
-	}
-}
-
-
 void base64::encode(const std::string& str_in, std::string& str_out, bool add_crlf)
 {
 	encode(str_in.c_str(), str_in.size(), str_out, add_crlf);
 }
 
-
 void base64::encode(const char* input,size_t l,std::string& output, bool add_crlf)
 {
-	size_t i = 0;
-	size_t o = 0;
-	
-	output = "";
-	while (i < l)
-	{
-		size_t remain = l - i;
-		if (add_crlf && o && o % 76 == 0)
-			output += "\n";
-		switch (remain)
-		{
-		case 1:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) ];
-			output += "==";
-			break;
-		case 2:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) + ((input[i + 1] >> 4) & 0x0f) ];
-			output += bstr[ ((input[i + 1] << 2) & 0x3c) ];
-			output += "=";
-			break;
-		default:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) + ((input[i + 1] >> 4) & 0x0f) ];
-			output += bstr[ ((input[i + 1] << 2) & 0x3c) + ((input[i + 2] >> 6) & 0x03) ];
-			output += bstr[ (input[i + 2] & 0x3f) ];
-		}
-		o += 4;
-		i += 3;
-	}
+    return encode((const unsigned char*) input, l, output, add_crlf);
 }
 
-
-void base64::encode(const unsigned char* input,size_t l,std::string& output,bool add_crlf)
+void base64::encode(const unsigned char* input, 
+    size_t nLength,
+    std::string& output,
+    bool add_crlf)
 {
-	size_t i = 0;
-	size_t o = 0;
-	
-	output = "";
-	while (i < l)
-	{
-		size_t remain = l - i;
-		if (add_crlf && o && o % 76 == 0)
-			output += "\n";
-		switch (remain)
-		{
-		case 1:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) ];
-			output += "==";
-			break;
-		case 2:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) + ((input[i + 1] >> 4) & 0x0f) ];
-			output += bstr[ ((input[i + 1] << 2) & 0x3c) ];
-			output += "=";
-			break;
-		default:
-			output += bstr[ ((input[i] >> 2) & 0x3f) ];
-			output += bstr[ ((input[i] << 4) & 0x30) + ((input[i + 1] >> 4) & 0x0f) ];
-			output += bstr[ ((input[i + 1] << 2) & 0x3c) + ((input[i + 2] >> 6) & 0x03) ];
-			output += bstr[ (input[i + 2] & 0x3f) ];
-		}
-		o += 4;
-		i += 3;
-	}
+    // Base64的编码需要的空间长度是源串长度的4/3 + 64；
+    int nDestLength =  (int)(nLength * 1.7) + 64;
+    char *out_buf_ptr = new char[nDestLength];
+    if(out_buf_ptr == NULL)
+        return ;
+    
+    defer( delete[] out_buf_ptr  );
+
+    int i = 0;
+    int j = 0;
+    char *cur_ptr = (char*) input;
+    for (i=0, j=0; i<nLength ; i+=3, j+=4)
+    {
+        if (add_crlf && j % 76 == 0) {
+            out_buf_ptr[j]   = '\r';
+            out_buf_ptr[j+1] = '\n';
+            j += 2;
+        }
+
+        out_buf_ptr[j] = g_Base64Table[ (cur_ptr[i] >> 2) & 0x3F ];
+        switch(nLength - i)
+        {
+        case 1:
+            out_buf_ptr[j+1] = g_Base64Table[ (cur_ptr[i] << 4) & 0x30 ];
+            out_buf_ptr[j+2] = g_Base64Table[ BASE64_NULLCHAR ];
+            out_buf_ptr[j+3] = g_Base64Table[ BASE64_NULLCHAR ];
+            break;
+        case 2:
+            out_buf_ptr[j+1] = g_Base64Table[ ((cur_ptr[i] << 4) & 0x30) | ((cur_ptr[i+1] >> 4) & 0x0F) ];
+            out_buf_ptr[j+2] = g_Base64Table[ (cur_ptr[i+1] << 2) & 0x3C ];
+            out_buf_ptr[j+3] = g_Base64Table[ BASE64_NULLCHAR ];
+            break;
+        default: // >=3
+            out_buf_ptr[j+1] = g_Base64Table[ ((cur_ptr[i] << 4) & 0x30) | ((cur_ptr[i+1] >> 4) & 0x0F) ];
+            out_buf_ptr[j+2] = g_Base64Table[ ((cur_ptr[i+1] << 2) & 0x3C) | ((cur_ptr[i+2] >> 6) & 0x03) ];
+            out_buf_ptr[j+3] = g_Base64Table[ cur_ptr[i+2] & 0x3F ];
+            break;
+        }
+    }
+    out_buf_ptr[j]=0;
+    output.assign(out_buf_ptr);
 }
 
 
-void base64::decode(const std::string& input,std::string& output)
+void base64::decode(const std::string& input, std::string& output)
 {
-	size_t i = 0;
-	size_t l = input.size();
-	
-	output = "";
-	while (i < l)
-	{
-		while (i < l && (input[i] == 13 || input[i] == 10))
-			i++;
-		if (i < l)
-		{
-			char b1 = (char)((rstr[(int)input[i]] << 2 & 0xfc) +
-					(rstr[(int)input[i + 1]] >> 4 & 0x03));
-			output += b1;
-			if (input[i + 2] != '=')
-			{
-				char b2 = (char)((rstr[(int)input[i + 1]] << 4 & 0xf0) +
-						(rstr[(int)input[i + 2]] >> 2 & 0x0f));
-				output += b2;
-			}
-			if (input[i + 3] != '=')
-			{
-				char b3 = (char)((rstr[(int)input[i + 2]] << 6 & 0xc0) +
-						rstr[(int)input[i + 3]]);
-				output += b3;
-			}
-			i += 4;
-		}
-	}
-}
+    // 合法的Base64编码后字符串长度必须为4字节的倍数(不含'\0')
+    if(input.size() % 4 !=0 || input.size() <= 0)
+    {
+        return ;
+    }
 
+    int index;
+    unsigned char ch1,ch2,ch3,ch4;
+    unsigned char sDecodeTable[256];
+    memset(sDecodeTable,0,256);
+    int nDecodedLength = 0;
+
+    for (index = 0; index < BASE64_CODE_LENGTH; index++)
+    {
+        sDecodeTable[(int) g_Base64Table[index]]=(unsigned char) index;
+    }
+
+    // uint8_t* szDestBuf = (uint8_t*) pDestBuf;
+    for (index = 0; index < input.size(); index += 4)
+    {
+        char ch = input[index];
+        if (ch == '\r' || ch == '\n') {
+            index ++;
+            continue;
+        }
+
+        ch1 = sDecodeTable[(int) input[index]];
+        ch2 = sDecodeTable[(int) input[index + 1]];
+        ch3 = sDecodeTable[(int) input[index + 2]];
+        ch4 = sDecodeTable[(int) input[index + 3]];
+
+        output.append(((ch1 << 2) & 0xFC) | ((ch2 >> 4) & 0x03), 1);
+        nDecodedLength ++;
+
+        if (ch3 != BASE64_NULLCHAR)
+        {
+            output.append(((ch2 << 4) & 0xF0) | ((ch3 >> 2) & 0x0F), 1);
+            nDecodedLength ++;
+            if (ch4 != BASE64_NULLCHAR)
+            {
+                output.append(((ch3 << 6) & 0xC0) | (ch4 & 0x3F), 1);
+                nDecodedLength ++;
+            }
+        }
+    }
+}
 
 void base64::decode(const std::string& input, unsigned char *output, size_t& sz)
 {
-	size_t i = 0;
-	size_t l = input.size();
-	size_t j = 0;
-	
-	while (i < l)
-	{
-		while (i < l && (input[i] == 13 || input[i] == 10))
-			i++;
-		if (i < l)
-		{
-			unsigned char b1 = (unsigned char)((rstr[(int)input[i]] << 2 & 0xfc) +
-					(rstr[(int)input[i + 1]] >> 4 & 0x03));
-			if (output)
-			{
-				output[j] = b1;
-			}
-			j++;
-			if (input[i + 2] != '=')
-			{
-				unsigned char b2 = (unsigned char)((rstr[(int)input[i + 1]] << 4 & 0xf0) +
-						(rstr[(int)input[i + 2]] >> 2 & 0x0f));
-				if (output)
-				{
-					output[j] = b2;
-				}
-				j++;
-			}
-			if (input[i + 3] != '=')
-			{
-				unsigned char b3 = (unsigned char)((rstr[(int)input[i + 2]] << 6 & 0xc0) +
-						rstr[(int)input[i + 3]]);
-				if (output)
-				{
-					output[j] = b3;
-				}
-				j++;
-			}
-			i += 4;
-		}
-	}
-	sz = j;
-}
 
+}
 
 size_t base64::decode_length(const std::string& str64)
 {
-	if (!str64.size() || str64.size() % 4)
-		return 0;
-	size_t l = 3 * (str64.size() / 4 - 1) + 1;
-	if (str64[str64.size() - 2] != '=')
-		l++;
-	if (str64[str64.size() - 1] != '=')
-		l++;
-	return l;
+    if (!str64.size() || str64.size() % 4)
+        return 0;
+    size_t l = 3 * (str64.size() / 4 - 1) + 1;
+    if (str64[str64.size() - 2] != '=')
+        l++;
+    if (str64[str64.size() - 1] != '=')
+        l++;
+    return l;
 }
 
 

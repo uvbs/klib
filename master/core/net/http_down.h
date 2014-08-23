@@ -17,8 +17,8 @@ namespace net {
 class http_down  
 {
 public:
-	http_down() {}
-	virtual ~http_down() {}
+    http_down() {}
+    virtual ~http_down() {}
 
 public:
     ///< 下载url文件到指定的路径

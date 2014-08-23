@@ -27,7 +27,7 @@ namespace net  {
 enum e_http_method
 {
     e_stats_get = 1,
-    e_stats_pos,
+    e_stats_post,
     e_stats_default = e_stats_get,
 };
 

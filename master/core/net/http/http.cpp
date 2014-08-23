@@ -176,7 +176,7 @@ bool http::send_request(const std::string http_url)
     request_header.append("\r\n");
 
     // 添加post请求参数
-    if (stats_method_ == e_stats_pos) 
+    if (e_stats_post == stats_method_) 
     {
         for (auto itr = http_post_param_lst_.begin(); 
             itr != http_post_param_lst_.end();

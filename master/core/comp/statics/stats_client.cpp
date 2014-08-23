@@ -38,8 +38,27 @@ void stats_client::add_post_param(const std::string& key, const std::string& val
 
 std::string stats_client::exec()
 {
+    std::string str_url = stats_url_;
     std::string str_content;
-    bool ret = http_.get_content(stats_url_, str_content);
+
+    if (str_url.find("?") == std::string::npos) {
+        str_url.append("?");
+    }
+    else {
+        str_url.append("&");
+    }
+
+    for (auto itr = get_params_.begin(); 
+         itr != get_params_.end();
+         itr ++)
+    {
+        str_url.append(itr->first);
+        str_url.append("&");
+        str_url.append(itr->second);
+        str_url.append("=");
+    }
+
+    bool ret = http_.get_content(str_url, str_content);
     
     return std::move(str_content);
 }

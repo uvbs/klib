@@ -4,9 +4,11 @@
 
 #include "http.h"
 #include "../addr_resolver.h"
+#include "../../core/scope_guard.h"
 
 #pragma warning(disable: 4996)
 
+using namespace klib::core;
 using namespace klib::net;
 
 
@@ -86,19 +88,15 @@ bool http::download(const std::string& http_url, const std::string& path)
     if (nullptr == hFile) {
         return false;
     }
+    defer ( fclose(hFile) );
 
     data_callback callback = [&](const char* data, size_t len)
     {
         fwrite(data, len, 1, hFile);
     };
 
-    bool result = handle_requst(http_url, callback);
-
-    fclose(hFile);
-
-    return result;
+    return handle_requst(http_url, callback);
 }
-
 
 bool http::send_request(const std::string http_url)
 {

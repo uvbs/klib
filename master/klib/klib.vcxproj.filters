@@ -183,9 +183,6 @@
     <ClInclude Include="..\core\net\IP_V4.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\net\http_down.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\algo\find_tool.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -375,6 +372,9 @@
     <ClInclude Include="..\core\net\http\http.h">
       <Filter>http</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\net\http_down.h">
+      <Filter>http</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -432,9 +432,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\algo\wm_wrapper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\net\http_down.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\net\wininet_httpclient.cpp">
@@ -537,6 +534,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\net\http\http.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\http_down.cpp">
       <Filter>http</Filter>
     </ClCompile>
   </ItemGroup>

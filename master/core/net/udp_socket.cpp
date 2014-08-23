@@ -221,7 +221,7 @@ BOOL udp_socket::send_to(const char* strSvrIp, USHORT uSvrPort, const char* buff
 BOOL udp_socket::send_to(ip_v4 svrIp, USHORT uSvrPort, const char* buff, int iLen) //ÍøÂç×Ö½ÚÐò
 {
 	sockaddr_in svrAddr = {0};
-	svrAddr.sin_addr.s_addr = svrIp;
+	svrAddr.sin_addr.s_addr = svrIp.get_val();
 	svrAddr.sin_port = uSvrPort;
 	svrAddr.sin_family = AF_INET;
 

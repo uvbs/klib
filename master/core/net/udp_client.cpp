@@ -171,11 +171,11 @@ void udp_client::set_callback(udp_client_callback callback)
 	udp_callback_ = callback;
 }
 
-BOOL udp_client::send_to(ip_v4 uAddr, USHORT port, const char*buff, int iLen)
+BOOL udp_client::send_to(ip_v4 ip, USHORT port, const char*buff, int iLen)
 {
 	sockaddr_in addrTo;
 	memset(&addrTo, 0, sizeof(addrTo));
-	addrTo.sin_addr.s_addr = uAddr;
+	addrTo.sin_addr.s_addr = ip.get_val();
 	addrTo.sin_family = AF_INET;
 	addrTo.sin_port = port;
 
@@ -190,7 +190,7 @@ void udp_client::set_svr_info(ip_v4 uAddrServer, USHORT uPortServer)
 
 BOOL udp_client::send_to_svr(const char* buff, int iLen)
 {
-	if (!(svr_addr_ && svr_port_)) 
+	if (!(svr_addr_.get_val() && svr_port_)) 
     {
 		return FALSE;
 	}

@@ -15,7 +15,7 @@ using namespace klib::net;
 typedef std::pair<std::string, std::string>  param_pair_type;
 typedef std::vector<param_pair_type> params_type;
 
-
+//----------------------------------------------------------------------
 // 统计客户端
 class stats_client : public singleton<stats_client>
 {

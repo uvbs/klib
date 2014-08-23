@@ -45,7 +45,10 @@ std::string stats_client::exec()
         str_url.append("?");
     }
     else {
-        str_url.append("&");
+        unsigned char ch = str_url[str_url.size() - 1];
+        if (ch != '&' && ch != '?') {
+            str_url.append("&");
+        }
     }
 
     for (auto itr = get_params_.begin(); 
@@ -53,9 +56,9 @@ std::string stats_client::exec()
          itr ++)
     {
         str_url.append(itr->first);
-        str_url.append("&");
-        str_url.append(itr->second);
         str_url.append("=");
+        str_url.append(itr->second);
+        str_url.append("&");
     }
 
     bool ret = http_.get_content(str_url, str_content);

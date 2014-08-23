@@ -18,7 +18,7 @@
 using namespace klib::core;
 
 
-string create_uuid()
+std::string create_uuid()
 {
     char buf[64] = {0};
 #ifdef WIN32

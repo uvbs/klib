@@ -3,10 +3,11 @@
 
 
 #include "../inttype.h"
+#include <string>
 
 
-namespace klib{
-namespace core{
+namespace klib {
+namespace core {
 
 // ´´½¨uuid
 std::string create_uuid();

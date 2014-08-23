@@ -366,6 +366,9 @@
     <ClInclude Include="..\core\pattern\ringbuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\core\uuid.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -519,6 +522,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\rdebug\thread_moniter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\core\uuid.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -436,6 +436,8 @@ UINT64 xini::parsed_data(const char* str)
     const int base_16[] = {10,11,12,13,14,15};
     int base = 10;
     UINT64  ret = 0;
+    
+    str = skip_space(str);
 
     if (osaa::_strnicmp(str, "0x", 2) == 0)
     {

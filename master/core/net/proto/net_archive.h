@@ -341,9 +341,9 @@ public:
             return *this;
         }
 
-        detail::operator >> (*this, len);
+        this->operator >> (len);
         for (int i=0; i<len; ++i) {
-            detail::operator >> (*this, target);
+            this->operator >> (target);
             theList.push_back(std::move(target));
         }
         return *this;
@@ -381,7 +381,7 @@ public:
 
         this-> operator >> (len);
         for (int i=0; i<len; ++i) {
-            detail::operator >> (*this, target);
+            this-> operator >> (target);
             theList.push_back(std::move(target));
         }
         return *this;
@@ -397,8 +397,8 @@ public:
         this-> operator << ((length_type)theMap.size());
         typename ::std::map<TKey, TVal>::iterator itr = theMap.begin();
         for (; itr != theMap.end(); ++itr) {
-            detail::operator << (*this, itr->first);
-            detail::operator << (*this, itr->second);
+            this-> operator << (itr->first);
+            this-> operator << (itr->second);
         }
         return *this;
     }
@@ -433,10 +433,10 @@ public:
     }
 
 private:
-    char*   op_pos_;		///< 当前在缓冲区的位置
-    const char* orig_pos_;	///< 缓冲区的初始位置
-    UINT buff_len_;		    ///< 缓冲区的总长度
-    bool error_flag_;       ///< 是否出错(缓冲区大小不够情况)
+    char*   op_pos_;            ///< 当前在缓冲区的位置
+    const char* orig_pos_;      ///< 缓冲区的初始位置
+    UINT buff_len_;             ///< 缓冲区的总长度
+    bool error_flag_;           ///< 是否出错(缓冲区大小不够情况)
 };
 
 inline std::string archive(const std::string& str)

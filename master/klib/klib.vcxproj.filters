@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="http">
+      <UniqueIdentifier>{ea1c4f1a-650b-4b91-9852-1d0c15713d22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -369,6 +372,9 @@
     <ClInclude Include="..\core\core\uuid.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\net\http\http.h">
+      <Filter>http</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -529,6 +535,9 @@
     </ClCompile>
     <ClCompile Include="..\core\net\addr_helper.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\http\http.cpp">
+      <Filter>http</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

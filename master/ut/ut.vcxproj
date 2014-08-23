@@ -107,6 +107,7 @@
     <ClInclude Include="qsort_test.h" />
     <ClInclude Include="queue_test.h" />
     <ClInclude Include="redirect_std_out_test.h" />
+    <ClInclude Include="stats_test.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stream_test.h" />
     <ClInclude Include="strutil_test.h" />

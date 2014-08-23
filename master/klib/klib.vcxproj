@@ -161,6 +161,7 @@
     <ClInclude Include="..\core\net\addr_resolver.h" />
     <ClInclude Include="..\core\net\bytebuyffer.h" />
     <ClInclude Include="..\core\net\CheckNat.h" />
+    <ClInclude Include="..\core\net\http\http.h" />
     <ClInclude Include="..\core\net\http_down.h" />
     <ClInclude Include="..\core\net\IP_V4.h" />
     <ClInclude Include="..\core\net\proto\command_header.h" />
@@ -232,6 +233,7 @@
     <ClCompile Include="..\core\net\addr_helper.cpp" />
     <ClCompile Include="..\core\net\addr_resolver.cpp" />
     <ClCompile Include="..\core\net\CheckNat.cpp" />
+    <ClCompile Include="..\core\net\http\http.cpp" />
     <ClCompile Include="..\core\net\http_down.cpp" />
     <ClCompile Include="..\core\net\tcp_socket.cpp" />
     <ClCompile Include="..\core\net\udp_client.cpp" />

@@ -15,14 +15,14 @@ using namespace klib::net;
 
 tcp_socket::tcp_socket()
 {
-	m_sock			= INVALID_SOCKET;
-	m_bConnected	= FALSE;
+    sock_			= INVALID_SOCKET;
+    connected_	= FALSE;
 }
 
 tcp_socket::tcp_socket(SOCKET sock, BOOL bConnected)
 {
-    m_sock = sock;
-    m_bConnected = bConnected;
+    sock_ = sock;
+    connected_ = bConnected;
 }
 
 tcp_socket::~tcp_socket()
@@ -32,17 +32,17 @@ tcp_socket::~tcp_socket()
 
 BOOL tcp_socket::init()
 {
-	if((m_sock = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP)) == INVALID_SOCKET)
+    if((sock_ = socket(AF_INET,SOCK_STREAM,IPPROTO_TCP)) == INVALID_SOCKET)
     {    
         return FALSE;   
     }
 
-	return TRUE;
+    return TRUE;
 }
 
 SOCKET& tcp_socket::get_socket()
 {
-    return m_sock;
+    return sock_;
 }
 
 BOOL tcp_socket::bind_port(USHORT uPort)
@@ -54,7 +54,7 @@ BOOL tcp_socket::bind_port(USHORT uPort)
     sockaddr.sin_addr.S_un.S_addr = htonl(INADDR_ANY);    
     sockaddr.sin_port = htons(uPort);
 
-    if(bind(m_sock, (struct sockaddr*) &sockaddr, sizeof(sockaddr)) == SOCKET_ERROR) 
+    if(bind(sock_, (struct sockaddr*) &sockaddr, sizeof(sockaddr)) == SOCKET_ERROR) 
     {
         return FALSE;
     }
@@ -65,7 +65,7 @@ USHORT tcp_socket::get_bind_port()
 {
     sockaddr_in addr;
     int addrlen = sizeof(addr);
-    int ret = getsockname(m_sock, (sockaddr*) &addr, &addrlen);
+    int ret = getsockname(sock_, (sockaddr*) &addr, &addrlen);
     if (SOCKET_ERROR == ret) 
     {
         return 0;
@@ -76,11 +76,11 @@ USHORT tcp_socket::get_bind_port()
 
 BOOL tcp_socket::listen(int ibacklog)
 {
-	if (SOCKET_ERROR == ::listen(m_sock, ibacklog)) 
+    if (SOCKET_ERROR == ::listen(sock_, ibacklog)) 
     {
-		return FALSE;
-	}
-	return TRUE;
+        return FALSE;
+    }
+    return TRUE;
 }
 
 tcp_socket tcp_socket::accept()
@@ -88,7 +88,7 @@ tcp_socket tcp_socket::accept()
     sockaddr_in local = {0};
     local.sin_family = AF_INET;
     int len = sizeof(sockaddr);
-    SOCKET connectsocket = ::accept(m_sock, (sockaddr*) &local, &len);
+    SOCKET connectsocket = ::accept(sock_, (sockaddr*) &local, &len);
 
     DWORD dwErr = WSAGetLastError();
     if (INVALID_SOCKET == connectsocket) 
@@ -100,138 +100,144 @@ tcp_socket tcp_socket::accept()
 
 BOOL tcp_socket::connect(const char* ip, USHORT uPort)
 {
-	if (NULL == ip || 0 == uPort) 
+    if (NULL == ip || 0 == uPort) 
     {
-		return FALSE;
-	}
+        return FALSE;
+    }
 
-	DWORD dwIP = 0;
-	addr_resolver resolver(ip);
-	if (resolver.size() > 0) 
+    DWORD dwIP = 0;
+    addr_resolver resolver(ip);
+    if (resolver.size() > 0) 
     {
-		dwIP = resolver.at(0);
-	}
-	else 
+        dwIP = resolver.at(0);
+    }
+    else 
     {
-		return FALSE;
-	}
+        return FALSE;
+    }
 
-	return connect(dwIP, htons(uPort));
+    return connect(dwIP, htons(uPort));
 }
 
 BOOL tcp_socket::connect(UINT32  uIP, USHORT uPort)
 {
-	sockaddr_in addrSvr;
-	memset(&addrSvr, 0, sizeof(addrSvr));
-	addrSvr.sin_family			 = AF_INET;
-	addrSvr.sin_port			 = uPort;
-	addrSvr.sin_addr.s_addr		 = uIP;
-	
-	int ret = ::connect(m_sock, (struct sockaddr*) &addrSvr, sizeof(sockaddr));
-	if (SOCKET_ERROR == ret) 
+    sockaddr_in addrSvr;
+    memset(&addrSvr, 0, sizeof(addrSvr));
+    addrSvr.sin_family           = AF_INET;
+    addrSvr.sin_port             = uPort;
+    addrSvr.sin_addr.s_addr      = uIP;
+
+    int ret = ::connect(sock_, (struct sockaddr*) &addrSvr, sizeof(sockaddr));
+    if (SOCKET_ERROR == ret) 
     {
-		return FALSE;
-	}
-	
-	m_bConnected = TRUE;
-	return TRUE;
+        return FALSE;
+    }
+
+    connected_ = TRUE;
+    return TRUE;
 }
 
 BOOL tcp_socket::close()
 {
-    if (INVALID_SOCKET != m_sock) 
+    if (INVALID_SOCKET != sock_) 
     {
-        closesocket(m_sock);
-        m_sock				= INVALID_SOCKET;
-        m_bConnected		= FALSE;
+        closesocket(sock_);
+        sock_				= INVALID_SOCKET;
+        connected_		= FALSE;
     }
-	return TRUE;
+    return TRUE;
 }
 
 BOOL tcp_socket::is_connected()
 {
-	return m_bConnected;
+    return connected_;
 }
 
 BOOL tcp_socket::enable_noblock(BOOL bEnable /* = TRUE */)
 {
-	//用非阻塞的连接
-	u_long ul= bEnable ? 1 : 0;
-    if (SOCKET_ERROR == ioctlsocket(m_sock, FIONBIO, &ul)) 
+    //用非阻塞的连接
+    u_long ul= bEnable ? 1 : 0;
+    if (SOCKET_ERROR == ioctlsocket(sock_, FIONBIO, &ul)) 
     {
-		return FALSE;
-	}
-	return TRUE;
+        return FALSE;
+    }
+    return TRUE;
 }
 
 BOOL tcp_socket::send(const char* buff, int iLen)
 {
-	enable_noblock(FALSE);
+    enable_noblock(FALSE);
 
-	int ret = ::send(m_sock, buff, iLen, 0);
-	if (SOCKET_ERROR == ret) 
+    int sended_bytes = 0;
+    while (sended_bytes < iLen)
     {
-		return FALSE;
-	}
+        int ret = ::send(sock_, &buff[sended_bytes], iLen - sended_bytes, 0);
+        if (SOCKET_ERROR == ret) 
+        {
+            return FALSE;
+        }
 
-	return TRUE;
+        sended_bytes += ret;
+    }
+
+    return TRUE;
 }
 
 int tcp_socket::recv(char* buff, int iLenOfBuff, int seconds, int useconds)
 {
-	if (seconds == 0 && useconds == 0) 
+    if (seconds == 0 && useconds == 0) 
     {
-		this->enable_noblock(FALSE);
-		int ret = ::recv(m_sock, buff, iLenOfBuff, 0);
-		if (0 == ret || SOCKET_ERROR == ret) 
+        this->enable_noblock(FALSE);
+        int ret = ::recv(sock_, buff, iLenOfBuff, 0);
+        if (0 == ret || SOCKET_ERROR == ret) 
         {
-			m_bConnected = FALSE;
-			closesocket(m_sock);
-			m_sock = INVALID_SOCKET;
-			return ret;
-		}
-		return ret;
-	}
-	else 
+            connected_ = FALSE;
+            closesocket(sock_);
+            sock_ = INVALID_SOCKET;
+            return ret;
+        }
+        return ret;
+    }
+    else 
     {
-		this->enable_noblock(TRUE);
-		
-		fd_set rfd;					// 描述符集 这个将用来测试有没有一个可用的连接
-		struct timeval timeout;
-		FD_ZERO(&rfd);				//总是这样先清空一个描述符集
-		
-		timeout.tv_sec	= seconds;    //等下select用到这个
-		timeout.tv_usec = useconds;
-		
-		//现在开始用select
-		FD_SET(m_sock, &rfd);    //把sock放入要测试的描述符集 就是说把sock放入了rfd里面 这样下一步调用select对rfd进行测试的时候就会测试sock了(因为我们将sock放入的rdf) 一个描述符集可以包含多个被测试的描述符, 
-		int ret = ::select(0, &rfd, 0, 0, &timeout);
-		
-		if (0 == ret) 
-        {
-			//time out
-			return 0;
-		}
-		else if (SOCKET_ERROR == ret) 
-        {
-			closesocket(m_sock);
-			m_sock = INVALID_SOCKET;
-			m_bConnected = FALSE;
-			return SOCKET_ERROR;
-		}
-		
-		if(FD_ISSET(m_sock, &rfd)) 
-        {
-			//ok
-			int ret = ::recv(m_sock, buff, iLenOfBuff, 0);
-			if (0 == ret || SOCKET_ERROR == ret) {
-				closesocket(m_sock);
-				m_sock = INVALID_SOCKET;
-				m_bConnected = FALSE;
-			}
-			return ret;
-		}
+        this->enable_noblock(TRUE);
 
-		return 0;
-	}
+        fd_set rfd;					// 描述符集 这个将用来测试有没有一个可用的连接
+        struct timeval timeout;
+        FD_ZERO(&rfd);				//总是这样先清空一个描述符集
+
+        timeout.tv_sec	= seconds;    //等下select用到这个
+        timeout.tv_usec = useconds;
+
+        //现在开始用select
+        FD_SET(sock_, &rfd);    //把sock放入要测试的描述符集 就是说把sock放入了rfd里面 这样下一步调用select对rfd进行测试的时候就会测试sock了(因为我们将sock放入的rdf) 一个描述符集可以包含多个被测试的描述符, 
+        int ret = ::select(0, &rfd, 0, 0, &timeout);
+
+        if (0 == ret) 
+        {
+            //time out
+            return 0;
+        }
+        else if (SOCKET_ERROR == ret) 
+        {
+            closesocket(sock_);
+            sock_ = INVALID_SOCKET;
+            connected_ = FALSE;
+            return SOCKET_ERROR;
+        }
+
+        if(FD_ISSET(sock_, &rfd)) 
+        {
+            //ok
+            int ret = ::recv(sock_, buff, iLenOfBuff, 0);
+            if (0 == ret || SOCKET_ERROR == ret) {
+                closesocket(sock_);
+                sock_ = INVALID_SOCKET;
+                connected_ = FALSE;
+            }
+            return ret;
+        }
+
+        return 0;
+    }
 }

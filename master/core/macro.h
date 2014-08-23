@@ -3,6 +3,10 @@
 
 #include "inttype.h"
 
+#ifdef _WIN32 
+#include <crtdbg.h>
+#endif
+
 namespace klib
 {
 

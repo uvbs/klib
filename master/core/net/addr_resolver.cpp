@@ -1,5 +1,6 @@
 
 //#include "stdafx.h"
+#include "../macro.h"
 #include "addr_resolver.h"
 
 //如果没有包含 winsock2则需要包含
@@ -35,6 +36,9 @@ BOOL addr_resolver::resolve(const char* ip)
 	HOSTENT* he = gethostbyname((char *)ip);
 	if (NULL == he)
 	{
+#ifdef _WIN32
+        KLIB_ASSERT("need init socket" && WSAGetLastError() != WSANOTINITIALISED);
+#endif
 		return FALSE;
 	}
 

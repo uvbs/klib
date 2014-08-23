@@ -69,7 +69,7 @@ public:
     {
         ip_seg  stTempElem;
         stTempElem.ulStartIp  = ntohl(inet_addr(pszStartIp));
-        stTempElem.ulEndIp    = stTempElem.ulStartIp + uIpCount - 1;
+        stTempElem.ulEndIp    = stTempElem.ulStartIp.get_val() + uIpCount - 1;
         return insert(stTempElem);
     }
         

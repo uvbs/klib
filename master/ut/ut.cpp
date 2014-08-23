@@ -12,6 +12,8 @@
 #pragma comment(lib, "gtest_main.lib")
 #endif
 
+#pragma comment(lib, "statics")
+
 //#pragma comment(lib, "ws2_32")
 
 #include <kthread/atomic.h>
@@ -53,87 +55,16 @@
 
 #include "third/letter.h"
 #include "timer_test.h"
+#include "stats_test.h"
 
 //#include "unzip_test.h"
 
 #include <net/proto/net_archive.h>
 
-#define AS_MEMBER()
-
-template<class Tuple, std::size_t N>
-struct TuplePrinter {
-    static void output(std::stringstream& str, const Tuple& t, const char* memb_arr[])
-    {
-        TuplePrinter<Tuple, N - 1>::output(t);
-        str << ", " << memb_arr[N-1] << "=" << std::get<N - 1>(t);
-    }
-};
-
-template<class Tuple>
-struct TuplePrinter<Tuple, 1>{
-    static void output(std::stringstream& str, const Tuple& t, const char* memb_arr[])
-    {
-        //std::cout << "ele type: " << typeid(std::get<0>(t)).name() << std::endl;
-        if (std::is_pointer<std::tuple_element<0, Tuple>::type>::value)
-        {
-            str << memb_arr[0] << "=" << *std::get<0>(t);
-        }
-        else
-        {
-            str << memb_arr[0] << "=" << std::get<0>(t);
-        }
-    }
-};
-
-
-
-#define de_type(val)\
-    typedef std::tuple<decltype(&val)> t_type;\
-    t_type t_val;           \
-    std::get<0>(t_val) = &val;
-
-#define make_stats_mgr(mgrname, val)  \
-class mgrname                                                  \
-{                                                              \
-    mgrname()                                                  \
-    {                                                          \
-          std::get<0>(t_val) = &val;                           \
-          member_name_arr[0] = #val;                           \
-    }                                                          \
-public:                                                        \
-                                                               \
-    static std::string info()                                  \
-    {                                                          \
-        return instance()->output();                           \
-    }                                                          \
-                                                               \
-    static mgrname* instance()                                 \
-    {                                                          \
-        static mgrname _instance;                              \
-        return &_instance;                                      \
-    }                                                           \
-protected:                                                      \
-    std::string output()                                        \
-    {                                                           \
-        std::stringstream stream_;                              \
-        TuplePrinter<t_type, tuple_size<t_type>::value>   \
-        ::output(stream_, t_val, member_name_arr);        \
-        return stream_.str();                                   \
-    }               \
-                        \
-protected:                                                      \
-    typedef std::tuple<decltype(&val)> t_type;                  \
-    t_type t_val;                                               \
-    const char* member_name_arr[10];                                        \
-};
-
-std::string aaadsd = "9999";
-make_stats_mgr(test_mgr, aaadsd);
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-    std::cout << test_mgr::info() << std::endl;
     klib::pattern::ring_buffer<int> rbuff;
     rbuff.push_back(1);
 

@@ -229,6 +229,7 @@
     <ClCompile Include="..\core\kthread\rw_emaphore.cpp" />
     <ClCompile Include="..\core\kthread\semaphore.cpp" />
     <ClCompile Include="..\core\kthread\win_mutex.cpp" />
+    <ClCompile Include="..\core\net\addr_helper.cpp" />
     <ClCompile Include="..\core\net\addr_resolver.cpp" />
     <ClCompile Include="..\core\net\CheckNat.cpp" />
     <ClCompile Include="..\core\net\http_down.cpp" />

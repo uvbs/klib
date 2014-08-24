@@ -40,6 +40,8 @@ TEST(http, 1)
     str_format = Replace(str_format, "R",  "TgF");
     str_format = Replace(str_format, "A",  "SwD");
 
+    std::string str_decode;
+    b64.decode(str_format, str_decode);
     /*
     ==  Ìæ»»  QegA27vc
     =   Ìæ»»  QegA27vcA

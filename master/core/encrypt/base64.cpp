@@ -82,16 +82,17 @@ void base64::decode(const std::string& input, std::string& output)
     {
         return ;
     }
+    output.clear();
 
     int index;
-    unsigned char ch1,ch2,ch3,ch4;
-    unsigned char sDecodeTable[256];
-    memset(sDecodeTable,0,256);
-    int nDecodedLength = 0;
+    unsigned char ch1, ch2, ch3, ch4;
+    unsigned char decode_tbl[256];
+    memset(decode_tbl,0,256);
+    int decode_length = 0;
 
     for (index = 0; index < BASE64_CODE_LENGTH; index++)
     {
-        sDecodeTable[(int) g_Base64Table[index]]=(unsigned char) index;
+        decode_tbl[(int) g_Base64Table[index]]=(unsigned char) index;
     }
 
     // uint8_t* szDestBuf = (uint8_t*) pDestBuf;
@@ -103,30 +104,25 @@ void base64::decode(const std::string& input, std::string& output)
             continue;
         }
 
-        ch1 = sDecodeTable[(int) input[index]];
-        ch2 = sDecodeTable[(int) input[index + 1]];
-        ch3 = sDecodeTable[(int) input[index + 2]];
-        ch4 = sDecodeTable[(int) input[index + 3]];
+        ch1 = decode_tbl[(int) input[index]];
+        ch2 = decode_tbl[(int) input[index + 1]];
+        ch3 = decode_tbl[(int) input[index + 2]];
+        ch4 = decode_tbl[(int) input[index + 3]];
 
         output.append(((ch1 << 2) & 0xFC) | ((ch2 >> 4) & 0x03), 1);
-        nDecodedLength ++;
+        decode_length ++;
 
         if (ch3 != BASE64_NULLCHAR)
         {
             output.append(((ch2 << 4) & 0xF0) | ((ch3 >> 2) & 0x0F), 1);
-            nDecodedLength ++;
+            decode_length ++;
             if (ch4 != BASE64_NULLCHAR)
             {
                 output.append(((ch3 << 6) & 0xC0) | (ch4 & 0x3F), 1);
-                nDecodedLength ++;
+                decode_length ++;
             }
         }
     }
-}
-
-void base64::decode(const std::string& input, unsigned char *output, size_t& sz)
-{
-
 }
 
 size_t base64::decode_length(const std::string& str64)

@@ -22,7 +22,6 @@ public:
     void encode(const unsigned char *, size_t, std::string& , bool add_crlf = true);
 
     void decode(const std::string&, std::string& );
-    void decode(const std::string&, unsigned char *, size_t&);
 
     size_t decode_length(const std::string& );
 

@@ -35,6 +35,7 @@ public:
     typedef retry_list<T, Ctx> self_type;
     typedef std::function<bool(const T&, Ctx& ctx)>  retry_func;
     typedef std::function<void(T&, Ctx& ctx)>        timeout_func;
+    typedef std::function<void(T&, Ctx& ctx)>        finally_func;
 
 public:
     retry_list()
@@ -45,9 +46,11 @@ public:
 
     self_type& on_retry(retry_func f);
     self_type& on_timeout(timeout_func f);
+    self_type& on_finally(finally_func f);
     self_type& set_retry_times(size_t retry_tms);
     self_type& set_retry_interval(size_t retry_interval);
-
+    
+    size_t size();
     bool add_item(T t);             // 添加一项
     bool exec();                    // 执行(返回是否需要继续执行)
 
@@ -59,6 +62,7 @@ protected:
 
     retry_func              m_retry_func;               // 重试要执行的动作
     timeout_func            m_timeout_func;             // 超时时执行的动作
+    finally_func            m_finally_func;
 };
 
 
@@ -77,6 +81,13 @@ retry_list<T, Ctx>& retry_list<T, Ctx>::on_timeout(typename retry_list<T, Ctx>::
 }
 
 template<class T, class Ctx>
+retry_list<T, Ctx>& retry_list<T, Ctx>::on_finally(typename retry_list<T, Ctx>::finally_func f)
+{
+    m_finally_func = f;
+    return *this;
+}
+
+template<class T, class Ctx>
 retry_list<T, Ctx>& retry_list<T, Ctx>::set_retry_times(size_t retry_tms)
 {
     m_max_retry_times = retry_tms;
@@ -91,9 +102,15 @@ retry_list<T, Ctx>& retry_list<T, Ctx>::set_retry_interval(size_t retry_interval
 }
 
 template<class T, class Ctx>
+size_t retry_list<T, Ctx>::size()
+{
+    return m_retry_list.size();
+}
+
+template<class T, class Ctx>
 bool retry_list<T, Ctx>::add_item(T t)
 {
-    retry_info_ptr ptr = retry_info_ptr(new retry_info);
+    retry_info_ptr ptr = retry_info_ptr(new retry_info());
     if (nullptr == ptr)
     {
         return false;
@@ -146,14 +163,36 @@ bool retry_list<T, Ctx>::exec()
 
         if (!m_retry_func(ptr->t, ptr->ctx))
         {
-            klib::kthread::guard guard(m_retry_lst_lock);
-            m_retry_list.push_back(ptr);
+            // 没超过次数，继续添加到链表中
+            if (0 == this->m_max_retry_times || ptr->retry_times < this->m_max_retry_times)
+            {
+                klib::kthread::guard guard(m_retry_lst_lock);
+                m_retry_list.push_back(ptr);
+            }
+            // 超过次数
+            else
+            {
+                if (m_timeout_func)
+                    m_timeout_func(ptr->t, ptr->ctx);
+
+                if (m_finally_func)
+                    m_finally_func(ptr->t, ptr->ctx);
+            }
+        }
+        else
+        {
+            // 重试成功
+            if (m_finally_func)
+                m_finally_func(ptr->t, ptr->ctx);
         }
     }
     else 
     {
         if (m_timeout_func)
             m_timeout_func(ptr->t, ptr->ctx);
+
+        if (m_finally_func)
+            m_finally_func(ptr->t, ptr->ctx);
     }
 
     return true;

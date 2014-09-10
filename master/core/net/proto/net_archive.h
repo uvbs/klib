@@ -92,6 +92,26 @@ public:
 
     //////////////////////////////////////////////////////////////////////////
     // 以下是一些序列化函数
+    net_archive& operator << (bool a) {
+        if (this->get_data_len() + sizeof(a) > buff_len_) {
+            error_flag_ = true;
+            return *this;
+        }
+        memcpy(op_pos_, &a, sizeof(a));
+        op_pos_ += sizeof(a);
+        return *this;
+    }
+
+    net_archive& operator >> (bool& a) {
+        if (this->get_data_len() + sizeof(a) > buff_len_) {
+            error_flag_ = true;
+            return *this;
+        }
+        memcpy(&a, op_pos_, sizeof(a));
+        op_pos_ += sizeof(a);
+        return *this;
+    }
+
     net_archive& operator << (uint8_t a) {
         if (this->get_data_len() + sizeof(a) > buff_len_) {
             error_flag_ = true;

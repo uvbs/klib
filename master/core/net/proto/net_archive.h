@@ -305,6 +305,13 @@ public:
     }
 
     template <class T>
+    net_archive& operator >> (T& t)
+    {
+        ::operator >> (*this, t);
+        return *this;
+    }
+
+    template <class T>
     net_archive& operator << (const T& t)
     {
         ::operator << (*this, t);
@@ -380,7 +387,7 @@ public:
         }
 
         this-> operator >> (len);
-        for (int i=0; i<len; ++i) {
+        for (size_t index=0; index<len; ++index) {
             this-> operator >> (target);
             theList.push_back(std::move(target));
         }

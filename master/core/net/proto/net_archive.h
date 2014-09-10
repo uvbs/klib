@@ -85,6 +85,10 @@ public:
     bool get_error() {
         return error_flag_;
     }
+    
+    void set_error(bool flag) {
+        error_flag_ = flag;
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // 以下是一些序列化函数
@@ -349,7 +353,7 @@ public:
         }
 
         this->operator >> (len);
-        for (int i=0; i<len; ++i) {
+        for (size_t index=0; index<len; ++index) {
             this->operator >> (target);
             theList.push_back(std::move(target));
         }

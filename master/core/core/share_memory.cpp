@@ -6,7 +6,7 @@ namespace klib{
 namespace mem{
 
 
-share_memory::share_memory(void) : m_hSharememoryHandle(NULL)
+share_memory::share_memory(void) : share_mem_handle_(NULL)
 {
 }
 
@@ -17,40 +17,64 @@ share_memory::~share_memory(void)
 
 void share_memory::create(tstring name, size_t nSize )
 {
-	m_hSharememoryHandle = CreateFileMapping(INVALID_HANDLE_VALUE,NULL, PAGE_READWRITE, 0, nSize, name.c_str());
-	if(m_hSharememoryHandle)
-	{
-		m_pShareMemoryAddress = MapViewOfFile(m_hSharememoryHandle, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-		if(m_pShareMemoryAddress == NULL)
-		{
-			MessageBox(NULL, _T("映射文件映射到调用进程地址时出错"), _T("错误"), MB_OK);
-		}
-	}
-	else
-	{
-		MessageBox(NULL, _T("创建文件映射失败"), _T("错误"), MB_OK);
-	}
-	m_buffer_size = nSize;
+    share_mem_handle_ = CreateFileMapping(INVALID_HANDLE_VALUE,NULL, PAGE_READWRITE, 0, nSize, name.c_str());
+    if(share_mem_handle_)
+    {
+        share_mem_addr_ = MapViewOfFile(share_mem_handle_, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+        if(share_mem_addr_ == NULL)
+        {
+            MessageBox(NULL, _T("映射文件映射到调用进程地址时出错"), _T("错误"), MB_OK);
+        }
+    }
+    else
+    {
+        MessageBox(NULL, _T("创建文件映射失败"), _T("错误"), MB_OK);
+    }
+    share_mem_size_ = nSize;
+}
+
+bool share_memory::open(tstring name)
+{
+    HANDLE  handle = OpenFileMapping(FILE_MAP_READ|FILE_MAP_WRITE,
+        FALSE,
+        name.c_str());
+    if (NULL == handle) {
+        return false;
+    }
+    share_mem_handle_ = handle;
+    share_mem_size_   = GetFileSize(handle, NULL);
+
+    share_mem_addr_ = MapViewOfFile(handle, // Handle to mapping object. 
+        FILE_MAP_ALL_ACCESS,               // Read/write permission. 
+        0,                                 // Max. object size. 
+        0,                                 // Size of hFile. 
+        0);                                // Map entire file. 
+
+    if (share_mem_addr_ == NULL) 
+    { 
+        return false;
+    } 
+
+    return true;
 }
 
 void share_memory::close()
 {
-    CloseHandle(m_hSharememoryHandle);
+    CloseHandle(share_mem_handle_);
 }
-
 
 std::string share_memory::read_string()
 {
-    std::string str = (char*)m_pShareMemoryAddress;
+    std::string str = (char*)share_mem_addr_;
     return std::move(str);
 }
 
 void share_memory::write_string(string& content)
 {
-    size_t nCopySize = content.size() >= m_buffer_size ? m_buffer_size - 1 : content.size();
+    size_t nCopySize = content.size() >= share_mem_size_ ? share_mem_size_ - 1 : content.size();
 
-	memcpy(m_pShareMemoryAddress, (void*)(content.c_str()), nCopySize);
-    ((char*)m_pShareMemoryAddress)[nCopySize] = '\0';
+    memcpy(share_mem_addr_, (void*)(content.c_str()), nCopySize);
+    ((char*)share_mem_addr_)[nCopySize] = '\0';
 }
 
 bool share_memory::read(char* pszBuff, size_t nReadLen, size_t nStartPos, size_t* pReadedLen)
@@ -62,17 +86,17 @@ bool share_memory::read(char* pszBuff, size_t nReadLen, size_t nStartPos, size_t
 
     // 确定有多少数据可以被读取
     size_t nCopySize = 0;
-    if (m_buffer_size > (nStartPos + nReadLen)) 
+    if (share_mem_size_ > (nStartPos + nReadLen)) 
     {
         nCopySize = nReadLen;
     }
     else
     {
-        nReadLen = m_buffer_size - nStartPos;
+        nReadLen = share_mem_size_ - nStartPos;
     }
 
     // 读取数据
-    memcpy(pszBuff, (const char*)m_pShareMemoryAddress + nStartPos, nCopySize);
+    memcpy(pszBuff, (const char*)share_mem_addr_ + nStartPos, nCopySize);
     if (pReadedLen) {
         *pReadedLen = nCopySize;
     }
@@ -84,17 +108,17 @@ bool share_memory::write(size_t nWritePos, const char* pSrc, size_t nDataLen, si
 {
     // 计算能够写的长度
     size_t nWritedLen;
-    if (m_buffer_size > (nWritePos + nDataLen)) 
+    if (share_mem_size_ > (nWritePos + nDataLen)) 
     {
         nWritedLen = nDataLen;
     }
     else 
     {
-        nWritedLen = m_buffer_size - nWritePos;
+        nWritedLen = share_mem_size_ - nWritePos;
     }
 
     // 写入共享内存
-    memcpy((char*)m_pShareMemoryAddress + nWritePos, pSrc, nWritedLen);
+    memcpy((char*)share_mem_addr_ + nWritePos, pSrc, nWritedLen);
 
     if (pWritedLem) 
     {

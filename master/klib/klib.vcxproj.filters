@@ -16,6 +16,9 @@
     <Filter Include="http">
       <UniqueIdentifier>{ea1c4f1a-650b-4b91-9852-1d0c15713d22}</UniqueIdentifier>
     </Filter>
+    <Filter Include="search">
+      <UniqueIdentifier>{b2573146-adf6-487a-883d-dfc395c82e1e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -375,6 +378,9 @@
     <ClInclude Include="..\core\net\http_down.h">
       <Filter>http</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\algo\search\ac_wrapper.h">
+      <Filter>search</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -538,6 +544,9 @@
     </ClCompile>
     <ClCompile Include="..\core\net\http_down.cpp">
       <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\search\ac_wrapper.cpp">
+      <Filter>search</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

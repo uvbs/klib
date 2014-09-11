@@ -5,6 +5,39 @@
 
 using namespace klib::sys;
 
+
+// 安全的取得真实系统信息     
+VOID SafeGetNativeSystemInfo(LPSYSTEM_INFO lpSystemInfo)
+{    
+    if (NULL == lpSystemInfo)  
+        return;    
+    typedef VOID (WINAPI *LPFN_GetNativeSystemInfo)(LPSYSTEM_INFO lpSystemInfo);   
+    LPFN_GetNativeSystemInfo nsInfo =   
+        (LPFN_GetNativeSystemInfo)GetProcAddress(GetModuleHandleA("kernel32"), "GetNativeSystemInfo");; 
+    if (NULL != nsInfo)
+    {
+        nsInfo(lpSystemInfo);
+    }
+    else
+    {
+        GetSystemInfo(lpSystemInfo);
+    }
+}
+
+
+int get_system_bits()    
+{    
+    SYSTEM_INFO si;    
+    SafeGetNativeSystemInfo(&si);
+    if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64 ||    
+        si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64 )    
+    {    
+        return 64;    
+    }    
+    return 32;    
+}    
+
+
 //读取操作系统的名称  
 void system_info::get_system_name(std::string& osname)
 {  
@@ -53,12 +86,12 @@ void system_info::get_system_name(std::string& osname)
                 if(os.wProductType==VER_NT_WORKSTATION   
                     && info.wProcessorArchitecture==PROCESSOR_ARCHITECTURE_AMD64)  
                 {  
-                    osname =_T("Microsoft Windows XP Professional x64 Edition");  
+                    osname = ("Microsoft Windows XP Professional x64 Edition");  
                 }  
                 else if(GetSystemMetrics(SM_SERVERR2)==0)  
-                    osname =_T("Microsoft Windows Server 2003");//2003年3月发布   
+                    osname = ("Microsoft Windows Server 2003");//2003年3月发布   
                 else if(GetSystemMetrics(SM_SERVERR2)!=0)  
-                    osname =_T("Microsoft Windows Server 2003 R2");  
+                    osname = ("Microsoft Windows Server 2003 R2");  
                 break;  
             }  
             break;  

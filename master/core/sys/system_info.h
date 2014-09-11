@@ -11,6 +11,9 @@ namespace sys {
 class system_info
 {
 public:
+    // 获取操作系统位数
+    int get_system_bits() ;
+
     //读取操作系统的名称  
     void get_system_name(std::string& osname);
 

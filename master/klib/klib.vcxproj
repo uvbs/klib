@@ -93,6 +93,7 @@
     <ClInclude Include="..\core\algo\one_many_queue.h" />
     <ClInclude Include="..\core\algo\qsort.h" />
     <ClInclude Include="..\core\algo\search.h" />
+    <ClInclude Include="..\core\algo\search\ac_wrapper.h" />
     <ClInclude Include="..\core\algo\sort.h" />
     <ClInclude Include="..\core\algo\string_hash.h" />
     <ClInclude Include="..\core\algo\str_algo.h" />
@@ -151,7 +152,6 @@
     <ClInclude Include="..\core\kthread\auto_lock.h" />
     <ClInclude Include="..\core\kthread\event.h" />
     <ClInclude Include="..\core\kthread\ReadWriteSection.h" />
-    <ClInclude Include="..\core\kthread\RWLock.h" />
     <ClInclude Include="..\core\kthread\rw_semaphore.h" />
     <ClInclude Include="..\core\kthread\semaphore.h" />
     <ClInclude Include="..\core\kthread\thread.h" />
@@ -203,6 +203,7 @@
     <ClCompile Include="..\core\algo\bitmap.cpp" />
     <ClCompile Include="..\core\algo\bloom.cpp" />
     <ClCompile Include="..\core\algo\many_many_queue.cpp" />
+    <ClCompile Include="..\core\algo\search\ac_wrapper.cpp" />
     <ClCompile Include="..\core\algo\string_hash.cpp" />
     <ClCompile Include="..\core\algo\trie.cpp" />
     <ClCompile Include="..\core\algo\wm_wrapper.cpp" />

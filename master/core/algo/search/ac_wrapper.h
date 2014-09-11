@@ -20,6 +20,9 @@ public:
     bool search(const char* buf, int buflen);
 
 protected:
+    static int Match(void * id, void *tree, int index, void *data, void *neg_list);
+
+protected:
     void* handle_;
 };
 

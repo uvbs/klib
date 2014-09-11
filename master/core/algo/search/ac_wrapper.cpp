@@ -50,9 +50,17 @@ bool ac_wrapper::search(const char* buf, int buflen)
     unsigned ret = bnfaSearch((bnfa_struct_t*)handle_,
         (unsigned char*)buf,
         buflen,
-        nullptr,
-        this,
-        0,
+        Match,    // match func
+        this,   // data
+        0,      // sindex
         &cur_state);
+
+    bnfa_struct_t* ptr = (bnfa_struct_t*)handle_;
+
     return true;
+}
+
+int ac_wrapper::Match(void * id, void *tree, int index, void *data, void *neg_list)
+{
+    return 0;
 }

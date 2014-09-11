@@ -20,7 +20,7 @@ ac_wrapper::~ac_wrapper()
     }
 }
 
-bool ac_wrapper::add_pattern(char* pt_buf, int pt_len, void* data)
+bool ac_wrapper::add_pattern(const char* pt_buf, int pt_len, void* data)
 {
     int ret = bnfaAddPattern( (bnfa_struct_t *) handle_,
         (unsigned char*) pt_buf, pt_len, false,

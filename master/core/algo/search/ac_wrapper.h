@@ -13,7 +13,7 @@ public:
     ac_wrapper() ;
     ~ac_wrapper() ;
 
-    bool add_pattern(char* pt_buf, int pt_len, void*data);
+    bool add_pattern(const char* pt_buf, int pt_len, void*data);
     bool compile();
     int  size();
 

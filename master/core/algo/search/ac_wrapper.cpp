@@ -43,6 +43,11 @@ int  ac_wrapper::size()
     return bnfaPatternCount((bnfa_struct_t *) handle_);
 }
 
+void ac_wrapper::set_callback(ac_match_callback call)
+{
+    callback_ = call;
+}
+
 bool ac_wrapper::search(const char* buf, int buflen)
 {
     int cur_state = 0;
@@ -62,5 +67,9 @@ bool ac_wrapper::search(const char* buf, int buflen)
 
 int ac_wrapper::Match(void * id, void *tree, int index, void *data, void *neg_list)
 {
+    ac_wrapper* wrap = (ac_wrapper*) data; 
+    if (wrap->callback_) {
+        wrap->callback_(id, tree, index, neg_list);
+    }
     return 0;
 }

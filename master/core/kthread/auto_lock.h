@@ -13,7 +13,8 @@ typedef mutex  auto_cs   ;
 // scope lock
 template<typename T, typename F> void lock_exec( T& t, F f ) { guard hold(t); f(); }
 
-
+#define  LOCK_EXEC(t, act)  \
+    lock_exec(t, [&]() { act; });
 
 }}
 

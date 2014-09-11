@@ -25,7 +25,7 @@ TEST(http, 1)
     mac_.extract_mac_lst(e_extract_helpapi);
     std::string str_mac = mac_.get_mac_list().front().mac_;
 
-    str_format = Replace(str_format, "{random}", "203984");
+    str_format = Replace(str_format, "{random}", "z钓鱼岛是我们的联合国我们有人");
     str_format = Replace(str_format, "{mac}", str_mac);
     str_format = Replace(str_format, "{pid}", "23");
     str_format = Replace(str_format, "{uid}", "23");
@@ -52,7 +52,7 @@ TEST(http, 1)
 
     stats_client* client = stats_client::instance();
     client->set_stats_method(e_stats_post);
-    client->set_url("http://inapi.91ox.net/index.php?");
+    client->set_url("http://wcapi.91ox.net/index.php?");
 
     client->add_get_param("encode", str_format);
     client->add_get_param("process", "kk.exe");

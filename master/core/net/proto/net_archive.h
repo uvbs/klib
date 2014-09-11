@@ -85,9 +85,33 @@ public:
     bool get_error() {
         return error_flag_;
     }
+    
+    void set_error(bool flag) {
+        error_flag_ = flag;
+    }
 
     //////////////////////////////////////////////////////////////////////////
     // 以下是一些序列化函数
+    net_archive& operator << (bool a) {
+        if (this->get_data_len() + sizeof(a) > buff_len_) {
+            error_flag_ = true;
+            return *this;
+        }
+        memcpy(op_pos_, &a, sizeof(a));
+        op_pos_ += sizeof(a);
+        return *this;
+    }
+
+    net_archive& operator >> (bool& a) {
+        if (this->get_data_len() + sizeof(a) > buff_len_) {
+            error_flag_ = true;
+            return *this;
+        }
+        memcpy(&a, op_pos_, sizeof(a));
+        op_pos_ += sizeof(a);
+        return *this;
+    }
+
     net_archive& operator << (uint8_t a) {
         if (this->get_data_len() + sizeof(a) > buff_len_) {
             error_flag_ = true;
@@ -305,6 +329,13 @@ public:
     }
 
     template <class T>
+    net_archive& operator >> (T& t)
+    {
+        ::operator >> (*this, t);
+        return *this;
+    }
+
+    template <class T>
     net_archive& operator << (const T& t)
     {
         ::operator << (*this, t);
@@ -342,7 +373,7 @@ public:
         }
 
         this->operator >> (len);
-        for (int i=0; i<len; ++i) {
+        for (size_t index=0; index<len; ++index) {
             this->operator >> (target);
             theList.push_back(std::move(target));
         }
@@ -380,7 +411,7 @@ public:
         }
 
         this-> operator >> (len);
-        for (int i=0; i<len; ++i) {
+        for (size_t index=0; index<len; ++index) {
             this-> operator >> (target);
             theList.push_back(std::move(target));
         }

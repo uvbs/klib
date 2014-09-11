@@ -152,7 +152,6 @@
     <ClInclude Include="..\core\kthread\auto_lock.h" />
     <ClInclude Include="..\core\kthread\event.h" />
     <ClInclude Include="..\core\kthread\ReadWriteSection.h" />
-    <ClInclude Include="..\core\kthread\RWLock.h" />
     <ClInclude Include="..\core\kthread\rw_semaphore.h" />
     <ClInclude Include="..\core\kthread\semaphore.h" />
     <ClInclude Include="..\core\kthread\thread.h" />
@@ -196,6 +195,7 @@
     <ClInclude Include="..\core\util\convert.h" />
     <ClInclude Include="..\core\util\mem_check.h" />
     <ClInclude Include="..\core\util\perf_tool.h" />
+    <ClInclude Include="..\core\util\rand_str.h" />
     <ClInclude Include="..\core\util\shell_link.h" />
     <ClInclude Include="..\core\util\strutil.h" />
     <ClInclude Include="..\core\util\timeout_checker.h" />
@@ -254,6 +254,7 @@
     <ClCompile Include="..\core\ui\window.cpp" />
     <ClCompile Include="..\core\util\buffer_reader.cpp" />
     <ClCompile Include="..\core\util\perf_tool.cpp" />
+    <ClCompile Include="..\core\util\rand_str.cpp" />
     <ClCompile Include="..\core\util\shell_link.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />
   </ItemGroup>

@@ -17,7 +17,19 @@
       <UniqueIdentifier>{ea1c4f1a-650b-4b91-9852-1d0c15713d22}</UniqueIdentifier>
     </Filter>
     <Filter Include="search">
-      <UniqueIdentifier>{b2573146-adf6-487a-883d-dfc395c82e1e}</UniqueIdentifier>
+      <UniqueIdentifier>{2dfaec87-012b-47bb-ae67-3d3e16155919}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="algo">
+      <UniqueIdentifier>{92329e06-efa7-41c1-82cb-813ed89cc978}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="pattern">
+      <UniqueIdentifier>{a298111b-0989-451d-9388-e709304dfb43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="encode">
+      <UniqueIdentifier>{72e702b5-9c2a-44b6-9fbe-a64681e7b406}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{cbba5bd3-0479-4949-badd-5db59bd7d8cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,12 +43,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\core\array.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core\fast_string.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core\lock_stl.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\core\mem_buffer.h">
@@ -60,15 +66,6 @@
     <ClInclude Include="..\core\core\small_string.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\algo\bm_wrapper.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\kmp.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\ld.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\algo\search.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -79,15 +76,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\db\CppSQLite3.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\encrypt\crc_func.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\encrypt\crc_single.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\encrypt\des_single.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\encrypt\MD4.h">
@@ -159,9 +147,6 @@
     <ClInclude Include="..\core\core\perf_counter.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\encrypt\base64.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\algo\str_algo.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -201,9 +186,6 @@
     <ClInclude Include="..\core\kthread\ReadWriteSection.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\kthread\RWLock.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\kthread\thread.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -211,15 +193,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\util\strutil.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\bitmap.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\bloom.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\pattern\fsm.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\string_hash.h">
@@ -235,9 +208,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\util\atom.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\common_substr.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\lps.h">
@@ -282,9 +252,6 @@
     <ClInclude Include="..\core\util\timeout_checker.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\util\buffer_reader.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\core\timer_mgr.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -292,9 +259,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\sys\cpu.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\encrypt\crc23.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\io\file.h">
@@ -348,9 +312,6 @@
     <ClInclude Include="..\core\kthread\semaphore.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\pattern\aspect.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\rdebug\logger.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -381,6 +342,60 @@
     <ClInclude Include="..\core\algo\search\ac_wrapper.h">
       <Filter>search</Filter>
     </ClInclude>
+<<<<<<< HEAD
+=======
+    <ClInclude Include="..\core\algo\bloom.h">
+      <Filter>algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\bitmap.h">
+      <Filter>algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\base64.h">
+      <Filter>encode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\aspect.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\crc23.h">
+      <Filter>encode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\des_single.h">
+      <Filter>encode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\crc_single.h">
+      <Filter>encode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\encrypt\crc_func.h">
+      <Filter>encode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\common_substr.h">
+      <Filter>algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\fsm.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\kmp.h">
+      <Filter>algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\ld.h">
+      <Filter>algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\bm_wrapper.h">
+      <Filter>algo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\util\buffer_reader.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\fast_string.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\core\lock_stl.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\util\rand_str.h">
+      <Filter>util</Filter>
+    </ClInclude>
+>>>>>>> remotes/origin/master
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -548,5 +563,11 @@
     <ClCompile Include="..\core\algo\search\ac_wrapper.cpp">
       <Filter>search</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
+    <ClCompile Include="..\core\util\rand_str.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+>>>>>>> remotes/origin/master
   </ItemGroup>
 </Project>

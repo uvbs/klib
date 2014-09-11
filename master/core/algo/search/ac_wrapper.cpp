@@ -20,7 +20,7 @@ ac_wrapper::~ac_wrapper()
     }
 }
 
-bool ac_wrapper::add_pattern(char* pt_buf, int pt_len, void* data)
+bool ac_wrapper::add_pattern(const char* pt_buf, int pt_len, void* data)
 {
     int ret = bnfaAddPattern( (bnfa_struct_t *) handle_,
         (unsigned char*) pt_buf, pt_len, false,
@@ -50,9 +50,17 @@ bool ac_wrapper::search(const char* buf, int buflen)
     unsigned ret = bnfaSearch((bnfa_struct_t*)handle_,
         (unsigned char*)buf,
         buflen,
-        nullptr,
-        this,
-        0,
+        Match,    // match func
+        this,   // data
+        0,      // sindex
         &cur_state);
+
+    bnfa_struct_t* ptr = (bnfa_struct_t*)handle_;
+
     return true;
+}
+
+int ac_wrapper::Match(void * id, void *tree, int index, void *data, void *neg_list)
+{
+    return 0;
 }

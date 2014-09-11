@@ -55,6 +55,7 @@
 
 #include "third/letter.h"
 #include "timer_test.h"
+#include "ac_wrapper_test.h"
 #include "stats_test.h"
 
 //#include "unzip_test.h"

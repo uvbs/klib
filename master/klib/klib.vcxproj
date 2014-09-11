@@ -189,6 +189,7 @@
     <ClInclude Include="..\core\rdebug\tracer.h" />
     <ClInclude Include="..\core\sys\cpu.h" />
     <ClInclude Include="..\core\sys\sys.h" />
+    <ClInclude Include="..\core\sys\system_info.h" />
     <ClInclude Include="..\core\ui\window.h" />
     <ClInclude Include="..\core\util\atom.h" />
     <ClInclude Include="..\core\util\buffer_reader.h" />
@@ -251,6 +252,7 @@
     <ClCompile Include="..\core\rdebug\tracer.cpp" />
     <ClCompile Include="..\core\sys\cpu.cpp" />
     <ClCompile Include="..\core\sys\sys.cpp" />
+    <ClCompile Include="..\core\sys\system_info.cpp" />
     <ClCompile Include="..\core\ui\window.cpp" />
     <ClCompile Include="..\core\util\buffer_reader.cpp" />
     <ClCompile Include="..\core\util\perf_tool.cpp" />

@@ -200,6 +200,7 @@
     <ClInclude Include="..\core\util\shell_link.h" />
     <ClInclude Include="..\core\util\strutil.h" />
     <ClInclude Include="..\core\util\timeout_checker.h" />
+    <ClInclude Include="..\core\util\xini.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\algo\bitmap.cpp" />
@@ -259,6 +260,7 @@
     <ClCompile Include="..\core\util\rand_str.cpp" />
     <ClCompile Include="..\core\util\shell_link.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />
+    <ClCompile Include="..\core\util\xini.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

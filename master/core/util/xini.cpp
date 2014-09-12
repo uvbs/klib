@@ -1,7 +1,8 @@
-#include "stdafx.h"
+
 #include "xini.h"
 
-#include "../../common/osaa/osaa_str.h"
+using namespace klib::util;
+
 
 xini::xini(void) 
 {
@@ -142,7 +143,7 @@ bool xini::read_bool(const std::string& section, const std::string& key, bool& b
     }
 
     bval = false;
-    if (osaa::_stricmp(str.c_str(), "true") == 0 ||
+    if (_stricmp(str.c_str(), "true") == 0 ||
         strcmp(str.c_str(), "1") == 0) 
     {
         bval = true;
@@ -409,7 +410,7 @@ size_t xini::parsed_comment(const char* p)
         return p - old_ptr;
     }
 
-    if (osaa::_strnicmp(p, "rem ", 3) == 0) 
+    if (_strnicmp(p, "rem ", 3) == 0) 
     {
         p = skip_until_line(p);
         return p - old_ptr;
@@ -439,7 +440,7 @@ UINT64 xini::parsed_data(const char* str)
     
     str = skip_space(str);
 
-    if (osaa::_strnicmp(str, "0x", 2) == 0)
+    if (_strnicmp(str, "0x", 2) == 0)
     {
         base = 16;
     }

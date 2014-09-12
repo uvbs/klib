@@ -399,6 +399,9 @@
     <ClInclude Include="..\core\sys\system_info.h">
       <Filter>system</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\util\xini.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -571,6 +574,9 @@
     </ClCompile>
     <ClCompile Include="..\core\sys\system_info.cpp">
       <Filter>system</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\xini.cpp">
+      <Filter>util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

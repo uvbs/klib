@@ -5,6 +5,12 @@
 #include <stdio.h>
 #include <strstream>
 
+#include "../inttype.h"
+
+namespace klib{
+namespace util{
+
+
 class xini
 {
 public:
@@ -81,6 +87,9 @@ bool xini::read_val(const std::string& section, const std::string& key, T& val)
 
     return true;
 }
+
+
+}}
 
 
 #endif // _csdcs_ini_h_

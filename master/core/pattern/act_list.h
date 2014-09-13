@@ -4,7 +4,6 @@
 #include <list>
 #include <functional>
 
-typedef std::function<void(void)> act_func_type;
 
 
 #include "../kthread/mutex.h"
@@ -13,10 +12,12 @@ typedef std::function<void(void)> act_func_type;
 namespace klib{
 namespace pattern{
 
+typedef std::function<void(void)> act_func_type;
 
 class act_list
 {
 public:
+    // add for a thread
     bool add_act(act_func_type func);
     bool add_act(act_func_type&& func);
 
@@ -27,40 +28,6 @@ protected:
     std::list<act_func_type>  act_lst_;
 };
 
-
-bool act_list::add_act(act_func_type func)
-{
-    klib::kthread::guard guard_(mutex_);
-    act_lst_.push_back(func);
-    return true;
-}
-
-bool act_list::add_act(act_func_type&& func)
-{
-    klib::kthread::guard guard_(mutex_);
-    act_lst_.push_back(std::move(func));
-    return true;
-}
-
-bool act_list::exec()
-{
-    if (act_lst_.empty()) {
-        return false;
-    }
-
-    act_func_type func;
-    klib::kthread::lock_exec(mutex_, [&]()
-    {
-        func = std::move(act_lst_.front());
-        act_lst_.pop_front();
-    }
-    );
-
-    if (func)
-        func();
-
-    return true;
-}
 
 
 }}

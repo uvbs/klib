@@ -142,8 +142,8 @@ BOOL tcp_socket::close()
     if (INVALID_SOCKET != sock_) 
     {
         closesocket(sock_);
-        sock_				= INVALID_SOCKET;
-        connected_		= FALSE;
+        sock_           = INVALID_SOCKET;
+        connected_      = FALSE;
     }
     return TRUE;
 }
@@ -156,7 +156,7 @@ BOOL tcp_socket::is_connected()
 BOOL tcp_socket::enable_noblock(BOOL bEnable /* = TRUE */)
 {
     //用非阻塞的连接
-    u_long ul= bEnable ? 1 : 0;
+    u_long ul = bEnable ? 1 : 0;
     if (SOCKET_ERROR == ioctlsocket(sock_, FIONBIO, &ul)) 
     {
         return FALSE;
@@ -202,15 +202,15 @@ int tcp_socket::recv(char* buff, int iLenOfBuff, int seconds, int useconds)
     {
         this->enable_noblock(TRUE);
 
-        fd_set rfd;					// 描述符集 这个将用来测试有没有一个可用的连接
+        fd_set rfd;                     // 描述符集 这个将用来测试有没有一个可用的连接
         struct timeval timeout;
-        FD_ZERO(&rfd);				//总是这样先清空一个描述符集
+        FD_ZERO(&rfd);                  //总是这样先清空一个描述符集
 
-        timeout.tv_sec	= seconds;    //等下select用到这个
+        timeout.tv_sec  = seconds;      //等下select用到这个
         timeout.tv_usec = useconds;
 
         //现在开始用select
-        FD_SET(sock_, &rfd);    //把sock放入要测试的描述符集 就是说把sock放入了rfd里面 这样下一步调用select对rfd进行测试的时候就会测试sock了(因为我们将sock放入的rdf) 一个描述符集可以包含多个被测试的描述符, 
+        FD_SET(sock_, &rfd);            //把sock放入要测试的描述符集 就是说把sock放入了rfd里面 这样下一步调用select对rfd进行测试的时候就会测试sock了(因为我们将sock放入的rdf) 一个描述符集可以包含多个被测试的描述符, 
         int ret = ::select(0, &rfd, 0, 0, &timeout);
 
         if (0 == ret) 

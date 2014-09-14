@@ -14,6 +14,87 @@ using namespace klib::net;
 
 #define default_user_agent "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17"
 
+
+bool trunk_reader::read(const data_callback& func)
+{
+    char tmp_buf[1024];
+    char buf[4];
+
+    do 
+    {
+        char* cur_read_pos = tmp_buf;
+
+        while(this->read(buf, 1))
+        {
+            *cur_read_pos = buf[0];
+            cur_read_pos ++;
+
+            if (buf[0] == '\n') 
+            {
+                break;
+            }
+        }
+
+        int trunk_len = 0;
+        int scan_ret = sscanf(tmp_buf, "%x", &trunk_len);
+        if (scan_ret < 0) {
+            read_err_ = true;
+            return false;
+        }
+        if (0 == trunk_len) {
+            return true;
+        }
+
+        size_t left_trunk_len = trunk_len;
+        while (left_trunk_len > 0)
+        {
+            size_t to_read = left_trunk_len > sizeof(tmp_buf) ? 
+                sizeof(tmp_buf) : left_trunk_len;
+
+            if (this->read(tmp_buf, to_read))
+            {
+                func(tmp_buf, to_read);
+                left_trunk_len -= to_read;
+            }
+            else 
+            {
+                read_err_ = true;
+                return false;
+            }
+        }
+
+        // 读取掉回车换行
+        this->read(tmp_buf, 2);
+    } while (true);
+
+    return true;
+}
+
+bool trunk_reader::is_error()
+{
+    return read_err_;
+}
+
+bool trunk_reader::read(char* buf, size_t len)
+{
+    size_t read_left = len;
+
+    char* cur_pos = buf;
+    while (read_left > 0)
+    {
+        int ret = sock_.recv(cur_pos, read_left, 0, 0);
+        if (ret < 0) {
+            return false;
+        }
+
+        read_left -= ret;
+    }
+
+    return true;
+}
+
+//----------------------------------------------------------------------
+// 
 bool http::parse_url(const char* url, char* hostAddr, int& port, char* getPath) 
 {
     if (url == NULL || hostAddr == NULL || getPath == NULL) 
@@ -209,7 +290,7 @@ bool http::handle_requst(const std::string http_url, const data_callback& handle
     int iRecvRet;
     while (true) 
     {
-        iRecvRet = socket_.recv(recv_buff + dwRecvedBytes, 1, 0, 0);
+        iRecvRet = socket_.recv(recv_buff + dwRecvedBytes, 1, 10, 0);
         if (iRecvRet <= 0) 
         {
             return false;
@@ -273,79 +354,11 @@ bool http::handle_requst(const std::string http_url, const data_callback& handle
 
 bool http::handle_chunk_response(char* recv_buff, const data_callback& handler)
 {
-    int   recv_ret = 0;
-    int   buff_data_size = 0;
+    trunk_reader reader(socket_);
 
-    size_t data_len   = 0;
-    char*  chunk_buf  = nullptr;
-    size_t chunk_size = 0;
-    size_t extra_size = 0;
+    reader.read(handler);
 
-    size_t handled_length = 0;
-
-    do 
-    {
-        recv_ret = socket_.recv(&recv_buff[extra_size], 10, 0, 0);
-        if (recv_ret < 3) { // 必须要大于3个: 5\r\n
-            return false;
-        }
-        buff_data_size = recv_ret;
-
-        chunk_parser_result parse_ret = e_parse_continue;
-        while (e_parse_continue == parse_ret)
-        {
-            parse_ret = parser_chunk_info(recv_buff, 
-            buff_data_size, 
-            data_len, 
-            chunk_buf, 
-            chunk_size,
-            extra_size);
-
-            if (e_parse_error == parse_ret) {
-                return false;
-            }
-
-            if (e_parse_continue == parse_ret) {
-                recv_ret = socket_.recv(&recv_buff[buff_data_size], 10, 0, 0);
-                if (recv_ret < 0) {
-                    return false;
-                }
-                buff_data_size += recv_ret;
-            }
-        }
-        if (0 == data_len) {
-            break;
-        }
-
-        if (data_len <= chunk_size || extra_size > 0) {
-            handler(chunk_buf, data_len);
-        }
-        else {
-            handler(chunk_buf, chunk_size - extra_size);
-        }
-        handled_length = chunk_size - extra_size;
-        memmove(recv_buff, recv_buff + (recv_ret - extra_size), extra_size);
-
-        while (handled_length < data_len) 
-        {
-            size_t left = data_len - handled_length;
-            recv_ret = socket_.recv(&recv_buff[extra_size], 
-                left >= HTTPDOWN_RECV_BUFF ? (HTTPDOWN_RECV_BUFF - 1) : left,
-                0, 
-                0);
-            if (recv_ret <= 0) 
-            {
-                break;
-            }
-
-            handler(recv_buff, recv_ret);
-            handled_length += recv_ret;
-            extra_size = 0;
-        }
-
-    } while (0 != data_len);
-
-    return (0 == data_len);
+    return !reader.is_error();
 }
 
 bool http::handle_content_response(char* recv_buff, const data_callback& handler, size_t content_len)
@@ -371,47 +384,4 @@ bool http::handle_content_response(char* recv_buff, const data_callback& handler
     }
 
     return (saved_length >= content_len);
-}
-
-// <len><\r\n><data...>[extra]
-http::chunk_parser_result http::parser_chunk_info(char* recv_buff, 
-    size_t buf_len,
-    size_t& data_size,
-    char*&  chunk_buff,
-    size_t& chunk_left,
-    size_t& extra_length
-    )
-{
-    int file_len = 0;
-    int scan_ret = sscanf(recv_buff, "%x", &file_len);
-    data_size = file_len;
-    
-    recv_buff[buf_len] = 0;
-    char* crlf = strstr(recv_buff, "\r\n");
-    if (nullptr == crlf || crlf == recv_buff) {
-        return e_parse_error;
-    }
-
-    char* crlf_end = crlf + 2;
-    chunk_left = buf_len - (crlf_end - recv_buff);
-
-    chunk_buff = crlf_end;
-    if (data_size >= chunk_left) {
-        extra_length = 0;
-    }
-    else {
-        extra_length = buf_len - ((chunk_buff + data_size) - recv_buff);
-        if (extra_length >= 2) {
-            extra_length -= 2; // \r\n
-            return e_parse_ok;
-        }
-        else {
-            return e_parse_continue;
-        }
-    }
-
-    if (chunk_left > 0 && scan_ret > 0) {
-        return e_parse_ok;
-    }
-    return e_parse_error;
 }

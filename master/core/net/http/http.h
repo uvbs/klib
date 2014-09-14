@@ -43,15 +43,35 @@ typedef std::pair<std::string, std::string> pair_type;
 typedef std::vector<pair_type> http_param_list;
 typedef std::vector<pair_type> http_header_list;
 
+typedef std::function<void(const char* data, size_t len)> data_callback;
+
+class trunk_reader
+{
+public:
+    trunk_reader(tcp_socket& sock)
+        : sock_(sock)
+        , read_err_(false)
+    {
+    }
+
+    bool read(const data_callback&);
+    bool is_error();
+
+protected:
+    bool read(char* buf, size_t len);
+
+protected:
+    tcp_socket& sock_;
+
+    bool        read_err_;
+};
 
 class http 
 {
 public:
     http() {}
     virtual ~http() {}
-
-    typedef std::function<void(const char* data, size_t len)> data_callback;
-
+    
     enum chunk_parser_result
     {
         e_parse_error,
@@ -76,14 +96,6 @@ protected:
     bool send_request(const std::string url);
     bool handle_chunk_response(char*, const data_callback& handler);
     bool handle_content_response(char*, const data_callback& handler, size_t content_len);
-
-    chunk_parser_result parser_chunk_info(char* buff, 
-        size_t buf_len,
-        size_t& data_size,
-        char*&  chunk_buff,
-        size_t& chunk_left,
-        size_t& extra_length
-    );
 
     template<typename CharType>
     CharType* skip_space(CharType*& );

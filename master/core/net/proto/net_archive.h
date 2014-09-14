@@ -50,8 +50,11 @@ typedef unsigned int length_type;
 class net_archive 
 {
 public:
-    net_archive() :  
-        error_flag_(false)
+    net_archive() 
+        : error_flag_(false)
+        , op_pos_(nullptr)
+        , orig_pos_(nullptr)
+        , buff_len_(0)
     {}
 
     net_archive(char* buff, UINT buffLen) {

@@ -177,6 +177,28 @@ public:
         return *this;
     }
 
+    net_archive& operator << (int a) {
+        if (this->get_data_len() + sizeof(a) > buff_len_) {
+            error_flag_ = true;
+            return *this;
+        }
+        a = KHTON32(a);
+        memcpy(op_pos_, &a, sizeof(a));
+        op_pos_ += sizeof(a);
+        return *this;
+    }
+
+    net_archive& operator >> (int& a) {
+        if (this->get_data_len() + sizeof(a) > buff_len_) {
+            error_flag_ = true;
+            return *this;
+        }
+        memcpy(&a, op_pos_, sizeof(a));
+        a = KHTON32(a);
+        op_pos_ += sizeof(a);
+        return *this;
+    }
+
     net_archive& operator << (unsigned short a) {
         if (this->get_data_len() + sizeof(a) > buff_len_) {
             error_flag_ = true;
@@ -195,28 +217,6 @@ public:
         }
         memcpy(&a, op_pos_, sizeof(a));
         a = KNTOH16(a);
-        op_pos_ += sizeof(a);
-        return *this;
-    }
-
-    net_archive& operator << (BOOL a) {
-        if (this->get_data_len() + sizeof(a) > buff_len_) {
-            error_flag_ = true;
-            return *this;
-        }
-        a = KHTON32(a);
-        memcpy(op_pos_, &a, sizeof(a));
-        op_pos_ += sizeof(a);
-        return *this;
-    }
-
-    net_archive& operator >> (BOOL& a) {
-        if (this->get_data_len() + sizeof(a) > buff_len_) {
-            error_flag_ = true;
-            return *this;
-        }
-        memcpy(&a, op_pos_, sizeof(a));
-        a = KNTOH32(a);
         op_pos_ += sizeof(a);
         return *this;
     }
@@ -243,7 +243,7 @@ public:
         return *this;
     }
 
-    net_archive& operator >> (long a) {
+    net_archive& operator >> (long& a) {
         if (this->get_data_len() + sizeof(a) > buff_len_) {
             error_flag_ = true;
             return *this;

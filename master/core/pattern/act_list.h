@@ -18,8 +18,9 @@ class act_list
 {
 public:
     // add for a thread
-    bool add_act(act_func_type func);
-    bool add_act(act_func_type&& func);
+    bool async_act(const act_func_type& func);
+    bool async_act(act_func_type&& func);
+    bool sync_act(const act_func_type& func);
 
     // execute by another thread
     bool exec();

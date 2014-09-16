@@ -16,9 +16,6 @@
     <Filter Include="http">
       <UniqueIdentifier>{ea1c4f1a-650b-4b91-9852-1d0c15713d22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="search">
-      <UniqueIdentifier>{2dfaec87-012b-47bb-ae67-3d3e16155919}</UniqueIdentifier>
-    </Filter>
     <Filter Include="algo">
       <UniqueIdentifier>{92329e06-efa7-41c1-82cb-813ed89cc978}</UniqueIdentifier>
     </Filter>
@@ -36,6 +33,9 @@
     </Filter>
     <Filter Include="mem">
       <UniqueIdentifier>{f0057b60-3df8-4d9c-9e08-89a21da06f8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search">
+      <UniqueIdentifier>{2dfaec87-012b-47bb-ae67-3d3e16155919}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -357,13 +357,7 @@
     <ClInclude Include="..\core\pattern\fsm.h">
       <Filter>pattern</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\algo\kmp.h">
-      <Filter>algo</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\algo\ld.h">
-      <Filter>algo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\bm_wrapper.h">
       <Filter>algo</Filter>
     </ClInclude>
     <ClInclude Include="..\core\util\buffer_reader.h">
@@ -434,6 +428,30 @@
     </ClInclude>
     <ClInclude Include="..\core\pattern\thread_mem_pool.h">
       <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\find_tool.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\search.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\str_algo.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\sunday.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\text_search.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\wildcmp.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\bm_wrapper.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\kmp.h">
+      <Filter>search</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -616,6 +634,9 @@
     </ClCompile>
     <ClCompile Include="..\core\pattern\thread_mem_pool.cpp">
       <Filter>pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\search\sunday.cpp">
+      <Filter>search</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

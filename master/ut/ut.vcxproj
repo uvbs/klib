@@ -112,6 +112,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stream_test.h" />
     <ClInclude Include="strutil_test.h" />
+    <ClInclude Include="sunday_test.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="thread_safe_wrapper_test.h" />
     <ClInclude Include="timer_test.h" />

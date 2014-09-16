@@ -10,53 +10,63 @@ using namespace klib::algo;
 
 
 wm_wrapper::wm_wrapper(void)
+    : pattern_num_(0)
 {
-    m_nline = 1;
-    m_nfound = 0;
-
-    m_pWmStruct = wmNew();
+    wm_handle_ = wmNew();
 }
-
 
 wm_wrapper::~wm_wrapper(void)
 {
-    if (m_pWmStruct) 
+    if (wm_handle_) 
     {
-        wmFree(m_pWmStruct);
+        wmFree(wm_handle_);
+        wm_handle_ = nullptr;
     }
 }
 
-void wm_wrapper::AddPattern(const char* pszPatten, int iLen)
+bool wm_wrapper::add_pattern(const char* pszPatten, int iLen, void* user_data)
 {
     _ASSERT(pszPatten);
-    wmAddPattern(m_pWmStruct, (unsigned char *) pszPatten, iLen);
+    int ret  = wmAddPattern(wm_handle_, (unsigned char *) pszPatten, iLen, user_data);
+    if (0 == ret)
+    {
+        ++ pattern_num_;
+    }
+    return 0 == ret;
 }
 
-void wm_wrapper::AddPattern(const char* pszPatten)
+bool wm_wrapper::add_pattern(const char* pszPatten, void* user_data)
 {
     _ASSERT(pszPatten);
-    wmAddPattern(m_pWmStruct, (unsigned char *) pszPatten, (int) strlen(pszPatten));
+    int ret  = wmAddPattern(wm_handle_, (unsigned char *) pszPatten, (int) strlen(pszPatten), user_data);
+    if (0 == ret)
+    {
+        ++ pattern_num_;
+    }
+    return 0 == ret;
 }
 
-void wm_wrapper::BuildContext()
+bool wm_wrapper::compile()
 {
-    wmPrepPatterns(m_pWmStruct);
+    return 0 == wmPrepPatterns(wm_handle_);
 }
 
-void wm_wrapper::Search(const char* pszSearch, int nLen)
+size_t wm_wrapper::size()
+{
+    return pattern_num_;
+}
+
+void wm_wrapper::set_callback(search_match_callback call, void* pthis)
+{
+    callback_func_ = call;
+    callback_this_ = pthis;
+}
+
+bool wm_wrapper::search(const char* pszSearch, int nLen)
 {
     _ASSERT(pszSearch);
-    m_vecResult.clear();
-
-    wmSearch(m_pWmStruct, (unsigned char *) pszSearch, (int) nLen);
+    return wmSearch(wm_handle_, this, (unsigned char *) pszSearch, (int) nLen);
 }
-
-bool wm_wrapper::GetResult(std::vector<std::string>& vecResult)
-{
-    vecResult = std::move(m_vecResult);
-    return true;
-}
-
 
 wm_wrapper::WM_STRUCT * wm_wrapper::wmNew()
 {
@@ -84,9 +94,8 @@ void wm_wrapper::wmFree(WM_STRUCT *ps)
                 if (pTmp->psPat) 
                 {
                     free(pTmp->psPat);
+                    pTmp->psPat = nullptr;
                 }
-
-                
 
                 free(pTmp);
             }
@@ -111,18 +120,23 @@ void wm_wrapper::wmFree(WM_STRUCT *ps)
         free(ps->msShift);
     free(ps);
 }
-int wm_wrapper::wmAddPattern(WM_STRUCT *ps, unsigned char *q, int m)//m字符串长度
+
+int wm_wrapper::wmAddPattern(WM_STRUCT *ps, unsigned char *q, int m, void* user_data)//m字符串长度
 {
     WM_PATTERN_STRUCT *p;
     p = (WM_PATTERN_STRUCT *) malloc(sizeof(WM_PATTERN_STRUCT));
     if (!p) {
         return -1;
     }
+
     memset(p, 0, sizeof(*p));
     p->psPat = (unsigned char*) malloc(m + 1);
     memset(p->psPat + m, 0, 1);
     memcpy(p->psPat, q, m);
+
     p->psLen = m;
+    p->user_data = user_data;
+
     ps->msNumPatterns++;
     if (p->psLen < (unsigned) ps->msSmallest)
         ps->msSmallest = p->psLen;
@@ -140,7 +154,9 @@ void wm_wrapper::sort(wm_wrapper::WM_STRUCT *ps)//字符串哈希值从小到大排列
 {
     int m = ps->msSmallest;
     int i, j;
-    unsigned char *temp;
+
+    WM_PATTERN_STRUCT tmp_struct;  // 用于交换数据
+
     int flag;
     for (i = ps->msNumPatterns - 1, flag = 1; i > 0 && flag; i--)
     {
@@ -151,9 +167,10 @@ void wm_wrapper::sort(wm_wrapper::WM_STRUCT *ps)//字符串哈希值从小到大排列
                 &(ps->msPatArray[j].psPat[m - 2])))
             {
                 flag = 1;
-                temp = ps->msPatArray[j + 1].psPat;
-                ps->msPatArray[j + 1].psPat = ps->msPatArray[j].psPat;
-                ps->msPatArray[j].psPat = temp;
+
+                tmp_struct = ps->msPatArray[j + 1];
+                ps->msPatArray[j + 1] = ps->msPatArray[j];
+                ps->msPatArray[j]     = tmp_struct;
             }
         }
     }
@@ -233,8 +250,11 @@ void wm_wrapper::wmPrepPrefixTable(WM_STRUCT *ps)//建立Prefix表
     }
 }
 
-void wm_wrapper::wmGroupMatch(WM_STRUCT *ps,//后缀哈希值相同，比较前缀以及整个字符匹配
-    int lindex, unsigned char *Tx, unsigned char *T)
+void wm_wrapper::wmGroupMatch(void* search_data,
+                              WM_STRUCT *ps,//后缀哈希值相同，比较前缀以及整个字符匹配
+                              int lindex, 
+                              unsigned char *Tx, 
+                              unsigned char *T)
 {
     WM_PATTERN_STRUCT *patrn;
     WM_PATTERN_STRUCT *patrnEnd;
@@ -262,10 +282,18 @@ void wm_wrapper::wmGroupMatch(WM_STRUCT *ps,//后缀哈希值相同，比较前缀以及整个字
             {
                 //printf("Match pattern \"%s\" at line %d column %d\n",
                 //    patrn->psPat, m_nline, T - Tx + 1);
+                
+                size_t index = T - Tx;
+                
+                matched_patten match_patn;
+                match_patn.pstr  = (char*)patrn->psPat;
+                match_patn.len   = patrn->psLen;
 
-                m_nfound++;
-
-                m_vecResult.push_back(std::string((char*)patrn->psPat));
+                int ret = Match (search_data, patrn->user_data, &match_patn, index);
+                if (ret > 0)
+                {
+                    return;
+                }
             }
         }
     }
@@ -297,14 +325,15 @@ int wm_wrapper::wmPrepPatterns(WM_STRUCT *ps)//由plist得到msPatArray
     return 0;
 }
 
-void wm_wrapper::wmSearch(WM_STRUCT *ps, unsigned char *Tx, int n)//字符串查找
+bool wm_wrapper::wmSearch(WM_STRUCT *ps, void* search_data, unsigned char *Tx, int n)//字符串查找
 {
     int Tleft, lindex, tshift;
     unsigned char *T, *Tend, *window;
     Tleft = n;
     Tend = Tx + n;
     if (n < ps->msSmallest)
-        return;
+        return false;
+
     for (T = Tx, window = Tx + ps->msSmallest - 1; window < Tend; T++, window++, Tleft--)
     {
         tshift = ps->msShift[(*(window - 1) << 8) | *window];
@@ -314,14 +343,35 @@ void wm_wrapper::wmSearch(WM_STRUCT *ps, unsigned char *Tx, int n)//字符串查找
             T += tshift;
             Tleft -= tshift;
             if (window > Tend)
-                return;
+                return false;
             tshift = ps->msShift[(*(window - 1) << 8) | *window];
         }
         if ((lindex = ps->msHash[(*(window - 1) << 8) | *window])
             == (HASH_TYPE) -1)
             continue;
         lindex = ps->msHash[(*(window - 1) << 8) | *window];
-        wmGroupMatch(ps, lindex, Tx, T);
+        wmGroupMatch(search_data, ps, lindex, Tx, T);
     }
+
+    return true;
+}
+
+int wm_wrapper::Match(
+    void* p,
+    void * user_data, 
+    matched_patten* pattern,
+    int  index
+    )
+{
+    wm_wrapper* pThis = (wm_wrapper*) p;
+    if (pThis->callback_func_)
+    {
+        return pThis->callback_func_(pThis->callback_this_,
+            user_data,
+            pattern,
+            index);
+    }
+
+    return 0;
 }
 

@@ -183,7 +183,7 @@ int bnfaCompileWithSnortConf( struct _SnortConfig *, bnfa_struct_t * pstruct,
                  int (*neg_list_func)(void *id, void **list));
 
 unsigned bnfaSearch( bnfa_struct_t * pstruct, unsigned char * t, int tlen,
-        		    int (*match)(void * id, void *tree, int index, void *data, void *neg_list),
+        		    int (*match)(void * id, bnfa_pattern_t*, void *tree, int index, void *data, void *neg_list),
 					void * sdata,
 					unsigned sindex,
                     int* current_state );

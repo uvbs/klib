@@ -5,7 +5,7 @@
 
 #include "singleton.h"
 #include "klib_core.h"
-#include "lock_stl.h"
+#include "../mem/lock_stl.h"
 #include "event.h"
 #include "../kthread/thread.h"
 

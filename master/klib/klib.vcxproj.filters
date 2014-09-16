@@ -34,6 +34,9 @@
     <Filter Include="system">
       <UniqueIdentifier>{090d81a9-4713-44d8-bd49-d098c66d335e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mem">
+      <UniqueIdentifier>{f0057b60-3df8-4d9c-9e08-89a21da06f8d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -48,15 +51,6 @@
     <ClInclude Include="..\core\core\array.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\core\mem_buffer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core\mem_list.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core\mem_string.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\core\PidAndPort.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -64,9 +58,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\core\singleton.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core\small_string.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\search.h">
@@ -126,9 +117,6 @@
     <ClInclude Include="..\core\pattern\sync_invoke.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\util\mem_check.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\core\task_mgr.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -147,9 +135,6 @@
     <ClInclude Include="..\core\core\kdetect_leakk.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\core\perf_counter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\algo\str_algo.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -163,9 +148,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\net\addr_resolver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\wm_wrapper.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\text_search.h">
@@ -402,6 +384,27 @@
     <ClInclude Include="..\core\util\xini.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\algo\search\wm_wrapper.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\circular_buffer.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\lock_stl.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\mem_buffer.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\mem_list.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\mem_string.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\small_string.h">
+      <Filter>mem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -456,9 +459,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\net\addr_resolver.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\algo\wm_wrapper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\net\wininet_httpclient.cpp">
@@ -577,6 +577,9 @@
     </ClCompile>
     <ClCompile Include="..\core\util\xini.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\search\wm_wrapper.cpp">
+      <Filter>search</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -54,7 +54,10 @@ bool engine::stop()
 
 void engine::add_task(actor_base* act, size_t num)
 {
-    kthread_pool::func_type func = std::bind(&engine::actor_task, this, act, num);
+    kthread_pool::func_type func = std::bind(&engine::actor_task, 
+        this, 
+        act, 
+        num);
 
     thread_pool_.add_task(func);
 };

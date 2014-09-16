@@ -2661,26 +2661,26 @@ bnfaSearch( bnfa_struct_t * bnfa, unsigned char *Tx, int n,
         if (bnfa->bnfaMethod)
         {
             ret = _bnfa_search_csparse_nfa( bnfa, Tx, n,
-                (int (*)(bnfa_pattern_t * id, void *tree, int index, void *data, void *neg_list))
+                (int (*)(bnfa_pattern_t * id, bnfa_pattern_t*, void *tree, int index, void *data, void *neg_list))
                 Match, data, sindex, current_state );
         }
         else
         {
             ret = _bnfa_search_csparse_nfa_q( bnfa, Tx, n,
-                (int (*)(bnfa_pattern_t * id, void *tree, int index, void *data, void *neg_list))
+                (int (*)(bnfa_pattern_t * id, bnfa_pattern_t*, void *tree, int index, void *data, void *neg_list))
                 Match, data, sindex, current_state );
         }
     }
     else if( bnfa->bnfaCaseMode == BNFA_CASE )
     {
            ret = _bnfa_search_csparse_nfa_case( bnfa, Tx, n,
-              (int (*)(bnfa_pattern_t * id, void *tree, int index, void *data, void *neg_list))
+              (int (*)(bnfa_pattern_t * id, bnfa_pattern_t*, void *tree, int index, void *data, void *neg_list))
               Match, data, sindex, current_state );
     }
     else/* NOCASE */
     {
            ret = _bnfa_search_csparse_nfa_nocase( bnfa, Tx, n,
-              (int (*)(bnfa_pattern_t * id, void *tree, int index, void *data, void *neg_list))
+              (int (*)(bnfa_pattern_t * id, bnfa_pattern_t*, void *tree, int index, void *data, void *neg_list))
               Match, data, sindex, current_state );
     }
 #endif

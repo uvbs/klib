@@ -94,6 +94,7 @@
     <ClInclude Include="..\core\algo\qsort.h" />
     <ClInclude Include="..\core\algo\search.h" />
     <ClInclude Include="..\core\algo\search\ac_wrapper.h" />
+    <ClInclude Include="..\core\algo\search\wm_wrapper.h" />
     <ClInclude Include="..\core\algo\sort.h" />
     <ClInclude Include="..\core\algo\string_hash.h" />
     <ClInclude Include="..\core\algo\str_algo.h" />
@@ -101,7 +102,6 @@
     <ClInclude Include="..\core\algo\text_search.h" />
     <ClInclude Include="..\core\algo\trie.h" />
     <ClInclude Include="..\core\algo\wildcmp.h" />
-    <ClInclude Include="..\core\algo\wm_wrapper.h" />
     <ClInclude Include="..\core\comp\calendar\calendar.h" />
     <ClInclude Include="..\core\core\api_fetcher.h" />
     <ClInclude Include="..\core\core\app_instance.h" />
@@ -112,11 +112,7 @@
     <ClInclude Include="..\core\core\ini_file.h" />
     <ClInclude Include="..\core\core\kdetect_leakk.h" />
     <ClInclude Include="..\core\core\lock_stl.h" />
-    <ClInclude Include="..\core\core\mem_buffer.h" />
-    <ClInclude Include="..\core\core\mem_list.h" />
-    <ClInclude Include="..\core\core\mem_string.h" />
     <ClInclude Include="..\core\core\mini_dumper.h" />
-    <ClInclude Include="..\core\core\perf_counter.h" />
     <ClInclude Include="..\core\core\PidAndPort.h" />
     <ClInclude Include="..\core\core\private_heap.h" />
     <ClInclude Include="..\core\core\process_enumer.h" />
@@ -125,7 +121,6 @@
     <ClInclude Include="..\core\core\seqnumber.h" />
     <ClInclude Include="..\core\core\share_memory.h" />
     <ClInclude Include="..\core\core\singleton.h" />
-    <ClInclude Include="..\core\core\small_string.h" />
     <ClInclude Include="..\core\core\task_mgr.h" />
     <ClInclude Include="..\core\core\timer_mgr.h" />
     <ClInclude Include="..\core\core\uuid.h" />
@@ -158,6 +153,12 @@
     <ClInclude Include="..\core\kthread\threadpool.h" />
     <ClInclude Include="..\core\kthread\win_mutex.h" />
     <ClInclude Include="..\core\macro.h" />
+    <ClInclude Include="..\core\mem\circular_buffer.h" />
+    <ClInclude Include="..\core\mem\lock_stl.h" />
+    <ClInclude Include="..\core\mem\mem_buffer.h" />
+    <ClInclude Include="..\core\mem\mem_list.h" />
+    <ClInclude Include="..\core\mem\mem_string.h" />
+    <ClInclude Include="..\core\mem\small_string.h" />
     <ClInclude Include="..\core\net\addr_resolver.h" />
     <ClInclude Include="..\core\net\bytebuyffer.h" />
     <ClInclude Include="..\core\net\CheckNat.h" />
@@ -194,7 +195,6 @@
     <ClInclude Include="..\core\util\atom.h" />
     <ClInclude Include="..\core\util\buffer_reader.h" />
     <ClInclude Include="..\core\util\convert.h" />
-    <ClInclude Include="..\core\util\mem_check.h" />
     <ClInclude Include="..\core\util\perf_tool.h" />
     <ClInclude Include="..\core\util\rand_str.h" />
     <ClInclude Include="..\core\util\shell_link.h" />
@@ -207,9 +207,9 @@
     <ClCompile Include="..\core\algo\bloom.cpp" />
     <ClCompile Include="..\core\algo\many_many_queue.cpp" />
     <ClCompile Include="..\core\algo\search\ac_wrapper.cpp" />
+    <ClCompile Include="..\core\algo\search\wm_wrapper.cpp" />
     <ClCompile Include="..\core\algo\string_hash.cpp" />
     <ClCompile Include="..\core\algo\trie.cpp" />
-    <ClCompile Include="..\core\algo\wm_wrapper.cpp" />
     <ClCompile Include="..\core\comp\calendar\calendar.cpp" />
     <ClCompile Include="..\core\core\code_convert.cpp" />
     <ClCompile Include="..\core\core\datetime.cpp" />

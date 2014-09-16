@@ -18,7 +18,7 @@
 #define  AtomAdd  InterlockedIncrement  
 
 namespace klib {
-namespace stl {
+namespace pattern {
 namespace lockfree {
 
 template<class T, int max_queue_size>

@@ -5,7 +5,7 @@
 #include "../kthread/thread.h"
 #include "../kthread/thread_local.h"
 #include "../kthread/kthreadpool.h"
-#include "../mem/lock_stl.h"
+#include "../pattern/lock_stl.h"
 
 #include "multi_buffer_queue.h"
 
@@ -99,7 +99,7 @@ protected:
     void actor_task(actor_base* act, size_t exec_num);
 
 protected:
-    klib::stl::lock_list<actor_base*> act_list_;
+    klib::pattern::lock_list<actor_base*> act_list_;
     klib::kthread::kthread_pool thread_pool_;
     klib::kthread::Thread       work_thread_;
     bool                        is_stop_;

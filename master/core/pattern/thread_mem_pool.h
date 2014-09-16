@@ -1,3 +1,12 @@
+#ifndef _klib_thread_mem_pool_h
+#define _klib_thread_mem_pool_h
+
+#include <Windows.h>
+#include <map>
+
+class tm_pool;
+class tm_poolset;
+
 struct tm_bufunit
 {
     tm_pool *pool;                        //pool指针
@@ -15,8 +24,8 @@ struct tm_gcontrol
 
     tm_gcontrol() : gfree(NULL) { InitializeCriticalSection(&gcs); }
     ~tm_gcontrol()        { DeleteCriticalSection(&gcs); }
-    Inline void lock()     { EnterCriticalSection(&gcs); }
-    Inline void unlock() { LeaveCriticalSection(&gcs); }
+    inline void lock()     { EnterCriticalSection(&gcs); }
+    inline void unlock() { LeaveCriticalSection(&gcs); }
     void free(tm_bufunit *buf)
     {
         lock();
@@ -97,3 +106,7 @@ void *tm_new(size_t size, size_t *osize=NULL);
 //tls相关释放
 void tm_del(void *buf, size_t size);
  
+
+
+
+#endif // _klib_thread_mem_pool_h

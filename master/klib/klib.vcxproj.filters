@@ -405,6 +405,36 @@
     <ClInclude Include="..\core\mem\small_string.h">
       <Filter>mem</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\pattern\act_list.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\active_object.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\fix_circle_buff.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\lock_stl.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\many_many_queue.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\multi_buffer_queue.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\one_many_queue.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\ptr_list.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\retry_list.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\thread_mem_pool.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -477,9 +507,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\io\stream.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\algo\many_many_queue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\io\path.cpp">
@@ -580,6 +607,15 @@
     </ClCompile>
     <ClCompile Include="..\core\algo\search\wm_wrapper.cpp">
       <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\act_list.cpp">
+      <Filter>pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\many_many_queue.cpp">
+      <Filter>pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\thread_mem_pool.cpp">
+      <Filter>pattern</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

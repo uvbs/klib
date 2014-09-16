@@ -5,8 +5,8 @@
 
 #include "singleton.h"
 #include "klib_core.h"
-#include "lock_stl.h"
 #include "event.h"
+#include "../pattern/lock_stl.h"
 #include "../kthread/thread.h"
 
 
@@ -37,7 +37,7 @@ protected:
 protected:
     klib::kthread::Thread                   thread_;
     klib::kthread::Event                    event_;
-    klib::stl::lock_list<task_func_type>    task_list_;
+    klib::pattern::lock_list<task_func_type>    task_list_;
 };
 
 

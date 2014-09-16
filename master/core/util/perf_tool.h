@@ -3,7 +3,7 @@
 
 #include "../kthread/thread.h"
 #include "../core/singleton.h"
-#include "../core/perf_counter.h"
+#include "../util/perf_counter.h"
 #include "../pattern/multi_buffer_queue.h"
 #include <string>
 

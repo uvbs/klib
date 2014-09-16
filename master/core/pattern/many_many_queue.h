@@ -15,7 +15,7 @@
 #endif
 
 namespace klib {
-namespace stl {
+namespace pattern {
 
 
 namespace lockfree

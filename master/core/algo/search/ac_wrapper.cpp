@@ -29,6 +29,15 @@ bool ac_wrapper::add_pattern(const char* pt_buf, int pt_len, void* data)
     return 0 == ret;
 }
 
+bool ac_wrapper::add_pattern(const char* pt_buf, void*data)
+{
+    int ret = bnfaAddPattern( (bnfa_struct_t *) handle_,
+        (unsigned char*) pt_buf, strlen(pt_buf), false,
+        false, data);
+
+    return 0 == ret;
+}
+
 bool ac_wrapper::compile()
 {
     int ret = bnfaCompile( (bnfa_struct_t *) handle_,
@@ -43,9 +52,10 @@ int  ac_wrapper::size()
     return bnfaPatternCount((bnfa_struct_t *) handle_);
 }
 
-void ac_wrapper::set_callback(ac_match_callback call)
+void ac_wrapper::set_callback(search_match_callback call, void* pthis)
 {
-    callback_ = call;
+    callback_func_ = call;
+    callback_this_ = pthis;
 }
 
 bool ac_wrapper::search(const char* buf, int buflen)
@@ -54,22 +64,28 @@ bool ac_wrapper::search(const char* buf, int buflen)
 
     unsigned ret = bnfaSearch((bnfa_struct_t*)handle_,
         (unsigned char*)buf,
-        buflen,
-        Match,    // match func
-        this,   // data
-        0,      // sindex
+        buflen,     // buffer length
+        Match,      // match func
+        this,       // data
+        0,          // sindex
         &cur_state);
-
-    bnfa_struct_t* ptr = (bnfa_struct_t*)handle_;
-
-    return true;
+    
+    return 1 == ret;
 }
 
-int ac_wrapper::Match(void * id, void *tree, int index, void *data, void *neg_list)
+int ac_wrapper::Match(void * user_data, 
+    bnfa_pattern_t* patrn, 
+    void *tree, 
+    int index, 
+    void *data, 
+    void *neg_list)
 {
     ac_wrapper* wrap = (ac_wrapper*) data; 
-    if (wrap->callback_) {
-        wrap->callback_(id, tree, index, neg_list);
+    if (wrap->callback_func_) {
+        matched_patten patten;
+        patten.len  = patrn->n;
+        patten.pstr = (char*) patrn->casepatrn;
+        return wrap->callback_func_(wrap->callback_this_, user_data, &patten, index);
     }
     return 0;
 }

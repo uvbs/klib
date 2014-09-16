@@ -9,7 +9,7 @@
 #include <hash_map>
 
 namespace klib {
-namespace stl {
+namespace pattern {
 
 using namespace klib::kthread;
 

@@ -16,9 +16,6 @@
     <Filter Include="http">
       <UniqueIdentifier>{ea1c4f1a-650b-4b91-9852-1d0c15713d22}</UniqueIdentifier>
     </Filter>
-    <Filter Include="search">
-      <UniqueIdentifier>{2dfaec87-012b-47bb-ae67-3d3e16155919}</UniqueIdentifier>
-    </Filter>
     <Filter Include="algo">
       <UniqueIdentifier>{92329e06-efa7-41c1-82cb-813ed89cc978}</UniqueIdentifier>
     </Filter>
@@ -34,6 +31,12 @@
     <Filter Include="system">
       <UniqueIdentifier>{090d81a9-4713-44d8-bd49-d098c66d335e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mem">
+      <UniqueIdentifier>{f0057b60-3df8-4d9c-9e08-89a21da06f8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="search">
+      <UniqueIdentifier>{2dfaec87-012b-47bb-ae67-3d3e16155919}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -48,15 +51,6 @@
     <ClInclude Include="..\core\core\array.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\core\mem_buffer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core\mem_list.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core\mem_string.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\core\PidAndPort.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -64,9 +58,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\core\singleton.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\core\small_string.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\search.h">
@@ -126,9 +117,6 @@
     <ClInclude Include="..\core\pattern\sync_invoke.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\util\mem_check.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\core\task_mgr.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -147,9 +135,6 @@
     <ClInclude Include="..\core\core\kdetect_leakk.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\core\perf_counter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\algo\str_algo.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -163,9 +148,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\net\addr_resolver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\wm_wrapper.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\text_search.h">
@@ -375,13 +357,7 @@
     <ClInclude Include="..\core\pattern\fsm.h">
       <Filter>pattern</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\algo\kmp.h">
-      <Filter>algo</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\algo\ld.h">
-      <Filter>algo</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\algo\bm_wrapper.h">
       <Filter>algo</Filter>
     </ClInclude>
     <ClInclude Include="..\core\util\buffer_reader.h">
@@ -401,6 +377,81 @@
     </ClInclude>
     <ClInclude Include="..\core\util\xini.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\wm_wrapper.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\circular_buffer.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\lock_stl.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\mem_buffer.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\mem_list.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\mem_string.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\mem\small_string.h">
+      <Filter>mem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\act_list.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\active_object.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\fix_circle_buff.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\lock_stl.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\many_many_queue.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\multi_buffer_queue.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\one_many_queue.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\ptr_list.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\retry_list.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\pattern\thread_mem_pool.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\find_tool.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\search.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\str_algo.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\sunday.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\text_search.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\wildcmp.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\bm_wrapper.h">
+      <Filter>search</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\algo\search\kmp.h">
+      <Filter>search</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -458,9 +509,6 @@
     <ClCompile Include="..\core\net\addr_resolver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\algo\wm_wrapper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\net\wininet_httpclient.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -477,9 +525,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\io\stream.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\algo\many_many_queue.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\io\path.cpp">
@@ -577,6 +622,21 @@
     </ClCompile>
     <ClCompile Include="..\core\util\xini.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\search\wm_wrapper.cpp">
+      <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\act_list.cpp">
+      <Filter>pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\many_many_queue.cpp">
+      <Filter>pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\thread_mem_pool.cpp">
+      <Filter>pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\algo\search\sunday.cpp">
+      <Filter>search</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 #ifndef _klib_find_tool_test_h
 #define _klib_find_tool_test_h
 
-#include <algo/find_tool.h>
+#include <algo/search/find_tool.h>
 
 TEST(FindToolTest, t1)
 {

@@ -3,7 +3,7 @@
 
 
 //#include "core/mem_string.h"
-#include "core/mem_buffer.h"
+#include "mem/mem_buffer.h"
 
 TEST(mem_buffer, create)
 {

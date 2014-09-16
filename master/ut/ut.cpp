@@ -37,6 +37,7 @@
 #include "trie_test.h"
 #include "factory_test.h"
 #include "qsort_test.h"
+#include "sunday_test.h"
 #include "sync_invoke_test.h"
 #include "kmp_test.h"
 #include "bitmap_test.h"

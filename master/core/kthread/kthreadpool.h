@@ -8,7 +8,7 @@
 #include <list>
 #include "event.h"
 #include "auto_lock.h"
-#include "../core/lock_stl.h"
+#include "../pattern/lock_stl.h"
 #include "../macro.h"
 
 
@@ -87,7 +87,7 @@ protected:
     auto_cs     thread_num_cs_;
     
     Event event_;
-    klib::stl::lock_list<task_info*> tasklist_;
+    klib::pattern::lock_list<task_info*> tasklist_;
     std::vector<HANDLE> thread_handles_;
 };
 

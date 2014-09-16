@@ -3,7 +3,7 @@
 #define _klib_kmp_test_h
 
 
-#include <algo/kmp.h>
+#include <algo/search/kmp.h>
 
 TEST(kmp, 1)
 {

@@ -13,7 +13,12 @@ sunday::sunday()
     , pat_start_(0)
     , pat_end_(0)
     , match_rule_(MATCH_RULE_STEP_ONE_CHAR)  
-{}    
+{}
+
+int sunday::search(const char *text_src, size_t text_len)
+{
+    return search(text_src, text_src + text_len);
+}
 
 // 源串     [text_start, text_end)  
 // 模式串   [pat_start, pat_end)  
@@ -46,9 +51,9 @@ int sunday::search(const char *text_start, const char *text_end)
                 //printf("text:%d [%c], pat:%d [%c] \n", i+pat_len-j-1, text_start[i+pat_len-j-1],  pat_len-j-1, pat_start_[pat_len-j-1]);  
                 //printf("i:%d [%c], j:%d [%c] \n", i, text_start[i],  j, pat_start_[j]);  
                 u_char next_c = (u_char)text_start[i + pat_len];  
-                //printf("next c:%d, [%c], jmp:%d\n", i+pat_len, next_c, _jump_table[next_c]);  
+                //printf("next c:%d, [%c], jmp:%d\n", i+pat_len, next_c, jump_table_[next_c]);  
 
-                i += _jump_table[next_c];  
+                i += jump_table_[next_c];  
 
                 finded = false;  
                 break;  
@@ -130,13 +135,13 @@ void sunday::pre_compute(const char* pat_start, const char* pat_end)
     // 初始化  
     for (int i=0; i<JUMP_TABLE_LEN; ++i)  
     {  
-        _jump_table[i] = pat_len + 1; // pat长度+1  
+        jump_table_[i] = pat_len + 1; // pat长度+1  
     }  
 
     const char* p = pat_start;  
     for (; p!=pat_end; ++p)  
     {  
-        _jump_table[(u_char)(*p)] = pat_end - p;  
+        jump_table_[(u_char)(*p)] = pat_end - p;  
     }  
 
     jump_table_inited_ = true;  

@@ -50,13 +50,14 @@
 #include "ui/TrayIcon.h"
 
 #include "algo/sort.h"
-#include "algo/search.h"
-#include "algo/kmp.h"
-#include "algo/sunday.h"
 #include "algo/ld.h"
 #include "algo/string_hash.h"
+
+#include "algo/search/search.h"
+#include "algo/search/kmp.h"
+#include "algo/search/sunday.h"
+#include "algo/search/text_search.h"
 #include "algo/search/wm_wrapper.h"
-#include "algo/text_search.h"
 
 #include "util/strutil.h"
 #include "util/convert.h"

@@ -2,9 +2,9 @@
 #ifndef _klib_queue_test_h
 #define _klib_queue_test_h
 
-#include <algo/one_many_queue.h>
+#include <pattern/one_many_queue.h>
 
-using namespace klib::stl;
+using namespace klib::pattern;
 
 TEST(test_queue, 1)
 {

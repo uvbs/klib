@@ -8,7 +8,7 @@
 #include <list>
 #include "event.h"
 #include "auto_lock.h"
-#include "../core/lock_stl.h"
+#include "../mem/lock_stl.h"
 #include "../macro.h"
 
 

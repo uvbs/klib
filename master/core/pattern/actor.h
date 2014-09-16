@@ -5,7 +5,7 @@
 #include "../kthread/thread.h"
 #include "../kthread/thread_local.h"
 #include "../kthread/kthreadpool.h"
-#include "../core/lock_stl.h"
+#include "../mem/lock_stl.h"
 
 #include "multi_buffer_queue.h"
 

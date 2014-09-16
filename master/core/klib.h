@@ -20,7 +20,6 @@
 #include "core/ip_seg_table.h"
 #include "core/ini_file.h"
 #include "core/console_screen.h"
-#include "core/perf_counter.h"
 #include "core/seqnumber.h"
 
 #include "sys/sys.h"
@@ -56,12 +55,13 @@
 #include "algo/sunday.h"
 #include "algo/ld.h"
 #include "algo/string_hash.h"
-#include "algo/wm_wrapper.h"
+#include "algo/search/wm_wrapper.h"
 #include "algo/text_search.h"
 
 #include "util/strutil.h"
 #include "util/convert.h"
 #include "util/atom.h"
+#include "util/perf_counter.h"
 
 #include "pattern/aspect.h"
 #include "pattern/factory.h"

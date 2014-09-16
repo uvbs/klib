@@ -4,7 +4,7 @@
 // #include <boost/cstdint.hpp>
 
 namespace klib {
-namespace core {
+namespace mem {
 
 
 

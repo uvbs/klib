@@ -1,7 +1,6 @@
 
 #include "rand_str.h"
 
-#include <random>
 
 #ifndef _WIN32
 #include <string.h>
@@ -12,7 +11,6 @@ const char g_rand_str_tbl[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLM
 
 using namespace klib::util;
 
-std::random_device g_rd;
 
 rand_str::rand_str() 
     : str_tbl_(nullptr)
@@ -47,7 +45,7 @@ std::string rand_str::get_rand_str(size_t len)
 
     for (size_t index = 0; index < len; index++)
     {
-        size_t offset = g_rd() % tbl_len_;
+        size_t offset = rd_() % tbl_len_;
         str_tmp.append(str_tbl_ + offset, 1);
     }
     return std::move(str_tmp);

@@ -2,6 +2,7 @@
 #define _klib_rand_str_h_
 
 #include <string>
+#include <random>
 
 namespace klib {
 namespace util {
@@ -19,6 +20,8 @@ public:
 protected:
     const char* str_tbl_;
     size_t      tbl_len_;
+
+    std::random_device rd_;
 
     size_t      gen_len_;
 };

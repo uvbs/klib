@@ -94,6 +94,7 @@
     <ClInclude Include="..\core\algo\search.h" />
     <ClInclude Include="..\core\algo\search\ac_wrapper.h" />
     <ClInclude Include="..\core\algo\search\find_tool.h" />
+    <ClInclude Include="..\core\algo\search\fnmatch.h" />
     <ClInclude Include="..\core\algo\search\kmp.h" />
     <ClInclude Include="..\core\algo\search\search.h" />
     <ClInclude Include="..\core\algo\search\str_algo.h" />
@@ -213,6 +214,7 @@
     <ClInclude Include="..\core\util\convert.h" />
     <ClInclude Include="..\core\util\perf_tool.h" />
     <ClInclude Include="..\core\util\rand_str.h" />
+    <ClInclude Include="..\core\util\rand_val.h" />
     <ClInclude Include="..\core\util\shell_link.h" />
     <ClInclude Include="..\core\util\strutil.h" />
     <ClInclude Include="..\core\util\timeout_checker.h" />
@@ -222,6 +224,7 @@
     <ClCompile Include="..\core\algo\bitmap.cpp" />
     <ClCompile Include="..\core\algo\bloom.cpp" />
     <ClCompile Include="..\core\algo\search\ac_wrapper.cpp" />
+    <ClCompile Include="..\core\algo\search\fnmatch.cpp" />
     <ClCompile Include="..\core\algo\search\sunday.cpp" />
     <ClCompile Include="..\core\algo\search\wm_wrapper.cpp" />
     <ClCompile Include="..\core\algo\string_hash.cpp" />

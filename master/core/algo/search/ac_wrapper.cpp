@@ -55,7 +55,7 @@ int  ac_wrapper::size()
 void ac_wrapper::set_callback(search_match_callback call, void* pthis)
 {
     callback_func_ = call;
-    callback_this_ = pthis;
+    callback_ctx_ = pthis;
 }
 
 bool ac_wrapper::search(const char* buf, int buflen)
@@ -85,7 +85,7 @@ int ac_wrapper::Match(void * user_data,
         matched_patten patten;
         patten.len  = patrn->n;
         patten.pstr = (char*) patrn->casepatrn;
-        return wrap->callback_func_(wrap->callback_this_, user_data, &patten, index);
+        return wrap->callback_func_(wrap->callback_ctx_, user_data, &patten, index);
     }
     return 0;
 }

@@ -70,7 +70,7 @@ protected:
     void wmPrepHashedPatternGroups(WM_STRUCT *ps); //计算有多少个不同哈希值，且从小到大
     void wmPrepShiftTable(WM_STRUCT *ps);
     void wmPrepPrefixTable(WM_STRUCT *ps);
-    void wmGroupMatch(void* search_data,
+    bool wmGroupMatch(void* search_data,
         WM_STRUCT *ps, //后缀哈希值相同，比较前缀以及整个字符匹配
         int lindex, 
         unsigned char *Tx, 
@@ -88,7 +88,7 @@ protected:
     WM_STRUCT * wm_handle_;
     size_t      pattern_num_;
     
-    void*                  callback_this_;
+    void*                  callback_ctx_;
     search_match_callback  callback_func_;
 };
 

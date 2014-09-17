@@ -11,6 +11,7 @@ using namespace klib::algo;
 
 wm_wrapper::wm_wrapper(void)
     : pattern_num_(0)
+    , callback_func_(nullptr)
 {
     wm_handle_ = wmNew();
 }
@@ -56,10 +57,10 @@ size_t wm_wrapper::size()
     return pattern_num_;
 }
 
-void wm_wrapper::set_callback(search_match_callback call, void* pthis)
+void wm_wrapper::set_callback(search_match_callback call, void* pctx)
 {
     callback_func_ = call;
-    callback_this_ = pthis;
+    callback_ctx_  = pctx;
 }
 
 bool wm_wrapper::search(const char* pszSearch, int nLen)
@@ -250,7 +251,7 @@ void wm_wrapper::wmPrepPrefixTable(WM_STRUCT *ps)//建立Prefix表
     }
 }
 
-void wm_wrapper::wmGroupMatch(void* search_data,
+bool wm_wrapper::wmGroupMatch(void* search_data,
                               WM_STRUCT *ps,//后缀哈希值相同，比较前缀以及整个字符匹配
                               int lindex, 
                               unsigned char *Tx, 
@@ -264,6 +265,8 @@ void wm_wrapper::wmGroupMatch(void* search_data,
     patrn = &ps->msPatArray[lindex];
     patrnEnd = patrn + ps->msNumArray[lindex];
     text_prefix = HASH16(T);
+
+    bool find_pattern = false;
 
     for (; patrn < patrnEnd; patrn++)
     {
@@ -289,14 +292,18 @@ void wm_wrapper::wmGroupMatch(void* search_data,
                 match_patn.pstr  = (char*)patrn->psPat;
                 match_patn.len   = patrn->psLen;
 
+                find_pattern = true;
+
                 int ret = Match (search_data, patrn->user_data, &match_patn, index);
                 if (ret > 0)
                 {
-                    return;
+                    return find_pattern;
                 }
             }
         }
     }
+
+    return find_pattern;
 }
 
 int wm_wrapper::wmPrepPatterns(WM_STRUCT *ps)//由plist得到msPatArray
@@ -333,7 +340,9 @@ bool wm_wrapper::wmSearch(WM_STRUCT *ps, void* search_data, unsigned char *Tx, i
     Tend = Tx + n;
     if (n < ps->msSmallest)
         return false;
-
+    
+    bool  find_pattern = false;
+    
     for (T = Tx, window = Tx + ps->msSmallest - 1; window < Tend; T++, window++, Tleft--)
     {
         tshift = ps->msShift[(*(window - 1) << 8) | *window];
@@ -343,17 +352,21 @@ bool wm_wrapper::wmSearch(WM_STRUCT *ps, void* search_data, unsigned char *Tx, i
             T += tshift;
             Tleft -= tshift;
             if (window > Tend)
-                return false;
+                return find_pattern;
+
             tshift = ps->msShift[(*(window - 1) << 8) | *window];
         }
         if ((lindex = ps->msHash[(*(window - 1) << 8) | *window])
             == (HASH_TYPE) -1)
             continue;
         lindex = ps->msHash[(*(window - 1) << 8) | *window];
-        wmGroupMatch(search_data, ps, lindex, Tx, T);
+        if (wmGroupMatch(search_data, ps, lindex, Tx, T))
+        {
+            find_pattern = true;
+        }
     }
 
-    return true;
+    return find_pattern;
 }
 
 int wm_wrapper::Match(
@@ -366,7 +379,7 @@ int wm_wrapper::Match(
     wm_wrapper* pThis = (wm_wrapper*) p;
     if (pThis->callback_func_)
     {
-        return pThis->callback_func_(pThis->callback_this_,
+        return pThis->callback_func_(pThis->callback_ctx_,
             user_data,
             pattern,
             index);

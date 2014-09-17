@@ -8,7 +8,7 @@ struct matched_patten
     size_t  len;
 };
 
-typedef int (*search_match_callback)(void* pthis,
+typedef int (*search_match_callback)(void* ctx,
     void * user_data,
     matched_patten*, 
     int index);

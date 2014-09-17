@@ -35,7 +35,7 @@ protected:
 protected:
     void*              handle_;
 
-    void*                  callback_this_;
+    void*                  callback_ctx_;
     search_match_callback  callback_func_;
 };
 

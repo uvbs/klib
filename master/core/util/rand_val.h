@@ -7,7 +7,7 @@
 namespace klib {
 namespace util {
 
-class rand_val : klib::core::singleton<rand_val>
+class rand_val : public klib::core::singleton<rand_val>
 {
 public:
     size_t val();

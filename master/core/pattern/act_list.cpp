@@ -5,21 +5,14 @@ using namespace klib::core;
 
 using namespace klib::pattern;
 
-bool act_list::async_act(const act_func_type& func)
+bool act_list::async_act(act_func_type& func)
 {
     klib::kthread::guard guard_(mutex_);
-    act_lst_.push_back(func);
+    act_lst_.push_back(&func);
     return true;
 }
 
-bool act_list::async_act(act_func_type&& func)
-{
-    klib::kthread::guard guard_(mutex_);
-    act_lst_.push_back(std::move(func));
-    return true;
-}
-
-bool act_list::sync_act(const act_func_type& func)
+bool act_list::sync_act(act_func_type& func)
 {
     HANDLE done = CreateEvent(NULL, TRUE, FALSE, NULL);
 
@@ -65,7 +58,7 @@ bool act_list::exec()
         return false;
     }
 
-    act_func_type func;
+    act_func_type* func;
     klib::kthread::lock_exec(mutex_, [&]()
         {
             if (!act_lst_.empty()) 
@@ -77,7 +70,7 @@ bool act_list::exec()
     );
 
     if (func)
-        func();
+        (*func)();
 
     return true;
 }

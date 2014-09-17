@@ -18,15 +18,14 @@ class act_list
 {
 public:
     // add for a thread
-    bool async_act(const act_func_type& func);
-    bool async_act(act_func_type&& func);
-    bool sync_act(const act_func_type& func);
+    bool async_act(act_func_type& func);
+    bool sync_act(act_func_type& func);
 
     // execute by another thread
     bool exec();
 protected:
     klib::kthread::mutex      mutex_;
-    std::list<act_func_type>  act_lst_;
+    std::list<act_func_type*>  act_lst_;
 };
 
 

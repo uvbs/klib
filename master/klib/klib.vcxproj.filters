@@ -566,9 +566,6 @@
     <ClCompile Include="..\core\ui\window.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\core\share_memory.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\core\mini_dumper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -646,6 +643,12 @@
     </ClCompile>
     <ClCompile Include="..\core\algo\search\fnmatch.cpp">
       <Filter>search</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\rand_val.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\mem\share_memory.cpp">
+      <Filter>mem</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

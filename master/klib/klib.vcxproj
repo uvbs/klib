@@ -236,7 +236,6 @@
     <ClCompile Include="..\core\core\mini_dumper.cpp" />
     <ClCompile Include="..\core\core\process_enumer.cpp" />
     <ClCompile Include="..\core\core\process_helper.cpp" />
-    <ClCompile Include="..\core\core\share_memory.cpp" />
     <ClCompile Include="..\core\core\task_mgr.cpp" />
     <ClCompile Include="..\core\core\timer_mgr.cpp" />
     <ClCompile Include="..\core\core\uuid.cpp" />
@@ -253,6 +252,7 @@
     <ClCompile Include="..\core\kthread\rw_emaphore.cpp" />
     <ClCompile Include="..\core\kthread\semaphore.cpp" />
     <ClCompile Include="..\core\kthread\win_mutex.cpp" />
+    <ClCompile Include="..\core\mem\share_memory.cpp" />
     <ClCompile Include="..\core\net\addr_helper.cpp" />
     <ClCompile Include="..\core\net\addr_resolver.cpp" />
     <ClCompile Include="..\core\net\CheckNat.cpp" />
@@ -280,6 +280,7 @@
     <ClCompile Include="..\core\util\buffer_reader.cpp" />
     <ClCompile Include="..\core\util\perf_tool.cpp" />
     <ClCompile Include="..\core\util\rand_str.cpp" />
+    <ClCompile Include="..\core\util\rand_val.cpp" />
     <ClCompile Include="..\core\util\shell_link.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />
     <ClCompile Include="..\core\util\xini.cpp" />

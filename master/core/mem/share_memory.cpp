@@ -15,7 +15,7 @@ share_memory::~share_memory(void)
     close();
 }
 
-void share_memory::create(tstring name, size_t nSize )
+bool share_memory::create(tstring name, size_t nSize )
 {
     share_mem_handle_ = CreateFileMapping(INVALID_HANDLE_VALUE,NULL, PAGE_READWRITE, 0, nSize, name.c_str());
     if(share_mem_handle_)
@@ -24,13 +24,18 @@ void share_memory::create(tstring name, size_t nSize )
         if(share_mem_addr_ == NULL)
         {
             MessageBox(NULL, _T("映射文件映射到调用进程地址时出错"), _T("错误"), MB_OK);
+            return false;
         }
+        return true;
     }
     else
     {
         MessageBox(NULL, _T("创建文件映射失败"), _T("错误"), MB_OK);
+        return false;
     }
     share_mem_size_ = nSize;
+
+    return true;
 }
 
 bool share_memory::open(tstring name)

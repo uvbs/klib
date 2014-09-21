@@ -61,7 +61,7 @@ log_helper& log_helper::serilize(const bin_buf& buf, const char* name)
         err_ << default_null_ptr_str;
     }
     else {
-        err_ << name << " = " << std::endl;
+        err_ << name << " = ";
         err_ << format_hex_ascii(buf);
     }
     return *this;
@@ -74,7 +74,7 @@ log_helper& log_helper::serilize(const str_buf& buf, const char* name)
     }
     else {
         err_ << name << " = " 
-             << std::string(buf.ptr_, buf.size_) << std::endl;;
+             << std::string(buf.ptr_, buf.size_) ;
     }
     return *this;
 }
@@ -92,18 +92,18 @@ log_helper& log_helper::serilize(int src, char const* name)
 }
 log_helper& log_helper::serilize(std::string const& src, char const* name)
 {
-    err_ << "\t" << name << " = " << src << ", size: " << src.size() << "; " << std::endl;
+    err_ << "\t" << name << " = " << src << ", size: " << src.size() << "; ";
     return *this;
 }
 log_helper& log_helper::serilize(char const* src, char const* name)
 {
     if (src)
     {
-        err_ << "\t" << name << " = " << src << "; " << std::endl;
+        err_ << "\t" << name << " = " << src << "; ";
     }
     else 
     {
-        err_ << "\t" << name << " = " << "nullptr" << "; " << std::endl;
+        err_ << "\t" << name << " = " << "nullptr" << "; ";
     }
     return *this;
 }
@@ -111,11 +111,11 @@ log_helper& log_helper::serilize(char * src, char const* name)
 {
     if (src)
     {
-        err_ << "\t" << name << " = " << src << "; " << std::endl;
+        err_ << "\t" << name << " = " << src << "; ";
     }
     else 
     {
-        err_ << "\t" << name << " = " << "nullptr" << "; " << std::endl;
+        err_ << "\t" << name << " = " << "nullptr" << "; ";
     }
     return *this;
 }
@@ -125,11 +125,11 @@ log_helper& log_helper::serilize(const wchar_t * src, char const* name)
 {
     if (src)
     {
-        err_ << "\t" << name << " = " << wide_2_gbk(src) << "; " << std::endl;
+        err_ << "\t" << name << " = " << wide_2_gbk(src) << "; ";
     }
     else 
     {
-        err_ << "\t" << name << " = " << "nullptr" << "; " << std::endl;
+        err_ << "\t" << name << " = " << "nullptr" << "; ";
     }
     return *this;
 }
@@ -137,11 +137,11 @@ log_helper& log_helper::serilize( wchar_t * src, char const* name)
 {
     if (src)
     {
-        err_ << "\t" << name << " = " << wide_2_gbk(src) << "; " << std::endl;
+        err_ << "\t" << name << " = " << wide_2_gbk(src) << "; ";
     }
     else 
     {
-        err_ << "\t" << name << " = " << "nullptr" << "; " << std::endl;
+        err_ << "\t" << name << " = " << "nullptr" << "; ";
     }
     return *this;
 }
@@ -231,7 +231,7 @@ log_helper& log_helper::operator << (const str_buf& buf)
         err_ << default_null_ptr_str;
     }
     else {
-        err_ << std::string(buf.ptr_, buf.size_) << std::endl;;
+        err_ << std::string(buf.ptr_, buf.size_);
     }
     return *this;
 }

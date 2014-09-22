@@ -192,7 +192,7 @@ log_helper& log_helper::serilize_tpl(T const t)
 template<typename _type>
 log_helper& log_helper::operator << (_type const src)
 {
-    err_ << src << std::endl;
+    err_ << src;
     return *this;
 }
 

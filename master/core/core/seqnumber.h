@@ -24,6 +24,11 @@ public:
         return ++ seq_;
     }
 
+    operator int64_t()
+    {
+        return alloc_id();
+    }
+
 protected:
     mutex mutex_;
     int64_t seq_;

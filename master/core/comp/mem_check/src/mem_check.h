@@ -7,101 +7,34 @@
 #include <string>
 #include <windows.h>
 
+#include "../include/allocator.h"
+#include "../include/lock.h"
+#include "addr_mgr.h"
+
+
+
+/**
+ 1、支持容器的申请
+ 2、支持内存块申请(需要添加使用说明)
+ 3、输出统计信息
+
+
+
+
+
+
+
+
+
+
+
+
+*/
+
 namespace klib {
 namespace debug {
 
- // 同步对象
-class auto_cs
-{
-public:
-    auto_cs() {  InitializeCriticalSection(&m_cs);  }
-    ~auto_cs() {  DeleteCriticalSection(&m_cs);    }
 
-    void lock() {  EnterCriticalSection(&m_cs);  }
-    void unlock()  {  LeaveCriticalSection(&m_cs);  }
-
-protected:
-    auto_cs(const auto_cs&);
-    auto_cs& operator = (const auto_cs& rhs);
-
-protected:
-    CRITICAL_SECTION m_cs;
-};
-
-// 同步锁对象
-class auto_lock
-{
-public:
-    explicit auto_lock(auto_cs& cs) : m_cs(cs)  {  m_cs.lock();  }
-    ~auto_lock()  {  m_cs.unlock();  }
-
-protected:
-    auto_cs& m_cs;
-};
-
-// 内存分配器
-template<typename T>
-class MemAlloc : public std::allocator<T>
-{  
-public:  
-    typedef size_t   size_type;  
-    typedef typename std::allocator<T>::pointer              pointer;  
-    typedef typename std::allocator<T>::value_type           value_type;  
-    typedef typename std::allocator<T>::const_pointer        const_pointer;  
-    typedef typename std::allocator<T>::reference            reference;  
-    typedef typename std::allocator<T>::const_reference      const_reference;  
-   
-    pointer allocate(size_type _Count, const void* _Hint = NULL)
-    {
-        (_Hint);
-        return (pointer) malloc(_Count * sizeof (T));
-    }
-  
-    void deallocate(pointer _Ptr, size_type _Count)
-    {
-        (_Count);
-        free(_Ptr);
-    }
-  
-    template<class _Other>  
-    struct rebind  
-    {   // convert this type to allocator<_Other>  
-        typedef MemAlloc<_Other> other;  
-    };  
-  
-    MemAlloc() throw()  {}   
-  
-    /*MyAllc(const MyAllc& __a) throw()  
-        : allocator<T>(__a)  
-    {}*/
-  
-    template<typename _Tp1>
-    MemAlloc(const MemAlloc<_Tp1>&) throw()  {}
-  
-    ~MemAlloc() throw()  {}
-};
-
-// 统计
-class addr_mgr
-{
-public:
-    struct addr_info
-    {
-        addr_info() : nsize(0) {}
-
-        size_t nsize;
-    };
-
-public:
-    bool add_addr_info(void* p, size_t nsize);
-    bool del_addr_info(void* p, size_t& nsize);
-
-protected:
-    std::map<void*, 
-             addr_info, 
-             std::less<void*>, 
-             MemAlloc<std::pair<void*, addr_info>> >    m_addr_infos;
-};
 
 // 类的内存管理类
 class class_mem_mgr
@@ -187,16 +120,14 @@ protected:
 class mem_imp
 {
 public:
+    static void* alloc_class(const char* class_name, size_t nsize); // 类名与大小
+    static void* alloc_global(size_t nsize); // 全局的
 
-static void* alloc_class(const char* class_name, size_t nsize); // 类名与大小
-static void* alloc_global(size_t nsize); // 全局的
+    static void free_class(const char* class_name, void* p);
+    static void free_global(void* p);
 
-static void free_class(const char* class_name, void* p);
-static void free_global(void* p);
-
-static void enable_stats(bool benable);
-static std::string summary();   // 汇总，包括总内存，及各类的使用内存
-
+    static void enable_stats(bool benable);
+    static std::string summary();   // 汇总，包括总内存，及各类的使用内存
 };
 
 
@@ -284,14 +215,5 @@ static std::string summary();   // 汇总，包括总内存，及各类的使用内存
 
 
 
-#define  CHECK_MEMORY_SWITCH(pMainService, ModuleID)            \
-{                                                               \
-    UINT64  uMemorySwitch;                                      \
-    pMainService->GetInternalMemorySwitch(uMemorySwitch);       \
-    if (!(uMemorySwitch & ModuleID))                            \
-    {                                                           \
-        ::mem::mem_imp::enable_stats(false);                    \
-    }                                                           \
-}
 
 #endif

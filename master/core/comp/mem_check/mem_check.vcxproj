@@ -83,7 +83,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\addr_mgr.h" />
     <ClInclude Include="src\mem_check.h" />
+    <ClInclude Include="src\record_helper.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -97,7 +99,9 @@
       </PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="mem_main.cpp" />
+    <ClCompile Include="src\addr_mgr.cpp" />
     <ClCompile Include="src\mem_check.cpp" />
+    <ClCompile Include="src\record_helper.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

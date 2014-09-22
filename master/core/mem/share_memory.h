@@ -29,7 +29,7 @@ public:
     * @param  name  共享内存的名字
     * @param  nSize 共享内存的大小
     */
-    void create(tstring name, size_t nSize);
+    bool create(tstring name, size_t nSize);
 
     /**
      *

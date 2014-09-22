@@ -2,8 +2,7 @@
 #include "mem_check.h"
 
 namespace klib{
-namespace mem {
-namespace check {
+namespace debug {
 
 bool g_enable_mem_stats = true;
 
@@ -242,9 +241,9 @@ std::string global_mem_mgr::summary_xml(const char* module_name) const
 
     std::string strInfo = module_name;
     strInfo += ",";
-    strInfo += std::to_string(info.ncurr_size);
+    strInfo += std::to_string((long long)info.ncurr_size);
     strInfo += ",";
-    strInfo += std::to_string(info.nmax_size);
+    strInfo += std::to_string((long long)info.nmax_size);
 
     return std::move(strInfo);
 }
@@ -332,8 +331,8 @@ void mem_imp::enable_stats(bool benable)
 // summary
 std::string mem_imp::summary()
 {
-    mem::class_mem_mgr* mgr_ = mem::class_mem_mgr::instance();
-    mem::global_mem_mgr* global_mgr_ = mem::global_mem_mgr::instance();
+    debug::class_mem_mgr* mgr_ = debug::class_mem_mgr::instance();
+    debug::global_mem_mgr* global_mgr_ = debug::global_mem_mgr::instance();
 
     std::string strInfo = "\r\n";
 
@@ -347,4 +346,4 @@ std::string mem_imp::summary()
 
 
 
-}}}
+}}

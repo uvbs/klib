@@ -93,7 +93,12 @@ public:
     // global memory info
     struct global_mem_info
     {
-        global_mem_info() : ncurr_size(0), nmax_size(0), nalloc_count(0), nfree_count(0) {}
+        global_mem_info() 
+            : ncurr_size(0)
+            , nmax_size(0)
+            , nalloc_count(0)
+            , nfree_count(0) 
+        {}
 
         size_t ncurr_size;           // 当前大小
         size_t nmax_size;            // 最大大小

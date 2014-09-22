@@ -37,6 +37,9 @@
     <Filter Include="search">
       <UniqueIdentifier>{2dfaec87-012b-47bb-ae67-3d3e16155919}</UniqueIdentifier>
     </Filter>
+    <Filter Include="rdebug">
+      <UniqueIdentifier>{e1d0d76b-e5f6-4a33-8a0e-f6ea8e5bf865}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />

@@ -84,12 +84,12 @@
   <ItemGroup>
     <ClInclude Include="..\..\util\mac_extractor.h" />
     <ClInclude Include="src\antvir_detect.h" />
-    <ClInclude Include="stats_client.h" />
+    <ClInclude Include="src\stats_client.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\util\mac_extractor.cpp" />
     <ClCompile Include="src\antvir_detect.cpp" />
-    <ClCompile Include="stats_client.cpp" />
+    <ClCompile Include="src\stats_client.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -10,7 +10,7 @@ using namespace klib::util;
 #include <encrypt/base64.h>
 using namespace klib::encode;
 
-#include <comp/statics/stats_client.h>
+#include <comp/statics/src/stats_client.h>
 #include <util/mac_extractor.h>
 
 
@@ -45,8 +45,8 @@ TEST(http, 1)
     std::string str_decode;
     b64.decode(str_format, str_decode);
     /*
-    ==  Ìæ»»  QegA27vc
-    =   Ìæ»»  QegA27vcA
+    ==  Ìæ»»  QegZ27vc
+    =   Ìæ»»  QegZ27vcZ
     O   Ìæ»»  IkL
     R   Ìæ»»  TgF
     A   Ìæ»»  SwD

@@ -1,8 +1,8 @@
 #ifndef _klib_stats_client_h_
 #define _klib_stats_client_h_
 
-#include "../../net/http/http.h"
-#include "../../core/singleton.h"
+#include "../../../net/http/http.h"
+#include "../../../core/singleton.h"
 
 using namespace klib;
 using namespace klib::core;

@@ -80,6 +80,13 @@
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\mem_lib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\mem_lib.h" />
+    <ClInclude Include="src\record_helper.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

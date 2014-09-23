@@ -2,7 +2,7 @@
 
 
 #include "../../dll/include/lock.h"
-#include "../../dll/src/addr_mgr.h"
+#include "../../dll/include/addr_mgr.h"
 
 class mem_lib
 {

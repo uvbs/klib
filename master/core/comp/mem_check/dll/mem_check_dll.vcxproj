@@ -83,12 +83,12 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\addr_mgr.h" />
     <ClInclude Include="include\allocator.h" />
     <ClInclude Include="include\lock.h" />
+    <ClInclude Include="include\mem_check.h" />
     <ClInclude Include="include\mem_interface.h" />
-    <ClInclude Include="src\addr_mgr.h" />
-    <ClInclude Include="src\mem_check.h" />
-    <ClInclude Include="src\mem_mgr.h" />
+    <ClInclude Include="include\mem_mgr.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

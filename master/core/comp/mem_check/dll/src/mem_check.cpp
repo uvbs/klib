@@ -1,5 +1,5 @@
 //#include "stdafx.h"
-#include "mem_check.h"
+#include "../include/mem_check.h"
 
 namespace klib{
 namespace debug {

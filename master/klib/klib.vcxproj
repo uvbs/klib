@@ -166,6 +166,7 @@
     <ClInclude Include="..\core\mem\mem_list.h" />
     <ClInclude Include="..\core\mem\mem_string.h" />
     <ClInclude Include="..\core\mem\small_string.h" />
+    <ClInclude Include="..\core\net\addr_helper.h" />
     <ClInclude Include="..\core\net\addr_resolver.h" />
     <ClInclude Include="..\core\net\bytebuyffer.h" />
     <ClInclude Include="..\core\net\CheckNat.h" />

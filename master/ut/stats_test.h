@@ -12,7 +12,8 @@ using namespace klib::encode;
 
 #include <comp/statics/src/stats_client.h>
 #include <util/mac_extractor.h>
-
+#include <net/addr_helper.h>
+using namespace klib::net;
 
 winsock_init  g_winsock_initor;
 
@@ -27,11 +28,16 @@ TEST(http, 1)
     mac_.extract_mac_lst(e_extract_helpapi);
     std::string str_mac = mac_.get_mac_list().front().mac_;
 
+    ipv4_list_type  ipv4s;
+    addr_helper::get_ipv4_lst(ipv4s);
+    ip_v4 addr = ipv4s.front();
+    std::string str_ip = inet_ntoa(*(in_addr*) addr.get_ip_buf());
+
     str_format = Replace(str_format, "{random}", "z钓鱼岛是我们的联合国我们有人");
     str_format = Replace(str_format, "{mac}", str_mac);
     str_format = Replace(str_format, "{pid}", "23");
     str_format = Replace(str_format, "{uid}", "23");
-    str_format = Replace(str_format, "{ip}",  "127.0.0.1");
+    str_format = Replace(str_format, "{ip}",  str_ip);
 
     base64 b64;
     b64.encode(str_format.c_str(), str_format.size(), str_format, false);

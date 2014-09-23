@@ -2,6 +2,7 @@
 #define _klib_ip_v4_h
 
 #include <vector>
+#include <string>
 
 namespace klib {
 namespace net {
@@ -17,6 +18,8 @@ public:
     DWORD get_val () const      { return ip_val_;     }
     unsigned char* get_ip_buf() { return &ip_seg_[0]; }
     void set_val(DWORD ip)  {  ip_val_ = ip;  }
+
+    std::string to_str() { return inet_ntoa(*(in_addr*) get_ip_buf()); }
 
     friend bool operator<(const ip_v4 &ipLeft, const ip_v4 & ipRight)
     {

@@ -40,6 +40,9 @@
     <Filter Include="rdebug">
       <UniqueIdentifier>{e1d0d76b-e5f6-4a33-8a0e-f6ea8e5bf865}</UniqueIdentifier>
     </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{be657f7b-665f-4d99-b9f0-e798b75866a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -148,9 +151,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\net\udp_socket.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\core\net\addr_resolver.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="..\core\algo\text_search.h">
@@ -462,6 +462,12 @@
     <ClInclude Include="..\core\util\rand_val.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\net\addr_helper.h">
+      <Filter>net</Filter>
+    </ClInclude>
+    <ClInclude Include="..\core\net\addr_resolver.h">
+      <Filter>net</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -513,9 +519,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\net\udp_socket.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="..\core\net\addr_resolver.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\core\net\wininet_httpclient.cpp">
@@ -608,9 +611,6 @@
     <ClCompile Include="..\core\core\uuid.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\net\addr_helper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\net\http\http.cpp">
       <Filter>http</Filter>
     </ClCompile>
@@ -652,6 +652,12 @@
     </ClCompile>
     <ClCompile Include="..\core\mem\share_memory.cpp">
       <Filter>mem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\addr_helper.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\net\addr_resolver.cpp">
+      <Filter>net</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

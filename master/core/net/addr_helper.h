@@ -16,9 +16,9 @@ namespace net {
 class addr_helper
 {
 public:
-    bool get_ipv4_lst(ipv4_list_type& lst);
-    bool get_conn_ip(SOCKET s, ip_v4& ip);
-    bool get_peer_ip(SOCKET s, ip_v4& ip);
+    static bool get_ipv4_lst(ipv4_list_type& lst);
+    static bool get_conn_ip(SOCKET s, ip_v4& ip);
+    static bool get_peer_ip(SOCKET s, ip_v4& ip);
     
 };
 

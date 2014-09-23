@@ -12,11 +12,12 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    set_memory_desc("test-exe");
 
     int* p = Type(int).create();
     *p = 100;
 
-    delete p;
+    //delete p;
 
 	return 0;
 }

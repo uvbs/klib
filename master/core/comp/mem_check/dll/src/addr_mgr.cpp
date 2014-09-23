@@ -12,6 +12,11 @@ void addr_mgr::set_desc(const char* desc)
     strncpy(this->m_desc, desc, _countof(this->m_desc));
 }
 
+const char* addr_mgr::get_desc()
+{
+    return this->m_desc;
+}
+
 bool addr_mgr::add_addr_info(void* p, 
                              size_t nsize,
                              const char* desc)

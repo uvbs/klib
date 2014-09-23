@@ -42,15 +42,18 @@ class addr_mgr
 public:
     addr_mgr();
 
-    void set_desc(const char* desc);
+    virtual void set_desc(const char* desc);
+    virtual const char* get_desc();
 
-    bool add_addr_info(void* p, 
+    virtual bool add_addr_info(void* p, 
         size_t nsize,
         const char* desc = nullptr);
 
-    bool del_addr_info(void* p, 
+    virtual bool del_addr_info(void* p, 
         size_t& nsize,
         const char* desc = nullptr);
+
+
 
 protected:
     std::map<void*, 

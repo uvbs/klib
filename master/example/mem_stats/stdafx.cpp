@@ -9,4 +9,4 @@
 
 #include <comp/mem_check/library/src/mem_lib.h>
 
-STATS_GLOBAL_MEMORY();
+stats_global_memory_define();

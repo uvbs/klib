@@ -4,6 +4,7 @@
 #include "../../dll/include/lock.h"
 #include "../../dll/include/mem_interface.h"
 
+
 #ifdef _WIN32
 #define library_dll_ame "mem_check_dll.dll"
 #else
@@ -23,6 +24,7 @@ public:
     void  free_global(void*);
     
     void enable_stats(bool benable);
+    void set_desc(const char* desc);
 
 protected:
     static mem_lib*     m_instance;
@@ -36,9 +38,10 @@ protected:
 #define  ENABLE_MEMORY_STATS   1
 
 #ifdef ENABLE_MEMORY_STATS
+    #include <new>
 
 // 统计全局的内存使用，在一个地方定义即可
-#define  STATS_GLOBAL_MEMORY()                                               \
+#define  stats_global_memory_define()                                               \
     void* operator new(size_t type_size)                                     \
     {                                                                        \
         return mem_lib::instance()->alloc_global(type_size);                 \
@@ -80,10 +83,13 @@ protected:
     }                                                                         
 
 
-
 #else
 
 #define STATS_CLASS_MEMORY(theClass)
-#define STATS_GLOBAL_MEMORY()
+#define stats_global_memory_define()
 
 #endif
+
+
+#define  set_memory_desc(desc)      \
+    mem_lib::instance()->free_global(desc); 

@@ -41,7 +41,13 @@ simp_string mem_mgr::stats()
     simp_string str;
     str.append("info --- \r\n");
 
-
+    for (auto itr = this->m_mgr_arr.begin();
+         itr != this->m_mgr_arr.end();
+         ++ itr)
+    {
+        str.append((*itr)->get_desc());
+        str.append("\r\n");
+    }
 
     str.append("\r\ninfo --- \r\n");
 

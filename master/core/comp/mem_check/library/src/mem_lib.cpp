@@ -1,6 +1,7 @@
 #include "mem_lib.h"
 
-// #include "../../dll/include/addr_mgr.h"
+#include "../../dll/include/addr_mgr.h"
+#include "../../dll/include/allocator.h"
 
 auto_cs g_memoib_cs;
 
@@ -106,4 +107,9 @@ void mem_lib::free_global(void* ptr)
 void mem_lib::enable_stats(bool benable)
 {
     m_enable_stats = benable;
+}
+
+void mem_lib::set_desc(const char* desc)
+{
+    m_addr_mgr->set_desc(desc);
 }

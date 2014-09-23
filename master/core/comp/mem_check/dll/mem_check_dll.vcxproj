@@ -94,7 +94,6 @@
     <ClInclude Include="include\addr_mgr.h" />
     <ClInclude Include="include\allocator.h" />
     <ClInclude Include="include\lock.h" />
-    <ClInclude Include="include\mem_check.h" />
     <ClInclude Include="include\mem_interface.h" />
     <ClInclude Include="include\mem_mgr.h" />
     <ClInclude Include="stdafx.h" />
@@ -111,7 +110,6 @@
     </ClCompile>
     <ClCompile Include="mem_main.cpp" />
     <ClCompile Include="src\addr_mgr.cpp" />
-    <ClCompile Include="src\mem_check.cpp" />
     <ClCompile Include="src\mem_interface.cpp" />
     <ClCompile Include="src\mem_mgr.cpp" />
     <ClCompile Include="stdafx.cpp">

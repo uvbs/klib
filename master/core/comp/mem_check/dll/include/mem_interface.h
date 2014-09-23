@@ -2,14 +2,14 @@
 #define _klib_mem_interface_h_
 
 
-#include "addr_mgr.h"
+class addr_mgr;
 
 class mem_interface
 {
 public:
     // interface define
-    addr_mgr*   create_mgr();
-    bool        global_free_addr(void* ptr);
+    virtual addr_mgr*   create_mgr();
+    virtual bool        global_free_addr(void* ptr);
 };
 
 extern "C" __declspec(dllexport)  mem_interface* get_mem_interface();

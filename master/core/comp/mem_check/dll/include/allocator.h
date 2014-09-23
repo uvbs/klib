@@ -2,6 +2,9 @@
 #define _klib_allocator_h_
 
 
+#include <string>
+
+
 // ÄÚ´æ·ÖÅäÆ÷
 template<typename T>
 class MemAlloc : public std::allocator<T>

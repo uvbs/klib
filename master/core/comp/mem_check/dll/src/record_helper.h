@@ -4,6 +4,7 @@
 
 
 
+
 template<class T>
 class object_creator
 {
@@ -43,6 +44,12 @@ public:
 
     template <class tr1, class tr2, class tr3, class tr4, class tr5>
     T * create(tr1 t1, tr2 t2, tr3 t3, tr4 t4, tr5 t5)
+    {
+        return nullptr;
+    }
+
+    template <class tr1, class tr2, class tr3, class tr4, class tr5, class tr6>
+    T * create(tr1 t1, tr2 t2, tr3 t3, tr4 t4, tr5 t5, tr6 t6)
     {
         return nullptr;
     }

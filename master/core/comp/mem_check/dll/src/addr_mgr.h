@@ -39,6 +39,10 @@ struct addr_info
 class addr_mgr
 {
 public:
+    addr_mgr();
+
+    void set_desc(const char* desc);
+
     bool add_addr_info(void* p, 
         size_t nsize,
         const char* desc = nullptr);
@@ -54,6 +58,7 @@ protected:
              MemAlloc<std::pair<void*, addr_info>> >    m_addr_infos;
 
     addr_stats_info  m_stats_info;
+    char             m_desc[ADDR_DESC_LEN];
 };
 
 

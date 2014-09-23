@@ -2,6 +2,15 @@
 
 
 //------------------------------------------------------------------------
+addr_mgr::addr_mgr()
+{
+    this->m_desc[0] = 0;
+}
+
+void addr_mgr::set_desc(const char* desc)
+{
+    strncpy(this->m_desc, desc, _countof(this->m_desc));
+}
 
 bool addr_mgr::add_addr_info(void* p, 
                              size_t nsize,

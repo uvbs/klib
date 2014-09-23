@@ -94,6 +94,52 @@ public:
         return ptr;
     }
 
+    operator T *()
+    {
+        return create();
+    }
+
+    T * operator()()
+    {
+        return create();
+    }
+
+    template <class tr1>
+    T * operator()(tr1 t1)
+    {
+        return create<T>(t1);
+    }
+
+    template <class tr1, class tr2>
+    T * operator()(tr1 t1, tr2 t2)
+    {
+        return create<T>(t1, t2);
+    }
+
+    template <class tr1, class tr2, class tr3>
+    T * operator()(tr1 t1, tr2 t2, tr3 t3)
+    {
+        return create<T>(t1, t2, t3);
+    }
+
+    template <class tr1, class tr2, class tr3, class tr4>
+    T * operator()(tr1 t1, tr2 t2, tr3 t3, tr4 t4)
+    {
+        return create<T>(t1, t2, t3, t4);
+    }
+
+    template <class tr1, class tr2, class tr3, class tr4, class tr5>
+    T * operator()(tr1 t1, tr2 t2, tr3 t3, tr4 t4, tr5 t5)
+    {
+        return create<T>(t1, t2, t3, t4, t5);
+    }
+
+    template <class tr1, class tr2, class tr3, class tr4, class tr5, class tr6>
+    T * operator()(tr1 t1, tr2 t2, tr3 t3, tr4 t4, tr5 t5, tr6 t6)
+    {
+        return create<T>(t1, t2, t3, t4, t5, t6);
+    }
+
 protected:
     const char* to_desc()
     {
@@ -135,6 +181,6 @@ protected:
 //@todo 需要记录行数，类型名，及大小
 #define Type(t)  object_creator<t>(##__FILE__, #t, ##__LINE__)
 
-
+#define New(t)   object_creator<t>(##__FILE__, #t, ##__LINE__)
 
 #endif // _klib_object_creator_h_

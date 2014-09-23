@@ -13,7 +13,6 @@
 #endif
 
 
-
 int _tmain(int argc, _TCHAR* argv[])
 {
     set_memory_desc("test-exe");
@@ -21,7 +20,10 @@ int _tmain(int argc, _TCHAR* argv[])
     int* p = Type(int).create();
     *p = 100;
 
+    new int ;
     //delete p;
+
+    p  = New(int);
 
 	return 0;
 }

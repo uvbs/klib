@@ -21,8 +21,10 @@ public:
     simp_string stats();
 
 protected:
-    std::vector<addr_mgr*, MemAlloc<addr_mgr*> > m_mgr_arr;
+    void print_info(simp_string& str, addr_info* );
 
+protected:
+    std::vector<addr_mgr*, MemAlloc<addr_mgr*> > m_mgr_arr;
     static mem_mgr* m_instance;
 };
 

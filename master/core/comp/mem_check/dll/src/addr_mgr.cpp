@@ -67,3 +67,14 @@ bool addr_mgr::del_addr_info(void* p,
 
     return false;
 }
+
+void addr_mgr::for_each(const view_addr_callback& func)
+{
+    auto_lock locker(m_auto_cs);
+
+    auto itr = m_addr_infos.begin();
+    for ( ; itr != m_addr_infos.end(); ++ itr)
+    {
+        func (&itr->second);
+    }
+}

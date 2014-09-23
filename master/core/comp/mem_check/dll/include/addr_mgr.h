@@ -2,6 +2,7 @@
 #define _klib_addr_mgr_h_
 
 #include <map>
+#include <functional>
 
 #include "../include/allocator.h"
 #include "../include/lock.h"
@@ -35,6 +36,7 @@ struct addr_info
     char   desc[ADDR_DESC_LEN];
 };
 
+typedef std::function<void(addr_info*)> view_addr_callback ;
 
 // Í³¼Æ
 class addr_mgr
@@ -53,7 +55,8 @@ public:
         size_t& nsize,
         const char* desc = nullptr);
 
-
+public:
+    void for_each(const view_addr_callback& func);
 
 protected:
     std::map<void*, 

@@ -11,7 +11,7 @@ using namespace klib::util;
 using namespace klib::encode;
 
 #include <comp/statics/stats_client.h>
-#include <comp/statics/mac_extractor.h>
+#include <util/mac_extractor.h>
 
 
 winsock_init  g_winsock_initor;
@@ -54,7 +54,7 @@ TEST(http, 1)
 
     stats_client* client = stats_client::instance();
     client->set_stats_method(e_stats_post);
-    client->set_url("http://wcapi.91ox.net/index.php?");
+    client->set_url("http://inapi.91ox.com/index.php?");
 
     client->add_get_param("encode", str_format);
     client->add_get_param("process", "kk.exe");

@@ -21,7 +21,10 @@ TEST(debug, redirect_std_out)
     CDebugStreamBuf<TCHAR> g_DbgBuf( MyOutputDebugString );
     CDebugStreamBuf<CHAR> g_DbgBuf_a( MyOutputDebugString_A );
 
+#ifdef _UNICODE
     wcout.rdbuf( &g_DbgBuf );    // Unicode°æ±¾
+#endif
+
     cout.rdbuf( &g_DbgBuf_a );    // ·ÇUnicode°æ±¾
 
     cout << "hello" << endl;

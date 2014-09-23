@@ -47,6 +47,9 @@ public:
 };
 
 
+
+
+
 typedef std::basic_string<char, std::char_traits<char>, MemAlloc<char> > simp_string;
 
 

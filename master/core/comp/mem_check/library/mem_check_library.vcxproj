@@ -85,7 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\mem_lib.h" />
-    <ClInclude Include="src\record_helper.h" />
+    <ClInclude Include="src\object_creator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -81,6 +81,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\dll\src\addr_mgr.cpp" />
+    <ClCompile Include="..\dll\src\mem_interface.cpp" />
+    <ClCompile Include="..\dll\src\mem_mgr.cpp" />
     <ClCompile Include="src\mem_lib.cpp" />
   </ItemGroup>
   <ItemGroup>

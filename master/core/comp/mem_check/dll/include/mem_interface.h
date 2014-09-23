@@ -12,7 +12,7 @@ public:
     bool        global_free_addr(void* ptr);
 };
 
-mem_interface* get_mem_interface();
+extern "C" __declspec(dllexport)  mem_interface* get_mem_interface();
 typedef mem_interface* (*get_mem_interface_func) ();
 
 

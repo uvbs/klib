@@ -14,7 +14,8 @@ mem_mgr* mem_mgr::instance()
 
         if (nullptr == m_instance)
         {
-            mem_mgr* mgr = new mem_mgr;
+            mem_mgr* mgr = MemAlloc<mem_mgr>().allocate(sizeof(mem_mgr));
+            new (mgr) mem_mgr;
             m_instance = mgr;
         }
 
@@ -26,12 +27,13 @@ mem_mgr* mem_mgr::instance()
 
 addr_mgr* mem_mgr::create()
 {
-    addr_mgr* mgr = new addr_mgr;
+    addr_mgr* mgr = MemAlloc<addr_mgr>().allocate(sizeof(addr_mgr));
     if (nullptr == mgr)
     {
         return nullptr;
     }
 
+    new (mgr) addr_mgr;
     m_mgr_arr.push_back(mgr);
     return mgr;
 }

@@ -4,6 +4,7 @@
 #include <map>
 
 #include "../include/allocator.h"
+#include "../include/lock.h"
 
 #define  ADDR_DESC_LEN  (50)
 
@@ -57,6 +58,7 @@ protected:
              std::less<void*>, 
              MemAlloc<std::pair<void*, addr_info>> >    m_addr_infos;
 
+    auto_cs          m_auto_cs;
     addr_stats_info  m_stats_info;
     char             m_desc[ADDR_DESC_LEN];
 };

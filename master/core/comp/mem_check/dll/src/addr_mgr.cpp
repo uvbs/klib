@@ -22,6 +22,7 @@ bool addr_mgr::add_addr_info(void* p,
     if (desc)
         strncpy(info.desc, desc, _countof(info.desc));
 
+    auto_lock locker(m_auto_cs);
     auto itr = m_addr_infos.find(p);
     if (itr == m_addr_infos.end()) 
     {
@@ -45,6 +46,8 @@ bool addr_mgr::del_addr_info(void* p,
                              size_t& nsize,
                              const char* desc)
 {
+    auto_lock locker(m_auto_cs);
+
     auto itr = m_addr_infos.find(p);
     if (itr != m_addr_infos.end()) 
     {

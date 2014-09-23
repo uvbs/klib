@@ -1,0 +1,4 @@
+LIBRARY memcheck
+
+EXPORTS 
+    get_mem_interface

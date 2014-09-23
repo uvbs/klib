@@ -5,6 +5,9 @@
 #include "../../dll/include/mem_interface.h"
 
 
+#define library_dll_ame "mem_check_dll.dll"
+
+
 class mem_lib
 {
     mem_lib(void);

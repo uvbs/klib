@@ -21,7 +21,7 @@ bool mem_interface::global_free_addr(void* ptr)
 
 ////////////////////////////////////////////////////////////////////////
 //
-mem_interface* get_mem_interface()
+extern "C"   mem_interface* get_mem_interface()
 {
     return &g_mem_interface;
 }

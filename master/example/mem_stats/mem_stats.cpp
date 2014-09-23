@@ -8,10 +8,15 @@
 
 #pragma comment(lib, "E:/project/git/klib/master/core/lib/Debug/mem_check_library.lib")
 
+
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 
-    Type(int).create();
+    int* p = Type(int).create();
+    *p = 100;
+
+    delete p;
 
 	return 0;
 }

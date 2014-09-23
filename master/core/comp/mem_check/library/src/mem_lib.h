@@ -12,6 +12,10 @@
 #define library_dll_ame "mem_check_dll.so"
 #endif
 
+/*
+#define GC_NEW new(__FILE__, __LINE__)  
+#define new GC_NEW  
+*/
 
 class mem_lib
 {
@@ -26,6 +30,12 @@ public:
     
     void enable_stats(bool benable);
     void set_desc(const char* desc);
+
+    static const char* to_str(char* buff, 
+        size_t buf_size,
+        const char* file, 
+        size_t line, 
+        size_t size_type);
 
 protected:
     static mem_lib*     m_instance;
@@ -42,8 +52,12 @@ protected:
 #ifdef ENABLE_MEMORY_STATS
     #include <new>
 
+
+// 申明函数
+void* operator new(size_t type_size, const char *file, int line ) ;
+
 // 统计全局的内存使用，在一个地方定义即可
-#define  stats_global_memory_define()                                               \
+#define  stats_global_memory_define()                                        \
     void* operator new(size_t type_size)                                     \
     {                                                                        \
         return mem_lib::instance()->alloc_global(type_size);                 \
@@ -52,6 +66,13 @@ protected:
     void* operator new[](size_t type_size)                                   \
     {                                                                        \
         return mem_lib::instance()->alloc_global(type_size);                 \
+    }                                                                        \
+                                                                             \
+    void* operator new(size_t type_size, const char *file, int line )        \
+    {                                                                        \
+        char buff[60];                                                       \
+        const char* str = mem_lib::to_str(buff, sizeof(buff), file, line, type_size);             \
+        return mem_lib::instance()->alloc_global(type_size, str);                 \
     }                                                                        \
                                                                              \
     void * operator new(size_t type_size, const _STD nothrow_t&)             \

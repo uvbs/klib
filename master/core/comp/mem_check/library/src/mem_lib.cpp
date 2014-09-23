@@ -111,3 +111,34 @@ void mem_lib::set_desc(const char* desc)
 {
     m_addr_mgr->set_desc(desc);
 }
+
+const char* mem_lib::to_str(char* desc_buff, 
+                            size_t buf_size,
+                            const char* file_name, 
+                            size_t line, 
+                            size_t size_type)
+{
+    if (nullptr == file_name)
+    {
+        return nullptr;
+    }
+
+    char* cur_pos = (char*) strrchr(file_name, '\\');
+    if (nullptr == cur_pos)
+    {
+        cur_pos = strncpy(desc_buff, file_name, buf_size);
+    }
+    else 
+    {
+        ++ cur_pos;
+        cur_pos = strncpy(desc_buff, cur_pos, buf_size);
+    }
+
+    cur_pos = strcat(cur_pos, ":");
+        
+    char tmp[20];
+    _itoa(line, tmp, 10);
+    cur_pos = strcat(cur_pos, tmp);
+
+    return desc_buff;
+}

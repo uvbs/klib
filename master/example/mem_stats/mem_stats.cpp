@@ -12,6 +12,18 @@
 #pragma comment(lib, "../../core/lib/Release/mem_check_library.lib")
 #endif
 
+#include <string>
+
+class sample_class
+{
+    std::string str; 
+};
+
+
+#define GC_NEW new(__FILE__, __LINE__)  
+#define new GC_NEW  
+
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -23,7 +35,9 @@ int _tmain(int argc, _TCHAR* argv[])
     new int ;
     //delete p;
 
-    p  = New(int);
+
+
+    sample_class* a = New(sample_class);
 
 	return 0;
 }

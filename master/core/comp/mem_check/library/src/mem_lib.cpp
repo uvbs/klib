@@ -11,15 +11,14 @@ mem_lib::mem_lib(void)
     : m_addr_mgr(nullptr)
     , m_enable_stats(true)
 {
-    //@todo load library and get the function
-    HMODULE hmod = LoadLibrary(library_dll_ame);
-    if (0 == hmod)
+    if (!m_dll_loader.load_lib(library_dll_ame))
     {
         //@todo 
         return;
     }
-
-    get_mem_interface_func func = (get_mem_interface_func) GetProcAddress(hmod, "get_mem_interface");
+    
+    get_mem_interface_func func = (get_mem_interface_func) 
+        m_dll_loader.get_addr("get_mem_interface");
     if (nullptr == func)
     {
         //@todo 
@@ -38,7 +37,7 @@ mem_lib* mem_lib::instance()
 {
     if (nullptr == m_instance)
     {
-        g_memoib_cs.lock();
+        auto_lock locker(g_memoib_cs);
 
         if (nullptr == m_instance)
         {
@@ -46,7 +45,6 @@ mem_lib* mem_lib::instance()
             new (p) mem_lib;
             m_instance = p;
         }
-        g_memoib_cs.unlock();
     }
 
     return m_instance;

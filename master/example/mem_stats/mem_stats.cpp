@@ -6,7 +6,11 @@
 #include <comp/mem_check/library/src/mem_lib.h>
 #include <comp/mem_check/library/src/object_creator.h>
 
-#pragma comment(lib, "E:/project/git/klib/master/core/lib/Debug/mem_check_library.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "../../core/lib/Debug/mem_check_library.lib")
+#else
+#pragma comment(lib, "../../core/lib/Release/mem_check_library.lib")
+#endif
 
 
 

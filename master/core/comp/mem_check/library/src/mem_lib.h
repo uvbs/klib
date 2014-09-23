@@ -3,6 +3,7 @@
 
 #include "../../dll/include/lock.h"
 #include "../../dll/include/mem_interface.h"
+#include "dll_loader.h"
 
 
 #ifdef _WIN32
@@ -31,6 +32,7 @@ protected:
     addr_mgr*           m_addr_mgr;
     mem_interface*      m_mem_i;
     bool                m_enable_stats;
+    dll_loader          m_dll_loader;
 };
 
 
@@ -92,4 +94,4 @@ protected:
 
 
 #define  set_memory_desc(desc)      \
-    mem_lib::instance()->free_global(desc); 
+    mem_lib::instance()->set_desc(desc); 

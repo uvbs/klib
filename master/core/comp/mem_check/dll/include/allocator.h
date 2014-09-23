@@ -2,6 +2,9 @@
 #define _klib_allocator_h_
 
 
+#include <string>
+
+
 // ÄÚ´æ·ÖÅäÆ÷
 template<typename T>
 class MemAlloc : public std::allocator<T>
@@ -42,6 +45,7 @@ public:
   
     ~MemAlloc() throw()  {}
 };
+
 
 
 typedef std::basic_string<char, std::char_traits<char>, MemAlloc<char> > simp_string;

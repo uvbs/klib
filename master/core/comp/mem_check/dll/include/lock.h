@@ -1,7 +1,7 @@
 #ifndef _klib_lock_h_
 #define _klib_lock_h_
 
-
+#include <Windows.h>
 
  // 同步对象
 class auto_cs

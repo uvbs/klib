@@ -18,7 +18,7 @@ public:
     {}
 
 #define  check_get_ptr(Type)  \
-    T* ptr = mem_lib::instance()->alloc_global(sizeof(T), m_desc); \
+    T* ptr = (T*)mem_lib::instance()->alloc_global(sizeof(T), m_desc); \
     if (nullptr == ptr)         \
     {                           \
         return ptr;             \

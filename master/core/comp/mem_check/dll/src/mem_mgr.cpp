@@ -9,7 +9,7 @@ addr_mgr* mem_mgr::create()
         return nullptr;
     }
 
-    mgr_arr_.push_back(mgr);
+    m_mgr_arr.push_back(mgr);
     return mgr;
 }
 

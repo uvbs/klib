@@ -18,7 +18,7 @@ public:
     simp_string stats();
 
 protected:
-    std::vector<addr_mgr*> mgr_arr_;
+    std::vector<addr_mgr*> m_mgr_arr;
 
 };
 

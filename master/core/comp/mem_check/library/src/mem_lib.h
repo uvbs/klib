@@ -4,8 +4,11 @@
 #include "../../dll/include/lock.h"
 #include "../../dll/include/mem_interface.h"
 
-
+#ifdef _WIN32
 #define library_dll_ame "mem_check_dll.dll"
+#else
+#define library_dll_ame "mem_check_dll.so"
+#endif
 
 
 class mem_lib
@@ -18,11 +21,14 @@ public:
 
     void* alloc_global(size_t type_size, const char* desc = nullptr);
     void  free_global(void*);
+    
+    void enable_stats(bool benable);
 
 protected:
     static mem_lib*     m_instance;
     addr_mgr*           m_addr_mgr;
-
+    mem_interface*      m_mem_i;
+    bool                m_enable_stats;
 };
 
 
@@ -72,6 +78,8 @@ protected:
     {                                                                        \
         mem_lib::instance()->free_global(obj_ptr);                           \
     }                                                                         
+
+
 
 #else
 

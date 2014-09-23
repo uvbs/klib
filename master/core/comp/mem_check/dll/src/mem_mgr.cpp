@@ -10,7 +10,7 @@ mem_mgr* mem_mgr::instance()
 {
     if (nullptr == m_instance)
     {
-        g_mem_mgr_cs.lock();
+        auto_lock  locker(g_mem_mgr_cs);
 
         if (nullptr == m_instance)
         {
@@ -18,8 +18,6 @@ mem_mgr* mem_mgr::instance()
             new (mgr) mem_mgr;
             m_instance = mgr;
         }
-
-        g_mem_mgr_cs.unlock();
     }
 
     return m_instance;
@@ -38,10 +36,14 @@ addr_mgr* mem_mgr::create()
     return mgr;
 }
 
-
 simp_string mem_mgr::stats()
 {
     simp_string str;
+    str.append("info --- \r\n");
+
+
+
+    str.append("\r\ninfo --- \r\n");
 
     return std::move(str);
 }

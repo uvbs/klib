@@ -8,6 +8,7 @@ mem_lib* mem_lib::m_instance = nullptr;
 
 mem_lib::mem_lib(void)
     : m_addr_mgr(nullptr)
+    , m_enable_stats(true)
 {
     //@todo load library and get the function
     HMODULE hmod = LoadLibrary(library_dll_ame);
@@ -24,8 +25,8 @@ mem_lib::mem_lib(void)
         return;
     }
 
-    mem_interface* mem_i = func();
-    m_addr_mgr = mem_i->create_mgr();
+    m_mem_i = func();
+    m_addr_mgr = m_mem_i->create_mgr();
 }
 
 mem_lib::~mem_lib(void)
@@ -58,6 +59,11 @@ void* mem_lib::alloc_global(size_t type_size, const char* desc /*= nullptr*/)
         return nullptr;
     }
 
+    if (!m_enable_stats)
+    {
+        return ptr;
+    }
+
     mem_lib* mlib = mem_lib::instance();
     addr_mgr* mgr = mlib->m_addr_mgr;
     
@@ -65,7 +71,7 @@ void* mem_lib::alloc_global(size_t type_size, const char* desc /*= nullptr*/)
     if (!ret)
     {
         //@todo call global add function
-
+        
     }
     
     return ptr;
@@ -73,6 +79,11 @@ void* mem_lib::alloc_global(size_t type_size, const char* desc /*= nullptr*/)
 
 void mem_lib::free_global(void* ptr)
 {
+    if (!m_enable_stats)
+    {
+        return;
+    }
+
     if (nullptr == ptr)
     {
         return ;
@@ -85,10 +96,14 @@ void mem_lib::free_global(void* ptr)
     bool ret = mgr->del_addr_info(ptr, type_size);
     if (!ret)
     {
-        //@todo call global free function
-
+        //call global free function
+        m_mem_i->global_free_addr(ptr);
     }
     
     return;
 }
 
+void mem_lib::enable_stats(bool benable)
+{
+    m_enable_stats = benable;
+}

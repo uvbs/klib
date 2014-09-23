@@ -468,6 +468,9 @@
     <ClInclude Include="..\core\net\addr_resolver.h">
       <Filter>net</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\util\supper_string.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -658,6 +661,9 @@
     </ClCompile>
     <ClCompile Include="..\core\net\addr_resolver.cpp">
       <Filter>net</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\util\supper_string.cpp">
+      <Filter>util</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

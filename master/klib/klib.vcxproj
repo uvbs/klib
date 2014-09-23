@@ -218,6 +218,7 @@
     <ClInclude Include="..\core\util\rand_val.h" />
     <ClInclude Include="..\core\util\shell_link.h" />
     <ClInclude Include="..\core\util\strutil.h" />
+    <ClInclude Include="..\core\util\supper_string.h" />
     <ClInclude Include="..\core\util\timeout_checker.h" />
     <ClInclude Include="..\core\util\xini.h" />
   </ItemGroup>
@@ -284,6 +285,7 @@
     <ClCompile Include="..\core\util\rand_val.cpp" />
     <ClCompile Include="..\core\util\shell_link.cpp" />
     <ClCompile Include="..\core\util\strutil.cpp" />
+    <ClCompile Include="..\core\util\supper_string.cpp" />
     <ClCompile Include="..\core\util\xini.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

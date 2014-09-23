@@ -12,7 +12,6 @@
 
 #include "core/console_screen.h"
 #include "core/ini_file.h"
-#include "core/share_memory.h"
 #include "core/DateTime.h"
 #include "core/mini_dumper.h"
 #include "core/private_heap.h"
@@ -80,6 +79,8 @@
 #include "rdebug/ensure.h"
 #include "rdebug/must_have_base.h"
 #include "rdebug/logger.h"
+
+#include "mem/share_memory.h"
 
 namespace klib
 {

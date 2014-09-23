@@ -82,11 +82,11 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="mac_extractor.h" />
+    <ClInclude Include="..\..\util\mac_extractor.h" />
     <ClInclude Include="stats_client.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="mac_extractor.cpp" />
+    <ClCompile Include="..\..\util\mac_extractor.cpp" />
     <ClCompile Include="stats_client.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

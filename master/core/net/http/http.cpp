@@ -290,7 +290,7 @@ bool http::handle_requst(const std::string http_url, const data_callback& handle
     int iRecvRet;
     while (true) 
     {
-        iRecvRet = socket_.recv(recv_buff + dwRecvedBytes, 1, 10, 0);
+        iRecvRet = socket_.recv(recv_buff + dwRecvedBytes, 1, 0, 0);
         if (iRecvRet <= 0) 
         {
             return false;

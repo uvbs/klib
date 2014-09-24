@@ -25,7 +25,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -82,11 +82,29 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\core\parent_process.h" />
+    <ClInclude Include="..\..\encrypt\base64.h" />
+    <ClInclude Include="..\..\io\path.h" />
+    <ClInclude Include="..\..\net\addr_helper.h" />
+    <ClInclude Include="..\..\net\addr_resolver.h" />
+    <ClInclude Include="..\..\net\http\http.h" />
+    <ClInclude Include="..\..\net\http_down.h" />
+    <ClInclude Include="..\..\net\tcp_socket.h" />
+    <ClInclude Include="..\..\sys\system_info.h" />
     <ClInclude Include="..\..\util\mac_extractor.h" />
     <ClInclude Include="src\antvir_detect.h" />
     <ClInclude Include="src\stats_client.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\core\parent_process.cpp" />
+    <ClCompile Include="..\..\encrypt\base64.cpp" />
+    <ClCompile Include="..\..\io\path.cpp" />
+    <ClCompile Include="..\..\net\addr_helper.cpp" />
+    <ClCompile Include="..\..\net\addr_resolver.cpp" />
+    <ClCompile Include="..\..\net\http\http.cpp" />
+    <ClCompile Include="..\..\net\http_down.cpp" />
+    <ClCompile Include="..\..\net\tcp_socket.cpp" />
+    <ClCompile Include="..\..\sys\system_info.cpp" />
     <ClCompile Include="..\..\util\mac_extractor.cpp" />
     <ClCompile Include="src\antvir_detect.cpp" />
     <ClCompile Include="src\stats_client.cpp" />

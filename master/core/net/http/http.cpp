@@ -129,7 +129,7 @@ void http::set_url(const std::string& url)
 
 void http::set_stats_method(e_http_method method)
 {
-    stats_method_ = method;
+    http_method_ = method;
 }
 
 void http::add_header(const std::string& key, const std::string& val)
@@ -207,7 +207,12 @@ bool http::send_request(const std::string http_url)
     }
 
     std::string request_header;
-    request_header.append("GET ");
+    if (e_http_get == this->http_method_) {
+        request_header.append("GET ");
+    }
+    else {
+        request_header.append("POST ");
+    }
     request_header.append(szGet);
     request_header.append(" HTTP/1.1\r\n");
 
@@ -257,7 +262,7 @@ bool http::send_request(const std::string http_url)
     request_header.append("\r\n");
 
     // 添加post请求参数
-    if (e_stats_post == stats_method_) 
+    if (e_http_post == http_method_) 
     {
         for (auto itr = http_post_param_lst_.begin(); 
             itr != http_post_param_lst_.end();

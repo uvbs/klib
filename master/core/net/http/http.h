@@ -26,9 +26,9 @@ namespace net  {
 // http提交的方式
 enum e_http_method
 {
-    e_stats_get = 1,
-    e_stats_post,
-    e_stats_default = e_stats_get,
+    e_http_get = 1,
+    e_http_post,
+    e_http_default = e_http_get,
 };
 
 // 下载时的头部的一些信息
@@ -105,7 +105,7 @@ protected:
     request_header_info     header_info_;
 
     std::string             stats_url_;
-    e_http_method           stats_method_;
+    e_http_method           http_method_;
 
     http_header_list        http_header_list_;
     http_param_list         http_post_param_lst_;

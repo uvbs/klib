@@ -10,6 +10,8 @@ baidusdSvc.exe  baidusdTray.exe    百度杀毒
 kxescore.exe和kxetray.exe          金山毒霸
 */
 
+//@todo do some mixed encoding
+
 
 bool antvir_detector::init ()
 {
@@ -59,5 +61,5 @@ e_antvir_type antvir_detector::get_detected_antvir()
         }
     }
 
-    return e_antvir_invalid; 
+    return e_antvir_other; 
 }

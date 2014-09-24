@@ -5,13 +5,17 @@
 #include <vector>
 #include <string>
 
+#include "../../../core/singleton.h"
+using namespace klib::core;
+
 enum e_antvir_type
 {
     e_antvir_invalid,
-    e_antvir_qq_pc_mgr = 1,
-    e_antvir_360_sd,
+    e_antvir_360_sd = 1,
     e_antvir_baidu,
+    e_antvir_qq_pc_mgr,
     e_antvir_king,
+    e_antvir_other,
 };
 
 typedef std::vector<std::string>  proc_name_list_type;
@@ -43,7 +47,7 @@ protected:
     proc_name_list_type  proc_name_lst_;
 };
 
-class antvir_detector
+class antvir_detector : public singleton<antvir_detector>
 {
 public:
     bool init();

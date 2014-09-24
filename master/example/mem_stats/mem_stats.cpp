@@ -38,6 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 
     sample_class* a = New(sample_class);
+    delete a;
 
 	return 0;
 }

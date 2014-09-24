@@ -19,8 +19,7 @@ winsock_init  g_winsock_initor;
 
 TEST(http, 1)
 {
-#define  form_str "pca*{mac},pod*{pid},uod*{uid},ip*{ip},"
-    "os*winxp,poison*1_2_3_4,list*d:/asdasd/asds,status*1";
+#define  form_str "pca*{mac},pod*{pid},uod*{uid},ip*{ip},os*winxp,poison*1_2_3_4,list*d:/asdasd/asds,status*1";
 
     std::string str_format = form_str;
 
@@ -31,11 +30,11 @@ TEST(http, 1)
     ipv4_list_type  ipv4s;
     addr_helper::get_ipv4_lst(ipv4s);
     ip_v4 addr = ipv4s.front();
-    std::string str_ip = inet_ntoa(*(in_addr*) addr.get_ip_buf());
+    std::string str_ip = addr.to_str();
 
     str_format = Replace(str_format, "{random}", "z钓鱼岛是我们的联合国我们有人");
     str_format = Replace(str_format, "{mac}", str_mac);
-    str_format = Replace(str_format, "{pid}", "23");
+    str_format = Replace(str_format, "{pid}", "11");
     str_format = Replace(str_format, "{uid}", "23");
     str_format = Replace(str_format, "{ip}",  str_ip);
 
@@ -60,7 +59,7 @@ TEST(http, 1)
 
     stats_client* client = stats_client::instance();
     client->set_stats_method(e_stats_post);
-    client->set_url("http://inapi.91ox.com/index.php?");
+    client->set_url("http://inapi.91ox.com/csindex.php?");
 
     client->add_get_param("encode", str_format);
     client->add_get_param("process", "kk.exe");

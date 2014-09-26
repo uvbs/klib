@@ -7,7 +7,11 @@
 #include "../include/allocator.h"
 #include "../include/lock.h"
 
+#ifdef _DEBUG
+#define  ADDR_DESC_LEN  (150)
+#else
 #define  ADDR_DESC_LEN  (50)
+#endif
 
 // stats memory info
 struct addr_stats_info
@@ -66,7 +70,7 @@ protected:
 
     auto_cs          m_auto_cs;
     addr_stats_info  m_stats_info;
-    char             m_desc[ADDR_DESC_LEN];
+    char             m_desc[30];
 };
 
 

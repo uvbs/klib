@@ -13,6 +13,7 @@
 #endif
 
 /*
+
 #define GC_NEW new(__FILE__, __LINE__)  
 #define new GC_NEW  
 */
@@ -70,7 +71,7 @@ void* operator new(size_t type_size, const char *file, int line ) ;
                                                                              \
     void* operator new(size_t type_size, const char *file, int line )        \
     {                                                                        \
-        char buff[60];                                                       \
+        char buff[120];                                                       \
         const char* str = mem_lib::to_str(buff, sizeof(buff), file, line, type_size);             \
         return mem_lib::instance()->alloc_global(type_size, str);                 \
     }                                                                        \

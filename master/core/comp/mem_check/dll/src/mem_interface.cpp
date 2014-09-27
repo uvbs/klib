@@ -12,12 +12,12 @@ addr_mgr* mem_interface::create_mgr()
     return mmgr->create();
 }
 
-bool mem_interface::global_free_addr(void* ptr)
+bool mem_interface::global_free_addr(addr_mgr* cur, void* ptr)
 {
-    // @todo to free to another mgr
-    return false;
+    // to free to another mgr
+    mem_mgr* mmgr = mem_mgr::instance();
+    return mmgr->free(cur, ptr);
 }
-
 
 ////////////////////////////////////////////////////////////////////////
 //

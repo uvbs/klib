@@ -5,6 +5,7 @@
 
 #include <comp/mem_check/library/src/mem_lib.h>
 #include <comp/mem_check/library/src/object_creator.h>
+#include <comp/mem_check/library/src/redefine_new.h>
 
 #ifdef _DEBUG
 #pragma comment(lib, "../../core/lib/Debug/mem_check_library.lib")
@@ -18,10 +19,6 @@ class sample_class
 {
     std::string str; 
 };
-
-
-#define GC_NEW new(__FILE__, __LINE__)  
-#define new GC_NEW  
 
 
 

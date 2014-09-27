@@ -96,7 +96,7 @@ void mem_lib::free_global(void* ptr)
     if (!ret)
     {
         //call global free function
-        m_mem_i->global_free_addr(ptr);
+        m_mem_i->global_free_addr(mgr, ptr);
     }
     
     return;
@@ -112,6 +112,7 @@ void mem_lib::set_desc(const char* desc)
     m_addr_mgr->set_desc(desc);
 }
 
+// format: test.cs£¨100£¬78£©
 const char* mem_lib::to_str(char* desc_buff, 
                             size_t buf_size,
                             const char* file_name, 
@@ -123,6 +124,7 @@ const char* mem_lib::to_str(char* desc_buff,
         return nullptr;
     }
 
+#ifndef _DEBUG
     char* cur_pos = (char*) strrchr(file_name, '\\');
     if (nullptr == cur_pos)
     {
@@ -133,12 +135,19 @@ const char* mem_lib::to_str(char* desc_buff,
         ++ cur_pos;
         cur_pos = strncpy(desc_buff, cur_pos, buf_size);
     }
+#else
+    char* cur_pos = strncpy(desc_buff, file_name, buf_size);
+#endif
 
-    cur_pos = strcat(cur_pos, ":");
-        
+    cur_pos = strcat(cur_pos, "(");
+    
+    // line
     char tmp[20];
     _itoa(line, tmp, 10);
     cur_pos = strcat(cur_pos, tmp);
 
+    cur_pos = strcat(cur_pos, ",");
+    cur_pos = strcat(cur_pos, "0):");
+    
     return desc_buff;
 }

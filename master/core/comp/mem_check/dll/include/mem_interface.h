@@ -9,7 +9,7 @@ class mem_interface
 public:
     // interface define
     virtual addr_mgr*   create_mgr();
-    virtual bool        global_free_addr(void* ptr);
+    virtual bool        global_free_addr(addr_mgr* cur, void* ptr);
 };
 
 extern "C" __declspec(dllexport)  mem_interface* get_mem_interface();

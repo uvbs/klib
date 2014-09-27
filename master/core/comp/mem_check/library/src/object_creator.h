@@ -148,26 +148,15 @@ protected:
             return nullptr;
         }
 
-        char* cur_pos = (char*) strrchr(m_file_name, '\\');
-        if (nullptr == cur_pos)
-        {
-            cur_pos = strncpy(desc_buff, m_file_name, _countof(desc_buff));
-        }
-        else 
-        {
-            ++ cur_pos;
-            cur_pos = strncpy(desc_buff, cur_pos, _countof(desc_buff));
-        }
-
-        cur_pos = strcat(cur_pos, ":");
-        cur_pos = strcat(cur_pos, m_type_name);
-        cur_pos = strcat(cur_pos, ":");
+        char* cur_pos = (char*)mem_lib::to_str(desc_buff, 
+            sizeof(desc_buff),
+            m_file_name, 
+            m_file_line, 
+            sizeof(T));
         
-        char tmp[20];
-        _itoa(m_file_line, tmp, 10);
-        cur_pos = strcat(cur_pos, tmp);
-
-        return desc_buff;
+        cur_pos = strcat(cur_pos, "type:");
+        cur_pos = strcat(cur_pos, m_type_name);
+        return cur_pos;
     }
 
 protected:

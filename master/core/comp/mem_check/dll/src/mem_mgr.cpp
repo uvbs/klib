@@ -32,9 +32,35 @@ addr_mgr* mem_mgr::create()
     }
 
     new (mgr) addr_mgr;
+
+    auto_lock  locker(m_addr_cs);
     m_mgr_arr.push_back(mgr);
     return mgr;
 }
+
+bool mem_mgr::free(addr_mgr* cur, void* ptr)
+{
+    size_t nsize = 0;
+
+    auto_lock locker(m_addr_cs);
+
+    for (auto itr = m_mgr_arr.begin(); 
+         itr != m_mgr_arr.end();
+         ++ itr)
+    {
+        if (*itr == cur)
+        {
+            continue;
+        }
+
+        if ((*itr)->del_addr_info(ptr, nsize))
+        {
+            return true;
+        }
+    }
+
+    return false;
+} 
 
 simp_string mem_mgr::stats()
 {
@@ -61,14 +87,15 @@ simp_string mem_mgr::stats()
     return std::move(str);
 }
 
+// format test.cs£¨100£¬78£©
 void mem_mgr::print_info(simp_string& str, addr_info* info)
 {
     char buff[20];
 
-    str.append("location: ");
+    //str.append("location: ");
     str.append(info->desc);
 
-    str.append(", size: ");
+    str.append(",size:");
     str.append(_itoa(info->nsize, buff, 10));
     str.append("\r\n");
 }

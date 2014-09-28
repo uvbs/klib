@@ -1,6 +1,7 @@
 #include "../include/mem_mgr.h"
 #include "../include/lock.h"
 
+#include <sstream>
 
 mem_mgr* mem_mgr::m_instance = nullptr;
 auto_cs     g_mem_mgr_cs;
@@ -62,10 +63,9 @@ bool mem_mgr::free(addr_mgr* cur, void* ptr)
     return false;
 } 
 
-simp_string mem_mgr::stats()
+simp_string mem_mgr::detail(const char* desc)
 {
     simp_string str;
-    str.append("info --- \r\n");
 
     view_addr_callback func = std::bind(&mem_mgr::print_info, 
         this, 
@@ -76,14 +76,63 @@ simp_string mem_mgr::stats()
          itr != this->m_mgr_arr.end();
          ++ itr)
     {
-        str.append((*itr)->get_desc());
-        str.append("\r\n");
+        if (nullptr == desc)
+        {
+            str.append((*itr)->get_desc());
+            str.append("\r\n");
 
-        (*itr)->for_each(func);
+            (*itr)->for_each(func);
+        }
+        else if (strcmp((*itr)->get_desc(), desc) == 0)
+        {
+            str.append((*itr)->get_desc());
+            str.append("\r\n");
+
+            (*itr)->for_each(func);
+            break;
+        }
     }
+    
+    return std::move(str);
+}
 
-    str.append("\r\ninfo --- \r\n");
+simp_string mem_mgr::stats(const char* desc)
+{
+    simp_string str;
+    addr_mgr* mgr = nullptr;
+    std::stringstream ss;
 
+    auto func_format_str = [&](addr_stats_info& info)
+    {
+        str.append(mgr->get_desc());
+        str.append(",");
+
+        ss << info.ncurr_size;
+        ss << ",";
+        ss << info.nmax_size;
+        ss << "\r\n";
+        str.append(ss.str().c_str());
+        ss.str("");
+    };
+    
+    for (auto itr = this->m_mgr_arr.begin();
+         itr != this->m_mgr_arr.end();
+         ++ itr)
+    {
+        mgr = *itr;
+        addr_stats_info& info = mgr->get_stats_info();
+
+        if (nullptr == desc)
+        {
+            func_format_str(info);
+        }
+        else if (strcmp((*itr)->get_desc(), desc) == 0)
+        {
+            func_format_str(info);
+            break;
+        }
+    }
+    
     return std::move(str);
 }
 

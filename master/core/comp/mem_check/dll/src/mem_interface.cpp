@@ -19,10 +19,12 @@ bool mem_interface::free_addr(addr_mgr* cur, void* ptr)
     return mmgr->free(cur, ptr);
 }
 
-bool mem_interface::stats(char* desc, std::string& str)
+bool mem_interface::stats(char* desc, simp_string& str)
 {
+    mem_mgr* mmgr = mem_mgr::instance();
+    str = mmgr->stats(desc);
 
-    return true;
+    return ! str.empty();
 }
 
 ////////////////////////////////////////////////////////////////////////

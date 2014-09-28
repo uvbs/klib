@@ -19,7 +19,7 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         
         break;
 	case DLL_PROCESS_DETACH:
-        auto str = mem_mgr::instance()->stats();
+        auto str = mem_mgr::instance()->detail(nullptr);
         OutputDebugStringA(str.c_str());
 		break;
 	}

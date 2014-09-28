@@ -59,6 +59,8 @@ public:
         size_t& nsize,
         const char* desc = nullptr);
 
+    addr_stats_info& get_stats_info() { return m_stats_info; }
+
 public:
     void for_each(const view_addr_callback& func);
 

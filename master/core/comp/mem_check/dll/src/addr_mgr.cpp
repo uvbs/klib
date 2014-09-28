@@ -21,17 +21,14 @@ bool addr_mgr::add_addr_info(void* p,
                              size_t nsize,
                              const char* desc)
 {
-    addr_info info;
-    info.nsize = nsize;
-
-    if (desc)
-        strncpy(info.desc, desc, _countof(info.desc));
-
     auto_lock locker(m_auto_cs);
     auto itr = m_addr_infos.find(p);
     if (itr == m_addr_infos.end()) 
     {
-        m_addr_infos.insert(std::make_pair(p, info));
+        addr_info& info = m_addr_infos[p];
+        info.nsize = nsize;
+        if (desc)
+            strncpy(info.desc, desc, _countof(info.desc));
 
         // update stats info
         m_stats_info.nalloc_count ++ ;

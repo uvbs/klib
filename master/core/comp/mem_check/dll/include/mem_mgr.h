@@ -20,7 +20,8 @@ public:
     addr_mgr* create();
     bool free(addr_mgr* cur, void* ptr);
 
-    simp_string stats();
+    simp_string detail(const char* desc);
+    simp_string stats(const char* desc);
     
 protected:
     void print_info(simp_string& str, addr_info* );

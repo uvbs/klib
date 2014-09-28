@@ -21,7 +21,6 @@ class sample_class
 };
 
 
-
 int _tmain(int argc, _TCHAR* argv[])
 {
     set_memory_desc("test-exe");
@@ -31,7 +30,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
     new int ;
     //delete p;
-
 
 
     sample_class* a = New(sample_class);

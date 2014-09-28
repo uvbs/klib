@@ -13,7 +13,7 @@
 #endif
 
 /*
-
+需要包含 redefine_new.h头文件 
 #define GC_NEW new(__FILE__, __LINE__)  
 #define new GC_NEW  
 */

@@ -96,7 +96,7 @@ void mem_lib::free_global(void* ptr)
     if (!ret)
     {
         //call global free function
-        m_mem_i->global_free_addr(mgr, ptr);
+        m_mem_i->free_addr(mgr, ptr);
     }
     
     return;

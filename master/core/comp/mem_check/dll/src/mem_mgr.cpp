@@ -136,6 +136,20 @@ simp_string mem_mgr::stats(const char* desc)
     return std::move(str);
 }
 
+bool mem_mgr::for_each(const view_info_func& func)
+{
+    addr_mgr* mgr = nullptr;
+
+    for (auto itr = this->m_mgr_arr.begin();
+         itr != this->m_mgr_arr.end();
+         ++ itr)
+    {
+        mgr = *itr;
+        func(mgr->get_desc(), mgr->get_stats_info());
+    }
+    return true;
+}
+
 // format test.cs£¨100£¬78£©
 void mem_mgr::debug_info(simp_string& str, addr_info* info)
 {

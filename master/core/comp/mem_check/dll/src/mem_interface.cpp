@@ -27,6 +27,13 @@ bool mem_interface::stats(char* desc, simp_string& str)
     return ! str.empty();
 }
 
+bool mem_interface::for_each(const view_info_func& func)
+{
+    // 遍历输出结果
+    mem_mgr* mmgr = mem_mgr::instance();
+    return mmgr->for_each(func);
+}
+
 ////////////////////////////////////////////////////////////////////////
 //
 extern "C" mem_interface* get_mem_interface()

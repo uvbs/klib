@@ -3,7 +3,6 @@
 #include "../../dll/include/addr_mgr.h"
 #include "../../dll/include/allocator.h"
 
-auto_cs g_memoib_cs;
 
 mem_lib* mem_lib::m_instance = nullptr;
 
@@ -36,7 +35,7 @@ mem_lib* mem_lib::instance()
 {
     if (nullptr == m_instance)
     {
-        auto_lock locker(g_memoib_cs);
+        //auto_lock locker(m_memoib_cs);
 
         if (nullptr == m_instance)
         {

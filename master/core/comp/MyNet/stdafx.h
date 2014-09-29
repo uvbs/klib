@@ -26,3 +26,7 @@
 using namespace klib::kthread;
 
 #endif
+
+
+#include "../mem_check/library/src/mem_lib.h"
+#include "../mem_check/library/src/redefine_new.h"

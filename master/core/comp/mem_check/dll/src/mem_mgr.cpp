@@ -4,7 +4,7 @@
 #include <sstream>
 
 mem_mgr* mem_mgr::m_instance = nullptr;
-auto_cs     g_mem_mgr_cs;
+critical_section     g_mem_mgr_cs;
 
 mem_mgr::mem_mgr()
     : m_enable_stats(true)

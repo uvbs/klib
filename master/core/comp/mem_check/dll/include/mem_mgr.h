@@ -30,7 +30,7 @@ public:
     bool for_each(const view_addr_info_func& func);
     
 protected:
-    auto_cs                                         m_addr_cs;
+    critical_section                                m_addr_cs;
     std::vector<addr_mgr*, MemAlloc<addr_mgr*> >    m_mgr_arr;
 
     bool                                            m_enable_stats;

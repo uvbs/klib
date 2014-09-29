@@ -39,7 +39,9 @@ public:
         size_t size_type);
 
 protected:
-    static mem_lib*     m_instance;
+    static mem_lib*         m_instance;
+    critical_section        m_memoib_cs;
+
     addr_mgr*           m_addr_mgr;
     mem_interface*      m_mem_i;
     dll_loader          m_dll_loader;

@@ -24,3 +24,6 @@ using namespace klib::core;
 
 #include <klib_link.h>
 #include <rdebug/logger.h>
+
+#include "../../../core/comp/mem_check/library/src/mem_lib.h"
+#include "../../../core/comp/mem_check/library/src/redefine_new.h"

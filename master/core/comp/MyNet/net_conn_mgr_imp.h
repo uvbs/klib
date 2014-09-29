@@ -6,7 +6,7 @@
 #include <map>
 
 #include <kthread/auto_lock.h>
-#include <core/lock_stl.h>
+#include <pattern/lock_stl.h>
 #include <util/timeout_checker.h>
 #include <core/timer_mgr.h>
 using namespace klib::util;
@@ -37,11 +37,11 @@ protected:
     size_t                               conn_timeout_;
     timeout_checker<net_conn_weak_ptr>   conn_tmout_checker_;
 
-    timer_mgr                       tmr_mgr_;
-    klib::kthread::mutex            mutex_;
+    timer_mgr                            tmr_mgr_;
+    klib::kthread::mutex                 mutex_;
 
 protected:
-    klib::stl::lock_bucket_map<net_conn*, 
+    klib::pattern::lock_bucket_map<net_conn*, 
         net_conn_weak_ptr, 
         NETCONNECTION_ARRAY_LENGTH>  
         conn_list_x_;

@@ -1,6 +1,12 @@
 #ifndef _klib_object_pool_h
 #define _klib_object_pool_h
 
+#pragma pack(push,_CRT_PACKING)
+#pragma warning(push,3)
+#pragma push_macro("new")
+    #undef new
+
+
 #include <vector>
 #include "..\kthread\auto_lock.h"
 
@@ -233,6 +239,10 @@ void CObjectPool<T, INIT_SIZE, INC_SIZE>::ReleaseSome()
 }}
 
 
+
+#pragma pop_macro("new")
+#pragma warning(pop)
+#pragma pack(pop)
 
 
 #endif

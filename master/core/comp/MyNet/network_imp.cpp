@@ -443,20 +443,20 @@ bool network_imp::post_connection(net_conn_ptr pConn)
     pmyoverlapped->op_conn_      = pConn;
 
     // 设置连接目标地址
-    sockaddr_in addrPeer;  
-    ZeroMemory(&addrPeer, sizeof(sockaddr_in));
-    addrPeer.sin_family      = AF_INET;
-    addrPeer.sin_addr.s_addr = uPeerAddr;
-    addrPeer.sin_port        = htons( pConn->get_peer_port() );
+    sockaddr_in peer_addr;  
+    ZeroMemory(&peer_addr, sizeof(sockaddr_in));
+    peer_addr.sin_family      = AF_INET;
+    peer_addr.sin_addr.s_addr = uPeerAddr;
+    peer_addr.sin_port        = htons( pConn->get_peer_port() );
 
-    int nLen = sizeof(addrPeer);
+    int nLen = sizeof(peer_addr);
     PVOID lpSendBuffer      = nullptr;
     DWORD dwSendDataLength  = 0;
     DWORD dwBytesSent       = 0;
 
     //重点
     BOOL bResult = m_lpfnConnectEx(sock,
-        (sockaddr*)&addrPeer,  // [in] 对方地址
+        (sockaddr*)&peer_addr,  // [in] 对方地址
         nLen,  				// [in] 对方地址长度
         lpSendBuffer,		// [in] 连接后要发送的内容，这里不用
         dwSendDataLength,	// [in] 发送内容的字节数 ，这里不用

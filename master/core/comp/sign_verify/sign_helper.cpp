@@ -45,7 +45,7 @@ bool sign_helper::set_sign_info(const std::string& n,
         printf( " failed\n  ! mpi_read_file returned %d\n\n", ret );
         return false;
     }
-
+    
     ptr->len = ( mpi_msb( &ptr->N ) + 7 ) >> 3;
     return true;
 }

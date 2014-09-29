@@ -24,7 +24,7 @@ class timer_event : public FsmEvent
 public:
     timer_event(UINT uElapse) : FsmEvent(event_timer)
     {
-        set_evt_data(uElapse);
+        set_evt_data((void*)uElapse);
     }
 };
 
@@ -118,7 +118,7 @@ public:
     push_client_status get_status();
     void reinit();
 
-    DEFINE_ACCESS_FUN_REF2(udp_client, udp_client, client_);
+    DEFINE_ACCESS_FUN_REF_CONST(udp_client, udp_client, client_);
 
 protected:
     virtual void on_msg(udp_client* client_, ip_v4 uAddr, USHORT uPort, char* buff, int iLen) ;		///< UDP消息回调接口

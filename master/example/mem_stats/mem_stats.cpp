@@ -17,6 +17,9 @@
 
 class sample_class
 {
+public:
+    sample_class(int i){}
+
     std::string str; 
 };
 
@@ -32,8 +35,8 @@ int _tmain(int argc, _TCHAR* argv[])
     //delete p;
 
 
-    sample_class* a = New(sample_class);
-    delete a;
+    sample_class* a = New(sample_class)(1);
+    //delete a;
 
 	return 0;
 }

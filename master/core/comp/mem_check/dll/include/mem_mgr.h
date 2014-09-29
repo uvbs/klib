@@ -24,7 +24,7 @@ public:
     simp_string stats(const char* desc);
     
 protected:
-    void print_info(simp_string& str, addr_info* );
+    void debug_info(simp_string& str, addr_info* );
 
 protected:
     auto_cs      m_addr_cs;

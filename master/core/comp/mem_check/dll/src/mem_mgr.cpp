@@ -67,7 +67,7 @@ simp_string mem_mgr::detail(const char* desc)
 {
     simp_string str;
 
-    view_addr_callback func = std::bind(&mem_mgr::print_info, 
+    view_addr_callback func = std::bind(&mem_mgr::debug_info, 
         this, 
         std::ref(str), 
         std::placeholders::_1);
@@ -137,7 +137,7 @@ simp_string mem_mgr::stats(const char* desc)
 }
 
 // format test.cs£¨100£¬78£©
-void mem_mgr::print_info(simp_string& str, addr_info* info)
+void mem_mgr::debug_info(simp_string& str, addr_info* info)
 {
     char buff[20];
 

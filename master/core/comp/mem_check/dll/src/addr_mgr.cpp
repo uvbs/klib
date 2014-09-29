@@ -38,6 +38,8 @@ bool addr_mgr::add_addr_info(void* p,
         {
             m_stats_info.nmax_size = m_stats_info.ncurr_size;
         }
+
+        m_stats_info.self_size += sizeof(addr_info) + sizeof(std::pair<void*, addr_info>);
         return true;
     }
 
@@ -58,6 +60,8 @@ bool addr_mgr::del_addr_info(void* p,
 
         m_stats_info.nfree_count ++;
         m_stats_info.ncurr_size -= nsize;
+
+        m_stats_info.self_size -= sizeof(addr_info) + sizeof(std::pair<void*, addr_info>);
 
         return true;
     }

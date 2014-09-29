@@ -42,7 +42,6 @@ protected:
     static mem_lib*     m_instance;
     addr_mgr*           m_addr_mgr;
     mem_interface*      m_mem_i;
-    bool                m_enable_stats;
     dll_loader          m_dll_loader;
 };
 

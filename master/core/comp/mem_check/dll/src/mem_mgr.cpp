@@ -6,6 +6,10 @@
 mem_mgr* mem_mgr::m_instance = nullptr;
 auto_cs     g_mem_mgr_cs;
 
+mem_mgr::mem_mgr()
+    : m_enable_stats(true)
+{
+}
 
 mem_mgr* mem_mgr::instance()
 {
@@ -33,6 +37,7 @@ addr_mgr* mem_mgr::create()
     }
 
     new (mgr) addr_mgr;
+    mgr->enable_stats(m_enable_stats);
 
     auto_lock  locker(m_addr_cs);
     m_mgr_arr.push_back(mgr);
@@ -65,21 +70,48 @@ bool mem_mgr::free(addr_mgr* cur, void* ptr)
     return false;
 } 
 
-simp_string mem_mgr::detail(const char* desc)
+void mem_mgr::enable_stats(bool enable)
+{
+    m_enable_stats = enable;
+    
+    addr_mgr* mgr = nullptr;
+
+    auto_lock locker(m_addr_cs);
+
+    for (auto itr = m_mgr_arr.begin(); 
+         itr != m_mgr_arr.end();
+         ++ itr)
+    {
+        mgr = *itr;
+        
+        mgr->enable_stats(enable);
+    }
+}
+
+simp_string mem_mgr::debug_output(const char* desc)
 {
     simp_string str;
+    char buff[20];
 
-    view_addr_callback func = std::bind(&mem_mgr::debug_info, 
-        this, 
-        std::ref(str), 
-        std::placeholders::_1);
+    view_addr_callback func = [&](addr_info* info)
+    {
+        str.append(info->desc);
 
+        str.append(",size:");
+        str.append(_itoa(info->nsize, buff, 10));
+        str.append("\r\n");
+
+        OutputDebugStringA(str.c_str());
+        str.clear();
+    };
+    
     for (auto itr = this->m_mgr_arr.begin();
          itr != this->m_mgr_arr.end();
          ++ itr)
     {
         if (nullptr == desc)
         {
+            str.append("module:");
             str.append((*itr)->get_desc());
             str.append("\r\n");
 
@@ -87,6 +119,7 @@ simp_string mem_mgr::detail(const char* desc)
         }
         else if (strcmp((*itr)->get_desc(), desc) == 0)
         {
+            str.append("module:");
             str.append((*itr)->get_desc());
             str.append("\r\n");
 
@@ -157,8 +190,6 @@ bool mem_mgr::write_file(char* desc, const char* filename)
         mgr->for_each([&](addr_info* info)
         {
             fwrite(info->desc, 1, strlen(info->desc), hfile);
-            fwrite("\r\n", 1, 2, hfile);
-
             _itoa(info->nsize, buff, 10);
             fwrite(buff, 1, strlen(buff), hfile);
             fwrite("\r\n", 1, 2, hfile);
@@ -196,17 +227,4 @@ bool mem_mgr::for_each(const view_addr_info_func& func)
         func(mgr->get_desc(), mgr->get_stats_info());
     }
     return true;
-}
-
-// format test.cs£¨100£¬78£©
-void mem_mgr::debug_info(simp_string& str, addr_info* info)
-{
-    char buff[20];
-
-    //str.append("location: ");
-    str.append(info->desc);
-
-    str.append(",size:");
-    str.append(_itoa(info->nsize, buff, 10));
-    str.append("\r\n");
 }

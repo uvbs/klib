@@ -15,24 +15,25 @@
 class mem_mgr
 {
 public:
+    mem_mgr();
     static mem_mgr* instance();
 
 public:
     addr_mgr* create();
     bool free(addr_mgr* cur, void* ptr);
+    void enable_stats(bool enable);
 
-    simp_string detail(const char* desc);
+    simp_string debug_output(const char* desc);
+
     simp_string stats(const char* desc);
     bool write_file(char* desc, const char* filename);
     bool for_each(const view_addr_info_func& func);
     
 protected:
-    void debug_info(simp_string& str, addr_info* );
-
-protected:
     auto_cs                                         m_addr_cs;
     std::vector<addr_mgr*, MemAlloc<addr_mgr*> >    m_mgr_arr;
 
+    bool                                            m_enable_stats;
     static mem_mgr*                                 m_instance;
 };
 

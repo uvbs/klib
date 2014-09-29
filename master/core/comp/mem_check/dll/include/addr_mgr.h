@@ -53,6 +53,9 @@ public:
     virtual void set_desc(const char* desc);
     virtual const char* get_desc();
 
+    virtual void enable_stats(bool enable);
+    virtual bool get_enable_stats();
+
     virtual bool add_addr_info(void* p, 
         size_t nsize,
         const char* desc = nullptr);
@@ -72,6 +75,7 @@ protected:
              std::less<void*>, 
              MemAlloc<std::pair<void*, addr_info>> >    m_addr_infos;
 
+    bool             m_enable_stats;    // 统计
     auto_cs          m_auto_cs;
     addr_stats_info  m_stats_info;      // 应用消耗的内存统计
     char             m_desc[30];

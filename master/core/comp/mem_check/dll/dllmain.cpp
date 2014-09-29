@@ -19,8 +19,9 @@ BOOL APIENTRY DllMain( HMODULE hModule,
         
         break;
 	case DLL_PROCESS_DETACH:
-        auto str = mem_mgr::instance()->detail(nullptr);
-        OutputDebugStringA(str.c_str());
+        auto str = mem_mgr::instance()->debug_output(nullptr);
+
+        mem_mgr::instance()->write_file(nullptr, "d:\\output.txt");
 		break;
 	}
 	return TRUE;

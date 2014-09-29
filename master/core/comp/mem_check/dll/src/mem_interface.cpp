@@ -19,6 +19,12 @@ bool mem_interface::free_addr(addr_mgr* cur, void* ptr)
     return mmgr->free(cur, ptr);
 }
 
+void mem_interface::enable_stats(bool enable)
+{
+    mem_mgr* mmgr = mem_mgr::instance();
+    return mmgr->enable_stats(enable);
+}
+
 bool mem_interface::stats(char* desc, simp_string& str)
 {
     mem_mgr* mmgr = mem_mgr::instance();

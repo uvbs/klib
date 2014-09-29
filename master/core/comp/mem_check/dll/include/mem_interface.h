@@ -12,6 +12,9 @@ public:
     // interface define
     virtual addr_mgr*   create_mgr();
     virtual bool        free_addr(addr_mgr* cur, void* ptr);
+
+    virtual void        enable_stats(bool enable);
+
     virtual bool        stats(char* desc, simp_string& str);
     virtual bool        write_file(char* desc, const char* filename);
     virtual bool        for_each(const view_addr_info_func& func);

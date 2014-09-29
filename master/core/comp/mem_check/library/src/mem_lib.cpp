@@ -68,10 +68,7 @@ void* mem_lib::alloc_global(size_t type_size, const char* desc /*= nullptr*/)
     
     bool ret = mgr->add_addr_info(ptr, type_size, desc);
     if (!ret)
-    {
-        //@todo call global add function
-        
-    }
+    {}
     
     return ptr;
 }
@@ -95,7 +92,7 @@ void mem_lib::free_global(void* ptr)
     bool ret = mgr->del_addr_info(ptr, type_size);
     if (!ret)
     {
-        //call global free function
+        // call global free function
         m_mem_i->free_addr(mgr, ptr);
     }
     

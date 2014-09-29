@@ -31,6 +31,7 @@ protected:
 protected:
     auto_cs                                         m_addr_cs;
     std::vector<addr_mgr*, MemAlloc<addr_mgr*> >    m_mgr_arr;
+
     static mem_mgr*                                 m_instance;
 };
 

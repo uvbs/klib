@@ -16,6 +16,7 @@ public:
     virtual bool        for_each(const view_info_func& func);
 };
 
+#define get_mem_interface_str "get_mem_interface"
 extern "C" __declspec(dllexport)  mem_interface* get_mem_interface();
 typedef mem_interface* (*get_mem_interface_func) ();
 

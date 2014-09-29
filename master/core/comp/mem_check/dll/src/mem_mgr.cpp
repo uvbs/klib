@@ -42,6 +42,7 @@ addr_mgr* mem_mgr::create()
 bool mem_mgr::free(addr_mgr* cur, void* ptr)
 {
     size_t nsize = 0;
+    addr_mgr* mgr = nullptr;
 
     auto_lock locker(m_addr_cs);
 
@@ -49,12 +50,13 @@ bool mem_mgr::free(addr_mgr* cur, void* ptr)
          itr != m_mgr_arr.end();
          ++ itr)
     {
-        if (*itr == cur)
+        mgr = *itr;
+        if (mgr == cur)
         {
             continue;
         }
 
-        if ((*itr)->del_addr_info(ptr, nsize))
+        if (mgr->del_addr_info(ptr, nsize))
         {
             return true;
         }

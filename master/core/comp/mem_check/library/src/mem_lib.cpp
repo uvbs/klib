@@ -18,7 +18,7 @@ mem_lib::mem_lib(void)
     }
     
     get_mem_interface_func func = (get_mem_interface_func) 
-        m_dll_loader.get_addr("get_mem_interface");
+        m_dll_loader.get_addr(get_mem_interface_str);
     if (nullptr == func)
     {
         //@todo 

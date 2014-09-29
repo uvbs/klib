@@ -471,6 +471,9 @@
     <ClInclude Include="..\core\util\supper_string.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\rdebug\resource_mgr.h">
+      <Filter>rdebug</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -664,6 +667,9 @@
     </ClCompile>
     <ClCompile Include="..\core\util\supper_string.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\rdebug\resource_mgr.cpp">
+      <Filter>rdebug</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@
 #include "addr_mgr.h"
 
 
-typedef std::function<void(const char*, const addr_stats_info&)> view_info_func;
+typedef std::function<void(const char*, const addr_stats_info&)> view_addr_info_func;
 
 
 

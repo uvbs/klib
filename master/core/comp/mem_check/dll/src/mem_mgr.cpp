@@ -138,7 +138,53 @@ simp_string mem_mgr::stats(const char* desc)
     return std::move(str);
 }
 
-bool mem_mgr::for_each(const view_info_func& func)
+bool mem_mgr::write_file(char* desc, const char* filename)
+{
+    addr_mgr* mgr = nullptr;
+    char  buff[25];
+
+    FILE* hfile = fopen(filename, "wb");
+    if (nullptr == hfile)
+    {
+        return false;
+    }
+    std::shared_ptr<FILE> f_releasor(hfile, [&](FILE* hfile){ fclose(hfile); });
+
+    auto func_write_addr_info = [&](addr_mgr* mgr)
+    {
+        fwrite(mgr->get_desc(), 1, strlen(mgr->get_desc()), hfile);
+        fwrite("\r\n", 1, 2, hfile);
+        mgr->for_each([&](addr_info* info)
+        {
+            fwrite(info->desc, 1, strlen(info->desc), hfile);
+            fwrite("\r\n", 1, 2, hfile);
+
+            _itoa(info->nsize, buff, 10);
+            fwrite(buff, 1, strlen(buff), hfile);
+            fwrite("\r\n", 1, 2, hfile);
+        });
+    };
+    
+    for (auto itr = this->m_mgr_arr.begin();
+         itr != this->m_mgr_arr.end();
+         ++ itr)
+    {
+        mgr = *itr;
+
+        if (nullptr == desc)
+        {
+            func_write_addr_info(mgr);
+        }
+        else if (strcmp((*itr)->get_desc(), desc) == 0)
+        {
+            func_write_addr_info(mgr);
+            break;
+        }
+    }
+    return true;
+}
+
+bool mem_mgr::for_each(const view_addr_info_func& func)
 {
     addr_mgr* mgr = nullptr;
 

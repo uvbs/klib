@@ -23,7 +23,8 @@ public:
 
     simp_string detail(const char* desc);
     simp_string stats(const char* desc);
-    bool for_each(const view_info_func& func);
+    bool write_file(char* desc, const char* filename);
+    bool for_each(const view_addr_info_func& func);
     
 protected:
     void debug_info(simp_string& str, addr_info* );

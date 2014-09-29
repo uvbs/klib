@@ -13,7 +13,8 @@ public:
     virtual addr_mgr*   create_mgr();
     virtual bool        free_addr(addr_mgr* cur, void* ptr);
     virtual bool        stats(char* desc, simp_string& str);
-    virtual bool        for_each(const view_info_func& func);
+    virtual bool        write_file(char* desc, const char* filename);
+    virtual bool        for_each(const view_addr_info_func& func);
 };
 
 #define get_mem_interface_str "get_mem_interface"

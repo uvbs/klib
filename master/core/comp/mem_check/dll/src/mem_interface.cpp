@@ -27,7 +27,14 @@ bool mem_interface::stats(char* desc, simp_string& str)
     return ! str.empty();
 }
 
-bool mem_interface::for_each(const view_info_func& func)
+bool mem_interface::write_file(char* desc, const char* filename)
+{
+    mem_mgr* mmgr = mem_mgr::instance();
+
+    return mmgr->write_file(desc, filename);
+}
+
+bool mem_interface::for_each(const view_addr_info_func& func)
 {
     // 遍历输出结果
     mem_mgr* mmgr = mem_mgr::instance();

@@ -50,7 +50,7 @@ void push_balance_server_module::on_query_logic_addr(ip_v4 remote_addr,
 
     (*ar) >> ptQuery;
 
-    ack.uLogicIP       =  logic_addr_info_.addr_;
+    ack.uLogicIP       =  logic_addr_info_.addr_.get_val();
     ack.uLogicUdpPort  =  KHTON16(logic_addr_info_.port_);
     ack.uLogicTcpPort  =  0;
 

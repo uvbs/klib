@@ -113,5 +113,8 @@
     <ClCompile Include="net_conn_mgr_imp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="memcheck_build.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

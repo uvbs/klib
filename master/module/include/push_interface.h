@@ -18,7 +18,7 @@ static const GUID IID_PUSH_LOGIC_SERVER =
 #include <net/udp_client.h>
 #include <functional>
 #include <macro.h>
-#include <core/small_string.h>
+#include <mem/small_string.h>
 
 using namespace klib::mem;
 using namespace klib::net;
@@ -39,13 +39,13 @@ protected:
     std::string      str_sign_;           ///< 消息内容的签名（计算出内容的md5值,使用签名算法签名）
     std::string      content_;            ///< 消息内容(xml内容)
     
-    DEFINE_ACCESS_FUN_REF2(UINT64, msg_id, msg_id_);
-    DEFINE_ACCESS_FUN_REF2(UINT32, msg_type, msg_type_);
-    DEFINE_ACCESS_FUN_REF2(UINT32, show_time, show_time_);
-    DEFINE_ACCESS_FUN_REF2(UINT32, delay_fetch, delay_fetch_);
-    DEFINE_ACCESS_FUN_REF2(UINT32, delay_show, delay_show_);
-    DEFINE_ACCESS_FUN_REF2(std::string, str_sign, str_sign_);
-    DEFINE_ACCESS_FUN_REF2(std::string, content, content_);
+    DEFINE_ACCESS_FUN_REF_CONST(UINT64, msg_id, msg_id_);
+    DEFINE_ACCESS_FUN_REF_CONST(UINT32, msg_type, msg_type_);
+    DEFINE_ACCESS_FUN_REF_CONST(UINT32, show_time, show_time_);
+    DEFINE_ACCESS_FUN_REF_CONST(UINT32, delay_fetch, delay_fetch_);
+    DEFINE_ACCESS_FUN_REF_CONST(UINT32, delay_show, delay_show_);
+    DEFINE_ACCESS_FUN_REF_CONST(std::string, str_sign, str_sign_);
+    DEFINE_ACCESS_FUN_REF_CONST(std::string, content, content_);
 };
 typedef std::shared_ptr<push_msg> push_msg_ptr;
 
@@ -111,8 +111,8 @@ private:
     USHORT port_;
 
 public:
-    DEFINE_ACCESS_FUN_REF2(ip_v4, addr, addr_);
-    DEFINE_ACCESS_FUN_REF2(USHORT, port, port_);
+    DEFINE_ACCESS_FUN_REF_CONST(ip_v4, addr, addr_);
+    DEFINE_ACCESS_FUN_REF_CONST(USHORT, port, port_);
 
     bool operator < (const client_addr_key& other) const 
     {
@@ -122,7 +122,7 @@ public:
         return port_ < other.port_;
     }
 
-    UINT  hash_key() const {   return addr_;  }
+    UINT  hash_key() const {   return addr_.get_val();  }
 };
 
 // 客户端信息
@@ -139,15 +139,15 @@ public:
       {}
       ~client_info(void) {}
 
-      DEFINE_ACCESS_FUN_REF2(ip_v4, client_addr, client_addr_);
-      DEFINE_ACCESS_FUN_REF2(USHORT, client_port, client_port_);
+      DEFINE_ACCESS_FUN_REF_CONST(ip_v4, client_addr, client_addr_);
+      DEFINE_ACCESS_FUN_REF_CONST(USHORT, client_port, client_port_);
 
-      DEFINE_ACCESS_FUN_REF2(UINT64, login_time,  login_time_);
-      DEFINE_ACCESS_FUN_REF2(UINT64, last_active_time, last_active_time_);
-      DEFINE_ACCESS_FUN_REF2(UINT64, heart_count, heart_count_);
-      DEFINE_ACCESS_FUN_REF2(UINT,   version,     version_);
+      DEFINE_ACCESS_FUN_REF_CONST(UINT64, login_time,  login_time_);
+      DEFINE_ACCESS_FUN_REF_CONST(UINT64, last_active_time, last_active_time_);
+      DEFINE_ACCESS_FUN_REF_CONST(UINT64, heart_count, heart_count_);
+      DEFINE_ACCESS_FUN_REF_CONST(UINT,   version,     version_);
 
-      DEFINE_ACCESS_FUN_REF2(UINT64, last_msg_id,  last_msg_id_);
+      DEFINE_ACCESS_FUN_REF_CONST(UINT64, last_msg_id,  last_msg_id_);
 
       ip_v4   client_addr_;               ///< 客户端的IP地址
       USHORT  client_port_;               ///< 客户端的端口（网络字节序）

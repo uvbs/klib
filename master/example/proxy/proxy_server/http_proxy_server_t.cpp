@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "http_proxy_server_t.h"
 
 #include <util/strutil.h>

@@ -32,10 +32,10 @@ private:
     UINT64              sended_times_;           ///< 发送的次数
     push_msg_ptr        user_msg_;               ///< 用户消息的指针
 
-    DEFINE_ACCESS_FUN_REF2(UINT64, msg_id, msg_id_);
-    DEFINE_ACCESS_FUN2(UINT64, last_send_time, last_send_time_);
-    DEFINE_ACCESS_FUN_REF2(UINT64, sended_times, sended_times_);
-    DEFINE_ACCESS_FUN_REF2(push_msg_ptr, user_msg, user_msg_);
+    DEFINE_ACCESS_FUN_REF_CONST(UINT64, msg_id, msg_id_);
+    DEFINE_ACCESS_FUN_REF_CONST(UINT64, last_send_time, last_send_time_);
+    DEFINE_ACCESS_FUN_REF_CONST(UINT64, sended_times, sended_times_);
+    DEFINE_ACCESS_FUN_REF_CONST(push_msg_ptr, user_msg, user_msg_);
 };
 
 

@@ -39,6 +39,8 @@ bool proxy_server_t::start()
     tcp_facade_->get_network()->try_listen(8080, http_proxy_);
     ((proxy_server_imp*)http_proxy_)->network_i_ = tcp_facade_->get_network();
 
+    printf("listen on port : 8080\r\n");
+    printf("waiting to svr...\r\n");
 
     return true;
 }

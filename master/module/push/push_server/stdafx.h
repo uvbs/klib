@@ -28,7 +28,7 @@
 #include <net/proto/command_header.h>
 #include <net/ip_v4.h>
 
-#include <core/small_string.h>
+#include <mem/small_string.h>
 
 using namespace klib;
 using namespace klib::debug;

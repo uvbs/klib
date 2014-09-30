@@ -2,11 +2,11 @@
 
 #include "proxy_server_i.h"
 
-#include <core/lock_stl.h>
-#include <core/mem_buffer.h>
+#include <pattern/lock_stl.h>
+#include <mem/mem_buffer.h>
 #include <pattern/fsm.h>
 
-using namespace klib::stl;
+using namespace klib::pattern;
 using namespace klib::pattern;
 using namespace klib::mem;
 using namespace klib::pattern::fsm;

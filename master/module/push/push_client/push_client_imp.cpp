@@ -332,7 +332,7 @@ void push_client_imp::on_online_msg_ack(ip_v4 uAddr, USHORT uPort, cmd_header& h
 {
     WriteLog("服务器回复在线消息...");
 
-    if (uAddr == app_data::instance()->get_logic_addr()) 
+    if (uAddr.get_val() == app_data::instance()->get_logic_addr()) 
     {
         PT_CMD_ONLINE_ACK ptOnlineAck;
         ar >> ptOnlineAck;
@@ -382,7 +382,7 @@ void push_client_imp::on_msg_content(ip_v4 uAddr, USHORT uPort, cmd_header& head
         return;
     }
 
-    if (uAddr != data_->get_logic_addr()) {
+    if (uAddr.get_val() != data_->get_logic_addr()) {
         WriteLog("不是来自逻辑服务器的消息...");
         return;
     }

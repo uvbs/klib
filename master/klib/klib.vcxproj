@@ -204,6 +204,7 @@
     <ClInclude Include="..\core\pattern\thread_mem_pool.h" />
     <ClInclude Include="..\core\rdebug\logger.h" />
     <ClInclude Include="..\core\rdebug\log_helper.h" />
+    <ClInclude Include="..\core\rdebug\resource_mgr.h" />
     <ClInclude Include="..\core\rdebug\thread_moniter.h" />
     <ClInclude Include="..\core\rdebug\tracer.h" />
     <ClInclude Include="..\core\sys\cpu.h" />
@@ -273,6 +274,7 @@
     <ClCompile Include="..\core\rdebug\ensure.cpp" />
     <ClCompile Include="..\core\rdebug\logger.cpp" />
     <ClCompile Include="..\core\rdebug\log_helper.cpp" />
+    <ClCompile Include="..\core\rdebug\resource_mgr.cpp" />
     <ClCompile Include="..\core\rdebug\thread_moniter.cpp" />
     <ClCompile Include="..\core\rdebug\tracer.cpp" />
     <ClCompile Include="..\core\sys\cpu.cpp" />

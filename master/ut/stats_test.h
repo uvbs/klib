@@ -8,6 +8,7 @@ using namespace klib::net;
 using namespace klib::util;
 
 #include <encrypt/base64.h>
+#include <encrypt/rc4_single.h>
 using namespace klib::encode;
 
 #include <comp/statics/src/stats_client.h>
@@ -38,14 +39,23 @@ TEST(http, 1)
     str_format = Replace(str_format, "{uid}", "23");
     str_format = Replace(str_format, "{ip}",  str_ip);
 
-    base64 b64;
-    b64.encode(str_format.c_str(), str_format.size(), str_format, false);
 
+    /*
     str_format = Replace(str_format, "==",  "QegZ27vc");
     str_format = Replace(str_format, "=",  "QegZ27vcZ");
     str_format = Replace(str_format, "O",  "IkL");
     str_format = Replace(str_format, "R",  "TgF");
     str_format = Replace(str_format, "A",  "SwD");
+    */
+
+    const std::string str_key = "ISD#$UYo&%iuIOU&^%$#";
+    rc4_encrypt enc_;
+    enc_.set_key(str_key.c_str(), str_key.size());
+    enc_.encrypt((unsigned char*)str_format.c_str(), str_format.size());
+
+    base64 b64;
+    b64.encode(str_format.c_str(), str_format.size(), str_format, false);
+
 
     std::string str_decode;
     b64.decode(str_format, str_decode);
@@ -58,7 +68,7 @@ TEST(http, 1)
     */
 
     stats_client* client = stats_client::instance();
-    client->set_stats_method(e_stats_post);
+    client->set_stats_method(e_http_get);
     client->set_url("http://inapi.91ox.com/csindex.php?");
 
     client->add_get_param("encode", str_format);

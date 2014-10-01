@@ -4,6 +4,7 @@
 #include <atlcomcli.h>
 #include "../Utils/downloadmgr.h"
 #include <mshtml.h>
+#include <MsHtmdid.h>
 
 DuiLib::CWebBrowserUI::CWebBrowserUI()
 : m_pWebBrowser2(NULL)
@@ -59,7 +60,14 @@ STDMETHODIMP DuiLib::CWebBrowserUI::GetIDsOfNames( REFIID riid, OLECHAR **rgszNa
 	return E_NOTIMPL;
 }
 
-STDMETHODIMP DuiLib::CWebBrowserUI::Invoke( DISPID dispIdMember, REFIID riid, LCID lcid,WORD wFlags, DISPPARAMS* pDispParams,VARIANT* pVarResult, EXCEPINFO* pExcepInfo,UINT* puArgErr )
+STDMETHODIMP DuiLib::CWebBrowserUI::Invoke( DISPID dispIdMember, 
+    REFIID riid, 
+    LCID lcid,
+    WORD wFlags, 
+    DISPPARAMS* pDispParams,
+    VARIANT* pVarResult, 
+    EXCEPINFO* pExcepInfo,
+    UINT* puArgErr )
 {
 	if ((riid != IID_NULL))
 		return E_INVALIDARG;
@@ -111,6 +119,14 @@ STDMETHODIMP DuiLib::CWebBrowserUI::Invoke( DISPID dispIdMember, REFIID riid, LC
 // 			TRACE(_T("PropertyChange(%s)\n"), pDispParams->rgvarg[0].bstrVal);
 // 		}
 // 		break;
+    case DISPID_AMBIENT_DLCONTROL:
+        // 暂时不做处理的
+        return DISP_E_MEMBERNOTFOUND;
+
+        pVarResult->vt = VT_I4;
+        //pVarResult->lVal =  DLCTL_NO_RUNACTIVEXCTLS | DLCTL_NO_DLACTIVEXCTLS;
+        pVarResult->lVal = DLCTL_DLIMAGES|DLCTL_VIDEOS;//、DLCTL_VIDEOS 和 DLCTL_BGSOUNDS;
+        break;
 	default:
 		return DISP_E_MEMBERNOTFOUND;
 	}
@@ -123,6 +139,10 @@ STDMETHODIMP DuiLib::CWebBrowserUI::QueryInterface( REFIID riid, LPVOID *ppvObje
 
 	if( riid == IID_IDocHostUIHandler)
 		*ppvObject = static_cast<IDocHostUIHandler*>(this);
+    else if(riid == IID_IDocHostUIHandler2)
+        *ppvObject = static_cast<IDocHostUIHandler2*>(this);
+    else if (riid == IID_IDocHostShowUI)
+        *ppvObject = static_cast<IDocHostShowUI*>(this);
 	else if( riid == IID_IDispatch)
 		*ppvObject = static_cast<IDispatch*>(this);
 	else if( riid == IID_IServiceProvider)
@@ -429,6 +449,65 @@ STDMETHODIMP DuiLib::CWebBrowserUI::FilterDataObject( IDataObject* pDO, IDataObj
     }
 }
 
+STDMETHODIMP DuiLib::CWebBrowserUI::ShowMessage(HWND hwnd,
+    __in __nullterminated  LPOLESTR lpstrText, 
+    __in __nullterminated  LPOLESTR lpstrCaption, 
+    DWORD dwType, 
+    __in __nullterminated  LPOLESTR lpstrHelpFile,
+    DWORD dwHelpContext,
+    LRESULT *plResult) 
+{
+    return E_NOTIMPL;
+}
+
+STDMETHODIMP DuiLib::CWebBrowserUI::GetOverrideKeyPath(__deref_out  LPOLESTR *pchKey, 
+    DWORD dw)
+{
+    return E_NOTIMPL;
+}
+
+STDMETHODIMP DuiLib::CWebBrowserUI::ShowHelp(HWND hwnd,
+    __in __nullterminated  LPOLESTR pszHelpFile,
+    UINT uCommand,
+    DWORD dwData,
+    POINT ptMouse,
+    IDispatch *pDispatchObjectHit) 
+{
+    return E_NOTIMPL;
+}
+
+// IOleClientSite
+STDMETHODIMP DuiLib::CWebBrowserUI::SaveObject(void)
+{
+    return E_NOTIMPL;
+}
+
+STDMETHODIMP DuiLib::CWebBrowserUI::GetMoniker(DWORD dwAssign,DWORD dwWhichMoniker,IMoniker **ppmk)
+{
+    return E_NOTIMPL;
+}
+
+STDMETHODIMP DuiLib::CWebBrowserUI::GetContainer(IOleContainer **ppContainer)
+{
+    return E_NOTIMPL;
+}
+
+STDMETHODIMP DuiLib::CWebBrowserUI::ShowObject( void)
+{
+    return E_NOTIMPL;
+}
+
+STDMETHODIMP DuiLib::CWebBrowserUI::OnShowWindow(BOOL fShow)
+{
+    return E_NOTIMPL;
+}
+
+STDMETHODIMP DuiLib::CWebBrowserUI::RequestNewObjectLayout( void)
+{
+    return E_NOTIMPL;
+}
+
+
 void DuiLib::CWebBrowserUI::SetWebBrowserEventHandler( CWebBrowserEventHandler* pEventHandler )
 {
 	if ( pEventHandler!=NULL && m_pWebBrowserEventHandler!=pEventHandler)
@@ -541,6 +620,15 @@ HRESULT DuiLib::CWebBrowserUI::RegisterEventHandler( BOOL inAdvise )
 	{
 		hr = pCP->Unadvise(m_dwCookie);
 	}
+
+    CComPtr<IOleObject> spOleObj;
+
+    // Query WebBrowser for IOleObject pointer
+    pWebBrowser->QueryInterface(IID_IOleObject, (void**)&spOleObj);
+
+    // Set client site
+    spOleObj->SetClientSite(this);
+
 	return hr; 
 }
 

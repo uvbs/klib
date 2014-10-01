@@ -10,7 +10,10 @@ namespace DuiLib
 {
 	class UILIB_API CWebBrowserUI
 		: public CActiveXUI
-		, public IDocHostUIHandler
+		//, public IDocHostUIHandler
+        , public IDocHostUIHandler2
+        , public IDocHostShowUI
+        , public IOleClientSite
 		, public IServiceProvider
 		, public IOleCommandTarget
 		, public IDispatch
@@ -44,8 +47,8 @@ namespace DuiLib
 		static HRESULT SetProperty(IDispatch *pObj, LPOLESTR pName, VARIANT *pValue);
 
 	protected:
-		IWebBrowser2*			m_pWebBrowser2; //ä¯ÀÀÆ÷Ö¸Õë
-		IHTMLWindow2*		_pHtmlWnd2;
+		IWebBrowser2*       m_pWebBrowser2; //ä¯ÀÀÆ÷Ö¸Õë
+		IHTMLWindow2*       _pHtmlWnd2;
 		LONG m_dwRef;
 		DWORD m_dwCookie;
 		virtual void ReleaseControl();
@@ -94,6 +97,33 @@ namespace DuiLib
 		STDMETHOD(GetExternal)(IDispatch** ppDispatch);
 		STDMETHOD(TranslateUrl)(DWORD dwTranslate, OLECHAR* pchURLIn, OLECHAR** ppchURLOut);
 		STDMETHOD(FilterDataObject)(IDataObject* pDO, IDataObject** ppDORet);
+
+        // IDocHostUIHandler2
+        STDMETHOD(GetOverrideKeyPath)(LPOLESTR *pchKey, DWORD dw);
+
+        // IDocHostShowUI
+        STDMETHOD(ShowMessage)(HWND hwnd,
+            LPOLESTR lpstrText, 
+            LPOLESTR lpstrCaption, 
+            DWORD dwType, 
+            LPOLESTR lpstrHelpFile,
+            DWORD dwHelpContext,
+            LRESULT *plResult) ;
+
+        STDMETHOD(ShowHelp)(HWND hwnd,
+            LPOLESTR pszHelpFile,
+            UINT uCommand,
+            DWORD dwData,
+            POINT ptMouse,
+            IDispatch *pDispatchObjectHit) ;
+        
+        // IOleClientSite
+        STDMETHOD(SaveObject)(void);
+        STDMETHOD(GetMoniker)(DWORD dwAssign,DWORD dwWhichMoniker,IMoniker **ppmk);
+        STDMETHOD(GetContainer)(IOleContainer **ppContainer);
+        STDMETHOD(ShowObject)( void);
+        STDMETHOD(OnShowWindow)(BOOL fShow);
+        STDMETHOD(RequestNewObjectLayout)( void);
 
 		// IServiceProvider
 		STDMETHOD(QueryService)(REFGUID guidService, REFIID riid, void** ppvObject);

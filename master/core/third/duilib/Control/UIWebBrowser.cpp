@@ -94,6 +94,11 @@ STDMETHODIMP DuiLib::CWebBrowserUI::Invoke( DISPID dispIdMember,
 			pDispParams->rgvarg[1].pdispVal,
 			pDispParams->rgvarg[0].pvarVal);
 		break;
+    case DISPID_DOCUMENTCOMPLETE:
+        OnDocumentComplete(
+            pDispParams->rgvarg[1].pdispVal,
+            pDispParams->rgvarg[0].pvarVal);
+        break;
 	case DISPID_NAVIGATEERROR:
 		NavigateError(
 			pDispParams->rgvarg[4].pdispVal,
@@ -235,6 +240,14 @@ void DuiLib::CWebBrowserUI::NavigateComplete2( IDispatch *pDisp,VARIANT *&url )
 	{
 		m_pWebBrowserEventHandler->NavigateComplete2(pDisp,url);
 	}
+}
+
+void DuiLib::CWebBrowserUI::OnDocumentComplete(IDispatch* pDisp, VARIANT* URL)
+{
+    if (m_pWebBrowserEventHandler)
+    {
+        m_pWebBrowserEventHandler->OnDocumentComplete(pDisp, URL);
+    }
 }
 
 void DuiLib::CWebBrowserUI::ProgressChange( LONG nProgress, LONG nProgressMax )

@@ -7,6 +7,12 @@
 
 #pragma comment(lib, "Wininet.lib")
 
+
+namespace klib{
+namespace sys{
+
+
+
 ie_cache_helper::ie_cache_helper(void)
 {
 }
@@ -235,3 +241,7 @@ HRESULT ie_cache_helper::delete_ie_history(BOOL bDeleteHistory /*= TRUE*/,
 
     return hr;
 }
+
+
+
+}}

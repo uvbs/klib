@@ -78,6 +78,14 @@ public:
         e_parse_continue,
         e_parse_ok,
     };
+
+    enum e_content_data_type
+    {
+        e_content_length,
+        e_content_chunk,
+        e_content_close,
+    };
+
 public:
     void set_url(const std::string& url);
     void set_stats_method(e_http_method method);
@@ -94,6 +102,8 @@ protected:
     // ∑¢ÀÕ«Î«Û
     bool handle_requst(const std::string url, const data_callback& handler);
     bool send_request(const std::string url);
+    e_content_data_type judge_data_type(const char* buff, size_t buf_len, size_t& data_len);
+    bool handle_close_response(char*, const data_callback& handler);
     bool handle_chunk_response(char*, const data_callback& handler);
     bool handle_content_response(char*, const data_callback& handler, size_t content_len);
 

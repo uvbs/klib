@@ -31,6 +31,7 @@ bool trunk_reader::read(const data_callback& func)
 
             if (buf[0] == '\n') 
             {
+                *cur_read_pos = '\0';
                 break;
             }
         }
@@ -48,8 +49,7 @@ bool trunk_reader::read(const data_callback& func)
         size_t left_trunk_len = trunk_len;
         while (left_trunk_len > 0)
         {
-            size_t to_read = left_trunk_len > sizeof(tmp_buf) ? 
-                sizeof(tmp_buf) : left_trunk_len;
+            size_t to_read = std::min<size_t>(left_trunk_len, sizeof(tmp_buf) - 1);
 
             if (this->read(tmp_buf, to_read))
             {
@@ -337,24 +337,72 @@ bool http::handle_requst(const std::string http_url, const data_callback& handle
         return false;
     }
 
-    DWORD dwFileLength = 0;
-    char* pszFindStr = strstr(recv_buff, "\r\nContent-Length:");
+    size_t parsed_data_len = 0;
+    e_content_data_type tp = judge_data_type(recv_buff, dwRecvedBytes, parsed_data_len);
+
+    if (e_content_close == tp) 
+    {
+        return handle_close_response(recv_buff, handler);
+    }
+    else if (e_content_chunk == tp) 
+    {
+        return handle_chunk_response(recv_buff, handler);
+    }
+    else if (e_content_length == tp)
+    {
+        return handle_content_response(recv_buff, handler, parsed_data_len);
+    }
+    
+    return false;
+}
+
+http::e_content_data_type http::judge_data_type(const char* buff, 
+    size_t buf_len, 
+    size_t& data_len)
+{
+    data_len = 0;
+
+    char* pszFindStr = strstr((char*)buff, "\r\nContent-Length:");
     if (pszFindStr) 
     {
         pszFindStr += 15 + 2;
         skip_space(pszFindStr);
-        if (sscanf(pszFindStr, "%d", &dwFileLength)) 
+        if (sscanf(pszFindStr, "%d", &data_len)) 
         {}
+
+        return e_content_length;
     }
 
-    if (0 == dwFileLength) 
-    {
-        return handle_chunk_response(recv_buff, handler);
+    pszFindStr = strstr((char*)buff, "\r\nTransfer-Encoding:");
+    if (pszFindStr) {
+        pszFindStr = strstr((char*)pszFindStr, "chunked\r\n");
+        if (pszFindStr) {
+            return e_content_chunk;
+        }
     }
-    else 
+    else
     {
-        return handle_content_response(recv_buff, handler, dwFileLength);
+        return e_content_close;
     }
+    return e_content_close;
+}
+
+bool http::handle_close_response(char* recv_buff, const data_callback& handler)
+{
+    int recv_ret = 0;
+    while (true)
+    {
+        recv_ret = socket_.recv(recv_buff, HTTPDOWN_RECV_BUFF, 0, 0);
+        if (recv_ret <= 0) 
+        {
+            break;
+        }
+
+        // 直接调用，不需要记录长度
+        handler(recv_buff, recv_ret);
+    }
+
+    return true;
 }
 
 bool http::handle_chunk_response(char* recv_buff, const data_callback& handler)

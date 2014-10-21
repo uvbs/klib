@@ -78,15 +78,17 @@ bool trunk_reader::is_error()
 bool trunk_reader::read(char* buf, size_t len)
 {
     size_t read_left = len;
+    size_t read_size = 0;
 
     char* cur_pos = buf;
     while (read_left > 0)
     {
-        int ret = sock_.recv(cur_pos, read_left, 0, 0);
-        if (ret < 0) {
+        int ret = sock_.recv(cur_pos + read_size, read_left, 0, 0);
+        if (ret <= 0) {
             return false;
         }
 
+        read_size += ret;
         read_left -= ret;
     }
 

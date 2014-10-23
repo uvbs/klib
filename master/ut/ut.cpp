@@ -22,6 +22,7 @@
 #include <core/timestamp.h>
 #include <pattern/ringbuffer.h>
 
+#include "lazy_test.h"
 #include "find_tool_test.h"
 #include "faststring_test.h"
 #include "object_resuer_test.h"

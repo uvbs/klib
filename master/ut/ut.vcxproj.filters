@@ -123,6 +123,9 @@
     <ClInclude Include="lazy_test.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="cache_lru_test.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

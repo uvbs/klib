@@ -92,6 +92,7 @@
     <ClInclude Include="aspect_test.h" />
     <ClInclude Include="bitmap_test.h" />
     <ClInclude Include="bloom_test.h" />
+    <ClInclude Include="cache_lru_test.h" />
     <ClInclude Include="cat_str_macro_test.h" />
     <ClInclude Include="ensure_test.h" />
     <ClInclude Include="factory_test.h" />

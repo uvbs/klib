@@ -19,8 +19,8 @@ struct cache_node
         , next(nullptr)
     {}
 
-    K* key;
-    T  data;
+    const K* key;
+    T        data;
     cache_node *prev, *next;
 };
 
@@ -61,7 +61,7 @@ public:
             node = itr->second;
             detach(node);
             node->data = data;
-            node->key  = (K*)&itr->first;
+            node->key  = &itr->first;
             attach(node);
         }
         else
@@ -84,7 +84,7 @@ public:
             auto itr = cache_tbl_.insert(std::make_pair(key, node));
             if (itr.second) 
             {
-                node->key = (K*)& itr.first->first;
+                node->key = & itr.first->first;
             }
             attach(node);
         }

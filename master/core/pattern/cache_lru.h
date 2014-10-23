@@ -13,14 +13,21 @@ namespace pattern{
 template <class K, class T>
 struct cache_node
 {
-    K key;
-    T data;
+    cache_node() 
+        : key(nullptr) 
+        , prev(nullptr)
+        , next(nullptr)
+    {}
+
+    K* key;
+    T  data;
     cache_node *prev, *next;
 };
 
 template <class K, class T>
 class cache_lru
 {
+    typedef std::map<K, cache_node<K,T>* >  cache_table_type;
 public:
     cache_lru(size_t size)
     {
@@ -46,11 +53,15 @@ public:
 
     void put(K key, T data)
     {
-        cache_node<K,T> *node = cache_tbl_[key];
-        if(node)
-        { // node exists
+        cache_node<K,T> *node = nullptr;
+
+        cache_table_type::iterator itr = cache_tbl_.find(key);
+        if (cache_tbl_.end() != itr) 
+        {
+            node = itr->second;
             detach(node);
             node->data = data;
+            node->key  = (K*)&itr->first;
             attach(node);
         }
         else
@@ -59,7 +70,8 @@ public:
             {// 可用结点为空，即cache已满
                 node = tail_->prev;
                 detach(node);
-                cache_tbl_.erase(node->key);
+                size_t count = cache_tbl_.erase(* node->key);
+                KLIB_ASSERT(1 == count);
             }
             else
             {
@@ -67,26 +79,31 @@ public:
                 free_entries_.pop_back();
             }
 
-            node->key = key;
             node->data = data;
-            cache_tbl_[key] = node;
+            // insert to map
+            auto itr = cache_tbl_.insert(std::make_pair(key, node));
+            if (itr.second) 
+            {
+                node->key = (K*)& itr.first->first;
+            }
             attach(node);
         }
     }
 
-    bool get(K key, T& t)
+    bool get(const K& key, T& t)
     {
-        cache_node<K,T> *node = cache_tbl_[key];
-        if(node)
+        auto itr = cache_tbl_.find(key);
+        if (itr == cache_tbl_.end()) 
         {
+            return false;
+        }
+        else 
+        {
+            cache_node<K,T> *node = itr->second;
             detach(node);
             attach(node);
             t = node->data;
             return true;
-        }
-        else
-        {   // 如果cache中没有，返回false
-            return false;
         }
     }
 
@@ -109,7 +126,7 @@ private:
     }
 
 private:
-    std::map<K, cache_node<K,T>* >    cache_tbl_;
+    cache_table_type                  cache_tbl_;
     std::vector<cache_node<K,T>* >    free_entries_; // 存储可用结点的地址
     cache_node<K,T> *                 head_;
     cache_node<K,T> *                 tail_;

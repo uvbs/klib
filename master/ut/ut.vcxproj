@@ -98,6 +98,7 @@
     <ClInclude Include="faststring_test.h" />
     <ClInclude Include="find_tool_test.h" />
     <ClInclude Include="kmp_test.h" />
+    <ClInclude Include="lazy_test.h" />
     <ClInclude Include="mem_buffer_test.h" />
     <ClInclude Include="mem_list_test.h" />
     <ClInclude Include="mem_string_test.h" />

@@ -474,6 +474,9 @@
     <ClInclude Include="..\core\rdebug\resource_mgr.h">
       <Filter>rdebug</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\pattern\lazy.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">

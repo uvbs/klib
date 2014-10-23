@@ -190,6 +190,7 @@
     <ClInclude Include="..\core\pattern\factory.h" />
     <ClInclude Include="..\core\pattern\fix_circle_buff.h" />
     <ClInclude Include="..\core\pattern\fsm.h" />
+    <ClInclude Include="..\core\pattern\lazy.h" />
     <ClInclude Include="..\core\pattern\lock_stl.h" />
     <ClInclude Include="..\core\pattern\many_many_queue.h" />
     <ClInclude Include="..\core\pattern\multi_buffer_queue.h" />

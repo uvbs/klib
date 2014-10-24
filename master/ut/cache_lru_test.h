@@ -6,7 +6,24 @@ using namespace klib::pattern;
 
 TEST(cache_lru_tesst, 1)
 {
+    auto detach_func = [](const int& k, const int& knew, int* old, int* news)
+    {
+        int x = 1;
+        x = 2;
+    };
+
+
     cache_lru<int, int> cache(1000);
+    cache.on_detach(detach_func);
+
+
+    auto miss_func = [](const int& k, int* v, cache_lru<int, int>* c) -> bool
+    {
+        *v = 111;
+        return true;
+    };
+    cache.on_miss(miss_func);
+
     for (int index = 0; index<10000; ++ index)
     {
         cache.put(index, index);
@@ -37,4 +54,6 @@ TEST(cache_lru_tesst, 2)
     EXPECT_TRUE(cache.get(std::to_string((long long)9000), val));
     EXPECT_FALSE(cache.get(std::to_string((long long)8999), val));
     EXPECT_FALSE(cache.get(std::to_string((long long)8998), val));
+
+
 }

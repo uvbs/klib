@@ -45,114 +45,32 @@ class cache_lru
 public:
     typedef cache_lru<K,T>  self_type;
     typedef std::map<K, cache_node<K,T>* >  cache_table_type;
-    typedef std::function<bool(const K&, self_type*)>                 on_miss_callback;
-    typedef std::function<void(const K&, T* /*old*/, T* /*new*/)>     on_change_callback;   
-    typedef std::function<void(const K&, T*)>                         on_detach_callback;
+    typedef std::function<bool(const K&, T*, self_type*)>             on_miss_callback;
+    typedef std::function<void(const K&, T* /*old*/, T* /*new*/)>     on_change_callback;
+    typedef std::function<void(const K& /*old key*/, const K& /*new key*/, 
+        T* /*old val*/, T* /*new val*/)>     on_detach_callback;
 
 public:
-    cache_lru(size_t size)
-    {
-        free_entries_.reserve(size);
-        entries_ = new cache_node<K,T>[size];
-        for(size_t index=0; index<size; ++index)// 存储可用结点的地址
-            free_entries_.push_back(entries_ + index);
-
-        head_ = new cache_node<K,T>;
-        tail_ = new cache_node<K,T>;
-        head_->prev = NULL;
-        head_->next = tail_;
-        tail_->prev = head_;
-        tail_->next = NULL;
-
-        miss_count_ = 0;
-        hit_count_  = 0;
-    }
-
-    ~cache_lru()
-    {
-        delete      head_;
-        delete      tail_;
-        delete[]    entries_;
-    }
+    cache_lru(size_t size);
+    ~cache_lru();
 
     size_t size()       {  return cache_tbl_.size();  }
     size_t hit_count()  {  return hit_count_;         }
     size_t miss_count() {  return miss_count_;        }
 
-    void put(const K& key, T data)
-    {
-        cache_node<K,T> *node = nullptr;
+    void put(const K& key, T data);
+    bool get(const K& key, T& t);
 
-        cache_table_type::iterator itr = cache_tbl_.find(key);
-        if (cache_tbl_.end() != itr) 
-        {
-            node = itr->second;
+    self_type& on_miss(on_miss_callback callback)
+    { miss_callback_ = callback;  return * this; }
 
-            if (change_callback_)
-                change_callback_(key, &node->data, &data);
+    self_type& on_change(on_change_callback callback)  
+    { change_callback_ = callback; ;  return * this; }
 
-            detach(node);
-            node->data = data;
-            node->key  = &itr->first;
-            attach(node);
-        }
-        else
-        {
-            if(free_entries_.empty())
-            {   // 可用结点为空，即cache已满
-                node = tail_->prev;
-
-                // 通知需要detach的元素
-                if (detach_callback_)
-                    detach_callback_(key, &node->data);
-
-                detach(node);
-                size_t count = cache_tbl_.erase(* node->key);
-                KLIB_ASSERT(1 == count);
-            }
-            else
-            {
-                node = free_entries_.back();
-                free_entries_.pop_back();
-            }
-
-            node->data = data;
-            // insert to map
-            auto itr = cache_tbl_.insert(std::make_pair(key, node));
-            if (itr.second) 
-            {
-                node->key = & itr.first->first;
-            }
-            attach(node);
-        }
-    }
-
-    bool get(const K& key, T& t)
-    {
-        auto itr = cache_tbl_.find(key);
-        if (itr == cache_tbl_.end()) 
-        {
-            ++ miss_count_;
-
-            if (miss_callback_)
-                return miss_callback_(key, this);
-
-            return false;
-        }
-        else 
-        {
-            ++ hit_count_;
-
-            cache_node<K,T> *node = itr->second;
-            detach(node);
-            attach(node);
-            t = node->data;
-            return true;
-        }
-    }
+    self_type& on_detach(on_detach_callback callback)  
+    { detach_callback_ = callback; ;  return * this; }
 
 private:
-
     // 分离结点
     void detach(cache_node<K,T>* node)
     {
@@ -186,9 +104,106 @@ private:
     size_t                              hit_count_;
 };
 
+template <class K, class T>
+cache_lru<K,T>::cache_lru(size_t size)
+{
+    free_entries_.reserve(size);
+    entries_ = new cache_node<K,T>[size];
+    for(size_t index=0; index<size; ++index)// 存储可用结点的地址
+        free_entries_.push_back(entries_ + index);
 
+    head_ = new cache_node<K,T>;
+    tail_ = new cache_node<K,T>;
+    head_->prev = NULL;
+    head_->next = tail_;
+    tail_->prev = head_;
+    tail_->next = NULL;
 
+    miss_count_ = 0;
+    hit_count_  = 0;
+}
 
+template <class K, class T>
+cache_lru<K,T>::~cache_lru()
+{
+    delete      head_;
+    delete      tail_;
+    delete[]    entries_;
+}
+
+template <class K, class T>
+void cache_lru<K,T>::put(const K& key, T data)
+{
+    cache_node<K,T> *node = nullptr;
+
+    cache_table_type::iterator itr = cache_tbl_.find(key);
+    if (cache_tbl_.end() != itr) 
+    {
+        node = itr->second;
+
+        if (change_callback_)
+            change_callback_(key, &node->data, &data);
+
+        detach(node);
+        node->data = data;
+        node->key  = &itr->first;
+        attach(node);
+    }
+    else
+    {
+        if(free_entries_.empty())
+        {   // 可用结点为空，即cache已满
+            node = tail_->prev;
+
+            // 通知需要detach的元素
+            if (detach_callback_)
+                detach_callback_(*node->key, key, &node->data, &data);
+
+            detach(node);
+            size_t count = cache_tbl_.erase(* node->key);
+            KLIB_ASSERT(1 == count);
+        }
+        else
+        {
+            node = free_entries_.back();
+            free_entries_.pop_back();
+        }
+
+        node->data = data;
+        // insert to map
+        auto itr = cache_tbl_.insert(std::make_pair(key, node));
+        if (itr.second) 
+        {
+            node->key = & itr.first->first;
+        }
+        attach(node);
+    }
+}
+
+template <class K, class T>
+bool cache_lru<K,T>::get(const K& key, T& t)
+{
+    auto itr = cache_tbl_.find(key);
+    if (itr == cache_tbl_.end()) 
+    {
+        ++ miss_count_;
+
+        if (miss_callback_)
+            return miss_callback_(key, &t, this);
+
+        return false;
+    }
+    else 
+    {
+        ++ hit_count_;
+
+        cache_node<K,T> *node = itr->second;
+        detach(node);
+        attach(node);
+        t = node->data;
+        return true;
+    }
+}
 
 
 }}

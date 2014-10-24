@@ -5,6 +5,19 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <functional>
+
+
+/*
+
+// 
+on_miss()
+on_change()
+on_detach()
+脏数据在detach时存盘或改变时存盘
+
+结合任务队列，异步存盘
+*/
 
 namespace klib{
 namespace pattern{
@@ -14,20 +27,28 @@ template <class K, class T>
 struct cache_node
 {
     cache_node() 
-        : key(nullptr) 
+        : dirty(false)
+        , key(nullptr) 
         , prev(nullptr)
         , next(nullptr)
     {}
-
-    const K* key;
-    T        data;
+    
+    bool       dirty;
+    const K*   key;
+    T          data;
     cache_node *prev, *next;
 };
 
 template <class K, class T>
 class cache_lru
 {
+public:
+    typedef cache_lru<K,T>  self_type;
     typedef std::map<K, cache_node<K,T>* >  cache_table_type;
+    typedef std::function<bool(const K&, self_type*)>                 on_miss_callback;
+    typedef std::function<void(const K&, T* /*old*/, T* /*new*/)>     on_change_callback;   
+    typedef std::function<void(const K&, T*)>                         on_detach_callback;
+
 public:
     cache_lru(size_t size)
     {
@@ -54,11 +75,11 @@ public:
         delete[]    entries_;
     }
 
-    size_t size()      {  return cache_tbl_.size();  }
-    size_t hit_count() {  return hit_count_;         }
-    size_t miss_count(){  return miss_count_;        }
+    size_t size()       {  return cache_tbl_.size();  }
+    size_t hit_count()  {  return hit_count_;         }
+    size_t miss_count() {  return miss_count_;        }
 
-    void put(K key, T data)
+    void put(const K& key, T data)
     {
         cache_node<K,T> *node = nullptr;
 
@@ -66,6 +87,10 @@ public:
         if (cache_tbl_.end() != itr) 
         {
             node = itr->second;
+
+            if (change_callback_)
+                change_callback_(key, &node->data, &data);
+
             detach(node);
             node->data = data;
             node->key  = &itr->first;
@@ -74,8 +99,13 @@ public:
         else
         {
             if(free_entries_.empty())
-            {// 可用结点为空，即cache已满
+            {   // 可用结点为空，即cache已满
                 node = tail_->prev;
+
+                // 通知需要detach的元素
+                if (detach_callback_)
+                    detach_callback_(key, &node->data);
+
                 detach(node);
                 size_t count = cache_tbl_.erase(* node->key);
                 KLIB_ASSERT(1 == count);
@@ -103,6 +133,10 @@ public:
         if (itr == cache_tbl_.end()) 
         {
             ++ miss_count_;
+
+            if (miss_callback_)
+                return miss_callback_(key, this);
+
             return false;
         }
         else 
@@ -136,16 +170,25 @@ private:
     }
 
 private:
-    cache_table_type                  cache_tbl_;
-    std::vector<cache_node<K,T>* >    free_entries_; // 存储可用结点的地址
-    cache_node<K,T> *                 head_;
-    cache_node<K,T> *                 tail_;
-    cache_node<K,T> *                 entries_; // 双向链表中的结点
+    cache_table_type                    cache_tbl_;
+    std::vector<cache_node<K,T>* >      free_entries_;      // 存储可用结点的地址
+    cache_node<K,T> *                   head_;
+    cache_node<K,T> *                   tail_;
+    cache_node<K,T> *                   entries_;           // 双向链表中的结点
+
+    // callback;
+    on_miss_callback                    miss_callback_;
+    on_change_callback                  change_callback_;
+    on_detach_callback                  detach_callback_;
 
     // 统计相关
-    size_t                            miss_count_;
-    size_t                            hit_count_;
+    size_t                              miss_count_;
+    size_t                              hit_count_;
 };
+
+
+
+
 
 
 }}

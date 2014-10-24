@@ -42,14 +42,21 @@ public:
         head_->next = tail_;
         tail_->prev = head_;
         tail_->next = NULL;
+
+        miss_count_ = 0;
+        hit_count_  = 0;
     }
 
     ~cache_lru()
     {
-        delete head_;
-        delete tail_;
-        delete[] entries_;
+        delete      head_;
+        delete      tail_;
+        delete[]    entries_;
     }
+
+    size_t size()      {  return cache_tbl_.size();  }
+    size_t hit_count() {  return hit_count_;         }
+    size_t miss_count(){  return miss_count_;        }
 
     void put(K key, T data)
     {
@@ -95,10 +102,13 @@ public:
         auto itr = cache_tbl_.find(key);
         if (itr == cache_tbl_.end()) 
         {
+            ++ miss_count_;
             return false;
         }
         else 
         {
+            ++ hit_count_;
+
             cache_node<K,T> *node = itr->second;
             detach(node);
             attach(node);
@@ -131,6 +141,10 @@ private:
     cache_node<K,T> *                 head_;
     cache_node<K,T> *                 tail_;
     cache_node<K,T> *                 entries_; // 双向链表中的结点
+
+    // 统计相关
+    size_t                            miss_count_;
+    size_t                            hit_count_;
 };
 
 

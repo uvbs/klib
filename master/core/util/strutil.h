@@ -347,6 +347,7 @@ namespace util
         if (begin_pos == TString::npos) {
             return TString();
         }
+        begin_pos += std::char_traits<TString::value_type>::length(begin_str);
 
         size_t end_pos = str.find(end_str, begin_pos + 1);
         if (end_pos == TString::npos) {

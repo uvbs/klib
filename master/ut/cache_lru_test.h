@@ -6,21 +6,21 @@ using namespace klib::pattern;
 
 TEST(cache_lru_tesst, 1)
 {
+    typedef cache_lru<int, int>  cache_test_type;
+
     auto detach_func = [](const int& k, const int& knew, int* old, int* news)
     {
         int x = 1;
         x = 2;
     };
 
-
-    cache_lru<int, int> cache(1000);
+    cache_test_type cache(1000);
     cache.on_detach(detach_func);
 
-
-    auto miss_func = [](const int& k, int* v, cache_lru<int, int>* c) -> bool
+    auto miss_func = [](const int& k, int* v, cache_test_type::self_type* c) -> bool
     {
         *v = 111;
-        return true;
+        return false;
     };
     cache.on_miss(miss_func);
 

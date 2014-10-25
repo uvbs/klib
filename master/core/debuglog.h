@@ -61,7 +61,8 @@ public:
       int index = dwlen - 1;
       while (index > 0)
       {
-          if (path[index] == _T('\\')) {
+          if (path[index] == _T('.')) {
+              path[index] = _T('_');
               path[index + 1] = _T('\0');
               break;
           }
@@ -73,7 +74,7 @@ public:
   void operator ()(const char * format,...)
   {
     char newformat[512] = {0};
-    char msgbuffer[4*1024] = {0};
+    char msgbuffer[8*1024] = {0};
     //sprintf_s(newformat, "%s line %d,", m_file, m_line);
     //strcat_s(newformat, format);
     strcpy(newformat, format);
@@ -107,7 +108,7 @@ public:
 	  return;
 	}
 
-    char logMsg[4*1024 + 30] = {0};
+    char logMsg[8*1024 + 30] = {0};
     sprintf(timebuf, 
               "%d-%d-%d %d:%d:%d ",
               newtime->tm_year + 1900,

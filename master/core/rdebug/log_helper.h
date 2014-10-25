@@ -206,6 +206,34 @@ inline log_helper get_formator(Logger* loger = nullptr)
     return log_helper(loger); 
 }
 
+class empty_logger
+{
+public:
+    template <class T>
+    empty_logger& operator << (const T& )
+    {
+        return * this;
+    }
+
+    template <class T>
+    empty_logger& operator << (T&)
+    {
+        return * this;
+    }
+
+    template<class T>
+    empty_logger& operator()(const T&)
+    {
+        return * this;
+    }
+
+    template<class T>
+    empty_logger& operator()(T&)
+    {
+        return * this;
+    }
+};
+
 
 }}
 
@@ -235,6 +263,8 @@ using klib::debug::get_formator;
                 __LINE__).LOG_FORMATOR_A
 
 // 条件成功的时候记录日志
+
+#if defined(_DEBUG) || defined(RELEASE_LOGGER)
 #define LOGGER() \
     get_formator().set_ctx(ENSURE_DEBUG_LOG, \
     "",\
@@ -242,5 +272,11 @@ using klib::debug::get_formator;
     __LINE__).LOG_FORMATOR_A
 
 
+#else
+
+#define LOGGER() \
+    empty_logger()
+
+#endif
 
 

@@ -1,0 +1,31 @@
+#include <iostream>
+#include <windows.h>
+
+using namespace std;
+
+BOOL IsObjectOnHeap(LPVOID pObject)
+{
+    BOOL bRet(FALSE);
+    DWORD dwHeaps = GetProcessHeaps(0, NULL);
+    LPHANDLE pHeaps = new HANDLE[dwHeaps];
+    if(pHeaps != NULL)
+    {
+        MEMORY_BASIC_INFORMATION mi = {0};
+        GetProcessHeaps(dwHeaps, pHeaps);
+
+        for(INT i=0; i<dwHeaps; ++i)
+        {
+            VirtualQuery((LPVOID)pHeaps[i], &mi, sizeof(mi));
+           
+            if(pObject >= mi.BaseAddress
+                && (DWORD)pObject < (DWORD)mi.BaseAddress + mi.RegionSize)
+            {
+                bRet = TRUE;
+                break;
+            }
+        }
+    }
+    delete []pHeaps;
+
+    return bRet;
+}

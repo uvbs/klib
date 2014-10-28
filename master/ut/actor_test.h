@@ -3,7 +3,7 @@
 
 using namespace klib::pattern::actor; 
 
-class myactor : public actor_imp<myactor, int>
+class myactor : public passive_actor_imp<myactor, int>
 {
 public:
     myactor () : m_sum(0) {}

@@ -480,6 +480,9 @@
     <ClInclude Include="..\core\pattern\actor.h">
       <Filter>pattern</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\pattern\ref_buffer.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">

@@ -155,6 +155,9 @@ public:
     // 加载模块
     virtual HRESULT load_module(LPCTSTR pszModuleFile) = 0;
 
+    // 加载模块
+    virtual HRESULT load_module(RegisterObjects_Fn RegisterObjects) = 0;
+
     // 卸载模块
     virtual HRESULT unload_module(LPCTSTR pszModuleName) = 0;
 

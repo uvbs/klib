@@ -200,6 +200,7 @@
     <ClInclude Include="..\core\pattern\one_many_queue.h" />
     <ClInclude Include="..\core\pattern\ptr_list.h" />
     <ClInclude Include="..\core\pattern\qmem_pool.h" />
+    <ClInclude Include="..\core\pattern\ref_buffer.h" />
     <ClInclude Include="..\core\pattern\retry_list.h" />
     <ClInclude Include="..\core\pattern\ringbuffer.h" />
     <ClInclude Include="..\core\pattern\sync_invoke.h" />

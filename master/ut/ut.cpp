@@ -66,9 +66,22 @@
 #include <net/proto/net_archive.h>
 
 
+#include <pattern/ref_buffer.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+    ref_buffer<1024>* ref = new ref_buffer<1024>;
+    KLIB_ASSERT(ref->size() == ref_buffer<1024>::e_buff_size);
+    scope_buff<ref_buffer<1024>> ref_scp(ref);
+    ref->release();
+
+    ref_buff* ptr = ref_buff::create(200);
+    scope_buff<ref_buff> scp(ptr);
+    scp->get_buffer();
+
+    ptr->release();
+
+
     klib::pattern::ring_buffer<int> rbuff;
     rbuff.push_back(1);
 

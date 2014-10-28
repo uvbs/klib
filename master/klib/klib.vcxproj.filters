@@ -285,9 +285,6 @@
     <ClInclude Include="..\core\util\convert.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="..\core\pattern\actor.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\core\net\winsock_init.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -480,6 +477,9 @@
     <ClInclude Include="..\core\pattern\item_counter.h">
       <Filter>pattern</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\pattern\actor.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -587,9 +587,6 @@
     <ClCompile Include="..\core\core\mini_dumper.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="..\core\pattern\actor.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="..\core\net\udp_server.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -676,6 +673,9 @@
     </ClCompile>
     <ClCompile Include="..\core\rdebug\resource_mgr.cpp">
       <Filter>rdebug</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\actor.cpp">
+      <Filter>pattern</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

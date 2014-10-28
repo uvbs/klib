@@ -71,7 +71,10 @@ class actor_base
 {
     friend engine;
 public:
+    // 处理数据接口
     virtual bool handle() = 0;
+
+    // 获取待处理消息的个数
     virtual size_t msg_count() = 0;
 
 protected:
@@ -121,6 +124,9 @@ protected:
             this->execute(t);
             return true;
         }
+
+        // 没有数据的时候同步一下局部存储的数据
+        mq_.sync();
 
         return false;
     };

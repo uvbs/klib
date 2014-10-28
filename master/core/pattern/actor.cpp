@@ -67,23 +67,24 @@ void engine::engine_loop()
     size_t exec_count = 0;
     bool need_sleep = true;
 
+    auto f = [&](actor_base* act) -> bool
+    {
+        size_t queued_msg_cout = act->msg_count();
+        if (act->is_queued() || queued_msg_cout == 0) 
+            return true;
+
+        act->set_queued(true);
+        exec_count = queued_msg_cout > 10 ? 10 : queued_msg_cout;
+        add_task(act, exec_count);
+
+        need_sleep = false;
+
+        return true;
+    };
+
     while (!this->is_stop_)
     {
         need_sleep = true;
-        auto f = [&](actor_base* act) -> bool
-        {
-            size_t queued_msg_cout = act->msg_count();
-            if (act->is_queued() || queued_msg_cout == 0) 
-                return true;
-
-            act->set_queued(true);
-            exec_count = queued_msg_cout > 10 ? 10 : queued_msg_cout;
-            add_task(act, exec_count);
-
-            need_sleep = false;
-
-            return true;
-        };
         act_list_.for_each(f);
 
         if (need_sleep) 

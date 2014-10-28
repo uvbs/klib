@@ -79,6 +79,20 @@ public:
         return hr;
     }
 
+    // 通过函数来加载模块
+    HRESULT load_module(RegisterObjects_Fn RegisterObjects)
+    {
+        HRESULT hr = S_FALSE;
+
+        if (nullptr == RegisterObjects)
+        {
+            return hr;
+        }
+
+        hr = RegisterObjects(AOM_LIB_VERSION, this);
+        return hr;
+    }
+
     //----------------------------------------------------------------------
     // Summary:
     //		卸载模块（接口设计中）

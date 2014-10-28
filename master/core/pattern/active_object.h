@@ -5,6 +5,8 @@
 #include "../kthread/thread.h"
 #include "multi_buffer_queue.h"
 
+#include <vector>
+
 using namespace ::klib::kthread;
 
 namespace klib {
@@ -71,8 +73,8 @@ public:
     size_t size() { return queue_.size(); }
 
 protected:
-    kthread::Thread     thread_;            // working thread
-    win_event evt_;
+    klib::kthread::Thread       thread_;                    // working thread
+    win_event                   evt_;
     multi_buffer_queue<1000000, 4, msg_type> queue_;        // msg queue
 };
 
@@ -82,41 +84,36 @@ class active_obj_mgr
 public:
     ~active_obj_mgr()
     {
-        if (NULL == worker_arr_) {
-            return;
-        }
-
-        for (size_t index=0; index<worker_num_; ++index)
+        for (size_t index=0; index < worker_arr_.size(); ++index)
         {
-            (worker_arr_ + index)->stop();
+            worker_arr_[index]->stop();
         }
-        delete [] worker_arr_;
     }
 
-    bool init(size_t worker_num = 1)
+    bool add_worker(obj_type* t)
     {
-        worker_arr_ = new obj_type[worker_num];
-        if (NULL == worker_arr_) {
-            return false;
-        }
-
-        for (size_t index=0; index<worker_num; ++index)
+        for (auto itr = 0; itr != worker_arr_.end(); itr++)
         {
-            (worker_arr_ + index)->start();
+            if (*itr == t)
+            {
+                return false;
+            }
         }
 
-        worker_num_ = worker_num;
+        worker_arr_.push_back(t);
+
+        t->start();
+
         return true;
     }
 
     obj_type* choose_worker(void* p)
     {
-        return worker_arr_ + ((size_t)p % worker_num_);
+        return worker_arr_[((size_t)p % worker_num_)];
     }
 
 protected:
-    obj_type*   worker_arr_;
-    size_t      worker_num_;
+    std::vector<obj_type*>   worker_arr_;
 };
 
 

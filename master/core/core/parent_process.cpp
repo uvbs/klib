@@ -29,3 +29,22 @@ std::string parent_process::get_parent_process()
 
     return "";
 }
+
+DWORD  parent_process::get_parent_process_id()
+{
+    process_enumer enumer;
+    PROCESSENTRY32 info;
+
+    DWORD dwParentId = 0;
+
+    DWORD dwpid = GetCurrentProcessId();
+    while (enumer.get_next_process_info(info))
+    {
+        if (dwpid == info.th32ProcessID) {
+            dwParentId = info.th32ParentProcessID;
+            break;
+        }
+    }
+
+    return dwParentId;
+}

@@ -48,6 +48,7 @@ namespace detail
             }
             return true;
         };
+
         void sync()
         {
             local_msg_list_type::value_type_ptr v = local_lst_.get();
@@ -67,19 +68,20 @@ namespace detail
 
 /* actor base class  */
 class engine;
-class actor_base
+class passive_actor
 {
     friend engine;
+
 public:
-    // 处理数据接口
+    // 处理消息接口
     virtual bool handle() = 0;
 
     // 获取待处理消息的个数
     virtual size_t msg_count() = 0;
 
 protected:
-    virtual bool is_queued() = 0;
-    virtual void set_queued(bool isqueue) = 0;
+    virtual bool get_is_dispatching() = 0;
+    virtual void set_is_dispatching(bool isqueue) = 0;
 };
 
 /* actor engine framework */
@@ -93,30 +95,32 @@ public:
     ~engine() ;
 
     bool init() ;
-    bool regist(actor_base* actor) ;
+    bool regist(passive_actor* actor) ;
     bool stop();
 
 protected:
     void engine_loop();
-    void add_task(actor_base* act, size_t num);
-    void actor_task(actor_base* act, size_t exec_num);
+    void add_task(passive_actor* act, size_t num);
+    void actor_task(passive_actor* act, size_t exec_num);
 
 protected:
-    klib::pattern::lock_list<actor_base*> act_list_;
-    klib::kthread::kthread_pool thread_pool_;
-    klib::kthread::Thread       work_thread_;
-    bool                        is_stop_;
+    klib::pattern::lock_list<passive_actor*>    actor_list_;
+    klib::kthread::kthread_pool                 thread_pool_;
+    klib::kthread::Thread                       work_thread_;
+    bool                                        is_stop_;
 };
 
 /* actor imp class */
 template<class subclass, typename msg_type>
-class actor_imp : public actor_base
+class passive_actor_imp : public passive_actor
 {
 protected:
     virtual bool handle() 
     {
         if (mq_.size() == 0) 
+        {
             return false;
+        }
 
         msg_queue_type::value_type t;
         if (mq_.pop(t)) 
@@ -124,22 +128,28 @@ protected:
             this->execute(t);
             return true;
         }
-
-        // 没有数据的时候同步一下局部存储的数据
-        mq_.sync();
-
+        
         return false;
     };
 
-    size_t msg_count()  {   return mq_.size();   }
-    bool is_queued()    {   return queued_;      }
-    void set_queued(bool flag)  {  queued_ = flag;   }
+    virtual size_t msg_count()                  
+    {
+        if (0 == mq_.size())
+        {
+            mq_.sync();
+        }
+
+        return mq_.size();   
+    }
+
+    bool get_is_dispatching()           {   return queued_;   }
+    void set_is_dispatching(bool flag)  {   queued_ = flag;   }
 
     /* to implement */
     virtual void execute(msg_type& t) = 0;
 
 public:
-    actor_imp () : queued_(false)
+    passive_actor_imp () : queued_(false)
     {
     }
     
@@ -148,8 +158,9 @@ public:
 
 protected:
     typedef detail::msg_queue<msg_type> msg_queue_type;
-    msg_queue_type  mq_;
-    bool            queued_ ;
+
+    msg_queue_type                      mq_;
+    bool                                queued_ ;
 };
 
 

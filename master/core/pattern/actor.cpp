@@ -27,12 +27,12 @@ bool engine::init()
     return true;
 }
 
-bool engine::regist(actor_base* actr) 
+bool engine::regist(passive_actor* actr) 
 {
-    if (act_list_.find_item(actr))
+    if (actor_list_.find_item(actr))
         return false;
 
-    return act_list_.push_item(actr);
+    return actor_list_.push_item(actr);
 }
 
 bool engine::stop()
@@ -52,7 +52,7 @@ bool engine::stop()
     return true;
 }
 
-void engine::add_task(actor_base* act, size_t num)
+void engine::add_task(passive_actor* act, size_t num)
 {
     kthread_pool::func_type func = std::bind(&engine::actor_task, 
         this, 
@@ -67,13 +67,19 @@ void engine::engine_loop()
     size_t exec_count = 0;
     bool need_sleep = true;
 
-    auto f = [&](actor_base* act) -> bool
+    auto f = [&](passive_actor* act) -> bool
     {
         size_t queued_msg_cout = act->msg_count();
-        if (act->is_queued() || queued_msg_cout == 0) 
+        if (0 == queued_msg_cout)
+        {
+            act->handle();
+            return true;
+        }
+
+        if (act->get_is_dispatching()) 
             return true;
 
-        act->set_queued(true);
+        act->set_is_dispatching(true);
         exec_count = queued_msg_cout > 10 ? 10 : queued_msg_cout;
         add_task(act, exec_count);
 
@@ -85,7 +91,7 @@ void engine::engine_loop()
     while (!this->is_stop_)
     {
         need_sleep = true;
-        act_list_.for_each(f);
+        actor_list_.for_each(f);
 
         if (need_sleep) 
         {
@@ -94,9 +100,9 @@ void engine::engine_loop()
     }
 }
 
-void engine::actor_task(actor_base* act, size_t exec_num)
+void engine::actor_task(passive_actor* act, size_t exec_num)
 {
-    ON_SCOPE_EXIT( act->set_queued(false); );
+    ON_SCOPE_EXIT( act->set_is_dispatching(false); );
 
     size_t counter = 0;
     bool ret = false;

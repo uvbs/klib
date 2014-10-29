@@ -67,6 +67,19 @@
 
 
 #include <pattern/ref_buffer.h>
+#include <pattern/res_mgr.h>
+
+
+
+class TheRes : public spicify_res
+{
+};
+
+class aaa_res_mgr 
+    : public spicify_res_mgr<TheRes>
+    , public singleton<aaa_res_mgr>
+{
+};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -81,6 +94,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
     ptr->release();
 
+    TheRes* res = aaa_res_mgr::instance()->create();
+    res->release();
+
+    res_mgr_imp aaa;
+    aaa.reg(aaa_res_mgr::instance());
 
     klib::pattern::ring_buffer<int> rbuff;
     rbuff.push_back(1);

@@ -483,6 +483,9 @@
     <ClInclude Include="..\core\pattern\ref_buffer.h">
       <Filter>pattern</Filter>
     </ClInclude>
+    <ClInclude Include="..\core\pattern\res_mgr.h">
+      <Filter>pattern</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\core\db\CppSQLite3.cpp">
@@ -678,6 +681,9 @@
       <Filter>rdebug</Filter>
     </ClCompile>
     <ClCompile Include="..\core\pattern\actor.cpp">
+      <Filter>pattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\core\pattern\res_mgr.cpp">
       <Filter>pattern</Filter>
     </ClCompile>
   </ItemGroup>

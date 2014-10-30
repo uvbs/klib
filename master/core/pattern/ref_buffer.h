@@ -14,7 +14,7 @@ public:
 
 public:
     ref_buffer()
-        : ref_count_(1)
+        : ref_count_(0)
     {}
 
     size_t add_ref() 
@@ -47,7 +47,7 @@ class ref_buff
 {
 protected:
     ref_buff() 
-        : ref_count_(1)
+        : ref_count_(0)
         , buff_size_(0)
     {}
 

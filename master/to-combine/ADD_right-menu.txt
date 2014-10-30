@@ -1,0 +1,57 @@
+const char *MenuItemText="将程序图标转换为GIF";
+
+void RegOpen(LPCTSTR thisPath)
+{
+    HKEY h_key=NULL;
+
+    if (ERROR_SUCCESS==RegOpenKeyEx(HKEY_CLASSES_ROOT,"exefile//shell//",0,KEY_ALL_ACCESS,&h_key))
+    {
+        HKEY h_sub_key=NULL;
+
+
+        
+        if (ERROR_SUCCESS==RegCreateKey(h_key,"ExeExportIcon",&h_sub_key))
+        {
+
+            HKEY h_ss_key=NULL;
+
+
+            if (ERROR_SUCCESS==RegSetValueEx(h_sub_key, NULL , 0, REG_SZ, (LPBYTE)MenuItemText, strlen(MenuItemText)))
+            {
+
+            }
+        
+            if (ERROR_SUCCESS==RegCreateKey(h_sub_key,"command",&h_ss_key))
+            {
+                char buff[1024];
+
+                sprintf(buff,"/"%s/" /"%%1/"",thisPath);
+
+                if (ERROR_SUCCESS==RegSetValueEx(h_ss_key, NULL , 0, REG_SZ, (LPBYTE)buff, strlen(buff)))
+                {
+                    
+                }
+
+                ::RegCloseKey(h_ss_key);
+            }
+
+            ::RegCloseKey(h_sub_key);
+
+        }
+
+        ::RegCloseKey(h_key);
+    }
+}
+
+
+
+int main(int argc, char* argv[])
+{
+    if (argc==1)
+    {
+        RegOpen(argv[0]);
+
+    }else if (argc>=2){
+      //...
+    }
+}

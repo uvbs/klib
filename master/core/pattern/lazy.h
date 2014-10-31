@@ -18,7 +18,7 @@ private:
     // init function type
     typedef   std::function<void(T&t)>  init_functor;
 
-    static void default_initiator(T&t) {
+    static void default_initiator(T&) {
         throw std::runtime_error("No lazy evaluator given.");
     }
 
@@ -37,7 +37,7 @@ public:
         return *this;
     }
 
-    self_type& set_lazy_initor(const init_functor& func) {
+    self_type& set_init_func(const init_functor& func) {
         initiator_ = func;
         return *this;
     }
@@ -51,6 +51,16 @@ public:
     }
 
     T& operator* () {
+        return get_value();
+    }
+
+    T* operator ->()
+    {
+        return & get_value();
+    }
+
+    T& operator()()
+    {
         return get_value();
     }
 };

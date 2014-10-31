@@ -275,7 +275,7 @@ using klib::debug::get_formator;
 #else
 
 #define LOGGER() \
-    empty_logger()
+    klib::debug::empty_logger()
 
 #endif
 

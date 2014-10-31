@@ -9,17 +9,16 @@
 namespace klib {
 namespace pattern {
 
-#define LAZY_INIT(state_ment) \
-    [&](int& t){ state_ment; }
-
 template<typename T>
 class lazy 
 {
 private:
+    typedef lazy<T>         self_type;
+
     // init function type
     typedef   std::function<void(T&t)>  init_functor;
 
-    static T default_initiator() {
+    static void default_initiator(T&t) {
         throw std::runtime_error("No lazy evaluator given.");
     }
 
@@ -35,6 +34,11 @@ public:
     lazy<T>& operator= (const lazy<T>& other) {
         initiator_   = other.initiator_;
         initialized_ = false;
+        return *this;
+    }
+
+    self_type& set_lazy_initor(const init_functor& func) {
+        initiator_ = func;
         return *this;
     }
 

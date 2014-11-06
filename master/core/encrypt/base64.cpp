@@ -109,16 +109,16 @@ void base64::decode(const std::string& input, std::string& output)
         ch3 = decode_tbl[(int) input[index + 2]];
         ch4 = decode_tbl[(int) input[index + 3]];
 
-        output.append(((ch1 << 2) & 0xFC) | ((ch2 >> 4) & 0x03), 1);
+        output.append(1, ((ch1 << 2) & 0xFC) | ((ch2 >> 4) & 0x03));
         decode_length ++;
 
         if (ch3 != BASE64_NULLCHAR)
         {
-            output.append(((ch2 << 4) & 0xF0) | ((ch3 >> 2) & 0x0F), 1);
+            output.append(1, ((ch2 << 4) & 0xF0) | ((ch3 >> 2) & 0x0F));
             decode_length ++;
             if (ch4 != BASE64_NULLCHAR)
             {
-                output.append(((ch3 << 6) & 0xC0) | (ch4 & 0x3F), 1);
+                output.append(1, ((ch3 << 6) & 0xC0) | (ch4 & 0x3F));
                 decode_length ++;
             }
         }

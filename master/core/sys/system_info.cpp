@@ -4,7 +4,7 @@
 #include <windows.h>
 
 using namespace klib::sys;
-
+ 
 
 // 安全的取得真实系统信息     
 VOID SafeGetNativeSystemInfo(LPSYSTEM_INFO lpSystemInfo)
@@ -25,16 +25,17 @@ VOID SafeGetNativeSystemInfo(LPSYSTEM_INFO lpSystemInfo)
 }
 
 
-int get_system_bits()    
+int system_info::get_system_bits()
 {    
     SYSTEM_INFO si;    
     SafeGetNativeSystemInfo(&si);
-    if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64 ||    
-        si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64 )    
+    if (si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_AMD64 ||
+        si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_IA64  ||
+        si.wProcessorArchitecture == PROCESSOR_ARCHITECTURE_ALPHA64)    
     {    
-        return 64;    
+        return 64; 
     }    
-    return 32;    
+    return 32;
 }    
 
 
